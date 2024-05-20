@@ -1,0 +1,152 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:social_psn/configs/setting/themes.dart';
+
+import '../../../configs/localization/app_localizations.dart';
+import '../../../repos/models/content.dart';
+import '../../../repos/models/media.dart';
+import '../../widgets/cached_network_image.dart';
+import '../../widgets/selectImge.dart';
+
+class ContentItem extends StatelessWidget {
+  final Content content;
+
+  ContentItem(this.content);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // todo go to media screen
+      },
+      child: Stack(
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.0, // to make it square
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: selectImage(content.medias ?? []),
+            ),
+          ),
+          Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0x00000000), // transparent color
+                  Color(0xB2000000), // semi-transparent black color
+                ],
+              ),
+            ),
+            child: Align(
+                alignment: AlignmentDirectional.bottomStart,
+                child: Container(
+                  padding: const EdgeInsetsDirectional.fromSTEB(7, 3, 0, 3),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          content.name ?? '',
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.background,
+                                fontWeight: FontWeight.w400,
+                              ),
+                        ),
+                      ), // white text
+                    ],
+                  ),
+                )),
+          ),
+          Align(
+            alignment: AlignmentDirectional.topEnd,
+            child: PopupMenuButton<int>(
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              color: Theme.of(context).colorScheme.background,
+              surfaceTintColor: Theme.of(context).colorScheme.background,
+              icon: Container(
+                  height: 25,
+                  width: 25,
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    // semi-transparent background
+                    shape: BoxShape.circle,
+                  ),
+                  child: SvgPicture.asset(
+                      'assets/images/profile/three_dots.svg',
+                      width: 6,
+                      height: 14,
+                      color: whiteColor)),
+              // white icon
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  onTap: (){},
+                  value: 1,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset('assets/images/profile/trash-can.svg', height: 20, width: 20,
+                          color: Theme.of(context).colorScheme.shadow),
+                      SizedBox(width: 12),
+                      Text(
+                        AppLocalizations.of(context)!
+                            .translateNested("profileScreen", "edit"),
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              color: Theme.of(context).colorScheme.shadow,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  onTap: (){},
+                  value: 2,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset('assets/images/profile/trash-can.svg', height: 20, width: 20,
+                          color: Theme.of(context).colorScheme.shadow),
+                      SizedBox(width: 12),
+                      Text(
+                        AppLocalizations.of(context)!
+                            .translateNested("profileScreen", "delete"),
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              color: Theme.of(context).colorScheme.shadow,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              onSelected: (value) {
+                if (value == 1) {
+                  // Handle edit action
+                } else if (value == 2) {
+                  // Handle delete action
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
