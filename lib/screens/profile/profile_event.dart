@@ -13,6 +13,7 @@ class FetchProfile extends ProfileEvent {
 class EditProfile extends ProfileEvent {
   final String? name;
   final String? family;
+  final String? id;
   final String? photo;
   final String? biography;
   final String? field;
@@ -25,6 +26,7 @@ class EditProfile extends ProfileEvent {
   EditProfile({
     this.name,
     this.family,
+    this.id,
     this.photo,
     this.biography,
     this.field,
@@ -39,3 +41,16 @@ class EditProfile extends ProfileEvent {
 class NavigateToEditProfile extends ProfileEvent {}
 
 class NavigateToInitialScreen extends ProfileEvent {}
+
+class DeletePost extends ProfileEvent {
+  final String postId;
+
+  DeletePost(this.postId);
+}
+
+class ChangeStatusEvent extends ProfileEvent {
+  final bool status;
+
+  ChangeStatusEvent(this.status);
+}
+class RefreshProfile extends ProfileEvent {}

@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../repos/models/content.dart';
 import '../../../repos/models/liked.dart';
 import '../../widgets/cached_network_image.dart';
+import '../../widgets/selectImge.dart';
 
 class InterestItem extends StatelessWidget {
   final Liked liked;
@@ -23,9 +25,8 @@ class InterestItem extends StatelessWidget {
             aspectRatio: 1.0, // to make it square
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: liked.medias!.isNotEmpty && liked.medias![0].getMediaUrl() != null
-                  ? CacheImage(liked.medias![0].getMediaUrl()!)
-                  : Image.asset('assets/images/profile/profile.png'),
+              child: selectImage(liked.medias ?? [])
+
             ),
           ),
           Container(

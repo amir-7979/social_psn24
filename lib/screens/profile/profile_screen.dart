@@ -4,12 +4,7 @@ import 'package:social_psn/configs/setting/setting_bloc.dart';
 import 'package:social_psn/screens/profile/widgets/user_screen.dart';
 import 'profile_bloc.dart';
 import 'widgets/expert_user/edit_expert_user.dart';
-import 'widgets/interests.dart';
-import 'widgets/main_tab_bar.dart';
 import 'widgets/normal_user/edit_normal_user.dart';
-import 'widgets/shimmer/shimmer_edit_expert_user.dart';
-import 'widgets/shimmer/shimmer_edit_normal_user.dart';
-import 'widgets/user_info.dart';
 
 class ProfileScreen extends StatelessWidget {
   Widget? _lastWidget;
@@ -21,12 +16,8 @@ class ProfileScreen extends StatelessWidget {
     SettingState settingState = BlocProvider.of<SettingBloc>(context).state;
     return BlocProvider<ProfileBloc>(
       create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context)),
-      child: BlocConsumer<ProfileBloc, ProfileState>(
-        listener: (context, state) {
-          // TODO: implement listener
-        },
+      child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
-
           Widget? currentWidget = profileWidget(state, settingState);
           if (currentWidget != null) {
             _lastWidget = currentWidget;
@@ -34,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
           return Padding(
             padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
             child: Container(
-              child: EditNormalUser() /*_lastWidget*/,
+              child: _lastWidget,
             ),
           );
         },
@@ -44,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget? profileWidget(ProfileState state, SettingState settingState) {
     final bool isUserExpert = settingState.isUserExpert; // Replace with actual property
-    if (state is ProfileInitial) {
+    if (state is ProfileInitial || state is EditProfileInfoLoaded) {
       return UserScreen(); // Replace with actual widgets
     } else if (state is NavigationToEditScreenState) {
       return isUserExpert ? EditExpertUser() : EditNormalUser(); // Replace with actual widgets

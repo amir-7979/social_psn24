@@ -71,8 +71,10 @@ class _LoginState extends State<Login> {
                   focusNode: _focusNode,
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
+                  textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     label: Text(
+
                       AppLocalizations.of(context)!.translateNested("auth", "phoneNumber"),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w400,

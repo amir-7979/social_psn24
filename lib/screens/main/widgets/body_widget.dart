@@ -9,7 +9,7 @@ import 'base_widget.dart';
 Widget buildBody(int index) {
   switch (index) {
     case 0:
-      return ProfileScreen();
+      return ProfileScreen(key: ValueKey(DateTime.now()));
     case 1:
       return HomeScreen();
     case 2:

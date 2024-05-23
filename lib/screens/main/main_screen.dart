@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/screens/auth/auth_screen.dart';
 import 'package:social_psn/screens/main/widgets/guest_drawer_widget.dart';
 import 'package:social_psn/screens/main/widgets/user_drawer_widget.dart';
+import '../../configs/setting/setting_bloc.dart';
 import 'main_bloc.dart';
 import 'widgets/appbar_widget.dart';
 import 'widgets/body_widget.dart';
@@ -18,33 +19,31 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => MainBloc(),
-      child: BlocProvider<MainBloc>(
-        create: (context) => MainBloc(),
-        child: BlocBuilder<MainBloc, MainState>(builder: (context, state) {
-          bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
-          return SafeArea(
-            child: Scaffold(
-              resizeToAvoidBottomInset: true,
-              drawer: GuestDrawer(),
-              appBar: buildAppBar(context),
-              body: AuthScreen(),
-              /*body: buildBody(state.index),*/
-              floatingActionButton: isKeyboardOpen
-                  ? Container() // Return an empty container when keyboard is open
-                  : FloatingActionButton(
-                      onPressed: () {},
-                      child: SvgPicture.asset('assets/images/bottom_navbar/plus.svg'),
-                      shape: CircleBorder(),
-                    ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-              bottomNavigationBar: buildStylishBottomBar(state, context),
-            ),
-          );
-        }),
-      ),
+      create: (context) => MainBloc(BlocProvider.of<SettingBloc>(context)),
+      child: BlocBuilder<MainBloc, MainState>(builder: (context, state) {
+        bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
+        bool isLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn; // Check if user is logged in
+
+        return SafeArea(
+          child: Scaffold(
+            resizeToAvoidBottomInset: true,
+            drawer: isLoggedIn ? UserDrawer() : GuestDrawer(),
+            appBar: buildAppBar(context),
+            body: buildBody(state.index),
+            floatingActionButton: isKeyboardOpen
+                ? Container() // Return an empty container when keyboard is open
+                : FloatingActionButton(
+                    onPressed: () {},
+                    child: SvgPicture.asset('assets/images/bottom_navbar/plus.svg'),
+                    shape: CircleBorder(),
+                  ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+            bottomNavigationBar: buildStylishBottomBar(state, context),
+          ),
+        );
+      }),
     );
   }
 }

@@ -66,9 +66,10 @@ Widget buildStylishBottomBar(MainState state, BuildContext context) {
     ],
     currentIndex: state.index,
     onTap: (index) {
-      if( state.index != index) {
+      if(state.index != index) {
         BlocProvider.of<MainBloc>(context).add(MainUpdate(index));
-      }},
+      }
+    },
     fabLocation: StylishBarFabLocation.center,
     hasNotch: true,
     notchStyle: NotchStyle.circle,

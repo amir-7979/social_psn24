@@ -9,3 +9,9 @@ class MainUpdate extends MainEvent {
 }
 
 class CooperatingClicked extends MainEvent {}
+
+class AuthenticationClicked extends MainEvent {}
+
+class InterestClicked extends MainEvent {}
+
+class LogoutClicked extends MainEvent {} // New event for logout

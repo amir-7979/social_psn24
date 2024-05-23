@@ -10,11 +10,17 @@ import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
 import '../auth_bloc.dart';
 
-class Verify extends StatelessWidget {
-  final TextEditingController _codeController = TextEditingController();
+class Verify extends StatefulWidget {
   String? phoneNumber;
 
   Verify({this.phoneNumber});
+
+  @override
+  State<Verify> createState() => _VerifyState();
+}
+
+class _VerifyState extends State<Verify> {
+  final TextEditingController _codeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +58,7 @@ class Verify extends StatelessWidget {
                   AppLocalizations.of(context)!.translateNestedWithVariable(
                       'auth',
                       'insertCode',
-                      {'mobileNumber': phoneNumber ?? ''}),
+                      {'mobileNumber': widget.phoneNumber ?? ''}),
                   textAlign: TextAlign.center,
                   style:
                       Theme.of(context).textTheme.headlineSmall!.copyWith(
@@ -65,8 +71,14 @@ class Verify extends StatelessWidget {
           ),
           Directionality(
             textDirection: TextDirection.ltr,
-            child: BlocBuilder<AuthBloc, AuthState>(
+            child: BlocConsumer<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthResetPin) {
+                  setState(() {_codeController.clear();});
+                }
+              },
               builder: (context, state) {
+
                 return PinCodeTextField(
                   length: 5,
                   controller: _codeController,
@@ -94,10 +106,9 @@ class Verify extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   enableActiveFill: true,
                   onCompleted: (v) {
-                    final code = _codeController.text;
                     if (state is! AuthLoading) {
                       BlocProvider.of<AuthBloc>(context)
-                          .add(VerifyTokenEvent(code));
+                          .add(VerifyTokenEvent(v));
                     }
                   },
                   beforeTextPaste: (text) {
@@ -111,7 +122,7 @@ class Verify extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsetsDirectional.symmetric(vertical: 16.0),
-            child: TimerWidget(phoneNumber.toString()),
+            child: TimerWidget(widget.phoneNumber.toString()),
           ),
           TextButton(
             onPressed: () {

@@ -1,14 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/configs/setting/themes.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/content.dart';
 import '../../../repos/models/media.dart';
+import '../../main/main_bloc.dart';
 import '../../widgets/cached_network_image.dart';
 import '../../widgets/selectImge.dart';
+import '../profile_bloc.dart';
 
 class ContentItem extends StatelessWidget {
   final Content content;
@@ -81,29 +84,38 @@ class ContentItem extends StatelessWidget {
               ),
               color: Theme.of(context).colorScheme.background,
               surfaceTintColor: Theme.of(context).colorScheme.background,
-              icon: Container(
-                  height: 25,
-                  width: 25,
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
-                    // semi-transparent background
-                    shape: BoxShape.circle,
-                  ),
-                  child: SvgPicture.asset(
-                      'assets/images/profile/three_dots.svg',
-                      width: 6,
-                      height: 14,
-                      color: whiteColor)),
+              shadowColor: Colors.transparent,
+              icon: BlocBuilder<ProfileBloc, ProfileState>(
+                builder: (context, state) {
+                  return Container(
+                      height: 25,
+                      width: 25,
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        // semi-transparent background
+                        shape: BoxShape.circle,
+                      ),
+                      child: (state is PostDeleting && state.id == content.id)
+                          ? CircularProgressIndicator(color: whiteColor, strokeWidth: 2)
+                          : SvgPicture.asset(
+                              'assets/images/profile/three_dots.svg',
+                              width: 6,
+                              height: 14,
+                              color: whiteColor));
+                },
+              ),
               // white icon
               itemBuilder: (context) => [
                 PopupMenuItem(
-                  onTap: (){},
+                  onTap: () {},
                   value: 1,
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     children: [
-                      SvgPicture.asset('assets/images/profile/trash-can.svg', height: 20, width: 20,
+                      SvgPicture.asset('assets/images/profile/edit.svg',
+                          height: 20,
+                          width: 20,
                           color: Theme.of(context).colorScheme.shadow),
                       SizedBox(width: 12),
                       Text(
@@ -117,12 +129,20 @@ class ContentItem extends StatelessWidget {
                   ),
                 ),
                 PopupMenuItem(
-                  onTap: (){},
+                  onTap: () async {
+                    BlocProvider.of<ProfileBloc>(context)
+                        .add(DeletePost(content.id ?? ''));
+                    BlocProvider.of<MainBloc>(context).add(MainUpdate(0));
+
+
+                  },
                   value: 2,
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     children: [
-                      SvgPicture.asset('assets/images/profile/trash-can.svg', height: 20, width: 20,
+                      SvgPicture.asset('assets/images/profile/trash-can.svg',
+                          height: 20,
+                          width: 20,
                           color: Theme.of(context).colorScheme.shadow),
                       SizedBox(width: 12),
                       Text(

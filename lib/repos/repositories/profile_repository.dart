@@ -1,6 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 QueryOptions getUserProfileWithPermissions(int? id) {
+  print('here');
   Map<String, dynamic> variables = {};
   if (id != null) variables['id'] = id;
 
@@ -19,6 +20,8 @@ QueryOptions getUserProfileWithPermissions(int? id) {
       }
     '''),
     variables: variables,
+    fetchPolicy: FetchPolicy.noCache, // Add this line
+
   );
 }
 
@@ -43,6 +46,8 @@ QueryOptions getUserPosts(int postType, int limit, int offset, int? userId) {
       }
     '''),
     variables: variables,
+    fetchPolicy: FetchPolicy.noCache, // Add this line
+
   );
 }
 
@@ -77,6 +82,8 @@ QueryOptions getCommentsWithPostData(String? postId, int? userId, String type, i
       }
     '''),
     variables: variables,
+    fetchPolicy: FetchPolicy.noCache, // Add this line
+
   );
 }
 
@@ -94,6 +101,7 @@ QueryOptions getUserProfile(int? id) {
       }
     '''),
     variables: variables,
+    fetchPolicy: FetchPolicy.noCache, // Add this line
   );
 }
 
@@ -112,21 +120,21 @@ QueryOptions getUserFavorites(int offset, int limit, int? userId) {
             id, owner_id, post_id, loc, type, thumbnails {
               loc, type
             }
-          }, creator {
-            id, phone, photo, name, family
           }
         }
       }
     '''),
     variables: variables,
+    fetchPolicy: FetchPolicy.noCache, // Add this line
   );
 }
 
-MutationOptions editUser(String? name, String? family, String? photo, String? biography, String? field, String? experience, String? address, List<String>? office, int? showActivity, String? username) {
+MutationOptions editUser(String? name, String? family, String? id, String? photo, String? biography, String? field, String? experience, String? address, List<String>? office, int? showActivity, String? username) {
   Map<String, dynamic> variables = {};
 
   if (name != null) variables['name'] = name;
   if (family != null) variables['family'] = family;
+  if (id != null) variables['username'] = id;
   if (photo != null) variables['photo'] = photo;
   if (biography != null) variables['biography'] = biography;
   if (field != null) variables['field'] = field;
@@ -145,6 +153,7 @@ MutationOptions editUser(String? name, String? family, String? photo, String? bi
       }
     '''),
     variables: variables,
+    fetchPolicy: FetchPolicy.noCache, // Add this line
   );
 }
 
@@ -159,6 +168,7 @@ MutationOptions deleteAccount(String name) {
       }
     '''),
     variables: {'name': name},
+    fetchPolicy: FetchPolicy.noCache, // Add this line
   );
 }
 
@@ -172,6 +182,7 @@ MutationOptions toggleAllowNotification(String name, String family, int notifica
       }
     '''),
     variables: {'name': name, 'family': family, 'notification': notification},
+    fetchPolicy: FetchPolicy.noCache, // Add this line
   );
 }
 
@@ -183,6 +194,7 @@ MutationOptions uploadProfileImage(dynamic file) {
       }
     '''),
     variables: {'file': file},
+    fetchPolicy: FetchPolicy.noCache, // Add this line
   );
 }
 
@@ -197,6 +209,7 @@ MutationOptions changeOnlineStatus() {
       }
     '''),
     variables: {},
+    fetchPolicy: FetchPolicy.noCache, // Add this line
   );
 }
 
@@ -210,5 +223,18 @@ MutationOptions enableNotification(int userId) {
       }
     '''),
     variables: {'userId': userId},
+    fetchPolicy: FetchPolicy.noCache, // Add this line
+  );
+}
+
+MutationOptions deletePost(String id) {
+  return MutationOptions(
+    document: gql('''
+        mutation deletePost(\$id: String!) {
+          deletePost(id: \$id)
+        }
+      '''),
+    variables: {'id': id},
+    fetchPolicy: FetchPolicy.noCache, // Add this line
   );
 }

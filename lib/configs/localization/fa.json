@@ -103,7 +103,9 @@
     "interest": "علاقه\u200Cمندی\u200Cها",
     "fetchError": "خطا در دریافت اطلاعات",
     "edit": "ویرایش",
-    "delete": "حذف"
+    "delete": "حذف",
+    "online" : "آنلاین",
+    "offline": "آفلاین"
   },
 
   "error": {

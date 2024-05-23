@@ -91,7 +91,10 @@ class GuestDrawer extends StatelessWidget {
                         color: Theme.of(context).hoverColor,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      BlocProvider.of<MainBloc>(context).add(AuthenticationClicked());
+                      Navigator.pop(context);
+                    },
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -115,6 +118,7 @@ class GuestDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       BlocProvider.of<MainBloc>(context).add(CooperatingClicked());
+                      Navigator.pop(context);
 
                     },
                   ),
@@ -139,7 +143,8 @@ class GuestDrawer extends StatelessWidget {
                         color: Theme.of(context).hoverColor,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);
+                    },
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -162,7 +167,7 @@ class GuestDrawer extends StatelessWidget {
                         color: Theme.of(context).hoverColor,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -186,7 +191,7 @@ class GuestDrawer extends StatelessWidget {
                         color: Theme.of(context).hoverColor,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -210,7 +215,7 @@ class GuestDrawer extends StatelessWidget {
                         color: Theme.of(context).hoverColor,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                 ],
               ),

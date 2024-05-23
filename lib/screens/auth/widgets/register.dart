@@ -22,7 +22,7 @@ class _RegisterState extends State<Register> {
   final _nameFocusNode = FocusNode();
   final _lastNameFocusNode = FocusNode();
   final _idFocusNode = FocusNode();
-  bool _isChecked = true;
+  bool _isChecked = false;
   final _nameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _idController = TextEditingController();
@@ -164,7 +164,7 @@ class _RegisterState extends State<Register> {
                       AppLocalizations.of(context)!.translateNested("params", "family"),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: _nameFocusNode.hasFocus
+                            color: _lastNameFocusNode.hasFocus
                                 ? Theme.of(context).primaryColor
                                 : Theme.of(context).hintColor,
                           ),
@@ -201,7 +201,7 @@ class _RegisterState extends State<Register> {
                       AppLocalizations.of(context)!.translateNested("params", "username"),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: _nameFocusNode.hasFocus
+                            color: _idFocusNode.hasFocus
                                 ? Theme.of(context).primaryColor
                                 : Theme.of(context).hintColor,
                           ),
@@ -214,7 +214,10 @@ class _RegisterState extends State<Register> {
                         const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                   ),
                   validator: (value) {
-                    if (value!.length > 30) {
+                    if (value!.isEmpty) {
+                      return AppLocalizations.of(context)!
+                          .translateNested('error', 'notEmpty');
+                    } else if (value.length > 30) {
                       return AppLocalizations.of(context)!
                           .translateNested('error', 'length_exceed');
                     } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$').hasMatch(value)) {

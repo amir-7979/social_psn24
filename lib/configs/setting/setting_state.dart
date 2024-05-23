@@ -19,6 +19,7 @@ class SettingState {
   });
 
   get isUserExpert => isExpert ?? false;
+  get isUserLoggedIn => token != null;
 
   SettingState copyWith({
     AppTheme? theme,
@@ -32,8 +33,8 @@ class SettingState {
       theme: theme ?? this.theme,
       language: language ?? this.language,
       permissions: permissions ?? this.permissions,
-      isExpert: isExpert ?? this.isExpert,
-      token: token ?? this.token, // Use the new property in the copyWith method
+      isExpert: isExpert == '' ? null : this.isExpert,
+      token: token ?? this.token,
     );
   }
 }

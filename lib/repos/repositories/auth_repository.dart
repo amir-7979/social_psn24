@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 
@@ -16,7 +18,6 @@ MutationOptions getLogInOptions(String phoneNumber) {
 }
 
 MutationOptions getVerifyTokenOptions(String id, String code) {
-  print('id: $id, code: $code');
   return MutationOptions(
     document: gql('''
       mutation VerifyToken(\$id: String!, \$code: String!) {
@@ -30,11 +31,13 @@ MutationOptions getVerifyTokenOptions(String id, String code) {
   );
 }
 
-MutationOptions getEditUserOptions(String name, String family, String username, String? photo, int show_activity) {
+MutationOptions getEditUserOptions(String name, String family, String username, String? photo, int? showActivity) {
+  print('photo : $photo');
   Map<String, dynamic> variables = {
     'name': name,
     'family': family,
     'username': username,
+    'show_activity': showActivity,
   };
   if (photo != null) variables['photo'] = photo;
   return MutationOptions(

@@ -13,7 +13,6 @@ import '../../repos/models/profile.dart';
 import '../../repos/repositories/profile_repository.dart';
 import '../../services/core_graphql_service.dart';
 import '../../services/graphql_service.dart';
-import '../../services/storage_service.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -29,7 +28,28 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<NavigateToEditProfile>(navigateToEditProfile);
     on<NavigateToInitialScreen>(navigateToInitialScreen);
     on<EditProfile>(handleEditProfileEvent);
+    on<DeletePost>(handleDeletePost);
+    on<ChangeStatusEvent>(handleChangeStatusEvent);
+    on<RefreshProfile>(handleRefreshProfile);
+  }
 
+  FutureOr<void> handleDeletePost(event, emit) async {
+    print('handleDeletePost');
+    emit(PostDeleting(event.postId));
+    try {
+      final MutationOptions options = deletePost(event.postId);
+      print('response');
+      final QueryResult result = await graphQLService.mutate(options);
+      if (result.hasException) {
+        print(result.exception.toString());
+        emit(PostDeleteFailure(result.exception.toString()));
+      } else {
+        emit(PostDeleteSuccess());
+      }
+    } catch (e) {
+      print(e.toString());
+      emit(PostDeleteFailure(e.toString()));
+    }
   }
 
   FutureOr<void> navigateToInitialScreen(event, emit) {
@@ -37,12 +57,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   FutureOr<void> fetchProfile(FetchProfile event, Emitter<ProfileState> emit) async {
+    print('fetchProfile');
     emit(ProfileInfoLoading());
     try {
       final QueryOptions options = getUserProfileWithPermissions(event.id);
       final QueryResult result = await coreGraphQLService.query(options);
       if (result.data == null) {
-        emit(ProfileError('No data found'));
+        emit(ProfileError('خطا در دریافت اطلاعات'));
         return;
       }
 
@@ -53,12 +74,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if(event.id != null){
         settingBloc.add(UpdateUserPermissions(userPermissions));
         if (userPermissions.isExpert != null) {
-          final storageService = StorageService();
-          await storageService.saveData('isExpert', userPermissions.isExpert.toString());
           settingBloc.add(UpdateIsExpert(userPermissions.isExpert!));
         }
       }
       emit(ProfileInfoLoaded(profile: profile, userPermissions: userPermissions));
+
     } catch (exception) {
       print(exception.toString());
       emit(ProfileError(exception.toString()));
@@ -71,6 +91,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final MutationOptions options = editUser(
         event.name,
         event.family,
+        event.id,
         event.photo,
         event.biography,
         event.field,
@@ -96,28 +117,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  FutureOr<void> handleEditProfileWithNameParamsEvent(EditProfile event, Emitter<ProfileState> emit) async {
-    emit(EditProfileInfoWithNameLoading());
-    try {
-      final MutationOptions options = editUser(event.name, null, null, null, null, null, null, null, null, null);
-      final QueryResult result = await coreGraphQLService.mutate(options);
-      print(result.data.toString());
-      if (result.data == null) {
-        emit(EditProfileInfoWithNameError());
-        return;
-      }
-
-      final Map<String, dynamic> data = result.data!;
-      final Profile profile = Profile.fromJson(data['editUser']);
-      emit(EditProfileInfoWithNameLoaded(profile: profile, userPermissions: null));
-    } catch (exception) {
-      print(exception.toString());
-      emit(EditProfileInfoWithNameError());
-    }
-  }
-
   static Future<void> fetchContent(PagingController<int, Content> pagingController, int postType, int limit, int? userId) async {
-    print(postType);
     try {
       final QueryOptions options = getUserPosts(postType, limit, pagingController.nextPageKey!, userId);
       final QueryResult result = await GraphQLService.instance.client.query(options);
@@ -129,25 +129,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       } else {
         final nextPageKey = pagingController.nextPageKey! + contents.length;
         pagingController.appendPage(contents, nextPageKey);
-      }
-    } catch (error) {
-      print(error.toString());
-      pagingController.error = error;
-    }
-  }
-
-  static Future<void> fetchLikedContent(PagingController<int, Liked> pagingController, int offset, int limit, int? userId) async {
-    try {
-      final QueryOptions options = getUserFavorites(offset, limit, userId);
-      final QueryResult result = await GraphQLService.instance.client.query(options);
-      final List<Liked> likedContents = (result.data?['liked'] as List<dynamic>?)
-          ?.map((dynamic item) => Liked.fromJson(item as Map<String, dynamic>)).toList() ?? [];
-      final isLastPage = likedContents.length < limit;
-      if (isLastPage) {
-        pagingController.appendLastPage(likedContents);
-      } else {
-        final nextPageKey = pagingController.nextPageKey! + likedContents.length;
-        pagingController.appendPage(likedContents, nextPageKey);
       }
     } catch (error) {
       print(error.toString());
@@ -174,9 +155,29 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-
   void navigateToEditProfile(NavigateToEditProfile event, Emitter<ProfileState> emit) {
     print('NavigateToEditProfile');
-    emit(NavigationToEditScreenState()); // Emit NavigationState with the route name
+    emit(NavigationToEditScreenState());
+    emit(ProfileInitial());
+  }
+
+  Future<FutureOr<void>> handleChangeStatusEvent(ChangeStatusEvent event, Emitter<ProfileState> emit) async {
+    try {
+      final MutationOptions options = changeOnlineStatus();
+      final QueryResult result = await coreGraphQLService.mutate(options);
+      if (result.hasException) {
+        print(result.exception.toString());
+      } else {
+        print(result.data.toString());
+
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  FutureOr<void> handleRefreshProfile(RefreshProfile event, Emitter<ProfileState> emit) {
+  print('handleRefreshProfile');
+    emit(ProfileInitial());
   }
 }

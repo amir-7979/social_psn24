@@ -8,6 +8,6 @@ class HomeScreen extends StatelessWidget {
    HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Center(child: Text('Home Screen'),);
   }
 }

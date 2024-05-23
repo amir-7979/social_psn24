@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/content.dart';
+import '../profile_bloc.dart';
 import 'content_item.dart';
 import 'shimmer/shimmer_content_item.dart';
 
@@ -13,63 +15,74 @@ class Contents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PagedGridView<int, Content>(
-      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-      pagingController: pagingController,
-      cacheExtent: 300,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.0,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-      ),
-      builderDelegate: PagedChildBuilderDelegate<Content>(
-        itemBuilder: (context, item, index) => ContentItem(item),
-        firstPageProgressIndicatorBuilder: (context) => SizedBox(
-          height: 400,
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.0,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
+    return BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is PostDeleteSuccess) {
+          print('PostDeleteSuccess');
+          pagingController.refresh();
+
+        }
+      },
+      child: PagedGridView<int, Content>(
+        showNewPageProgressIndicatorAsGridChild: false,
+        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+        pagingController: pagingController,
+        cacheExtent: 300,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.0,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+        ),
+        builderDelegate: PagedChildBuilderDelegate<Content>(
+          itemBuilder: (context, item, index) => ContentItem(item),
+          firstPageProgressIndicatorBuilder: (context) => SizedBox(
+            height: 400,
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.0,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+              ),
+              itemCount: 20,
+              itemBuilder: (context, index) => ShimmerContentItem(),
             ),
-            itemCount: 20,
-            itemBuilder: (context, index) => ShimmerContentItem(),
           ),
-        ),
-        newPageProgressIndicatorBuilder: (context) => Center(
-          child: Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
+          newPageProgressIndicatorBuilder: (context) => Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 10),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
             ),
           ),
-        ),
-        newPageErrorIndicatorBuilder: (context) => Center(
-          child: Text(
-            AppLocalizations.of(context)!
-                .translateNested("profileScreen", "fetchError"),
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).primaryColor,
-                ),
+          newPageErrorIndicatorBuilder: (context) => Center(
+            child: Text(
+              AppLocalizations.of(context)!
+                  .translateNested("profileScreen", "fetchError"),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).primaryColor,
+                  ),
+            ),
           ),
-        ),
-        firstPageErrorIndicatorBuilder: (context) => Center(
-          child: Text(
-            AppLocalizations.of(context)!
-                .translateNested("profileScreen", "fetchError"),
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).primaryColor,
-                ),
+          firstPageErrorIndicatorBuilder: (context) => Center(
+            child: Text(
+              AppLocalizations.of(context)!
+                  .translateNested("profileScreen", "fetchError"),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).primaryColor,
+                  ),
+            ),
           ),
-        ),
-        noItemsFoundIndicatorBuilder: (context) => Center(
-          child: Text(
-            AppLocalizations.of(context)!
-                .translateNested("profileScreen", "noPost"),
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).primaryColor,
-                ),
+          noItemsFoundIndicatorBuilder: (context) => Center(
+            child: Text(
+              AppLocalizations.of(context)!
+                  .translateNested("profileScreen", "noPost"),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).primaryColor,
+                  ),
+            ),
           ),
         ),
       ),

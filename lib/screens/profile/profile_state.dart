@@ -79,3 +79,22 @@ class ProfileExpertCommentsLoaded extends ProfileState {
 
   ProfileExpertCommentsLoaded({required this.comments});
 }
+
+class PostDeleting extends ProfileState {
+  final String id;
+
+  PostDeleting(this.id);
+}
+class PostDeleteSuccess extends ProfileState {}
+
+class PostDeleteFailure extends ProfileState {
+  final String error;
+
+  PostDeleteFailure(this.error);
+}
+
+class ChangeOnlineStatus extends ProfileEvent {
+  final bool status;
+
+  ChangeOnlineStatus(this.status);
+}

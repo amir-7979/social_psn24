@@ -42,6 +42,7 @@ class _MainTabBarState extends State<MainTabBar>
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       height: MediaQuery.of(context).size.height - 170,
       decoration: BoxDecoration(
@@ -96,7 +97,7 @@ class _MainTabBarState extends State<MainTabBar>
                   BlocBuilder<SettingBloc, SettingState>(
                     builder: (context, state) {
                       //state.isExpert!= null && state.isExpert!
-                      if(state.isExpert == null ) {
+                      if(context.read<SettingBloc>().state.isExpert ?? false) {
                         return ContentCustomTabBar();
                       } else {
                         return Contents(pagingController: _pagingContentController);
@@ -106,7 +107,7 @@ class _MainTabBarState extends State<MainTabBar>
 
                   BlocBuilder<SettingBloc, SettingState>(
                     builder: (context, state) {
-                      if(state.isExpert == null ) {
+                      if(context.read<SettingBloc>().state.isExpert ?? false) {
                         return CommentCustomTabBar();
                       } else {
                         return Comments(pagingController: _pagingCommentController);

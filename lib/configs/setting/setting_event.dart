@@ -25,8 +25,14 @@ class UpdateIsExpert extends SettingEvent {
 
   UpdateIsExpert(this.isExpert);
 }
-class UpdateLoginStatus extends SettingEvent {
-  final String? token;
 
-  UpdateLoginStatus(this.token);
+class UpdateLoginStatus extends SettingEvent {
+  final Map<String, dynamic>? data;
+
+  UpdateLoginStatus(this.data);
+}
+
+class ClearStatus extends SettingEvent {
+
+  ClearStatus();
 }

@@ -50,6 +50,8 @@ dependencies:
   shamsi_date: ^1.0.2
   intl: ^0.18.1
   persian_number_utility: ^1.1.4
+  flutter_launcher_icons: ^0.13.1
+  flutter_advanced_switch: ^3.1.0
 
 
 
@@ -57,11 +59,21 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/splash/logo.png"
+  min_sdk_android: 21
+  cupertino_icons: ^1.0.5
+  remove_alpha_ios: true
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
+
+
+
   flutter_lints: ^3.0.0
 
 # For information on the generic Dart part of this file, see the

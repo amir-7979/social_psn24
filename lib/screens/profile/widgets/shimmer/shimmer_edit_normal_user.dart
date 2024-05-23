@@ -7,7 +7,7 @@ class ShimmerEditNormalUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsetsDirectional.all(16),
+    return Padding(padding: const EdgeInsetsDirectional.only(top: 16.0),
       child: Container(
         width: MediaQuery.of(context).size.height,
         padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),

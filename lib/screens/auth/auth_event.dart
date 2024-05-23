@@ -21,7 +21,7 @@ class EditUserEvent extends AuthEvent {
   final String family;
   final String username;
   final String? photo;
-  final int show_activity;
+  final int showActivity;
 
-  EditUserEvent(this.name, this.family, this.username, this.show_activity, this.photo);
+  EditUserEvent(this.name, this.family, this.username, this.showActivity, this.photo);
 }

@@ -92,7 +92,7 @@ class _AuthScreenState extends State<AuthScreen> {
               padding: const EdgeInsetsDirectional.all(16),
               child: Container(
                 height: MediaQuery.of(context).size.height,
-                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   color: Theme.of(context).colorScheme.background,

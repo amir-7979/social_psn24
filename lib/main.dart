@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'configs/localization/app_localizations_delegate.dart';
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MultiBlocProvider(
       providers: [
         BlocProvider<SettingBloc>(
@@ -29,6 +31,7 @@ class MyApp extends StatelessWidget {
             child: MaterialApp(
               routes: routes,
               title: 'social psn',
+
               debugShowCheckedModeBanner: false,
               theme: state.theme == AppTheme.light ? lightTheme : darkTheme, // Use your custom light theme
               locale: state.language == AppLanguage.english

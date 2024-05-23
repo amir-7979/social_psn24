@@ -12,6 +12,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+
   final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
   final SettingBloc settingBloc;
   String? loginId;
@@ -28,6 +29,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final QueryResult result = await coreGraphQLService.mutate(getLogInOptions(event.phoneNumber));
+      print('result: ${result.data}');
       if (result.hasException) {
         if(result.exception!.graphqlErrors.isNotEmpty && result.exception!.graphqlErrors.first.extensions!['validation']['code'] != null){
           emit(AuthVerifyState(event.phoneNumber));
@@ -54,16 +56,13 @@ Future<void> _handleVerifyTokenEvent(VerifyTokenEvent event, Emitter<AuthState> 
         emit(AuthResetPinNotif(result.exception!.graphqlErrors[0].extensions!['validation']['code'][0]));
       }
     } else {
-      var data = result.data;
-      final storageService = StorageService();
-      if (data?['verifyToken'] != null) {
-        await writeInStorage(storageService, data);
-        settingBloc.add(UpdateLoginStatus(data?['verifyToken'][2])); // Dispatch the new event when the user logs in
-      }
+      settingBloc.add(UpdateLoginStatus(result.data)); // Dispatch the new event when the user logs in
       GraphQLService.instance.addTokenToAuthLink();
-      //todo if first one :
-      print('data: $data');
+      if(result.data?['verifyToken'][4] == 2)
       emit(AuthRegisterState());
+      else
+        emit(AuthRegisterState());
+        //emit(AuthFinished('ورود با موفقیت انجام شد'));
     }
   } catch (exception) {
     emit(AuthResetPin());
@@ -72,26 +71,26 @@ Future<void> _handleVerifyTokenEvent(VerifyTokenEvent event, Emitter<AuthState> 
   }
 }
 
-Future<void> writeInStorage(StorageService storageService, Map<String, dynamic>? data) async {
-    await storageService.saveData('bearer', data?['verifyToken'][0]);
-    await storageService.saveData('expiry', data?['verifyToken'][1]);
-    await storageService.saveData('token', data?['verifyToken'][2]);
-    await storageService.saveData('refreshToken', data?['verifyToken'][3]);
-    await storageService.saveData('userId', data?['verifyToken'][4]);
-  }
+
+
 
 Future<void> _handleEditUserEvent(EditUserEvent event, Emitter<AuthState> emit) async {
   emit(AuthLoading());
   try {
-    final QueryResult result = await coreGraphQLService.mutate(getEditUserOptions(event.name, event.family, event.username, event.photo, event.show_activity));
+    final QueryResult result = await coreGraphQLService.mutate(getEditUserOptions(event.name, event.family, event.username, event.photo, event.showActivity));
+    print('result: ${result}');
     if (result.hasException) {
       if(result.exception!.graphqlErrors.isNotEmpty && result.exception!.graphqlErrors.first.extensions!['validation']['name'] != null){
         emit(AuthFailure(result.exception!.graphqlErrors[0].extensions!['validation']['name'][0]));
+      }else {
+        emit(AuthFailure('خطا'));
       }
+
     } else {
-      emit(AuthFinished('success'));
+      emit(AuthFinished('ورود با موفقیت انجام شد'));
     }
   } catch (exception) {
+
     emit(AuthFailure('خطا'));
   }
 }

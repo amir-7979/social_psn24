@@ -105,7 +105,7 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).hoverColor,
                               ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -131,7 +131,7 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).hoverColor,
                               ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -157,7 +157,8 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).hoverColor,
                               ),
                     ),
-                    onTap: () {},
+                    onTap: () {context.read<MainBloc>().add(InterestClicked());
+                      Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -185,7 +186,7 @@ class UserDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       BlocProvider.of<MainBloc>(context).add(CooperatingClicked());
-
+                      Navigator.pop(context);
                     },
                   ),
                   ListTile(
@@ -212,7 +213,7 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).hoverColor,
                               ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -238,7 +239,7 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).hoverColor,
                               ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -264,7 +265,7 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).hoverColor,
                               ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -290,7 +291,7 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).hoverColor,
                               ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -316,7 +317,7 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).hoverColor,
                               ),
                     ),
-                    onTap: () {},
+                    onTap: () {Navigator.pop(context);},
                   ),
                   ListTile(
                     minLeadingWidth: 0,
@@ -342,7 +343,8 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.error,
                               ),
                     ),
-                    onTap: () {},
+                    onTap: () {context.read<MainBloc>().add(LogoutClicked());
+                    Navigator.pop(context);},
                   ),
                 ],
               ),

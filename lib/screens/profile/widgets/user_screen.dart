@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:social_psn/screens/profile/widgets/interests.dart';
 
 import 'main_tab_bar.dart';
 import 'user_info.dart';
