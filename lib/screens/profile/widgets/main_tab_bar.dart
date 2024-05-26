@@ -96,7 +96,6 @@ class _MainTabBarState extends State<MainTabBar>
                 children: [
                   BlocBuilder<SettingBloc, SettingState>(
                     builder: (context, state) {
-                      //state.isExpert!= null && state.isExpert!
                       if(context.read<SettingBloc>().state.isExpert ?? false) {
                         return ContentCustomTabBar();
                       } else {

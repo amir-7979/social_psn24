@@ -30,34 +30,29 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<EditProfile>(handleEditProfileEvent);
     on<DeletePost>(handleDeletePost);
     on<ChangeStatusEvent>(handleChangeStatusEvent);
-    on<RefreshProfile>(handleRefreshProfile);
   }
 
-  FutureOr<void> handleDeletePost(event, emit) async {
-    print('handleDeletePost');
+  Future<void> handleDeletePost(event, emit) async {
     emit(PostDeleting(event.postId));
     try {
       final MutationOptions options = deletePost(event.postId);
-      print('response');
       final QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
-        print(result.exception.toString());
         emit(PostDeleteFailure(result.exception.toString()));
       } else {
         emit(PostDeleteSuccess());
       }
     } catch (e) {
-      print(e.toString());
       emit(PostDeleteFailure(e.toString()));
     }
   }
 
   FutureOr<void> navigateToInitialScreen(event, emit) {
-    emit(ProfileInitial());
+    emit(NavigationToProfileScreenState());
   }
 
   FutureOr<void> fetchProfile(FetchProfile event, Emitter<ProfileState> emit) async {
-    print('fetchProfile');
+
     emit(ProfileInfoLoading());
     try {
       final QueryOptions options = getUserProfileWithPermissions(event.id);
@@ -68,7 +63,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
 
       final Map<String, dynamic> data = result.data!;
-      print(data.isNotEmpty);
       final Profile profile = Profile.fromJson(data['profile']);
       final UserPermissions userPermissions = UserPermissions.fromJson(data['userPermissions']);
       if(event.id != null){
@@ -77,10 +71,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           settingBloc.add(UpdateIsExpert(userPermissions.isExpert!));
         }
       }
+
       emit(ProfileInfoLoaded(profile: profile, userPermissions: userPermissions));
 
     } catch (exception) {
-      print(exception.toString());
       emit(ProfileError(exception.toString()));
     }
   }
@@ -101,19 +95,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         event.showActivity,
         event.username,
       );
+      print('--${event.address}');
       final QueryResult result = await coreGraphQLService.mutate(options);
       print(result.data.toString());
-      if (result.data == null) {
-        emit(EditProfileError());
+      if (result.hasException) {
+        emit(EditProfileError('خطا در ثبت اطلاعات'));
         return;
       }
-
       final Map<String, dynamic> data = result.data!;
       final Profile profile = Profile.fromJson(data['editUser']);
       emit(EditProfileInfoLoaded(profile: profile, userPermissions: null));
     } catch (exception) {
       print(exception.toString());
-      emit(EditProfileError());
+      emit(EditProfileError('خطا در ثبت اطلاعات'));
     }
   }
 
@@ -156,9 +150,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void navigateToEditProfile(NavigateToEditProfile event, Emitter<ProfileState> emit) {
-    print('NavigateToEditProfile');
     emit(NavigationToEditScreenState());
-    emit(ProfileInitial());
   }
 
   Future<FutureOr<void>> handleChangeStatusEvent(ChangeStatusEvent event, Emitter<ProfileState> emit) async {
@@ -176,8 +168,5 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  FutureOr<void> handleRefreshProfile(RefreshProfile event, Emitter<ProfileState> emit) {
-  print('handleRefreshProfile');
-    emit(ProfileInitial());
-  }
+
 }

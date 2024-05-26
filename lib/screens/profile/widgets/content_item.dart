@@ -64,7 +64,7 @@ class ContentItem extends StatelessWidget {
                           maxLines: 1,
                           style: Theme.of(context)
                               .textTheme
-                              .bodyMedium!
+                              .titleLarge!
                               .copyWith(
                                 color: Theme.of(context).colorScheme.background,
                                 fontWeight: FontWeight.w400,

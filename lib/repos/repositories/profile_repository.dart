@@ -1,5 +1,17 @@
+import 'dart:io';
+import 'package:crypto/crypto.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:async/async.dart';
+import 'package:mime/mime.dart';
 QueryOptions getUserProfileWithPermissions(int? id) {
   print('here');
   Map<String, dynamic> variables = {};
@@ -157,7 +169,6 @@ MutationOptions editUser(String? name, String? family, String? id, String? photo
   );
 }
 
-
 MutationOptions deleteAccount(String name) {
   return MutationOptions(
     document: gql('''
@@ -186,18 +197,6 @@ MutationOptions toggleAllowNotification(String name, String family, int notifica
   );
 }
 
-MutationOptions uploadProfileImage(dynamic file) {
-  return MutationOptions(
-    document: gql('''
-      mutation uploadProfileImage(\$file: Upload) {
-        uploadProfileImage(profilePicture: \$file)
-      }
-    '''),
-    variables: {'file': file},
-    fetchPolicy: FetchPolicy.noCache, // Add this line
-  );
-}
-
 MutationOptions changeOnlineStatus() {
   return MutationOptions(
     document: gql('''
@@ -211,6 +210,35 @@ MutationOptions changeOnlineStatus() {
     variables: {},
     fetchPolicy: FetchPolicy.noCache, // Add this line
   );
+}
+
+Future<MutationOptions<Object>> uploadProfileImage(File file) async {
+  return MutationOptions(
+    document: gql('''
+      mutation uploadProfileImage(\$file: Upload) {
+        uploadProfileImage(profilePicture: \$file)
+      }
+    '''),
+    variables: {'file': await multipartFileFrom(file),
+    },
+    fetchPolicy: FetchPolicy.noCache,
+  );
+}
+
+Future<MultipartFile> multipartFileFrom(File file) async {
+  List<int> fileBytes = await file.readAsBytes();
+  String filename = file.path.split('/').last;
+  String? mimeType = lookupMimeType(file.path);
+
+  final multipartFile = http.MultipartFile.fromBytes(
+    'profilePicture', // field name
+    fileBytes, // file bytes
+    filename: filename, // file name
+    contentType:  MediaType.parse(mimeType!), // content type
+  );
+  return multipartFile;
+
+
 }
 
 MutationOptions enableNotification(int userId) {

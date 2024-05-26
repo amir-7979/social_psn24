@@ -10,13 +10,16 @@ import 'package:social_psn/configs/setting/themes.dart';
 import 'package:social_psn/screens/profile/profile_bloc.dart';
 
 import '../../../configs/localization/app_localizations.dart';
+import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/profile.dart';
 import '../../../repos/models/user_permissions.dart';
 import '../../widgets/cached_network_image.dart';
 import 'shimmer/shimmer_user_info.dart';
 
 class UserInfo extends StatefulWidget {
-  const UserInfo({super.key});
+  final Function refreshIndex;
+
+  UserInfo(this.refreshIndex);
 
   @override
   State<UserInfo> createState() => _UserInfoState();
@@ -25,6 +28,7 @@ class UserInfo extends StatefulWidget {
 class _UserInfoState extends State<UserInfo>
     with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
+
   late AnimationController _controller;
   final advanceSwitchController = ValueNotifier<bool>(false);
   late Animation<double> _animation;
@@ -49,7 +53,7 @@ class _UserInfoState extends State<UserInfo>
     });
     context
         .read<ProfileBloc>()
-        .add(FetchProfile()); // Replace 1 with the actual user id
+        .add(FetchProfile());
   }
 
   @override
@@ -63,7 +67,7 @@ class _UserInfoState extends State<UserInfo>
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         Widget? currentWidget = infoWidget(context, state);
-        if (currentWidget != null) {
+        if (currentWidget != null && currentWidget != _lastWidget) {
           _lastWidget = currentWidget;
         }
         return Container(child: _lastWidget);
@@ -72,7 +76,7 @@ class _UserInfoState extends State<UserInfo>
   }
 
   Widget? infoWidget(BuildContext context, ProfileState state) {
-    if (state is ProfileInfoLoading || state is ProfileInitial) {
+    if (state is ProfileInfoLoading) {
       return ShimmerUserInfo();
     } else if (state is ProfileError) {
       return Container(
@@ -282,7 +286,7 @@ class _UserInfoState extends State<UserInfo>
                         ),
                         SizedBox(height: 8),
                         // i want to show switch button here
-                        AdvancedSwitch(
+                        BlocProvider.of<SettingBloc>(context).state.isExpert?? false ? AdvancedSwitch(
                           controller: advanceSwitchController,
                           thumb: Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
@@ -327,10 +331,9 @@ class _UserInfoState extends State<UserInfo>
                             ),
                           ),
                           onChanged: (value) {
-                            print('value: $value');
                             BlocProvider.of<ProfileBloc>(context).add(ChangeStatusEvent(value));
                           },
-                        ),
+                        ) : Container(),
                       ],
                     ),
                   ),
@@ -537,7 +540,8 @@ class _UserInfoState extends State<UserInfo>
               ),
             ),
             onPressed: () {
-              context.read<ProfileBloc>().add(NavigateToEditProfile());
+              // navigate to edit page
+              BlocProvider.of<SettingBloc>(context).state.isExpert?? false ? widget.refreshIndex(2) : widget.refreshIndex(1);
             },
             child: Text(
               AppLocalizations.of(context)!

@@ -117,7 +117,9 @@ class GuestDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
+/*
                       BlocProvider.of<MainBloc>(context).add(CooperatingClicked());
+*/
                       Navigator.pop(context);
 
                     },

@@ -29,7 +29,11 @@ class EditProfileInfoLoaded extends ProfileState {
   EditProfileInfoLoaded({required this.profile, this.userPermissions});
 }
 
-class EditProfileError extends ProfileState {}
+class EditProfileError extends ProfileState {
+  String message;
+
+  EditProfileError(this.message);
+}
 
 class EditProfileInfoWithNameLoading extends ProfileState {}
 
@@ -51,6 +55,11 @@ class NavigationToEditScreenState extends ProfileState {
   NavigationToEditScreenState();
 }
 
+class NavigationToProfileScreenState extends ProfileState {
+
+  NavigationToProfileScreenState();
+}
+
 class ProfilePostsLoaded extends ProfileState {
   final List<Content> contents;
 
@@ -62,7 +71,6 @@ class ProfileExpertPostsLoaded extends ProfileState {
 
   ProfileExpertPostsLoaded({required this.contents});
 }
-
 
 class ProfileCommentsLoading extends ProfileState {}
 
@@ -85,6 +93,7 @@ class PostDeleting extends ProfileState {
 
   PostDeleting(this.id);
 }
+
 class PostDeleteSuccess extends ProfileState {}
 
 class PostDeleteFailure extends ProfileState {

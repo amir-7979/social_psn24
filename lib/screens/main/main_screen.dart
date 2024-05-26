@@ -21,7 +21,6 @@ class MainScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => MainBloc(BlocProvider.of<SettingBloc>(context)),
       child: BlocBuilder<MainBloc, MainState>(builder: (context, state) {
-        bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
         bool isLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn; // Check if user is logged in
 
         return SafeArea(
@@ -30,17 +29,21 @@ class MainScreen extends StatelessWidget {
             drawer: isLoggedIn ? UserDrawer() : GuestDrawer(),
             appBar: buildAppBar(context),
             body: buildBody(state.index),
-            floatingActionButton: isKeyboardOpen
-                ? Container() // Return an empty container when keyboard is open
-                : FloatingActionButton(
-                    onPressed: () {},
-                    child: SvgPicture.asset('assets/images/bottom_navbar/plus.svg'),
-                    shape: CircleBorder(),
-                  ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
             floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
             bottomNavigationBar: buildStylishBottomBar(state, context),
+            floatingActionButton: LayoutBuilder(
+              builder: (context, constraints) {
+                bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
+                return isKeyboardOpen
+                    ? Container() // Return an empty container when keyboard is open
+                    : FloatingActionButton(
+                  onPressed: () {},
+                  child: SvgPicture.asset('assets/images/bottom_navbar/plus.svg'),
+                  shape: CircleBorder(),
+                );
+              },
+            ),
           ),
         );
       }),

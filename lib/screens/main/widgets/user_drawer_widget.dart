@@ -185,7 +185,9 @@ class UserDrawer extends StatelessWidget {
                               ),
                     ),
                     onTap: () {
+/*
                       BlocProvider.of<MainBloc>(context).add(CooperatingClicked());
+*/
                       Navigator.pop(context);
                     },
                   ),
@@ -343,8 +345,11 @@ class UserDrawer extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.error,
                               ),
                     ),
-                    onTap: () {context.read<MainBloc>().add(LogoutClicked());
-                    Navigator.pop(context);},
+                    onTap: () {
+                      context.read<MainBloc>().add(LogoutClicked());
+                      context.read<MainBloc>().add(MainUpdate(1));
+
+                      Navigator.pop(context);},
                   ),
                 ],
               ),

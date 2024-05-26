@@ -87,7 +87,10 @@ class _RegisterState extends State<Register> {
                       child: IconButton(
                         icon: SvgPicture.asset(
                             'assets/images/profile/camera.svg'),
-                        onPressed: _pickImage,
+                        onPressed: () async {
+                          await _pickImage();
+                          BlocProvider.of<AuthBloc>(context).add(PhotoUploadEvent(_pickedImage!));
+                        },
                       ),
                     ),
                   ],
@@ -100,7 +103,8 @@ class _RegisterState extends State<Register> {
           child: Padding(
             padding: const EdgeInsetsDirectional.symmetric(vertical: 16.0),
             child: Text(
-              AppLocalizations.of(context)!.translateNested("auth", "insertInformation"),
+              AppLocalizations.of(context)!
+                  .translateNested("auth", "insertInformation"),
               style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                     color: Theme.of(context).hoverColor,
                     fontWeight: FontWeight.w400,
@@ -120,7 +124,8 @@ class _RegisterState extends State<Register> {
                   focusNode: _nameFocusNode,
                   decoration: InputDecoration(
                     label: Text(
-                      AppLocalizations.of(context)!.translateNested("params", "name"),
+                      AppLocalizations.of(context)!
+                          .translateNested("params", "name"),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w400,
                             color: _nameFocusNode.hasFocus
@@ -139,7 +144,8 @@ class _RegisterState extends State<Register> {
                     if (value!.isEmpty) {
                       return AppLocalizations.of(context)!
                           .translateNested('error', 'notEmpty');
-                    } else if (!RegExp(r'^[\u0600-\u06FF\s]+$').hasMatch(value)) {
+                    } else if (!RegExp(r'^[\u0600-\u06FF\s]+$')
+                        .hasMatch(value)) {
                       return AppLocalizations.of(context)!
                           .translateNested('error', 'persian_name');
                     } else if (value.length > 30) {
@@ -161,7 +167,8 @@ class _RegisterState extends State<Register> {
                   keyboardType: TextInputType.name,
                   decoration: InputDecoration(
                     label: Text(
-                      AppLocalizations.of(context)!.translateNested("params", "family"),
+                      AppLocalizations.of(context)!
+                          .translateNested("params", "family"),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w400,
                             color: _lastNameFocusNode.hasFocus
@@ -180,7 +187,8 @@ class _RegisterState extends State<Register> {
                     if (value!.isEmpty) {
                       return AppLocalizations.of(context)!
                           .translateNested('error', 'notEmpty');
-                    } else if (!RegExp(r'^[\u0600-\u06FF\s]+$').hasMatch(value)) {
+                    } else if (!RegExp(r'^[\u0600-\u06FF\s]+$')
+                        .hasMatch(value)) {
                       return AppLocalizations.of(context)!
                           .translateNested('error', 'persian_lastname');
                     } else if (value.length > 40) {
@@ -198,7 +206,8 @@ class _RegisterState extends State<Register> {
                   focusNode: _idFocusNode,
                   decoration: InputDecoration(
                     label: Text(
-                      AppLocalizations.of(context)!.translateNested("params", "username"),
+                      AppLocalizations.of(context)!
+                          .translateNested("params", "username"),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w400,
                             color: _idFocusNode.hasFocus
@@ -274,17 +283,14 @@ class _RegisterState extends State<Register> {
               child: Text.rich(
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       color: Theme.of(context).hoverColor,
-                  fontWeight: FontWeight.w400,
-
-                ),
+                      fontWeight: FontWeight.w400,
+                    ),
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: AppLocalizations.of(context)!.translateNested('auth','terms1'),
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(
+                      text: AppLocalizations.of(context)!
+                          .translateNested('auth', 'terms1'),
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w400,
                             color: Theme.of(context).primaryColor,
                           ),
@@ -292,7 +298,8 @@ class _RegisterState extends State<Register> {
                         ..onTap = () => print('Link clicked'),
                     ),
                     TextSpan(
-                      text: AppLocalizations.of(context)!.translateNested('auth','terms2'),
+                      text: AppLocalizations.of(context)!
+                          .translateNested('auth', 'terms2'),
                     ),
                   ],
                 ),
@@ -329,12 +336,13 @@ class _RegisterState extends State<Register> {
                   if (_formKey.currentState!.validate() && _isChecked) {
                     _formKey.currentState!.save();
                     if (state is! AuthLoading) {
-                      BlocProvider.of<AuthBloc>(context).add(EditUserEvent(
-                          _nameController.text,
-                          _lastNameController.text,
-                          _idController.text,
-                          1,
-                          _pickedImage?.path),
+                      BlocProvider.of<AuthBloc>(context).add(
+                        EditUserEvent(
+                            _nameController.text,
+                            _lastNameController.text,
+                            _idController.text,
+                            1,
+                            _pickedImage?.path),
                       );
                     }
                   }
@@ -345,15 +353,16 @@ class _RegisterState extends State<Register> {
                         strokeWidth: 2,
                       )
                     : Text(
-                  AppLocalizations.of(context)!.translateNested('auth', 'submit'),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: whiteColor,
-                  ),
-                ),
+                        AppLocalizations.of(context)!
+                            .translateNested('auth', 'submit'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: whiteColor,
+                            ),
+                      ),
               );
             },
           ),

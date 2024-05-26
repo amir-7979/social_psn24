@@ -6,7 +6,6 @@ abstract class ProfileEvent {}
 class FetchProfile extends ProfileEvent {
   int? id;
   FetchProfile({this.id});
-
 }
 
 
@@ -53,4 +52,3 @@ class ChangeStatusEvent extends ProfileEvent {
 
   ChangeStatusEvent(this.status);
 }
-class RefreshProfile extends ProfileEvent {}

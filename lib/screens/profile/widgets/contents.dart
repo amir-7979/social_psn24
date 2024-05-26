@@ -18,7 +18,6 @@ class Contents extends StatelessWidget {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is PostDeleteSuccess) {
-          print('PostDeleteSuccess');
           pagingController.refresh();
 
         }

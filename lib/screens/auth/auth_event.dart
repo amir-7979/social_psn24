@@ -25,3 +25,9 @@ class EditUserEvent extends AuthEvent {
 
   EditUserEvent(this.name, this.family, this.username, this.showActivity, this.photo);
 }
+
+class PhotoUploadEvent extends AuthEvent {
+  final File file;
+
+  PhotoUploadEvent(this.file);
+}

@@ -6,39 +6,44 @@ import 'profile_bloc.dart';
 import 'widgets/expert_user/edit_expert_user.dart';
 import 'widgets/normal_user/edit_normal_user.dart';
 
-class ProfileScreen extends StatelessWidget {
-  Widget? _lastWidget;
-
+class ProfileScreen extends StatefulWidget {
+  int index = 0;
+  List<Widget> widgets = [];
   ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    SettingState settingState = BlocProvider.of<SettingBloc>(context).state;
-    return BlocProvider<ProfileBloc>(
-      create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context)),
-      child: BlocBuilder<ProfileBloc, ProfileState>(
-        builder: (context, state) {
-          Widget? currentWidget = profileWidget(state, settingState);
-          if (currentWidget != null) {
-            _lastWidget = currentWidget;
-          }
-          return Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
-            child: Container(
-              child: _lastWidget,
-            ),
-          );
-        },
-      ),
-    );
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    widget.widgets = [
+      UserScreen(refreshIndex),
+      EditNormalUser(refreshIndex),
+      EditExpertUser(refreshIndex),
+    ];
   }
 
-  Widget? profileWidget(ProfileState state, SettingState settingState) {
-    final bool isUserExpert = settingState.isUserExpert; // Replace with actual property
-    if (state is ProfileInitial || state is EditProfileInfoLoaded) {
-      return UserScreen(); // Replace with actual widgets
-    } else if (state is NavigationToEditScreenState) {
-      return isUserExpert ? EditExpertUser() : EditNormalUser(); // Replace with actual widgets
-    }
+  void refreshIndex(int i) {
+    setState(() {
+      widget.index = i;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context)),
+      child: Padding(
+        padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
+        child: Container(
+          child:  widget.widgets[widget.index],
+        ),
+      ),
+    );
   }
 }

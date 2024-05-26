@@ -19,7 +19,7 @@ class SettingState {
   });
 
   get isUserExpert => isExpert ?? false;
-  get isUserLoggedIn => token != null;
+  get isUserLoggedIn => token != '';
 
   SettingState copyWith({
     AppTheme? theme,

@@ -25,66 +25,12 @@ class _AuthScreenState extends State<AuthScreen> {
         create: (context) => AuthBloc(BlocProvider.of<SettingBloc>(context)),
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state is AuthVerifyState && state.lastCode != null) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  content: Text(
-                    state.lastCode!,
-                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onError,
-                    ),
-                  ),
-                  action: SnackBarAction(
-                    label: AppLocalizations.of(context)!.translateNested('auth', 'close'),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    },
-                  ),
-                ));
-            } else if (state is AuthResetPinNotif) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: Theme.of(context).colorScheme.error,
-                content: Text(
-                  'کد ارسال شده نامعتبر است',
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onError,
-                  ),
-                ),
-                action: SnackBarAction(
-                  label: AppLocalizations.of(context)!.translateNested('auth', 'close'),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  },
-                ),
-              ));
-
-            }
-            else if (state is AuthFinished) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                content: Text(
-                  state.token,
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onError,
-                  ),
-                ),
-                action: SnackBarAction(
-                  label: AppLocalizations.of(context)!.translate('close'),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  },
-                ),
-                elevation: 0,
-              ));
-              BlocProvider.of<MainBloc>(context).add(MainUpdate(1));
+            if (state is AuthFinished) {
+              context.read<MainBloc>().add(MainUpdate(1));
             }
           },
           builder: (context, state) {
             Widget? currentWidget = authWidget(state);
-            print(currentWidget);
             if (currentWidget != null && currentWidget != _lastWidget) {
               _lastWidget = currentWidget;
             }
