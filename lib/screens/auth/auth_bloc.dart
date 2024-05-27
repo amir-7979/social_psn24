@@ -56,6 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } else {
         loginId = result.data!['logIn'];
+        phoneNumber = event.phoneNumber;
         emit(AuthVerifyState(event.phoneNumber));
       }
     } catch (exception) {
@@ -99,9 +100,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final QueryResult result = await coreGraphQLService.mutate(
-          getEditUserOptions(event.name, event.family, event.username,
+          getEditUserOptions(event.name, event.family, "@" + event.username,
               event.photo, event.showActivity));
-      print('result: ${result}');
       if (result.hasException) {
         if (result.exception!.graphqlErrors.isNotEmpty &&
             result.exception!.graphqlErrors.first.extensions!['validation']
@@ -113,6 +113,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthFailure('خطا'));
         }
       } else {
+        print('phone: $phoneNumber');
+        settingBloc.add(UpdateInfoEvent(event.name, event.family, phoneNumber: phoneNumber));
         emit(AuthFinished('ورود با موفقیت انجام شد'));
       }
     } catch (exception) {

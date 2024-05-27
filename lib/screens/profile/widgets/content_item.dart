@@ -66,7 +66,7 @@ class ContentItem extends StatelessWidget {
                               .textTheme
                               .titleLarge!
                               .copyWith(
-                                color: Theme.of(context).colorScheme.background,
+                                color: whiteColor,
                                 fontWeight: FontWeight.w400,
                               ),
                         ),

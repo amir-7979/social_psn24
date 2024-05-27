@@ -12,28 +12,38 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final StorageService _storageService = StorageService(); // Add a StorageService instance
 
   SettingBloc() : super(
-      SettingState(theme: AppTheme.light, language: AppLanguage.persian)) {
+      SettingState(theme: AppTheme.light, language: AppLanguage.persian, token: '')) {
     on<SettingThemeEvent>(_handleSettingThemeEvent);
     on<SettingLanguageEvent>(_handleSettingLanguageEvent);
     on<UpdateLoginStatus>(_handleUpdateLoginStatus);
     on<UpdateUserPermissions>(_handleUpdateUserPermissions);
     on<UpdateIsExpert>(_handleUpdateIsExpert);
-    on<ClearStatus>((event, emit) async {
-      await _handelClearUserInformation();
-    });
+    on<UpdateInfoEvent>(_handleUpdateInfoEvent);
+    on<ClearInfo>(_handelClearUserInformation);
     _loadSettingsFromStorage(); // Load the settings from storage when the bloc is created
 
   }
 
   Future<void> _loadSettingsFromStorage() async {
+
     AppTheme theme = (await _storageService.readData('theme')) == 'AppTheme.dark' ? AppTheme.dark : AppTheme.light;
     AppLanguage language = (await _storageService.readData('language')) == 'english' ? AppLanguage.english : AppLanguage.persian;
     String? token = await _storageService.readData('token');
-    print(await _storageService.readData('theme'));
+    String? name = await _storageService.readData('name');
+    String? family = await _storageService.readData('family');
+    String? phone = await _storageService.readData('phone');
     String? isExpert = await _storageService.readData('isExpert');
     String? permissionsJson = await _storageService.readData('permissions');
     UserPermissions permissions = UserPermissions.fromJson(jsonDecode(permissionsJson ?? '{}'));
-    emit(state.copyWith(theme: theme, language: language, token: token, permissions: permissions, isExpert: isExpert == 'true' ? true : false));
+    emit(state.copyWith(theme: theme, language: language, token: token, permissions: permissions, isExpert: isExpert == 'true' ? true : false, name: name, lastName: family, phoneNumber: phone));
+  }
+
+  Future<void> _handleUpdateInfoEvent(event, emit) async {
+    await _storageService.saveData('name', event.name);
+    await _storageService.saveData('family', event.lastName);
+    if (event.phoneNumber != null) await _storageService.saveData('phone', event.phoneNumber);
+    emit(state.copyWith(name: event.name, lastName: event.lastName, phoneNumber: event.phoneNumber));
+
   }
 
   Future<void> _handleUpdateLoginStatus(event, emit) async {
@@ -61,6 +71,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   FutureOr<void> _handleUpdateUserPermissions(UpdateUserPermissions event, Emitter<SettingState> emit) {
+    String permissionsJson = jsonEncode(event.permissions);
+    _storageService.saveData('permissions', permissionsJson);
     emit(state.copyWith(permissions: event.permissions));
   }
 
@@ -69,7 +81,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     emit(state.copyWith(isExpert: event.isExpert));
   }
 
-  Future<void> _handelClearUserInformation() async {
+  FutureOr<void> _handelClearUserInformation(event, emit) async {
     await _storageService.deleteData('bearer');
     await _storageService.deleteData('expiry');
     await _storageService.deleteData('token');
@@ -77,7 +89,11 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await _storageService.deleteData('userId');
     await _storageService.deleteData('isExpert');
     await _storageService.deleteData('permissions');
-    emit(state.copyWith(isExpert: false, token: '', permissions: UserPermissions()));
+    await _storageService.deleteData('name');
+    await _storageService.deleteData('family');
+    await _storageService.deleteData('phone');
+    state.reset();
+    emit(state.copyWith());
   }
 
   Future<void> writeInStorage(StorageService storageService, Map<String, dynamic>? data) async {

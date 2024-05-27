@@ -66,6 +66,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final Profile profile = Profile.fromJson(data['profile']);
       final UserPermissions userPermissions = UserPermissions.fromJson(data['userPermissions']);
       if(event.id != null){
+        settingBloc.add(UpdateInfoEvent(profile.name??'', profile.family??''));
         settingBloc.add(UpdateUserPermissions(userPermissions));
         if (userPermissions.isExpert != null) {
           settingBloc.add(UpdateIsExpert(userPermissions.isExpert!));
@@ -85,7 +86,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final MutationOptions options = editUser(
         event.name,
         event.family,
-        event.id,
+        "@${event.id}",
         event.photo,
         event.biography,
         event.field,

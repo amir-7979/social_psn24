@@ -29,7 +29,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       emit(InterestState());
     });
     on<LogoutClicked>((event, emit) async {
-      settingBloc.add(ClearStatus());
+      settingBloc.add(ClearInfo());
       emit(LogoutState());
     });
   }

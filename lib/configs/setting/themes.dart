@@ -94,6 +94,7 @@ final ThemeData lightTheme = ThemeData(
   drawerTheme: const DrawerThemeData(
     backgroundColor: Colors.white,
   ),
+
   primaryColor: const Color(0xFF00BFB3),
 
   scaffoldBackgroundColor: const Color(0xFFB4C0D3),

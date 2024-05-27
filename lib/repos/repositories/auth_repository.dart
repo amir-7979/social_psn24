@@ -45,7 +45,6 @@ MutationOptions getEditUserOptions(String name, String family, String username, 
       mutation EditUser(\$name: String!, \$family: String!, \$username: String!, \$photo: String, \$show_activity: Int!) {
         editUser(name: \$name, family: \$family, username: \$username, photo: \$photo, show_activity: \$show_activity) {
           id,
-          email,
           name,
           family,
           photo,

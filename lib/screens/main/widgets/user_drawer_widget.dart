@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:social_psn/configs/setting/setting_bloc.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
@@ -41,7 +42,7 @@ class UserDrawer extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'امیررضا یعقوبی',
+                  BlocProvider.of<SettingBloc>(context).state.fullName ?? '',
                   style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                         color: whiteColor,
                         fontWeight: FontWeight.w700,
@@ -49,7 +50,7 @@ class UserDrawer extends StatelessWidget {
                 ),
                 SizedBox(height: 3),
                 Text(
-                  '09117470667',
+                  BlocProvider.of<SettingBloc>(context).state.userPhoneNumber,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: whiteColor,
                         fontWeight: FontWeight.w400,

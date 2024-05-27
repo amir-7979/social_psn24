@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:social_psn/configs/setting/themes.dart';
 
 import '../../../repos/models/content.dart';
 import '../../../repos/models/liked.dart';
@@ -60,9 +61,9 @@ class InterestItem extends StatelessWidget {
                           maxLines: 1,
                           style: Theme.of(context)
                               .textTheme
-                              .bodyMedium!
+                              .titleLarge!
                               .copyWith(
-                            color: Theme.of(context).colorScheme.background,
+                            color: whiteColor,
                             fontWeight: FontWeight.w400,
                           ),),
                       ), // white text

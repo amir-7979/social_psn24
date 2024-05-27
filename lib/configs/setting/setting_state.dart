@@ -4,30 +4,41 @@ enum AppTheme { light, dark }
 enum AppLanguage { english, persian }
 
 class SettingState {
-  final AppTheme theme;
-  final AppLanguage language;
-  final UserPermissions? permissions;
-  final bool? isExpert;
-  final String? token; // New property for authentication token
+   AppTheme theme;
+   AppLanguage language;
+   UserPermissions? permissions;
+   bool? isExpert;
+  String token = '';
+  String? phoneNumber;
+  String? name;
+  String? lastName;
 
   SettingState({
     required this.theme,
     required this.language,
     this.permissions,
     this.isExpert,
-    this.token, // Initialize the new property
+    required this.token,
+    this.phoneNumber,
+    this.name,
+    this.lastName,
   });
 
   get isUserExpert => isExpert ?? false;
   get isUserLoggedIn => token != '';
+  get fullName => '${name??''} ${lastName??''}';
+  get userPhoneNumber => phoneNumber??'';
 
   SettingState copyWith({
     AppTheme? theme,
     AppLanguage? language,
     UserPermissions? permissions,
     bool? isExpert,
-    bool? isLoggedIn, // Add the new property to the copyWith method
-    String? token, // Add the new property to the copyWith method
+    bool? isLoggedIn,
+    String? token,
+    String? phoneNumber,
+    String? name,
+    String? lastName,
   }) {
     return SettingState(
       theme: theme ?? this.theme,
@@ -35,6 +46,20 @@ class SettingState {
       permissions: permissions ?? this.permissions,
       isExpert: isExpert == '' ? null : this.isExpert,
       token: token ?? this.token,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      name: name ?? this.name,
+      lastName: lastName ?? this.lastName,
     );
+  }
+
+  void reset() {
+    this.theme = AppTheme.light;
+    this.language = AppLanguage.persian;
+    this.permissions = UserPermissions();
+    this.isExpert = false;
+    this.token = '';
+    this.phoneNumber = null;
+    this.name = null;
+    this.lastName = null;
   }
 }

@@ -32,7 +32,15 @@ class UpdateLoginStatus extends SettingEvent {
   UpdateLoginStatus(this.data);
 }
 
-class ClearStatus extends SettingEvent {
+class UpdateInfoEvent extends SettingEvent {
+  String name;
+  String lastName;
+  String? phoneNumber;
 
-  ClearStatus();
+  UpdateInfoEvent(this.name, this.lastName, {this.phoneNumber});
+}
+
+class ClearInfo extends SettingEvent {
+
+  ClearInfo();
 }
