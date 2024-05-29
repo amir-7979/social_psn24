@@ -22,7 +22,6 @@ class MainScreen extends StatelessWidget {
       create: (context) => MainBloc(BlocProvider.of<SettingBloc>(context)),
       child: BlocBuilder<MainBloc, MainState>(builder: (context, state) {
         bool isLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn; // Check if user is logged in
-
         return SafeArea(
           child: Scaffold(
             resizeToAvoidBottomInset: true,

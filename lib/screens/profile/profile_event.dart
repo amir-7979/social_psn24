@@ -1,7 +1,9 @@
 part of 'profile_bloc.dart';
 
 @immutable
-abstract class ProfileEvent {}
+abstract class ProfileEvent {
+
+}
 
 class FetchProfile extends ProfileEvent {
   int? id;
@@ -13,7 +15,6 @@ class EditProfile extends ProfileEvent {
   final String? name;
   final String? family;
   final String? id;
-  final String? photo;
   final String? biography;
   final String? field;
   final String? experience;
@@ -26,7 +27,6 @@ class EditProfile extends ProfileEvent {
     this.name,
     this.family,
     this.id,
-    this.photo,
     this.biography,
     this.field,
     this.experience,
@@ -51,4 +51,10 @@ class ChangeStatusEvent extends ProfileEvent {
   final bool status;
 
   ChangeStatusEvent(this.status);
+}
+
+class PhotoUploadEvent extends ProfileEvent {
+  final String? file;
+
+  PhotoUploadEvent(this.file);
 }

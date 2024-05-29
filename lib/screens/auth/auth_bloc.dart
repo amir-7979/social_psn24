@@ -101,7 +101,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final QueryResult result = await coreGraphQLService.mutate(
           getEditUserOptions(event.name, event.family, "@" + event.username,
-              event.photo, event.showActivity));
+              photoUrl, event.showActivity));
       if (result.hasException) {
         if (result.exception!.graphqlErrors.isNotEmpty &&
             result.exception!.graphqlErrors.first.extensions!['validation']
@@ -113,8 +113,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthFailure('خطا'));
         }
       } else {
-        print('phone: $phoneNumber');
-        settingBloc.add(UpdateInfoEvent(event.name, event.family, phoneNumber: phoneNumber));
+        settingBloc.add(UpdateInfoEvent(event.name, event.family, phoneNumber: phoneNumber, photo: photoUrl == null ? null : 'https://media.psn24.ir/$photoUrl'));
+        photoUrl = null;
         emit(AuthFinished('ورود با موفقیت انجام شد'));
       }
     } catch (exception) {
@@ -128,18 +128,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _handlePhotoUploadEvent(PhotoUploadEvent event, Emitter<AuthState> emit) async {
-    emit(PhotoUploading());
-    try {
-      final result = await coreGraphQLService.mutate(await uploadProfileImage(event.file));
-      if (result.hasException) {
-        print('error : ${result.exception!.graphqlErrors}');
-        emit(PhotoUploadFailed('error'));
-      }
-      print('result: ${result.data.toString()}');
-      photoUrl = result.data!['uploadProfileImage'];
-      emit(PhotoUploadCompleted(result.data.toString()));
-    } catch (e) {
-      emit(PhotoUploadFailed(e.toString()));
-    }
+    photoUrl = event.file??null;
   }
 }

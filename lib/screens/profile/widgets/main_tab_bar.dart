@@ -125,6 +125,7 @@ class _MainTabBarState extends State<MainTabBar>
   @override
   void dispose() {
     _tabController?.dispose();
+
     super.dispose();
   }
 }

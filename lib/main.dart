@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
             child: MaterialApp(
               routes: routes,
               title: 'social psn',
-
               debugShowCheckedModeBanner: false,
               theme: state.theme == AppTheme.light ? lightTheme : darkTheme, // Use your custom light theme
               locale: state.language == AppLanguage.english

@@ -17,7 +17,6 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   Widget? _lastWidget = Login();
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(

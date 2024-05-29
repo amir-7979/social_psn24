@@ -1,4 +1,6 @@
 class Profile {
+  static const String url = 'https://media.psn24.ir/';
+
   final int? id;
   final String? name;
   final String? family;
@@ -44,13 +46,17 @@ class Profile {
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
+    String? username = json['username'] as String?;
+    if (username != null && username.startsWith('@')) {
+      username = username.substring(1);
+    }
     return Profile(
       id: json['id'] as int?,
       name: json['name'] as String?,
       family: json['family'] as String?,
       displayName: json['display_name'] as String?,
-      username: json['username'] as String?,
-      photo: json['photo'] as String?,
+      username: username,
+      photo: '${url}${json['photo']}' as String?,
       phone: json['phone'] as String?,
       commentsCreated: json['commentsCreated'] as int?,
       contentCreated: json['contentCreated'] as int?,

@@ -11,8 +11,7 @@ part 'setting_state.dart';
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final StorageService _storageService = StorageService(); // Add a StorageService instance
 
-  SettingBloc() : super(
-      SettingState(theme: AppTheme.light, language: AppLanguage.persian, token: '')) {
+  SettingBloc() : super(SettingState(theme: AppTheme.light, language: AppLanguage.persian, token: '')) {
     on<SettingThemeEvent>(_handleSettingThemeEvent);
     on<SettingLanguageEvent>(_handleSettingLanguageEvent);
     on<UpdateLoginStatus>(_handleUpdateLoginStatus);
@@ -25,24 +24,25 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> _loadSettingsFromStorage() async {
-
     AppTheme theme = (await _storageService.readData('theme')) == 'AppTheme.dark' ? AppTheme.dark : AppTheme.light;
     AppLanguage language = (await _storageService.readData('language')) == 'english' ? AppLanguage.english : AppLanguage.persian;
     String? token = await _storageService.readData('token');
     String? name = await _storageService.readData('name');
     String? family = await _storageService.readData('family');
     String? phone = await _storageService.readData('phone');
+    String? photo = await _storageService.readData('photo');
     String? isExpert = await _storageService.readData('isExpert');
     String? permissionsJson = await _storageService.readData('permissions');
     UserPermissions permissions = UserPermissions.fromJson(jsonDecode(permissionsJson ?? '{}'));
-    emit(state.copyWith(theme: theme, language: language, token: token, permissions: permissions, isExpert: isExpert == 'true' ? true : false, name: name, lastName: family, phoneNumber: phone));
+    emit(state.copyWith(theme: theme, language: language, token: token, permissions: permissions, isExpert: isExpert == 'true' ? true : false, name: name, lastName: family, phoneNumber: phone, photo: photo));
   }
 
   Future<void> _handleUpdateInfoEvent(event, emit) async {
     await _storageService.saveData('name', event.name);
     await _storageService.saveData('family', event.lastName);
+    await _storageService.saveData('photo', event.photo);
     if (event.phoneNumber != null) await _storageService.saveData('phone', event.phoneNumber);
-    emit(state.copyWith(name: event.name, lastName: event.lastName, phoneNumber: event.phoneNumber));
+    emit(state.copyWith(name: event.name, lastName: event.lastName, phoneNumber: event.phoneNumber, photo: event.photo));
 
   }
 
@@ -52,12 +52,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> _handleSettingLanguageEvent(event, emit) async {
+    await _storageService.saveData('language', event.language.toString()); // Save the language to storage
     if (event.language == AppLanguage.english) {
       emit(state.copyWith(language: AppLanguage.english));
     } else {
       emit(state.copyWith(language: AppLanguage.persian));
     }
-    await _storageService.saveData('language', event.language.toString()); // Save the language to storage
 
   }
 
@@ -92,6 +92,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await _storageService.deleteData('name');
     await _storageService.deleteData('family');
     await _storageService.deleteData('phone');
+    await _storageService.deleteData('photo');
     state.reset();
     emit(state.copyWith());
   }

@@ -11,6 +11,7 @@ import 'package:social_psn/screens/profile/widgets/shimmer/shimmer_edit_expert_u
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../configs/setting/setting_bloc.dart';
 import '../../../../configs/setting/themes.dart';
+import '../../../widgets/profile_pucture/profile_picture.dart';
 
 class EditExpertUser extends StatefulWidget {
   final Function refreshIndex;
@@ -39,21 +40,12 @@ class _EditExpertUserState extends State<EditExpertUser> {
   final _addressFocusNode = FocusNode();
   final _bioFocusNode = FocusNode();
   final _fieldFocusNode = FocusNode();
-
-  File? _pickedImage;
+  String? photoUrl;
   final ScrollController _scrollController = ScrollController();
 
-  Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  void _newPickedImage(String? value) {
+    BlocProvider.of<ProfileBloc>(context).add(PhotoUploadEvent(value));
 
-    setState(() {
-      if (image != null) {
-        _pickedImage = File(image.path);
-      } else {
-        print('No image selected.');
-      }
-    });
   }
 
   void _addTextField() {
@@ -73,7 +65,7 @@ class _EditExpertUserState extends State<EditExpertUser> {
     _focusNodes.removeAt(index);
     setState(() {});
   }
-  
+
   @override
   void initState() {
     context.read<ProfileBloc>().add(EditProfile());
@@ -87,6 +79,7 @@ class _EditExpertUserState extends State<EditExpertUser> {
         if (state is ProfileInfoLoading) {
           return const ShimmerEditExpertUser();
         } else if (state is ProfileInfoLoaded) {
+          photoUrl = state.profile.photo;
           _nameController.text = state.profile.name ?? '';
           _lastNameController.text = state.profile.family ?? '';
           _usernameController.text = state.profile.username ?? '';
@@ -144,35 +137,7 @@ class _EditExpertUserState extends State<EditExpertUser> {
                 height: 150,
                 width: 150,
                 child: Center(
-                  child: Stack(
-                    alignment: Alignment.bottomLeft,
-                    children: [
-                      CircleAvatar(
-                        radius: 200,
-                        backgroundImage: _pickedImage != null
-                            ? Image.file(_pickedImage!).image
-                            : const AssetImage(
-                            'assets/images/profile/profile.png'),
-                      ),
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: cameraBackgroundColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.background,
-                            width: 3,
-                          ),
-                        ),
-                        child: IconButton(
-                          icon: SvgPicture.asset(
-                              'assets/images/profile/camera.svg'),
-                          onPressed: _pickImage,
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: ProfilePicture(photoUrl, _newPickedImage)
                 ),
               ),
             ),
@@ -712,7 +677,6 @@ class _EditExpertUserState extends State<EditExpertUser> {
             EditProfile(
               name: _nameController.text,
               family: _lastNameController.text,
-              photo: _pickedImage?.path,
               biography: _bio.text,
               experience: _history.text,
               address: _address.text,

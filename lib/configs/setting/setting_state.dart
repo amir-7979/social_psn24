@@ -12,6 +12,7 @@ class SettingState {
   String? phoneNumber;
   String? name;
   String? lastName;
+  String? photo;
 
   SettingState({
     required this.theme,
@@ -22,12 +23,21 @@ class SettingState {
     this.phoneNumber,
     this.name,
     this.lastName,
+    this.photo,
   });
 
   get isUserExpert => isExpert ?? false;
   get isUserLoggedIn => token != '';
   get fullName => '${name??''} ${lastName??''}';
   get userPhoneNumber => phoneNumber??'';
+  get userPhoto => photo??'';
+
+/*
+  set newTheme(AppTheme value) {
+     theme = value;
+     _storageService.saveData('theme', value.toString());
+   }
+*/
 
   SettingState copyWith({
     AppTheme? theme,
@@ -39,6 +49,7 @@ class SettingState {
     String? phoneNumber,
     String? name,
     String? lastName,
+    String? photo,
   }) {
     return SettingState(
       theme: theme ?? this.theme,
@@ -49,6 +60,7 @@ class SettingState {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       name: name ?? this.name,
       lastName: lastName ?? this.lastName,
+      photo: photo ?? this.photo,
     );
   }
 
@@ -61,5 +73,6 @@ class SettingState {
     this.phoneNumber = null;
     this.name = null;
     this.lastName = null;
+    this.photo = null;
   }
 }

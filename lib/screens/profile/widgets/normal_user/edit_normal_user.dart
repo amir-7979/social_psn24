@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:social_psn/screens/profile/profile_bloc.dart';
 
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../configs/setting/themes.dart';
+import '../../../widgets/profile_pucture/profile_picture.dart';
 import '../shimmer/shimmer_edit_normal_user.dart';
 
 class EditNormalUser extends StatefulWidget {
   final Function refreshIndex;
+
   EditNormalUser(this.refreshIndex);
 
   @override
@@ -25,19 +25,10 @@ class _EditNormalUserState extends State<EditNormalUser> {
   final _nameFocusNode = FocusNode();
   final _lastNameFocusNode = FocusNode();
   final _idFocusNode = FocusNode();
-  File? _pickedImage;
+  String? photoUrl;
 
-  Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (image != null) {
-        _pickedImage = File(image.path);
-      } else {
-        print('No image selected.');
-      }
-    });
+  void _newPickedImage(String? value) {
+    BlocProvider.of<ProfileBloc>(context).add(PhotoUploadEvent(value));
   }
 
   @override
@@ -53,15 +44,18 @@ class _EditNormalUserState extends State<EditNormalUser> {
         if (state is ProfileInfoLoading) {
           return const ShimmerEditNormalUser();
         } else if (state is ProfileInfoLoaded) {
-          _nameController.text = state.profile.name ?? AppLocalizations.of(context)!
-              .translateNested('params', 'name');
-          _lastNameController.text = state.profile.family ?? AppLocalizations.of(context)!
-              .translateNested('params', 'family');
-          _idController.text = state.profile.username ?? AppLocalizations.of(context)!
-              .translateNested('params', 'username');
+          photoUrl = state.profile.photo;
+
+          _nameController.text = state.profile.name ??
+              AppLocalizations.of(context)!.translateNested('params', 'name');
+          _lastNameController.text = state.profile.family ??
+              AppLocalizations.of(context)!.translateNested('params', 'family');
+          _idController.text = state.profile.username ??
+              AppLocalizations.of(context)!
+                  .translateNested('params', 'username');
 
           return buildListView(context);
-        } else if(state is ProfileError){
+        } else if (state is ProfileError) {
           return Padding(
             padding: const EdgeInsetsDirectional.only(top: 16),
             child: Container(
@@ -69,21 +63,20 @@ class _EditNormalUserState extends State<EditNormalUser> {
               padding: const EdgeInsetsDirectional.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .background,
+                color: Theme.of(context).colorScheme.background,
               ),
               child: Center(
-                child: Text('خطا در دریافت اطلاعات', style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).primaryColor,
-                ),),
+                child: Text(
+                  'خطا در دریافت اطلاعات',
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                ),
               ),
             ),
           );
-        }else{
+        } else {
           return buildListView(context);
-
         }
       },
     );
@@ -98,10 +91,7 @@ class _EditNormalUserState extends State<EditNormalUser> {
             padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .background,
+              color: Theme.of(context).colorScheme.background,
             ),
             child: ListView(
               children: [
@@ -111,41 +101,7 @@ class _EditNormalUserState extends State<EditNormalUser> {
                     height: 150,
                     width: 150,
                     child: Center(
-                      child: Stack(
-                        alignment: Alignment.bottomLeft,
-                        children: [
-                          CircleAvatar(
-                            radius: 200,
-                            backgroundImage: _pickedImage != null
-                                ? Image
-                                .file(_pickedImage!)
-                                .image
-                                : const AssetImage(
-                                'assets/images/profile/profile.png'),
-                          ),
-                          Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              color: cameraBackgroundColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color:
-                                Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .background,
-                                width: 3,
-                              ),
-                            ),
-                            child: IconButton(
-                              icon: SvgPicture.asset(
-                                  'assets/images/profile/camera.svg'),
-                              onPressed: _pickImage,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: ProfilePicture(photoUrl, _newPickedImage),
                     ),
                   ),
                 ),
@@ -158,16 +114,10 @@ class _EditNormalUserState extends State<EditNormalUser> {
                       AppLocalizations.of(context)!
                           .translateNested("profileScreen", 'UserInfo'),
                       style:
-                      Theme
-                          .of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(
-                        color: Theme
-                            .of(context)
-                            .primaryColor,
-                        fontWeight: FontWeight.w700,
-                      ),
+                          Theme.of(context).textTheme.displayMedium!.copyWith(
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.w700,
+                              ),
                     ),
                     const SizedBox(height: 8),
                     Container(
@@ -175,14 +125,8 @@ class _EditNormalUserState extends State<EditNormalUser> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Theme
-                                .of(context)
-                                .primaryColor
-                                .withOpacity(0),
-                            Theme
-                                .of(context)
-                                .primaryColor
-                                .withOpacity(1),
+                            Theme.of(context).primaryColor.withOpacity(0),
+                            Theme.of(context).primaryColor.withOpacity(1),
                           ],
                           stops: const [0.0, 1.0],
                         ),
@@ -196,8 +140,7 @@ class _EditNormalUserState extends State<EditNormalUser> {
                   child: Column(
                     children: [
                       Padding(
-                        padding:
-                        const EdgeInsetsDirectional.only(bottom: 16.0),
+                        padding: const EdgeInsetsDirectional.only(bottom: 16.0),
                         child: TextFormField(
                           controller: _nameController,
                           keyboardType: TextInputType.name,
@@ -206,29 +149,23 @@ class _EditNormalUserState extends State<EditNormalUser> {
                             label: Text(
                               AppLocalizations.of(context)!
                                   .translateNested('params', 'name'),
-                              style: Theme
-                                  .of(context)
+                              style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
                                   .copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: _nameFocusNode.hasFocus
-                                    ? Theme
-                                    .of(context)
-                                    .primaryColor
-                                    : Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .surface,
-                              ),
+                                    fontWeight: FontWeight.w400,
+                                    color: _nameFocusNode.hasFocus
+                                        ? Theme.of(context).primaryColor
+                                        : Theme.of(context).colorScheme.surface,
+                                  ),
                             ),
                             enabledBorder: borderStyle,
                             errorBorder: errorBorderStyle,
                             border: borderStyle,
                             focusedErrorBorder: errorBorderStyle,
                             contentPadding:
-                            const EdgeInsetsDirectional.fromSTEB(
-                                16, 0, 16, 0),
+                                const EdgeInsetsDirectional.fromSTEB(
+                                    16, 0, 16, 0),
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -251,8 +188,7 @@ class _EditNormalUserState extends State<EditNormalUser> {
                         ),
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsetsDirectional.only(bottom: 16.0),
+                        padding: const EdgeInsetsDirectional.only(bottom: 16.0),
                         child: TextFormField(
                           controller: _lastNameController,
                           focusNode: _lastNameFocusNode,
@@ -261,29 +197,23 @@ class _EditNormalUserState extends State<EditNormalUser> {
                             label: Text(
                               AppLocalizations.of(context)!
                                   .translateNested('params', 'family'),
-                              style: Theme
-                                  .of(context)
+                              style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
                                   .copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: _lastNameFocusNode.hasFocus
-                                    ? Theme
-                                    .of(context)
-                                    .primaryColor
-                                    : Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .surface,
-                              ),
+                                    fontWeight: FontWeight.w400,
+                                    color: _lastNameFocusNode.hasFocus
+                                        ? Theme.of(context).primaryColor
+                                        : Theme.of(context).colorScheme.surface,
+                                  ),
                             ),
                             enabledBorder: borderStyle,
                             errorBorder: errorBorderStyle,
                             border: borderStyle,
                             focusedErrorBorder: errorBorderStyle,
                             contentPadding:
-                            const EdgeInsetsDirectional.fromSTEB(
-                                16, 0, 16, 0),
+                                const EdgeInsetsDirectional.fromSTEB(
+                                    16, 0, 16, 0),
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -300,14 +230,12 @@ class _EditNormalUserState extends State<EditNormalUser> {
                             return null;
                           },
                           onFieldSubmitted: (value) {
-                            FocusScope.of(context)
-                                .requestFocus(_idFocusNode);
+                            FocusScope.of(context).requestFocus(_idFocusNode);
                           },
                         ),
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsetsDirectional.only(bottom: 16.0),
+                        padding: const EdgeInsetsDirectional.only(bottom: 16.0),
                         child: TextFormField(
                           controller: _idController,
                           focusNode: _idFocusNode,
@@ -316,29 +244,23 @@ class _EditNormalUserState extends State<EditNormalUser> {
                             label: Text(
                               AppLocalizations.of(context)!
                                   .translateNested('params', 'username'),
-                              style: Theme
-                                  .of(context)
+                              style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
                                   .copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: _idFocusNode.hasFocus
-                                    ? Theme
-                                    .of(context)
-                                    .primaryColor
-                                    : Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .surface,
-                              ),
+                                    fontWeight: FontWeight.w400,
+                                    color: _idFocusNode.hasFocus
+                                        ? Theme.of(context).primaryColor
+                                        : Theme.of(context).colorScheme.surface,
+                                  ),
                             ),
                             enabledBorder: borderStyle,
                             errorBorder: errorBorderStyle,
                             border: borderStyle,
                             focusedErrorBorder: errorBorderStyle,
                             contentPadding:
-                            const EdgeInsetsDirectional.fromSTEB(
-                                16, 0, 16, 0),
+                                const EdgeInsetsDirectional.fromSTEB(
+                                    16, 0, 16, 0),
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -347,7 +269,8 @@ class _EditNormalUserState extends State<EditNormalUser> {
                             } else if (value.length > 30) {
                               return AppLocalizations.of(context)!
                                   .translateNested('error', 'length_exceed');
-                            } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$').hasMatch(value)) {
+                            } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$')
+                                .hasMatch(value)) {
                               return AppLocalizations.of(context)!
                                   .translateNested('error', 'english_username');
                             }
@@ -363,55 +286,48 @@ class _EditNormalUserState extends State<EditNormalUser> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
+                BlocBuilder<ProfileBloc, ProfileState>(
+                    builder: (context, state) {
                   if (state is EditProfileError) {
                     return Padding(
                       padding: const EdgeInsetsDirectional.only(bottom: 16),
                       child: Text(
                         state.message,
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.error,
-                          fontWeight: FontWeight.w400,
-                        ),
+                              color: Theme.of(context).colorScheme.error,
+                              fontWeight: FontWeight.w400,
+                            ),
                       ),
                     );
                   } else {
                     return Container();
                   }
                 }),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            widget.refreshIndex(0);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shadowColor: Colors.transparent,
-                            //foregroundColor: Theme.of(context).colorScheme.tertiary,
-                            backgroundColor: Color(0x3300A6ED),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .translateNested('profileScreen', 'return'),
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(
+                      onPressed: () {
+                        widget.refreshIndex(0);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.transparent,
+                        //foregroundColor: Theme.of(context).colorScheme.tertiary,
+                        backgroundColor: Color(0x3300A6ED),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .translateNested('profileScreen', 'return'),
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
                               fontWeight: FontWeight.w400,
-                              color: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .tertiary,
+                              color: Theme.of(context).colorScheme.tertiary,
                             ),
-                          ),
-                        )),
+                      ),
+                    )),
                     const SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
@@ -420,10 +336,7 @@ class _EditNormalUserState extends State<EditNormalUser> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                          Theme
-                              .of(context)
-                              .colorScheme
-                              .primary,
+                              Theme.of(context).colorScheme.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -436,23 +349,22 @@ class _EditNormalUserState extends State<EditNormalUser> {
                           },
                           builder: (context, state) {
                             return state is EditProfileInfoLoading
-                                  ? const CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              )
-                                  : Text(
-                                AppLocalizations.of(context)!
-                                    .translateNested('profileScreen', 'save'),
-                                style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: whiteColor,
-                                ),
-                              );
-
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  )
+                                : Text(
+                                    AppLocalizations.of(context)!
+                                        .translateNested(
+                                            'profileScreen', 'save'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                          fontWeight: FontWeight.w400,
+                                          color: whiteColor,
+                                        ),
+                                  );
                           },
                         ),
                       ),
@@ -471,14 +383,12 @@ class _EditNormalUserState extends State<EditNormalUser> {
   void editUserFunction(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       context.read<ProfileBloc>().add(
-        EditProfile(
-          name: _nameController.text,
-          family: _lastNameController.text,
-          id: _idController.text,
-          photo: _pickedImage?.path,
-          // Add other fields here
-        ),
-      );
+            EditProfile(
+              name: _nameController.text,
+              family: _lastNameController.text,
+              id: _idController.text,
+            ),
+          );
     }
   }
 }

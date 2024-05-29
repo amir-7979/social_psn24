@@ -94,9 +94,7 @@ final ThemeData lightTheme = ThemeData(
   drawerTheme: const DrawerThemeData(
     backgroundColor: Colors.white,
   ),
-
   primaryColor: const Color(0xFF00BFB3),
-
   scaffoldBackgroundColor: const Color(0xFFB4C0D3),
   hintColor: const Color(0xFFB4C0D3),
   dividerColor: const Color(0xFFCACACA),
@@ -127,7 +125,9 @@ final ThemeData darkTheme = ThemeData(
     ),
 
     appBarTheme: AppBarTheme(
-    backgroundColor: const Color(0xFF212121),
+      backgroundColor: const Color(0xFF212121),
+      foregroundColor: const Color(0xFF212121),
+      surfaceTintColor: const Color(0xFF212121),
     elevation: 0,
     iconTheme: const IconThemeData(color: Color(0xFFffffff)),
     toolbarHeight: 50,

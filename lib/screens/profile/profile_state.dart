@@ -1,7 +1,8 @@
 part of 'profile_bloc.dart';
 
 @immutable
-abstract class ProfileState {}
+abstract class ProfileState {
+}
 
 class ProfileInitial extends ProfileState {}
 
@@ -106,4 +107,18 @@ class ChangeOnlineStatus extends ProfileEvent {
   final bool status;
 
   ChangeOnlineStatus(this.status);
+}
+
+class PhotoUploading extends ProfileState {}
+
+class PhotoUploadCompleted extends ProfileState {
+  final String photoUrl;
+
+  PhotoUploadCompleted(this.photoUrl);
+}
+
+class PhotoUploadFailed extends ProfileState {
+  final String error;
+
+  PhotoUploadFailed(this.error);
 }

@@ -140,6 +140,7 @@
     "media_count_video": "نمی‌توان بیشتر از {count} ویدیو آپلود کرد",
     "media_count_voice": "نمی‌توان بیشتر از {count} صوت آپلود کرد",
     "NetworkException" : "خطا در اتصال به اینترنت",
-    "notEmpty" : "این فیلد نمی‌تواند خالی باشد"
+    "notEmpty" : "این فیلد نمی‌تواند خالی باشد",
+    "profileUploadException" : "خطا در بارگذاری عکس"
   }
 }

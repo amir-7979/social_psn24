@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
@@ -22,6 +24,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GraphQLClient graphQLService = GraphQLService.instance.client;
   final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
   final SettingBloc settingBloc;
+  String? photoUrl;
 
   ProfileBloc(this.settingBloc) : super(ProfileInitial()) {
     on<FetchProfile>(fetchProfile);
@@ -30,6 +33,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<EditProfile>(handleEditProfileEvent);
     on<DeletePost>(handleDeletePost);
     on<ChangeStatusEvent>(handleChangeStatusEvent);
+    on<PhotoUploadEvent>(_handlePhotoUploadEvent);
   }
 
   Future<void> handleDeletePost(event, emit) async {
@@ -52,7 +56,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   FutureOr<void> fetchProfile(FetchProfile event, Emitter<ProfileState> emit) async {
-
     emit(ProfileInfoLoading());
     try {
       final QueryOptions options = getUserProfileWithPermissions(event.id);
@@ -61,20 +64,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(ProfileError('خطا در دریافت اطلاعات'));
         return;
       }
-
       final Map<String, dynamic> data = result.data!;
       final Profile profile = Profile.fromJson(data['profile']);
       final UserPermissions userPermissions = UserPermissions.fromJson(data['userPermissions']);
-      if(event.id != null){
-        settingBloc.add(UpdateInfoEvent(profile.name??'', profile.family??''));
-        settingBloc.add(UpdateUserPermissions(userPermissions));
+      if(event.id == null){
+        settingBloc.add(UpdateInfoEvent(profile.name??'', profile.family??'', photo: profile.photo));
+        //settingBloc.add(UpdateUserPermissions(userPermissions));
         if (userPermissions.isExpert != null) {
           settingBloc.add(UpdateIsExpert(userPermissions.isExpert!));
         }
       }
-
       emit(ProfileInfoLoaded(profile: profile, userPermissions: userPermissions));
-
     } catch (exception) {
       emit(ProfileError(exception.toString()));
     }
@@ -87,7 +87,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         event.name,
         event.family,
         "@${event.id}",
-        event.photo,
+        photoUrl?? null,
         event.biography,
         event.field,
         event.experience,
@@ -96,7 +96,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         event.showActivity,
         event.username,
       );
-      print('--${event.address}');
       final QueryResult result = await coreGraphQLService.mutate(options);
       print(result.data.toString());
       if (result.hasException) {
@@ -105,6 +104,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
       final Map<String, dynamic> data = result.data!;
       final Profile profile = Profile.fromJson(data['editUser']);
+      photoUrl = null;
       emit(EditProfileInfoLoaded(profile: profile, userPermissions: null));
     } catch (exception) {
       print(exception.toString());
@@ -169,5 +169,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
+  Future<void> _handlePhotoUploadEvent(PhotoUploadEvent event, Emitter<ProfileState> emit) async {
+    photoUrl = event.file??null;
+  }
 
 }

@@ -20,14 +20,13 @@ class EditUserEvent extends AuthEvent {
   final String name;
   final String family;
   final String username;
-  final String? photo;
   final int showActivity;
 
-  EditUserEvent(this.name, this.family, this.username, this.showActivity, this.photo);
+  EditUserEvent(this.name, this.family, this.username, this.showActivity);
 }
 
 class PhotoUploadEvent extends AuthEvent {
-  final File file;
+  final String? file;
 
   PhotoUploadEvent(this.file);
 }

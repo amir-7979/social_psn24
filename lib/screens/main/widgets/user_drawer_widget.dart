@@ -12,6 +12,7 @@ class UserDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? photo = BlocProvider.of<SettingBloc>(context).state.photo;
     return Drawer(
       width: 240,
       backgroundColor: Theme.of(context).drawerTheme.backgroundColor,
@@ -31,12 +32,12 @@ class UserDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  child: const Padding(
+                  child:  Padding(
                     padding:
                     EdgeInsetsDirectional.fromSTEB(16, 16, 16, 8),
                     child: CircleAvatar(
                       radius: 70,
-                      backgroundImage: AssetImage(
+                      backgroundImage: photo != null ? Image.network(photo).image :  const AssetImage(
                           'assets/images/profile/profile.png'),
                     ),
                   ),

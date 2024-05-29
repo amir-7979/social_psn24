@@ -10,6 +10,7 @@ class ShimmerContentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return AspectRatio(
       aspectRatio: 1.0,
       child: shimmerContainer(context),

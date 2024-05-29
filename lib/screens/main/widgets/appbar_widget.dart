@@ -42,6 +42,8 @@ AppBar buildAppBar(BuildContext context) {
               SettingThemeEvent(Theme.of(context).brightness == Brightness.light
                   ? AppTheme.dark
                   : AppTheme.light),
+
+
             );
           },
         ),

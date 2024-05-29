@@ -56,7 +56,7 @@ dependencies:
   crypto: ^3.0.3
   mime: ^1.0.5
   flutter_native_splash: ^2.4.0
-
+  image_cropper: ^5.0.1
 
 
 dev_dependencies:

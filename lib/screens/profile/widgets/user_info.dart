@@ -52,8 +52,7 @@ class _UserInfoState extends State<UserInfo>
       });
     });
     context
-        .read<ProfileBloc>()
-        .add(FetchProfile());
+        .read<ProfileBloc>().add(FetchProfile());
   }
 
   @override
@@ -364,7 +363,7 @@ class _UserInfoState extends State<UserInfo>
                                 ),
                           ),
                           Text(
-                            profile.username ?? '',
+                              profile.username ?? '',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
@@ -540,7 +539,6 @@ class _UserInfoState extends State<UserInfo>
               ),
             ),
             onPressed: () {
-              // navigate to edit page
               BlocProvider.of<SettingBloc>(context).state.isExpert?? false ? widget.refreshIndex(2) : widget.refreshIndex(1);
             },
             child: Text(

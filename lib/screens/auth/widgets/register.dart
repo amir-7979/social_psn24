@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
+import '../../widgets/profile_pucture/profile_picture.dart';
 import '../auth_bloc.dart';
 
 class Register extends StatefulWidget {
@@ -27,20 +28,10 @@ class _RegisterState extends State<Register> {
   final _lastNameController = TextEditingController();
   final _idController = TextEditingController();
 
-  File? _pickedImage;
-
-  Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (image != null) {
-        _pickedImage = File(image.path);
-      } else {
-        print('No image selected.');
-      }
-    });
+  void _newPickedImage(String? value) {
+    BlocProvider.of<AuthBloc>(context).add(PhotoUploadEvent(value));
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,37 +55,7 @@ class _RegisterState extends State<Register> {
               height: 180,
               width: 180,
               child: Center(
-                child: Stack(
-                  alignment: Alignment.bottomLeft,
-                  children: [
-                    CircleAvatar(
-                      radius: 200,
-                      backgroundImage: _pickedImage != null
-                          ? Image.file(_pickedImage!).image
-                          : AssetImage('assets/images/profile/profile.png'),
-                    ),
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: cameraBackgroundColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.background,
-                          width: 3,
-                        ),
-                      ),
-                      child: IconButton(
-                        icon: SvgPicture.asset(
-                            'assets/images/profile/camera.svg'),
-                        onPressed: () async {
-                          await _pickImage();
-                          BlocProvider.of<AuthBloc>(context).add(PhotoUploadEvent(_pickedImage!));
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                child: ProfilePicture(null, _newPickedImage),
               ),
             ),
           ),
@@ -341,8 +302,7 @@ class _RegisterState extends State<Register> {
                             _nameController.text,
                             _lastNameController.text,
                             _idController.text,
-                            1,
-                            _pickedImage?.path),
+                            1),
                       );
                     }
                   }

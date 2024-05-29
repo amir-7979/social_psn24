@@ -36,8 +36,9 @@ class UpdateInfoEvent extends SettingEvent {
   String name;
   String lastName;
   String? phoneNumber;
+  String? photo;
 
-  UpdateInfoEvent(this.name, this.lastName, {this.phoneNumber});
+  UpdateInfoEvent(this.name, this.lastName, {this.phoneNumber, this.photo});
 }
 
 class ClearInfo extends SettingEvent {
