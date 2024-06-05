@@ -10,9 +10,8 @@ class ProfileInfoLoading extends ProfileState {}
 
 class ProfileInfoLoaded extends ProfileState {
   final Profile profile;
-  final UserPermissions? userPermissions;
 
-  ProfileInfoLoaded({required this.profile, this.userPermissions});
+  ProfileInfoLoaded({required this.profile});
 }
 
 class ProfileError extends ProfileState {

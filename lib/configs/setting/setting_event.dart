@@ -45,3 +45,5 @@ class ClearInfo extends SettingEvent {
 
   ClearInfo();
 }
+
+class FetchUserProfileWithPermissionsEvent extends SettingEvent {}

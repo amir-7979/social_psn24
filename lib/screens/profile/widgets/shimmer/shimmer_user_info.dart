@@ -7,7 +7,7 @@ class ShimmerUserInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 345,
+      height: 370,
       padding: const EdgeInsetsDirectional.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -50,14 +50,13 @@ class ShimmerUserInfo extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        shimmerCircular(context,
-                            size: 100),
-                        SizedBox(height: 8),
+                        shimmerCircular(context, size: 100),
+                        SizedBox(height: 12),
                         shimmerContainer(context,
-                            width: 100, height: 15, radius: 16),
-                        SizedBox(height: 5),
+                            width: 150, height: 15, radius: 16),
+                        SizedBox(height: 15),
                         shimmerContainer(context,
-                            width: 70, height: 10, radius: 16),
+                            width: 70, height: 11, radius: 16),
                       ],
                     ),
                   ),
@@ -65,12 +64,12 @@ class ShimmerUserInfo extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 50),
+          SizedBox(height: 70),
           shimmerContainer(context,
               width: double.infinity, height: 45, radius: 8),
-          SizedBox(height: 16),
+          SizedBox(height: 40),
           shimmerContainer(context,
-              width: 180, height: 25, radius: 16),
+              width: 180, height: 30, radius: 16),
         ],
       ),
     );

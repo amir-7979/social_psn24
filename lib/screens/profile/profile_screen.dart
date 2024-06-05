@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
 import 'package:social_psn/screens/profile/widgets/user_screen.dart';
 import 'profile_bloc.dart';
-import 'widgets/expert_user/edit_expert_user.dart';
 import 'widgets/normal_user/edit_normal_user.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -37,11 +36,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Visibility(
                 visible: _currentIndex == 1,
                 child: EditNormalUser(_changeIndex),
-                maintainState: false,
-              ),
-              Visibility(
-                visible: _currentIndex == 2,
-                child: EditExpertUser(_changeIndex),
                 maintainState: false,
               ),
             ],

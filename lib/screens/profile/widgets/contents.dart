@@ -19,7 +19,6 @@ class Contents extends StatelessWidget {
       listener: (context, state) {
         if (state is PostDeleteSuccess) {
           pagingController.refresh();
-
         }
       },
       child: PagedGridView<int, Content>(
@@ -65,22 +64,30 @@ class Contents extends StatelessWidget {
                   ),
             ),
           ),
-          firstPageErrorIndicatorBuilder: (context) => Center(
-            child: Text(
-              AppLocalizations.of(context)!
-                  .translateNested("profileScreen", "fetchError"),
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).primaryColor,
-                  ),
+          firstPageErrorIndicatorBuilder: (context) => Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+              child: Text(
+                AppLocalizations.of(context)!
+                    .translateNested("profileScreen", "fetchError"),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: Theme.of(context).primaryColor,
+                    ),
+              ),
             ),
           ),
-          noItemsFoundIndicatorBuilder: (context) => Center(
-            child: Text(
-              AppLocalizations.of(context)!
-                  .translateNested("profileScreen", "noPost"),
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).primaryColor,
-                  ),
+          noItemsFoundIndicatorBuilder: (context) => Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+              child: Text(
+                AppLocalizations.of(context)!
+                    .translateNested("profileScreen", "noPost"),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: Theme.of(context).primaryColor,
+                    ),
+              ),
             ),
           ),
         ),

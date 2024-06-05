@@ -23,13 +23,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
   final SettingBloc settingBloc;
   String? loginId;
-  String? phoneNumber;
   String? photoUrl;
 
   AuthBloc(this.settingBloc) : super(InitState()) {
     on<LogInEvent>(_handleLogInEvent);
     on<VerifyTokenEvent>(_handleVerifyTokenEvent);
-    on<EditUserEvent>(_handleEditUserEvent);
+    on<EditUserEvent>(_handleRegisterEvent);
     on<GotoLoginEvent>(_handleGotoLoginEvent);
     on<PhotoUploadEvent>(_handlePhotoUploadEvent);
   }
@@ -56,7 +55,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } else {
         loginId = result.data!['logIn'];
-        phoneNumber = event.phoneNumber;
         emit(AuthVerifyState(event.phoneNumber));
       }
     } catch (exception) {
@@ -73,21 +71,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (result.hasException) {
         if (result.exception!.graphqlErrors.isNotEmpty &&
             result.exception!.graphqlErrors.first.extensions!['validation']
-                    ['code'] !=
-                null) {
+                    ['code'] != null) {
           emit(AuthResetPin());
-          emit(AuthResetPinNotif(result.exception!.graphqlErrors[0]
-              .extensions!['validation']['code'][0]));
+          emit(AuthResetPinNotif(result.exception!.graphqlErrors[0].extensions!['validation']['code'][0]));
         }
       } else {
-        settingBloc.add(UpdateLoginStatus(
-            result.data)); // Dispatch the new event when the user logs in
+        settingBloc.add(UpdateLoginStatus(result.data));
         GraphQLService.instance.addTokenToAuthLink();
+        settingBloc.add(FetchUserProfileWithPermissionsEvent());
+
         if (result.data?['verifyToken'][4] == 2)
           emit(AuthRegisterState());
         else
           emit(AuthRegisterState());
-        //emit(AuthFinished('ورود با موفقیت انجام شد'));
       }
     } catch (exception) {
       emit(AuthResetPin());
@@ -95,13 +91,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _handleEditUserEvent(
-      EditUserEvent event, Emitter<AuthState> emit) async {
+  Future<void> _handleRegisterEvent(EditUserEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
       final QueryResult result = await coreGraphQLService.mutate(
-          getEditUserOptions(event.name, event.family, "@" + event.username,
-              photoUrl, event.showActivity));
+          getEditUserOptions(event.name, event.family, "@" + event.username, photoUrl, event.showActivity));
       if (result.hasException) {
         if (result.exception!.graphqlErrors.isNotEmpty &&
             result.exception!.graphqlErrors.first.extensions!['validation']
@@ -113,7 +107,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthFailure('خطا'));
         }
       } else {
-        settingBloc.add(UpdateInfoEvent(event.name, event.family, phoneNumber: phoneNumber, photo: photoUrl == null ? null : 'https://media.psn24.ir/$photoUrl'));
+        settingBloc.add(FetchUserProfileWithPermissionsEvent());
         photoUrl = null;
         emit(AuthFinished('ورود با موفقیت انجام شد'));
       }

@@ -15,49 +15,50 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  Widget? _lastWidget = Login();
+  int _currentIndex = 0;
+
+  void _changeIndex(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: BlocProvider<AuthBloc>(
         create: (context) => AuthBloc(BlocProvider.of<SettingBloc>(context)),
-        child: BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state is AuthFinished) {
-              context.read<MainBloc>().add(MainUpdate(1));
-            }
-          },
-          builder: (context, state) {
-            Widget? currentWidget = authWidget(state);
-            if (currentWidget != null && currentWidget != _lastWidget) {
-              _lastWidget = currentWidget;
-            }
-            return Padding(
-              padding: const EdgeInsetsDirectional.all(16),
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Theme.of(context).colorScheme.background,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.all(16),
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            child: Stack(
+              children: [
+                Visibility(
+                  visible: _currentIndex == 0,
+                  child: Login(_changeIndex),
+                  maintainState: false,
                 ),
-                child: _lastWidget,
-              ),
-            );
-          },
+                Visibility(
+                  visible: _currentIndex == 1,
+                  child: Verify(_changeIndex), // You might need to pass the phoneNumber here
+                  maintainState: false,
+                ),
+                Visibility(
+                  visible: _currentIndex == 2,
+                  child: Register(_changeIndex),
+                  maintainState: false,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
-  }
-
-  Widget? authWidget(AuthState state) {
-    if (state is AuthLoginState) {
-      return Login();
-    } else if (state is AuthVerifyState) {
-      return Verify(phoneNumber: state.phoneNumber);
-    } else if (state is AuthRegisterState) {
-      return Register();
-    }
   }
 }

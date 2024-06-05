@@ -86,7 +86,7 @@ final ThemeData lightTheme = ThemeData(
     iconTheme: const IconThemeData(color: Color(0xFF374355)),
     toolbarHeight: 50,
     actionsIconTheme: const IconThemeData(color: Color(0xFF374355)),
-    titleTextStyle: iranSansTheme.displaySmall!.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF00BFB3)),
+    titleTextStyle: iranSansTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF00BFB3)),
   ),
   bottomAppBarTheme: const BottomAppBarTheme(
       color: Colors.white
@@ -94,6 +94,7 @@ final ThemeData lightTheme = ThemeData(
   drawerTheme: const DrawerThemeData(
     backgroundColor: Colors.white,
   ),
+
   primaryColor: const Color(0xFF00BFB3),
   scaffoldBackgroundColor: const Color(0xFFB4C0D3),
   hintColor: const Color(0xFFB4C0D3),
@@ -160,12 +161,12 @@ final ThemeData darkTheme = ThemeData(
   shadow: Colors.white ,
   surface: Color(0xFFA0AFC7),
     onError: Colors.white,
-
 )
 );
 
+const cameraBackgroundColor = Color(0xFFCCEDFB);
+const imageBackgroundColor = Color(0xFFF5F9FF);
 
-const cameraBackgroundColor = Color(0xFFDADBDC);
 const whiteColor = Colors.white;
 const blackColor = Colors.black;
 
@@ -174,16 +175,22 @@ final Color lightHighlightColor = Colors.grey[100]!;
 final Color darkBaseColor = Colors.grey[700]!;
 final Color darkHighlightColor = Colors.grey[600]!;
 
-var borderStyle = OutlineInputBorder(
-
+final OutlineInputBorder borderStyle = OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
   borderSide: const BorderSide(
-    color: Color(0xFFB4C0D3),
+    color: Color(0xFFA0AFC7),
 
   ),
 );
-var errorBorderStyle = OutlineInputBorder(
 
+final OutlineInputBorder selectedBorderStyle = OutlineInputBorder(
+  borderRadius: BorderRadius.circular(8),
+  borderSide: BorderSide(
+    color: const Color(0xFF00BFB3), // Change this to your desired color for selected state
+  ),
+);
+
+final OutlineInputBorder errorBorderStyle = OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
   borderSide: const BorderSide(
     color: Color(0xFFFF4D6D),

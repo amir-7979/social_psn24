@@ -12,19 +12,36 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:async/async.dart';
 import 'package:mime/mime.dart';
-QueryOptions getUserProfileWithPermissions(int? id) {
-  print('here');
+
+QueryOptions getUserProfileWithPermissions() {
+
+  return QueryOptions(
+    document: gql('''
+      query {
+        userPermissions{
+          id, name, display_name, permissions{
+            id, name,
+          }
+          role, settings{
+            id, options
+          }
+        }
+        profile {
+          id, name, family, display_name, photo, phone
+        }
+      }
+    '''),
+    fetchPolicy: FetchPolicy.noCache,
+  );
+}
+
+QueryOptions getUserProfile(int? id) {
   Map<String, dynamic> variables = {};
   if (id != null) variables['id'] = id;
 
   return QueryOptions(
     document: gql('''
-      query getUserProfileWithPermissions(\$id: Int) {
-        userPermissions(id: \$id) {
-          role, is_expert, permissions {
-            id, name
-          },
-        },
+      query getUserProfile(\$id: Int) {
         profile(id: \$id) {
           id, name, family, display_name, username, photo, phone, commentsCreated, contentCreated, upvotes, downvotes, field, biography, experience,
           address, offices, online, allow_notification, current_user_notification_enabled, show_activity
@@ -32,7 +49,7 @@ QueryOptions getUserProfileWithPermissions(int? id) {
       }
     '''),
     variables: variables,
-    fetchPolicy: FetchPolicy.noCache, // Add this line
+    fetchPolicy: FetchPolicy.noCache,
 
   );
 }
@@ -49,7 +66,7 @@ QueryOptions getUserPosts(int postType, int limit, int offset, int? userId) {
     document: gql('''
       query getUserPosts(\$postType: Int, \$limit: Int, \$offset: Int, \$userId: Int) {
         mycontents(post_type: \$postType, limit: \$limit, offset: \$offset, user_id: \$userId) {
-          id, name, post_type, medias {
+          id, name, post_type, disable, medias {
             id, loc, type, thumbnails {
               loc, type
             }
@@ -59,15 +76,12 @@ QueryOptions getUserPosts(int postType, int limit, int offset, int? userId) {
     '''),
     variables: variables,
     fetchPolicy: FetchPolicy.noCache, // Add this line
-
   );
 }
 
-QueryOptions getCommentsWithPostData(String? postId, int? userId, String type, int limit, int offset) {
-  // Initialize an empty map for the variables
+QueryOptions getCommentsWithPostData(
+    String? postId, int? userId, String type, int limit, int offset) {
   Map<String, dynamic> variables = {};
-
-  // Add variables to the map only if they are not null
   if (postId != null) variables['postId'] = postId;
   if (userId != null) variables['userId'] = userId;
   variables['type'] = type;
@@ -90,25 +104,6 @@ QueryOptions getCommentsWithPostData(String? postId, int? userId, String type, i
               }
             },
           }
-        }
-      }
-    '''),
-    variables: variables,
-    fetchPolicy: FetchPolicy.noCache, // Add this line
-
-  );
-}
-
-QueryOptions getUserProfile(int? id) {
-  Map<String, dynamic> variables = {};
-  if (id != null) variables['id'] = id;
-
-  return QueryOptions(
-    document: gql('''
-      query getUserProfile(\$id: Int) {
-        profile(id: \$id) {
-          id, name, family, display_name, username, photo, phone, commentsCreated, contentCreated, upvotes, downvotes, field, biography, experience,
-          address, offices, online, allow_notification, current_user_notification_enabled, show_activity
         }
       }
     '''),
@@ -141,7 +136,18 @@ QueryOptions getUserFavorites(int offset, int limit, int? userId) {
   );
 }
 
-MutationOptions editUser(String? name, String? family, String? id, String? photo, String? biography, String? field, String? experience, String? address, List<String>? office, int? showActivity, String? username) {
+MutationOptions editUser(
+    String? name,
+    String? family,
+    String? id,
+    String? photo,
+    String? biography,
+    String? field,
+    String? experience,
+    String? address,
+    List<String>? office,
+    int? showActivity,
+    String? username) {
   Map<String, dynamic> variables = {};
 
   if (name != null) variables['name'] = name;
@@ -183,7 +189,8 @@ MutationOptions deleteAccount(String name) {
   );
 }
 
-MutationOptions toggleAllowNotification(String name, String family, int notification) {
+MutationOptions toggleAllowNotification(
+    String name, String family, int notification) {
   return MutationOptions(
     document: gql('''
       mutation toggleAllowNotification(\$name: String!, \$family: String!, \$notification: Int!) {
@@ -219,7 +226,8 @@ Future<MutationOptions<Object>> uploadProfileImage(File file) async {
         uploadProfileImage(profilePicture: \$file)
       }
     '''),
-    variables: {'file': await multipartFileFrom(file),
+    variables: {
+      'file': await multipartFileFrom(file),
     },
     fetchPolicy: FetchPolicy.noCache,
   );
@@ -234,11 +242,9 @@ Future<MultipartFile> multipartFileFrom(File file) async {
     'profilePicture', // field name
     fileBytes, // file bytes
     filename: filename, // file name
-    contentType:  MediaType.parse(mimeType!), // content type
+    contentType: MediaType.parse(mimeType!), // content type
   );
   return multipartFile;
-
-
 }
 
 MutationOptions enableNotification(int userId) {
@@ -265,4 +271,26 @@ MutationOptions deletePost(String id) {
     variables: {'id': id},
     fetchPolicy: FetchPolicy.noCache, // Add this line
   );
+}
+
+MutationOptions fetchUserPermissionsMutation() {
+  return MutationOptions(
+    document: gql('''
+      mutation {
+        userPermissions {
+          id, name, display_name,
+          permissions {
+            id, name,
+          }
+          role,
+          settings {
+            id, options
+          }
+        }
+      }
+    '''),
+    fetchPolicy: FetchPolicy.noCache,
+
+  );
+
 }

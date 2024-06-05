@@ -58,7 +58,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   FutureOr<void> fetchProfile(FetchProfile event, Emitter<ProfileState> emit) async {
     emit(ProfileInfoLoading());
     try {
-      final QueryOptions options = getUserProfileWithPermissions(event.id);
+      final QueryOptions options = getUserProfile(event.id);
+      print('here');
+
       final QueryResult result = await coreGraphQLService.query(options);
       if (result.data == null) {
         emit(ProfileError('خطا در دریافت اطلاعات'));
@@ -66,17 +68,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
       final Map<String, dynamic> data = result.data!;
       final Profile profile = Profile.fromJson(data['profile']);
-      final UserPermissions userPermissions = UserPermissions.fromJson(data['userPermissions']);
-      if(event.id == null){
-        settingBloc.add(UpdateInfoEvent(profile.name??'', profile.family??'', photo: profile.photo));
-        //settingBloc.add(UpdateUserPermissions(userPermissions));
-        if (userPermissions.isExpert != null) {
-          settingBloc.add(UpdateIsExpert(userPermissions.isExpert!));
-        }
-      }
-      emit(ProfileInfoLoaded(profile: profile, userPermissions: userPermissions));
+      emit(ProfileInfoLoaded(profile: profile));
     } catch (exception) {
-      emit(ProfileError(exception.toString()));
+      emit(ProfileError('خطا در دریافت اطلاعات'));
     }
   }
 
@@ -87,7 +81,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         event.name,
         event.family,
         "@${event.id}",
-        photoUrl?? null,
+        photoUrl,
         event.biography,
         event.field,
         event.experience,
@@ -105,6 +99,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final Map<String, dynamic> data = result.data!;
       final Profile profile = Profile.fromJson(data['editUser']);
       photoUrl = null;
+      settingBloc.add(FetchUserProfileWithPermissionsEvent());
       emit(EditProfileInfoLoaded(profile: profile, userPermissions: null));
     } catch (exception) {
       print(exception.toString());
@@ -126,8 +121,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         pagingController.appendPage(contents, nextPageKey);
       }
     } catch (error) {
-      print(error.toString());
-      pagingController.error = error;
+      try {
+        pagingController.error = error;
+      } catch (e) {
+        print(e.toString());
+      }
     }
   }
 
@@ -146,7 +144,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         pagingController.appendPage(comments, nextPageKey);
       }
     } catch (error) {
-      pagingController.error = error;
+      try {
+        pagingController.error = error;
+      } catch (e) {
+        print(e.toString());
+      }
     }
   }
 

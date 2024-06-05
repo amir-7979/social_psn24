@@ -15,14 +15,13 @@ void main() {
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MultiBlocProvider(
       providers: [
         BlocProvider<SettingBloc>(
-          create: (context) => SettingBloc(),
+          create: (context) => SettingBloc()..add(FetchUserProfileWithPermissionsEvent()),
         ),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(

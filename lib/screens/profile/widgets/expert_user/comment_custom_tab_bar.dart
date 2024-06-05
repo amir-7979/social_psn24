@@ -39,6 +39,7 @@ class _CommentCustomTabBarState extends State<CommentCustomTabBar> {
       child: Column(
         children: [
           CustomSlidingSegmentedControl(
+            isDisabled: true,
             innerPadding: const EdgeInsets.all(5),
             controller: customSegmentedController,
             isStretch: true,
@@ -77,7 +78,6 @@ class _CommentCustomTabBarState extends State<CommentCustomTabBar> {
 
   Widget customTabItem(String text, int index) {
     return SizedBox(
-
       child: Center(
         child: Text(
           text,

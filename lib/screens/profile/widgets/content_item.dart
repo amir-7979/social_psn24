@@ -30,20 +30,19 @@ class ContentItem extends StatelessWidget {
             aspectRatio: 1.0, // to make it square
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: selectImage(content.medias ?? []),
+              child: ColorFiltered(
+                colorFilter: content.disabled??false ? ColorFilter.mode(Colors.grey, BlendMode.saturation) : ColorFilter.mode(Colors.transparent, BlendMode.saturation),
+                child: selectImage(content.medias ?? []),
+              )
             ),
           ),
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(8)),
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0x00000000), // transparent color
-                  Color(0xB2000000), // semi-transparent black color
-                ],
-              ),
+                colors: [Color(0x00000000), Color(0xB2000000)],),
             ),
             child: Align(
                 alignment: AlignmentDirectional.bottomStart,
@@ -75,6 +74,8 @@ class ContentItem extends StatelessWidget {
                   ),
                 )),
           ),
+           if(content.disabled == true) Center(child: Container(
+               child: SvgPicture.asset('assets/images/profile/disabled.svg'))),
           Align(
             alignment: AlignmentDirectional.topEnd,
             child: PopupMenuButton<int>(

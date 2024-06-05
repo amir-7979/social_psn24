@@ -54,31 +54,35 @@ class _MainTabBarState extends State<MainTabBar>
           const SizedBox(
             height: 10,
           ),
-          TabBar(
-            indicator: const UnderlineTabIndicator(
-              borderSide: BorderSide(width: 2.0, color: whiteColor),
+          SizedBox(
+            height: 60,
+            child: TabBar(
+              tabAlignment: TabAlignment.center,
+              indicator: const UnderlineTabIndicator(
+                borderSide: BorderSide(width: 2.0, color: whiteColor),
+              ),
+              labelColor: whiteColor,
+              dividerColor: Colors.transparent,
+              labelStyle: iranYekanTheme.displaySmall!.copyWith(
+                color: whiteColor,
+                fontWeight: FontWeight.w700,
+              ),
+              controller: _tabController,
+              labelPadding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
+              unselectedLabelStyle: iranYekanTheme.displaySmall!.copyWith(
+                color: whiteColor,
+                fontWeight: FontWeight.w700,
+              ),
+              indicatorPadding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 10),
+              tabs: [
+                Tab(
+                    text: AppLocalizations.of(context)!
+                        .translateNested('notifications', 'content')),
+                Tab(
+                    text: AppLocalizations.of(context)!
+                        .translateNested('profileScreen', 'comments')),
+              ],
             ),
-            labelColor: whiteColor,
-            dividerColor: Colors.transparent,
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-            labelStyle: iranYekanTheme.titleLarge!.copyWith(
-              color: whiteColor,
-              fontWeight: FontWeight.w700,
-            ),
-            controller: _tabController,
-            labelPadding: const EdgeInsetsDirectional.all(0),
-            unselectedLabelStyle: iranYekanTheme.titleLarge!.copyWith(
-              color: whiteColor,
-              fontWeight: FontWeight.w700,
-            ),
-            tabs: [
-              Tab(
-                  text: AppLocalizations.of(context)!
-                      .translateNested('notifications', 'content')),
-              Tab(
-                  text: AppLocalizations.of(context)!
-                      .translateNested('profileScreen', 'comments')),
-            ],
           ),
           const SizedBox(height: 10),
           Expanded(

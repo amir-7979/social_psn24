@@ -7,31 +7,33 @@ class SettingState {
    AppTheme theme;
    AppLanguage language;
    UserPermissions? permissions;
-   bool? isExpert;
+   Profile? profile;
   String token = '';
-  String? phoneNumber;
-  String? name;
-  String? lastName;
-  String? photo;
+
 
   SettingState({
     required this.theme,
     required this.language,
     this.permissions,
-    this.isExpert,
+    this.profile,
     required this.token,
-    this.phoneNumber,
-    this.name,
-    this.lastName,
-    this.photo,
+
   });
 
-  get isUserExpert => isExpert ?? false;
-  get isUserLoggedIn => token != '';
-  get fullName => '${name??''} ${lastName??''}';
-  get userPhoneNumber => phoneNumber??'';
-  get userPhoto => photo??'';
 
+  get isUserLoggedIn => token != '';
+  get getProfile => profile;
+  get getPermissions => permissions;
+   get isExpert {
+     if (permissions?.permissions != null) {
+       for (var permission in permissions!.permissions!) {
+         if (permission.id == 25 || permission.id == 29) {
+           return true;
+         }
+       }
+     }
+     return false;
+   }
 /*
   set newTheme(AppTheme value) {
      theme = value;
@@ -43,24 +45,16 @@ class SettingState {
     AppTheme? theme,
     AppLanguage? language,
     UserPermissions? permissions,
-    bool? isExpert,
-    bool? isLoggedIn,
+    Profile? profile,
     String? token,
-    String? phoneNumber,
-    String? name,
-    String? lastName,
-    String? photo,
+
   }) {
     return SettingState(
       theme: theme ?? this.theme,
       language: language ?? this.language,
       permissions: permissions ?? this.permissions,
-      isExpert: isExpert == '' ? null : this.isExpert,
+      profile: profile ?? this.profile,
       token: token ?? this.token,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      name: name ?? this.name,
-      lastName: lastName ?? this.lastName,
-      photo: photo ?? this.photo,
     );
   }
 
@@ -68,11 +62,7 @@ class SettingState {
     this.theme = AppTheme.light;
     this.language = AppLanguage.persian;
     this.permissions = UserPermissions();
-    this.isExpert = false;
+    this.profile = Profile();
     this.token = '';
-    this.phoneNumber = null;
-    this.name = null;
-    this.lastName = null;
-    this.photo = null;
   }
 }

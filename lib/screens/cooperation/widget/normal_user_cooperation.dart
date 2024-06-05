@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
+import '../../widgets/white_circular_progress_indicator.dart';
 import '../cooperation_bloc.dart';
 
 class NormalUserCooperation extends StatefulWidget {
@@ -165,10 +166,7 @@ class _NormalUserCooperationState extends State<NormalUserCooperation> {
                     ),
                   ),
                   child: state is CooperationLoading
-                      ? const CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                  )
+                      ? WhiteCircularProgressIndicator()
                       : Text(
                     AppLocalizations.of(context)!.translateNested(
                         'profileScreen', 'sendRequest'),

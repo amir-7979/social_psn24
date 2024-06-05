@@ -1,50 +1,57 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:social_psn/services/storage_service.dart';
 
+import '../../repos/models/profile.dart';
 import '../../repos/models/user_permissions.dart';
+import '../../repos/repositories/profile_repository.dart';
+import '../../services/core_graphql_service.dart';
+import '../../services/graphql_service.dart';
 
 part 'setting_event.dart';
 part 'setting_state.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
-  final StorageService _storageService = StorageService(); // Add a StorageService instance
+  final StorageService _storageService = StorageService();
+  final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
 
-  SettingBloc() : super(SettingState(theme: AppTheme.light, language: AppLanguage.persian, token: '')) {
+  SettingBloc() : super(_handleInitialSetting()) {
     on<SettingThemeEvent>(_handleSettingThemeEvent);
     on<SettingLanguageEvent>(_handleSettingLanguageEvent);
     on<UpdateLoginStatus>(_handleUpdateLoginStatus);
-    on<UpdateUserPermissions>(_handleUpdateUserPermissions);
-    on<UpdateIsExpert>(_handleUpdateIsExpert);
-    on<UpdateInfoEvent>(_handleUpdateInfoEvent);
     on<ClearInfo>(_handelClearUserInformation);
-    _loadSettingsFromStorage(); // Load the settings from storage when the bloc is created
+    on<FetchUserProfileWithPermissionsEvent>(_fetchUserProfileWithPermissions); // Add this line
+    _loadSettingsFromStorage();
+  }
 
+  static SettingState _handleInitialSetting() {
+    return SettingState(theme: AppTheme.light, language: AppLanguage.persian, token: '');
+  }
+
+  Future<void> _fetchUserProfileWithPermissions(event, emit) async {
+    final QueryOptions options =  getUserProfileWithPermissions() ;
+    final QueryResult result = await coreGraphQLService.query(options);
+    if (result.hasException) {
+      print(result.exception.toString());
+    } else {
+      final Map<String, dynamic> data = result.data!;
+      final Map<String, dynamic> profileData = data['profile'];
+      final Map<String, dynamic> userPermissionsData = data['userPermissions'];
+      final Profile profile = Profile.fromJson(profileData);
+      final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
+      emit(state.copyWith(profile: profile, permissions: userPermissions));
+    }
   }
 
   Future<void> _loadSettingsFromStorage() async {
     AppTheme theme = (await _storageService.readData('theme')) == 'AppTheme.dark' ? AppTheme.dark : AppTheme.light;
     AppLanguage language = (await _storageService.readData('language')) == 'english' ? AppLanguage.english : AppLanguage.persian;
     String? token = await _storageService.readData('token');
-    String? name = await _storageService.readData('name');
-    String? family = await _storageService.readData('family');
-    String? phone = await _storageService.readData('phone');
-    String? photo = await _storageService.readData('photo');
-    String? isExpert = await _storageService.readData('isExpert');
-    String? permissionsJson = await _storageService.readData('permissions');
-    UserPermissions permissions = UserPermissions.fromJson(jsonDecode(permissionsJson ?? '{}'));
-    emit(state.copyWith(theme: theme, language: language, token: token, permissions: permissions, isExpert: isExpert == 'true' ? true : false, name: name, lastName: family, phoneNumber: phone, photo: photo));
+    emit(state.copyWith(theme: theme, language: language, token: token));
   }
 
-  Future<void> _handleUpdateInfoEvent(event, emit) async {
-    await _storageService.saveData('name', event.name);
-    await _storageService.saveData('family', event.lastName);
-    await _storageService.saveData('photo', event.photo);
-    if (event.phoneNumber != null) await _storageService.saveData('phone', event.phoneNumber);
-    emit(state.copyWith(name: event.name, lastName: event.lastName, phoneNumber: event.phoneNumber, photo: event.photo));
-
-  }
 
   Future<void> _handleUpdateLoginStatus(event, emit) async {
     await writeInStorage(_storageService, event.data);
@@ -70,29 +77,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await _storageService.saveData('theme', event.theme.toString()); // Save the theme to storage
   }
 
-  FutureOr<void> _handleUpdateUserPermissions(UpdateUserPermissions event, Emitter<SettingState> emit) {
-    String permissionsJson = jsonEncode(event.permissions);
-    _storageService.saveData('permissions', permissionsJson);
-    emit(state.copyWith(permissions: event.permissions));
-  }
-
-  Future<void> _handleUpdateIsExpert(UpdateIsExpert event, Emitter<SettingState> emit) async {
-    await _storageService.saveData('isExpert', event.isExpert.toString()); // Save the language to storage
-    emit(state.copyWith(isExpert: event.isExpert));
-  }
-
   FutureOr<void> _handelClearUserInformation(event, emit) async {
     await _storageService.deleteData('bearer');
     await _storageService.deleteData('expiry');
     await _storageService.deleteData('token');
     await _storageService.deleteData('refreshToken');
     await _storageService.deleteData('userId');
-    await _storageService.deleteData('isExpert');
-    await _storageService.deleteData('permissions');
-    await _storageService.deleteData('name');
-    await _storageService.deleteData('family');
-    await _storageService.deleteData('phone');
-    await _storageService.deleteData('photo');
     state.reset();
     emit(state.copyWith());
   }

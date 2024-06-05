@@ -1,6 +1,4 @@
 class Profile {
-  static const String url = 'https://media.psn24.ir/';
-
   final int? id;
   final String? name;
   final String? family;
@@ -21,6 +19,7 @@ class Profile {
   final int? allowNotification;
   final dynamic currentUserNotificationEnabled;
   final int? showActivity;
+  String? fullName;
 
   Profile({
     this.id,
@@ -43,7 +42,10 @@ class Profile {
     this.allowNotification,
     this.currentUserNotificationEnabled,
     this.showActivity,
-  });
+  }){
+    fullName = '${name} ${family}';
+
+  }
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     String? username = json['username'] as String?;
@@ -56,7 +58,7 @@ class Profile {
       family: json['family'] as String?,
       displayName: json['display_name'] as String?,
       username: username,
-      photo: '${url}${json['photo']}' as String?,
+      photo: json['photo'] as String?,
       phone: json['phone'] as String?,
       commentsCreated: json['commentsCreated'] as int?,
       contentCreated: json['contentCreated'] as int?,

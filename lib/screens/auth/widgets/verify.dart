@@ -8,13 +8,14 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
+import '../../widgets/white_circular_progress_indicator.dart';
 import '../auth_bloc.dart';
 
 class Verify extends StatefulWidget {
   String? phoneNumber;
+  final Function changeIndex;
 
-  Verify({this.phoneNumber});
-
+  Verify(this.changeIndex,{this.phoneNumber});
   @override
   State<Verify> createState() => _VerifyState();
 }
@@ -75,10 +76,13 @@ class _VerifyState extends State<Verify> {
               listener: (context, state) {
                 if (state is AuthResetPin) {
                   setState(() {_codeController.clear();});
+                }else if (state is AuthRegisterState) {
+                  widget.changeIndex(2);
+                }else if(state is AuthLoginState){
+                  widget.changeIndex(0);
                 }
               },
               builder: (context, state) {
-
                 return PinCodeTextField(
                   length: 5,
                   controller: _codeController,
@@ -200,10 +204,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                 }
               : () {},
           child: state is AuthLoading
-              ? const CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                )
+              ? WhiteCircularProgressIndicator()
               : SizedBox(
                   child: Text(
                     _secondsRemaining == 0

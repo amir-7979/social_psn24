@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../configs/consts.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
+import '../../widgets/custom_snackbar.dart';
 import '../main_bloc.dart';
 
 class GuestDrawer extends StatelessWidget {
-  const GuestDrawer({Key? key}) : super(key: key);
+  final BuildContext snackBarContext;
+  GuestDrawer(this.snackBarContext);
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +32,12 @@ class GuestDrawer extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Padding(
+                Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
                   child: CircleAvatar(
                     radius: 70,
-                    backgroundImage:
-                        AssetImage('assets/images/profile/profile.png'),
+                    backgroundColor: Colors.transparent,
+                    child: SvgPicture.asset('assets/images/drawer/profile2.svg'),
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -49,19 +53,19 @@ class GuestDrawer extends StatelessWidget {
                         'drawer', 'guest'),
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: blackColor,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
                 Padding(
-                    padding: const EdgeInsetsDirectional.only(top: 17, bottom: 5),
+                    padding: const EdgeInsetsDirectional.only(top: 17, bottom: 5, start: 7, end: 7),
                   child: Text(
                     textAlign: TextAlign.center,
                     AppLocalizations.of(context)!.translateNested(
                         'drawer', 'loginForAllOptions'),
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: whiteColor,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 )
@@ -78,11 +82,14 @@ class GuestDrawer extends StatelessWidget {
                     minLeadingWidth: 0,
                     minVerticalPadding: 0,
                     contentPadding: const EdgeInsetsDirectional.all(0),
-                    horizontalTitleGap: 8,
+                    horizontalTitleGap: 10,
                     dense: true,
-                    leading: const SizedBox(
-                      width: 25,
-                    ),
+                    leading: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: SvgPicture.asset('assets/images/drawer/login.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),),),
                     title: Text(
                       AppLocalizations.of(context)!.translateNested(
                           'drawer', 'drawerLogin'),
@@ -106,35 +113,7 @@ class GuestDrawer extends StatelessWidget {
                       width: 22,
                       height: 22,
                       child: FittedBox(
-                        fit: BoxFit.fill,
-                        child: SvgPicture.asset('assets/images/drawer/hands.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),),),
-                    title: Text(
-                      AppLocalizations.of(context)!.translateNested(
-                          'drawer', 'drawerHand'),
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Theme.of(context).hoverColor,
-                      ),
-                    ),
-                    onTap: () {
-/*
-                      BlocProvider.of<MainBloc>(context).add(CooperatingClicked());
-*/
-                      Navigator.pop(context);
-
-                    },
-                  ),
-                  ListTile(
-                    minLeadingWidth: 0,
-                    minVerticalPadding: 0,
-                    contentPadding: const EdgeInsetsDirectional.all(0),
-                    horizontalTitleGap: 10,
-                    dense: true,
-                    leading: SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: FittedBox(
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                         child:
                         SvgPicture.asset('assets/images/drawer/invite.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),),),
                     title: Text(
@@ -145,9 +124,20 @@ class GuestDrawer extends StatelessWidget {
                         color: Theme.of(context).hoverColor,
                       ),
                     ),
-                    onTap: () {Navigator.pop(context);
+                    onTap: () async {
+                      FlutterClipboard.copy(inviteLink).then((value) {
+                        ScaffoldMessenger.of(snackBarContext).showSnackBar(
+                          CustomSnackBar(
+                              function: () => ScaffoldMessenger.of(snackBarContext).hideCurrentSnackBar(),
+                              content: AppLocalizations.of(context)!.translateNested('drawer', 'invite'),
+                              backgroundColor: Theme.of(context).primaryColor
+                          ).build(snackBarContext),
+                        );                          });
+                      Navigator.pop(context);
+
                     },
                   ),
+/*
                   ListTile(
                     minLeadingWidth: 0,
                     minVerticalPadding: 0,
@@ -171,6 +161,7 @@ class GuestDrawer extends StatelessWidget {
                     ),
                     onTap: () {Navigator.pop(context);},
                   ),
+*/
                   ListTile(
                     minLeadingWidth: 0,
                     minVerticalPadding: 0,
@@ -182,15 +173,15 @@ class GuestDrawer extends StatelessWidget {
                       width: 22,
                       height: 22,
                       child: FittedBox(
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                         child:
-                        SvgPicture.asset('assets/images/drawer/rules.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),),),
+                        SvgPicture.asset('assets/images/drawer/rules.svg', color: Colors.grey),),),
                     title: Text(
                       AppLocalizations.of(context)!.translateNested(
                           'drawer', 'drawerRules'),
                       style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                         fontWeight: FontWeight.w400,
-                        color: Theme.of(context).hoverColor,
+                        color: Colors.grey,
                       ),
                     ),
                     onTap: () {Navigator.pop(context);},
@@ -206,15 +197,15 @@ class GuestDrawer extends StatelessWidget {
                       width: 22,
                       height: 22,
                       child: FittedBox(
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                         child:
-                        SvgPicture.asset('assets/images/drawer/asks.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),),),
+                        SvgPicture.asset('assets/images/drawer/asks.svg', color: Colors.grey),),),
                     title: Text(
                       AppLocalizations.of(context)!.translateNested(
                           'drawer', 'drawerAsks'),
                       style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                         fontWeight: FontWeight.w400,
-                        color: Theme.of(context).hoverColor,
+                        color: Colors.grey,
                       ),
                     ),
                     onTap: () {Navigator.pop(context);},
