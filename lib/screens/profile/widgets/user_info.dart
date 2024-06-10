@@ -59,7 +59,7 @@ class _UserInfoState extends State<UserInfo>
 
   @override
   void dispose() {
-   // _controller.dispose();
+   _controller.dispose();
     super.dispose();
   }
 
@@ -119,9 +119,12 @@ class _UserInfoState extends State<UserInfo>
           Container(
             padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsetsDirectional.only(end: 30),
@@ -298,6 +301,7 @@ class _UserInfoState extends State<UserInfo>
                               ),
                               SizedBox(height: 8),
                               // i want to show switch button here
+/*
                               BlocProvider.of<SettingBloc>(context).state.isExpert?? false ? AdvancedSwitch(
                                 controller: advanceSwitchController,
                                 thumb: Padding(
@@ -346,6 +350,7 @@ class _UserInfoState extends State<UserInfo>
                                   BlocProvider.of<ProfileBloc>(context).add(ChangeStatusEvent(value));
                                 },
                               ) : Container(),
+*/
                             ],
                           ),
                         ),

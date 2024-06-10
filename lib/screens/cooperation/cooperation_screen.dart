@@ -13,7 +13,7 @@ class CooperationScreen extends StatelessWidget {
     SettingState settingState = BlocProvider.of<SettingBloc>(context).state;
     return BlocProvider(
       create: (context) => CooperationBloc(),
-      child: settingState.isExpert ? ExpertUserCooperation() : ExpertUserCooperation(),
+      child: settingState.seeExpertPost ? ExpertUserCooperation() : ExpertUserCooperation(),
     );
   }
 }

@@ -54,10 +54,10 @@ class _RegisterState extends State<Register> {
             padding: const EdgeInsetsDirectional.only(top: 16.0),
             child: Center(
               child: Container(
-                height: 180,
-                width: 180,
+                height: 155,
+                width: 155,
                 child: Center(
-                  child: ProfilePicture(null, _newPickedImage),
+                  child: ProfilePicture('', _newPickedImage),
                 ),
               ),
             ),

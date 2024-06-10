@@ -1,13 +1,19 @@
 class Thumbnail {
+  final String? id;
   final String? loc;
   final String? type;
 
-  Thumbnail({this.loc, this.type});
+  Thumbnail({
+    this.id,
+    this.loc,
+    this.type,
+  });
 
   factory Thumbnail.fromJson(Map<String, dynamic> json) {
     return Thumbnail(
-      loc: json['loc'] as String?,
-      type: json['type'] as String?,
+      id: json['id'],
+      loc: json['loc'],
+      type: json['type'],
     );
   }
 }

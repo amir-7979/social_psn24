@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/screens/profile/profile_bloc.dart';
@@ -33,17 +32,20 @@ class _EditNormalUserState extends State<EditNormalUser> {
   final _idFocusNode = FocusNode();
   final _historyFocusNode = FocusNode();
   final _bioFocusNode = FocusNode();
-  String? photoUrl;
+  String? photoUrl = null;
+  Widget lastWidget = ShimmerEditNormalUser();
 
   void _newPickedImage(String? value) {
-    BlocProvider.of<ProfileBloc>(context).add(PhotoUploadEvent(value));
+    if (value != null) {
+      photoUrl = value;
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    isExpert =  BlocProvider.of<SettingBloc>(context).state.isExpert?? false;
-    context.read<ProfileBloc>().add(FetchProfile());
+    isExpert = BlocProvider.of<SettingBloc>(context).state.seeExpertPost ?? false;
+    context.read<ProfileBloc>().add(FetchProfileForEditScreen());
   }
 
   @override
@@ -54,14 +56,15 @@ class _EditNormalUserState extends State<EditNormalUser> {
           ScaffoldMessenger.of(context).showSnackBar(
             CustomSnackBar(content: state.message).build(context),
           );
+        } else if (state is EditProfileInfoLoaded) {
+          widget.refreshIndex(0);
         }
       },
       builder: (context, state) {
-        if (state is ProfileInfoLoading) {
-          return const ShimmerEditNormalUser();
-        } else if (state is ProfileInfoLoaded) {
+        if (state is NewProfileInfoLoading) {
+          lastWidget = const ShimmerEditNormalUser();
+        } else if (state is NewProfileInfoLoaded) {
           photoUrl = state.profile.photo;
-
           _nameController.text = state.profile.name ??
               AppLocalizations.of(context)!.translateNested('params', 'name');
           _lastNameController.text = state.profile.family ??
@@ -71,9 +74,9 @@ class _EditNormalUserState extends State<EditNormalUser> {
                   .translateNested('params', 'username');
           _history.text = state.profile.experience ?? '';
           _bio.text = state.profile.biography ?? '';
-          return buildListView(context);
-        } else if (state is ProfileError) {
-          return Padding(
+          lastWidget = buildListView(context);
+        } else if (state is NewProfileError) {
+          lastWidget = Padding(
             padding: const EdgeInsetsDirectional.only(top: 16),
             child: Container(
               height: MediaQuery.of(context).size.height,
@@ -92,15 +95,13 @@ class _EditNormalUserState extends State<EditNormalUser> {
               ),
             ),
           );
-        } else {
-          return buildListView(context);
         }
+        return lastWidget; // return an empty container if lastWidget is null
       },
     );
   }
 
   Widget buildListView(BuildContext context) {
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -267,151 +268,164 @@ class _EditNormalUserState extends State<EditNormalUser> {
                           padding:
                               const EdgeInsetsDirectional.only(bottom: 16.0),
                           child: TextFormField(
-                            controller: _idController,
-                            focusNode: _idFocusNode,
-                            textDirection: TextDirection.ltr,
-                            // Set text direction to ltr
+                              controller: _idController,
+                              focusNode: _idFocusNode,
+                              textDirection: TextDirection.ltr,
+                              // Set text direction to ltr
 
-                            keyboardType: TextInputType.name,
-                            decoration: InputDecoration(
-                              suffix: Padding(
-                                padding:
-                                    const EdgeInsetsDirectional.only(start: 4),
-                                child: Text(
-                                  '@',
+                              keyboardType: TextInputType.name,
+                              decoration: InputDecoration(
+                                suffix: Padding(
+                                  padding: const EdgeInsetsDirectional.only(
+                                      start: 4),
+                                  child: Text(
+                                    '@',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                          fontWeight: FontWeight.w400,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .shadow,
+                                        ),
+                                  ),
+                                ),
+                                // Add this line
+
+                                label: Text(
+                                  AppLocalizations.of(context)!
+                                      .translateNested('params', 'username'),
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge!
                                       .copyWith(
                                         fontWeight: FontWeight.w400,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .shadow,
+                                        color: _idFocusNode.hasFocus
+                                            ? Theme.of(context).primaryColor
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .surface,
                                       ),
                                 ),
+                                enabledBorder: borderStyle,
+                                errorBorder: errorBorderStyle,
+                                border: borderStyle,
+                                focusedErrorBorder: errorBorderStyle,
+                                contentPadding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        16, 0, 16, 0),
                               ),
-                              // Add this line
-
-                              label: Text(
-                                AppLocalizations.of(context)!
-                                    .translateNested('params', 'username'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      color: _idFocusNode.hasFocus
-                                          ? Theme.of(context).primaryColor
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .surface,
-                                    ),
-                              ),
-                              enabledBorder: borderStyle,
-                              errorBorder: errorBorderStyle,
-                              border: borderStyle,
-                              focusedErrorBorder: errorBorderStyle,
-                              contentPadding:
-                                  const EdgeInsetsDirectional.fromSTEB(
-                                      16, 0, 16, 0),
-                            ),
-                            validator: (value) {
-                              if(value == null || value.isEmpty){
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return null;
+                                } else if (value.length > 30) {
+                                  return AppLocalizations.of(context)!
+                                      .translateNested(
+                                          'error', 'length_exceed');
+                                } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$')
+                                    .hasMatch(value)) {
+                                  return AppLocalizations.of(context)!
+                                      .translateNested(
+                                          'error', 'english_username');
+                                }
                                 return null;
-                              } else if (value.length > 30) {
+                              },
+                              onFieldSubmitted: (value) {
+                                if (isExpert) {
+                                  FocusScope.of(context)
+                                      .requestFocus(_historyFocusNode);
+                                } else {
+                                  FocusScope.of(context).unfocus();
+                                }
+                              }),
+                        ),
+                        if (isExpert)
+                          Padding(
+                            padding:
+                                const EdgeInsetsDirectional.only(bottom: 16.0),
+                            child: TextFormField(
+                              controller: _history,
+                              keyboardType: TextInputType.name,
+                              focusNode: _historyFocusNode,
+                              decoration: InputDecoration(
+                                label: Text(
+                                  AppLocalizations.of(context)!.translateNested(
+                                      'profileScreen', 'experience'),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        color: _historyFocusNode.hasFocus
+                                            ? Theme.of(context).primaryColor
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                      ),
+                                ),
+                                enabledBorder: borderStyle,
+                                errorBorder: errorBorderStyle,
+                                border: borderStyle,
+                                focusedErrorBorder: errorBorderStyle,
+                                contentPadding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        16, 0, 16, 0),
+                              ),
+                              validator: (value) {
+                                if (value!.isEmpty || value.length < 30) {
+                                  return null;
+                                }
                                 return AppLocalizations.of(context)!
                                     .translateNested('error', 'length_exceed');
-                              } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$')
-                                  .hasMatch(value)) {
+                              },
+                              onFieldSubmitted: (value) {
+                                FocusScope.of(context)
+                                    .requestFocus(_bioFocusNode);
+                              },
+                            ),
+                          ),
+                        if (isExpert)
+                          Padding(
+                            padding:
+                                const EdgeInsetsDirectional.only(bottom: 16.0),
+                            child: TextFormField(
+                              controller: _bio,
+                              focusNode: _bioFocusNode,
+                              keyboardType: TextInputType.name,
+                              decoration: InputDecoration(
+                                label: Text(
+                                  AppLocalizations.of(context)!
+                                      .translateNested('params', 'biography'),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        color: _bioFocusNode.hasFocus
+                                            ? Theme.of(context).primaryColor
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                      ),
+                                ),
+                                enabledBorder: borderStyle,
+                                errorBorder: errorBorderStyle,
+                                border: borderStyle,
+                                focusedErrorBorder: errorBorderStyle,
+                                contentPadding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        16, 0, 16, 0),
+                              ),
+                              validator: (value) {
+                                if (value!.isEmpty || value.length < 300) {
+                                  return null;
+                                }
                                 return AppLocalizations.of(context)!
-                                    .translateNested(
-                                        'error', 'english_username');
-                              }
-                              return null;
-                            },
-                            onFieldSubmitted: (value) {
-                              editUserFunction(context);
-                              FocusScope.of(context).unfocus();
-                            },
-                          ),
-                        ),
-                        if(isExpert)Padding(
-                          padding: const EdgeInsetsDirectional.only(bottom: 16.0),
-                          child: TextFormField(
-                            controller: _history,
-                            keyboardType: TextInputType.name,
-                            focusNode: _historyFocusNode,
-                            decoration: InputDecoration(
-                              label: Text(
-                                AppLocalizations.of(context)!
-                                    .translateNested('profileScreen', 'experience'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: _historyFocusNode.hasFocus
-                                      ? Theme.of(context).primaryColor
-                                      : Theme.of(context).colorScheme.surface,
-                                ),
-                              ),
-                              enabledBorder: borderStyle,
-                              errorBorder: errorBorderStyle,
-                              border: borderStyle,
-                              focusedErrorBorder: errorBorderStyle,
-                              contentPadding: const EdgeInsetsDirectional.fromSTEB(
-                                  16, 0, 16, 0),
+                                    .translateNested('error', 'length_exceed');
+                              },
                             ),
-                            validator: (value) {
-                              if (value!.isEmpty || value.length < 30) {
-                                return null;
-                              }
-                              return AppLocalizations.of(context)!
-                                  .translateNested('error', 'length_exceed');
-                            },
-                            onFieldSubmitted: (value) {
-                              FocusScope.of(context)
-                                  .requestFocus(_bioFocusNode);
-                            },
                           ),
-                        ),
-                        if(isExpert)Padding(
-                          padding: const EdgeInsetsDirectional.only(bottom: 16.0),
-                          child: TextFormField(
-                            controller: _bio,
-                            focusNode: _bioFocusNode,
-                            keyboardType: TextInputType.name,
-                            decoration: InputDecoration(
-                              label: Text(
-                                AppLocalizations.of(context)!
-                                    .translateNested('params', 'biography'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: _bioFocusNode.hasFocus
-                                      ? Theme.of(context).primaryColor
-                                      : Theme.of(context).colorScheme.surface,
-                                ),
-                              ),
-                              enabledBorder: borderStyle,
-                              errorBorder: errorBorderStyle,
-                              border: borderStyle,
-                              focusedErrorBorder: errorBorderStyle,
-                              contentPadding: const EdgeInsetsDirectional.fromSTEB(
-                                  16, 0, 16, 0),
-                            ),
-                            validator: (value) {
-                              if (value!.isEmpty || value.length < 300) {
-                                return null;
-                              }
-                              return AppLocalizations.of(context)!
-                                  .translateNested('error', 'length_exceed');
-                            },
-
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -446,7 +460,6 @@ class _EditNormalUserState extends State<EditNormalUser> {
                           },
                           style: ElevatedButton.styleFrom(
                             shadowColor: Colors.transparent,
-                            //foregroundColor: Theme.of(context).colorScheme.tertiary,
                             backgroundColor: Color(0x3300A6ED),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -480,17 +493,7 @@ class _EditNormalUserState extends State<EditNormalUser> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: BlocConsumer<ProfileBloc, ProfileState>(
-                              listener: (context, state) {
-                                if (state is EditProfileInfoLoaded) {
-                                  widget.refreshIndex(0);
-                                }else if (state is EditProfileError) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    CustomSnackBar(content: state.message).build(context),
-
-                                  );
-                                }
-                              },
+                            child: BlocBuilder<ProfileBloc, ProfileState>(
                               builder: (context, state) {
                                 return state is EditProfileInfoLoading
                                     ? WhiteCircularProgressIndicator()
@@ -525,15 +528,14 @@ class _EditNormalUserState extends State<EditNormalUser> {
 
   void editUserFunction(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      context.read<ProfileBloc>().add(
-            EditProfile(
-              name: _nameController.text,
-              family: _lastNameController.text,
-              id: _idController.text,
-              experience: isExpert ? _history.text : null,
-              biography: isExpert ? _bio.text : null,
-            ),
-          );
+      context.read<ProfileBloc>().add(EditProfile(
+            name: _nameController.text,
+            family: _lastNameController.text,
+            photoUrl: photoUrl,
+            experience: isExpert ? _history.text : null,
+            biography: isExpert ? _bio.text : null,
+            username: _idController.text,
+          ));
     }
   }
 }

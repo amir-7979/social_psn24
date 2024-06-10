@@ -20,13 +20,28 @@ class ProfileError extends ProfileState {
   ProfileError(this.message);
 }
 
+//---------------------
+
+class NewProfileInfoLoading extends ProfileState {}
+
+class NewProfileInfoLoaded extends ProfileState {
+  final Profile profile;
+
+  NewProfileInfoLoaded({required this.profile});
+}
+
+class NewProfileError extends ProfileState {
+  final String message;
+
+  NewProfileError(this.message);
+}
+
+//---------------------
+
 class EditProfileInfoLoading extends ProfileState {}
 
 class EditProfileInfoLoaded extends ProfileState {
-  final Profile profile;
-  final UserPermissions? userPermissions;
-
-  EditProfileInfoLoaded({required this.profile, this.userPermissions});
+  EditProfileInfoLoaded();
 }
 
 class EditProfileError extends ProfileState {
@@ -45,48 +60,6 @@ class EditProfileInfoWithNameLoaded extends ProfileState {
 }
 
 class EditProfileInfoWithNameError extends ProfileState {}
-
-class ProfilePostsLoading extends ProfileState {}
-
-class ProfileExpertPostsLoading extends ProfileState {}
-
-class NavigationToEditScreenState extends ProfileState {
-
-  NavigationToEditScreenState();
-}
-
-class NavigationToProfileScreenState extends ProfileState {
-
-  NavigationToProfileScreenState();
-}
-
-class ProfilePostsLoaded extends ProfileState {
-  final List<Content> contents;
-
-  ProfilePostsLoaded({required this.contents});
-}
-
-class ProfileExpertPostsLoaded extends ProfileState {
-  final List<Content> contents;
-
-  ProfileExpertPostsLoaded({required this.contents});
-}
-
-class ProfileCommentsLoading extends ProfileState {}
-
-class ProfileExpertCommentsLoading extends ProfileState {}
-
-class ProfileCommentsLoaded extends ProfileState {
-  final List<Comment> comments;
-
-  ProfileCommentsLoaded({required this.comments});
-}
-
-class ProfileExpertCommentsLoaded extends ProfileState {
-  final List<Comment> comments;
-
-  ProfileExpertCommentsLoaded({required this.comments});
-}
 
 class PostDeleting extends ProfileState {
   final String id;
@@ -108,16 +81,8 @@ class ChangeOnlineStatus extends ProfileEvent {
   ChangeOnlineStatus(this.status);
 }
 
-class PhotoUploading extends ProfileState {}
+class NavigationToProfileScreenState extends ProfileState {}
 
-class PhotoUploadCompleted extends ProfileState {
-  final String photoUrl;
+class NavigationToEditScreenState extends ProfileState {}
 
-  PhotoUploadCompleted(this.photoUrl);
-}
 
-class PhotoUploadFailed extends ProfileState {
-  final String error;
-
-  PhotoUploadFailed(this.error);
-}

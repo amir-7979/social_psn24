@@ -1,19 +1,34 @@
 class Creator {
-  final int id;
-  final String phone;
-  final String photo;
-  final String name;
-  final String family;
+  final int? id;
+  final String? name;
+  final String? family;
+  final String? username;
+  final String? photo;
+  final bool? online;
+  final String? displayName;
+  final int? showActivity;
 
-  Creator({required this.id, required this.phone, required this.photo, required this.name, required this.family});
+  Creator({
+    this.id,
+    this.name,
+    this.family,
+    this.username,
+    this.photo,
+    this.online,
+    this.displayName,
+    this.showActivity,
+  });
 
   factory Creator.fromJson(Map<String, dynamic> json) {
     return Creator(
-      id: json['id'] as int,
-      phone: json['phone'] as String,
-      photo: json['photo'] as String,
-      name: json['name'] as String,
-      family: json['family'] as String,
+      id: json['id'],
+      name: json['name'],
+      family: json['family'],
+      username: '@' + json['username'],
+      photo: json['photo'],
+      online: json['online'],
+      displayName: json['display_name'],
+      showActivity: json['show_activity'],
     );
   }
 }

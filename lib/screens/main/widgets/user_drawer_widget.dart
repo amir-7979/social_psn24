@@ -43,13 +43,15 @@ class UserDrawer extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
+                      color: Colors.transparent,
                       child:  Padding(
                         padding:
                         EdgeInsetsDirectional.fromSTEB(16, 16, 16, 8),
-                        child: CircleAvatar(
-                          radius: 70,
-                          backgroundColor: Colors.transparent,
-                          child: photo != null ? ProfileCacheImage(photo) :  SvgPicture.asset('assets/images/drawer/profile2.svg'),
+                        child: ClipOval(
+                          child: SizedBox.fromSize(
+                            size: Size.fromRadius(70), // Image radius
+                            child: photo != null ? ProfileCacheImage(photo) :  SvgPicture.asset('assets/images/drawer/profile2.svg'),
+                          ),
                         ),
                       ),
                     ),

@@ -1,18 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:social_psn/repos/repositories/profile_repository.dart';
-
-import '../../configs/consts.dart';
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/repositories/auth_repository.dart';
 import '../../services/core_graphql_service.dart';
 import '../../services/graphql_service.dart';
-import '../../services/storage_service.dart';
 
 part 'auth_event.dart';
 

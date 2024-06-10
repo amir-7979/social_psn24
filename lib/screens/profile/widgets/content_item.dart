@@ -7,9 +7,7 @@ import 'package:social_psn/configs/setting/themes.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/content.dart';
-import '../../../repos/models/media.dart';
 import '../../main/main_bloc.dart';
-import '../../widgets/cached_network_image.dart';
 import '../../widgets/selectImge.dart';
 import '../profile_bloc.dart';
 

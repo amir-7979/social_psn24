@@ -1,14 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:social_psn/repos/models/comment.dart';
 
-import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/reply.dart';
 import '../../widgets/cached_network_image.dart';
-import '../../widgets/selectImge.dart';
 
 class OthersCommentItem extends StatelessWidget {
   final Comment comment;

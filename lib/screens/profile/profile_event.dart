@@ -10,30 +10,29 @@ class FetchProfile extends ProfileEvent {
   FetchProfile({this.id});
 }
 
+class FetchProfileForEditScreen extends ProfileEvent {
+  int? id;
+  FetchProfileForEditScreen({this.id});
+}
+
 
 class EditProfile extends ProfileEvent {
   final String? name;
   final String? family;
-  final String? id;
-  final String? biography;
-  final String? field;
-  final String? experience;
-  final String? address;
-  final List<String>? office;
-  final int? showActivity;
   final String? username;
+  final String? photoUrl;
+  final String? biography;
+  final String? experience;
+
 
   EditProfile({
     this.name,
     this.family,
-    this.id,
-    this.biography,
-    this.field,
-    this.experience,
-    this.address,
-    this.office,
-    this.showActivity,
     this.username,
+    this.photoUrl,
+    this.biography,
+    this.experience,
+
   });
 }
 
@@ -53,8 +52,3 @@ class ChangeStatusEvent extends ProfileEvent {
   ChangeStatusEvent(this.status);
 }
 
-class PhotoUploadEvent extends ProfileEvent {
-  final String? file;
-
-  PhotoUploadEvent(this.file);
-}

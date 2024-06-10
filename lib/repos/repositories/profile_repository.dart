@@ -139,28 +139,19 @@ QueryOptions getUserFavorites(int offset, int limit, int? userId) {
 MutationOptions editUser(
     String? name,
     String? family,
-    String? id,
+    String? username,
     String? photo,
     String? biography,
-    String? field,
     String? experience,
-    String? address,
-    List<String>? office,
-    int? showActivity,
-    String? username) {
+    ) {
   Map<String, dynamic> variables = {};
 
   if (name != null) variables['name'] = name;
   if (family != null) variables['family'] = family;
-  if (id != null) variables['username'] = id;
+  if (username != null) variables['username'] = username;
   if (photo != null) variables['photo'] = photo;
   if (biography != null) variables['biography'] = biography;
-  if (field != null) variables['field'] = field;
   if (experience != null) variables['experience'] = experience;
-  if (address != null) variables['address'] = address;
-  if (office != null) variables['office'] = office;
-  if (showActivity != null) variables['showActivity'] = showActivity;
-  if (username != null) variables['username'] = username;
 
   return MutationOptions(
     document: gql('''

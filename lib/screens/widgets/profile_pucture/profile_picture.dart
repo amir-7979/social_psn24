@@ -12,7 +12,7 @@ import '../profile_cached_network_image.dart';
 import 'profile_picture_bloc.dart';
 
 class ProfilePicture extends StatefulWidget {
-  final String? photoUrl;
+  String? photoUrl;
   Function onImagePicked;
 
   ProfilePicture(this.photoUrl, this.onImagePicked);
@@ -22,12 +22,14 @@ class ProfilePicture extends StatefulWidget {
 }
 
 class _ProfilePictureState extends State<ProfilePicture> {
-  File? pickedImage;
-  File? croppedFile;
+  File? lastPickedImage;
+  File? cropPath;
+  final picker = ImagePicker();
+  bool firstTime = false;
 
-  Future<File?> _cropImage(File imageFile, context) async {
+  Future<File?> _cropImage(String imageAddress, context) async {
     final croppedFile = await ImageCropper().cropImage(
-      sourcePath: imageFile.path,
+      sourcePath: imageAddress,
       aspectRatioPresets: [
         CropAspectRatioPreset.square,
       ],
@@ -49,7 +51,6 @@ class _ProfilePictureState extends State<ProfilePicture> {
         ),
       ],
     );
-
     if (croppedFile != null) {
       return File(croppedFile.path);
     }
@@ -58,16 +59,21 @@ class _ProfilePictureState extends State<ProfilePicture> {
   }
 
   Future<void> _pickImage(BuildContext context) async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      print(pickedImage.path);
-      final croppedFile = await _cropImage(File(pickedImage.path), context);
+    final pickedXFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedXFile != null) {
+      final croppedFile = await _cropImage(pickedXFile.path, context);
       if (croppedFile != null) {
+        cropPath = croppedFile;
         BlocProvider.of<ProfilePictureBloc>(context)
             .add(UploadProfilePicture(croppedFile));
       }
     }
+  }
+
+  @override
+  void initState() {
+    firstTime = true;
+    super.initState();
   }
 
   @override
@@ -78,14 +84,15 @@ class _ProfilePictureState extends State<ProfilePicture> {
         child: Stack(
           alignment: AlignmentDirectional.center,
           children: [
-            CircleAvatar(
-              radius: 75,
-              backgroundColor: Colors.transparent,
-              child: pickedImage != null
-                  ? Image.asset(pickedImage!.path)
-                  : widget.photoUrl != null
-                      ? ProfileCacheImage(widget.photoUrl!)
-                      : Image.asset('assets/images/profile/profile2.svg',),
+            ClipOval(
+              child: SizedBox.fromSize(
+                size: Size.fromRadius(75), // Image radius
+                child: firstTime && widget.photoUrl != null
+                    ? ProfileCacheImage(widget.photoUrl!)
+                    : lastPickedImage != null
+                    ? Image.file(lastPickedImage!)
+                    : Image.asset('assets/images/profile/profile2.svg',),
+              ),
             ),
             Align(
               alignment: AlignmentDirectional.bottomEnd,
@@ -115,15 +122,15 @@ class _ProfilePictureState extends State<ProfilePicture> {
                               AppLocalizations.of(context)!
                                   .translateNested('error', 'profileUploadException'),
                             ),
-
                           ),
                         );
                       } else if (state is ProfilePictureSuccess) {
-                        setState(() {
-                          if (croppedFile != null)
-                            pickedImage = File(croppedFile!.path);
-                        });
                         widget.onImagePicked(state.imageUrl);
+                        setState(() {
+                          firstTime = false;
+                          lastPickedImage = cropPath;
+                          print('state.imageUrl: ${state.imageUrl}');
+                        });
                       }
                     },
                     builder: (context, state) {
@@ -151,5 +158,11 @@ class _ProfilePictureState extends State<ProfilePicture> {
         ),
       ),
     );
+  }
+
+  dispose() {
+    lastPickedImage = null;
+    firstTime = false;
+    super.dispose();
   }
 }

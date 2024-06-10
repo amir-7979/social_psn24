@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:social_psn/repos/models/comment.dart';
-import 'package:social_psn/screens/profile/widgets/expert_user/comment_custom_tab_bar.dart';
-import 'package:social_psn/screens/profile/widgets/expert_user/content_custom_tab_bar.dart';
+import 'package:social_psn/screens/home/home_bloc.dart';
+import 'package:social_psn/screens/home/widgets/post_list.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
-import '../../../repos/models/content.dart';
-import '../profile_bloc.dart';
-import 'comments.dart';
-import 'contents.dart';
+import '../../../repos/models/post.dart';
 
 class MainTabBar extends StatefulWidget {
   const MainTabBar({super.key});
@@ -22,46 +18,40 @@ class MainTabBar extends StatefulWidget {
 class _MainTabBarState extends State<MainTabBar>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
-  late PagingController<int, Content> _pagingContentController;
-  late PagingController<int, Comment> _pagingCommentController;
-  bool seeExpertPost = false;
+  late PagingController<int, Post> _pagingPostController1;
+  late PagingController<int, Post> _pagingPostController2;
 
   @override
   void initState() {
     super.initState();
-     seeExpertPost =  context.read<SettingBloc>().state.seeExpertPost ?? false;
     _tabController = TabController(length: 2, vsync: this);
-     _pagingContentController = PagingController<int, Content>(firstPageKey: 0);
-     _pagingCommentController = PagingController<int, Comment>(firstPageKey: 0);
-    _pagingContentController.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchContent(_pagingContentController, 0, 20, null);
+    _pagingPostController1 = PagingController<int, Post>(firstPageKey: 0);
+    _pagingPostController2 = PagingController<int, Post>(firstPageKey: 0);
+    _pagingPostController1.addPageRequestListener((pageKey) {
+      HomeBloc.fetchPosts(_pagingPostController1, 10, 0 ,null, 1, null, null, pageKey);
     });
-    _pagingCommentController.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchComment(_pagingCommentController, null, null, "my", 20);
+    _pagingPostController2.addPageRequestListener((pageKey) {
+      HomeBloc.fetchPosts(_pagingPostController2, 10, 1 ,null, 1, null, null, pageKey);
     });
   }
 
   @override
   void dispose() {
     if (_tabController != null) _tabController!.dispose();
-    _pagingContentController.dispose();
-    _pagingCommentController.dispose();
+    _pagingPostController1.dispose();
+    _pagingPostController2.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-    print("build");
     return Container(
-      height: MediaQuery.of(context).size.height - 170,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Theme.of(context).colorScheme.primary,
       ),
       child: Column(
         children: [
-          const SizedBox(
-            height: 10,
-          ),
           SizedBox(
             height: 60,
             child: TabBar(
@@ -85,10 +75,10 @@ class _MainTabBarState extends State<MainTabBar>
               tabs: [
                 Tab(
                     text: AppLocalizations.of(context)!
-                        .translateNested('notifications', 'content')),
+                        .translateNested('profileScreen', 'normalContent'),),
                 Tab(
                     text: AppLocalizations.of(context)!
-                        .translateNested('profileScreen', 'comments')),
+                        .translateNested('profileScreen', 'expertContent')),
               ],
             ),
           ),
@@ -106,8 +96,8 @@ class _MainTabBarState extends State<MainTabBar>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  seeExpertPost? ContentCustomTabBar(): Contents(pagingController: _pagingContentController),
-                  seeExpertPost? CommentCustomTabBar(): Comments(pagingController: _pagingCommentController),
+                   PostList(key: UniqueKey(), pagingController: _pagingPostController1),
+                   PostList(key: UniqueKey(), pagingController: _pagingPostController2),
                 ],
               ),
             ),

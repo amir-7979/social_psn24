@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../configs/setting/setting_bloc.dart';
 import '../../../widgets/shimmer.dart';
 
 class ShimmerEditNormalUser extends StatelessWidget {
@@ -26,9 +28,9 @@ class ShimmerEditNormalUser extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               shimmerContainer(context,
-                  width: 150, height: 20, radius: 16),
+                  width: 200, height: 25, radius: 16),
               const SizedBox(height: 8),
               Container(
                 height: 1,
@@ -56,19 +58,34 @@ class ShimmerEditNormalUser extends StatelessWidget {
               Padding(
                 padding:
                 const EdgeInsetsDirectional.only(bottom: 16.0),
-                child: shimmerContainer(context, width: double.infinity, height: 40, radius: 8),
+                child: shimmerContainer(context, width: double.infinity, height: 50, radius: 8),
               ),
               Padding(
                 padding:
                 const EdgeInsetsDirectional.only(bottom: 16.0),
-                child: shimmerContainer(context, width: double.infinity, height: 40, radius: 8),
+                child: shimmerContainer(context, width: double.infinity, height: 50, radius: 8),
               ),
               Padding(
                 padding:
                 const EdgeInsetsDirectional.only(bottom: 16.0),
-                child: shimmerContainer(context, width: double.infinity, height: 40, radius: 8),
+                child: shimmerContainer(context, width: double.infinity, height: 50, radius: 8),
               ),
-            ],
+              BlocProvider.of<SettingBloc>(context).state.seeExpertPost ?? false ? Column(
+                children: [
+                  Padding(
+                    padding:
+                    const EdgeInsetsDirectional.only(bottom: 16.0),
+                    child: shimmerContainer(context, width: double.infinity, height: 50, radius: 8),
+                  ),
+                  Padding(
+                    padding:
+                    const EdgeInsetsDirectional.only(bottom: 16.0),
+                    child: shimmerContainer(context, width: double.infinity, height: 50, radius: 8),
+                  ),
+                ],
+              ) : const SizedBox(),
+
+      ],
           ),
           const SizedBox(height: 16),
           Row(

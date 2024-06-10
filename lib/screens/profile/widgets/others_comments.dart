@@ -3,10 +3,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:social_psn/repos/models/comment.dart';
 
 import '../../../configs/localization/app_localizations.dart';
-import 'comment_item.dart';
 import 'others_comment_item.dart';
 import 'shimmer/shimmer_comment_item.dart';
-import 'shimmer/shimmer_content_item.dart';
 
 class OthersComments extends StatelessWidget {
   final PagingController<int, Comment> pagingController;

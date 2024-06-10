@@ -24,7 +24,7 @@ class SettingState {
   get isUserLoggedIn => token != '';
   get getProfile => profile;
   get getPermissions => permissions;
-   get isExpert {
+   get seeExpertPost {
      if (permissions?.permissions != null) {
        for (var permission in permissions!.permissions!) {
          if (permission.id == 25 || permission.id == 29) {

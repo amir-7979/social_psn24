@@ -5,7 +5,6 @@ import 'package:social_psn/repos/models/comment.dart';
 import '../../../configs/localization/app_localizations.dart';
 import 'comment_item.dart';
 import 'shimmer/shimmer_comment_item.dart';
-import 'shimmer/shimmer_content_item.dart';
 
 class Comments extends StatelessWidget {
   final PagingController<int, Comment> pagingController;

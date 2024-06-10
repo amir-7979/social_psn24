@@ -6,6 +6,7 @@ import 'package:social_psn/screens/profile/widgets/comments.dart';
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../repos/models/comment.dart';
 import '../../profile_bloc.dart';
+// ignore: unused_import
 import '../others_comments.dart';
 
 class CommentCustomTabBar extends StatefulWidget {
@@ -24,10 +25,10 @@ class _CommentCustomTabBarState extends State<CommentCustomTabBar> {
   @override
   void initState() {
     _pagingController0.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchComment(_pagingController0, null, null, "my",0, 20);
+      ProfileBloc.fetchComment(_pagingController0, null, null, "my", 20);
     });
     _pagingController1.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchComment(_pagingController1, null, null, "my",0, 20);
+      ProfileBloc.fetchComment(_pagingController1, null, null, "my", 20);
     });
     super.initState();
   }
@@ -105,6 +106,8 @@ class _CommentCustomTabBarState extends State<CommentCustomTabBar> {
 
   @override
   void dispose() {
+    _pagingController0.dispose();
+    _pagingController1.dispose();
     customSegmentedController.dispose();
     super.dispose();
   }

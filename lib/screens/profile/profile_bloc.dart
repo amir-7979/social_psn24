@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -9,7 +8,6 @@ import 'package:meta/meta.dart';
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/comment.dart';
 import '../../repos/models/content.dart';
-import '../../repos/models/liked.dart';
 import '../../repos/models/user_permissions.dart';
 import '../../repos/models/profile.dart';
 import '../../repos/repositories/profile_repository.dart';
@@ -24,16 +22,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GraphQLClient graphQLService = GraphQLService.instance.client;
   final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
   final SettingBloc settingBloc;
-  String? photoUrl;
 
   ProfileBloc(this.settingBloc) : super(ProfileInitial()) {
     on<FetchProfile>(fetchProfile);
+    on<FetchProfileForEditScreen>(fetchProfileForEditScreen);
     on<NavigateToEditProfile>(navigateToEditProfile);
     on<NavigateToInitialScreen>(navigateToInitialScreen);
     on<EditProfile>(handleEditProfileEvent);
     on<DeletePost>(handleDeletePost);
     on<ChangeStatusEvent>(handleChangeStatusEvent);
-    on<PhotoUploadEvent>(_handlePhotoUploadEvent);
   }
 
   Future<void> handleDeletePost(event, emit) async {
@@ -59,18 +56,36 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(ProfileInfoLoading());
     try {
       final QueryOptions options = getUserProfile(event.id);
-      print('here');
 
       final QueryResult result = await coreGraphQLService.query(options);
       if (result.data == null) {
         emit(ProfileError('خطا در دریافت اطلاعات'));
         return;
       }
+      await Future.delayed(Duration(seconds: 2));
       final Map<String, dynamic> data = result.data!;
       final Profile profile = Profile.fromJson(data['profile']);
       emit(ProfileInfoLoaded(profile: profile));
     } catch (exception) {
       emit(ProfileError('خطا در دریافت اطلاعات'));
+    }
+  }
+
+  FutureOr<void> fetchProfileForEditScreen(FetchProfileForEditScreen event, Emitter<ProfileState> emit) async {
+    emit(NewProfileInfoLoading());
+    try {
+      final QueryOptions options = getUserProfile(event.id);
+
+      final QueryResult result = await coreGraphQLService.query(options);
+      if (result.data == null) {
+        emit(NewProfileError('خطا در دریافت اطلاعات'));
+        return;
+      }
+      final Map<String, dynamic> data = result.data!;
+      final Profile profile = Profile.fromJson(data['profile']);
+      emit(NewProfileInfoLoaded(profile: profile));
+    } catch (exception) {
+      emit(NewProfileError('خطا در دریافت اطلاعات'));
     }
   }
 
@@ -80,27 +95,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final MutationOptions options = editUser(
         event.name,
         event.family,
-        "@${event.id}",
-        photoUrl,
+        "@${event.username}",
+        event.photoUrl,
         event.biography,
-        event.field,
         event.experience,
-        event.address,
-        event.office,
-        event.showActivity,
-        event.username,
       );
       final QueryResult result = await coreGraphQLService.mutate(options);
-      print(result.data.toString());
       if (result.hasException) {
         emit(EditProfileError('خطا در ثبت اطلاعات'));
         return;
       }
-      final Map<String, dynamic> data = result.data!;
-      final Profile profile = Profile.fromJson(data['editUser']);
-      photoUrl = null;
-      settingBloc.add(FetchUserProfileWithPermissionsEvent());
-      emit(EditProfileInfoLoaded(profile: profile, userPermissions: null));
+
+      emit(EditProfileInfoLoaded());
     } catch (exception) {
       print(exception.toString());
       emit(EditProfileError('خطا در ثبت اطلاعات'));
@@ -129,10 +135,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  static Future<void> fetchComment(PagingController<int, Comment> pagingController, String? postId, int? userId, String type, int offset, int limit) async {
+  static Future<void> fetchComment(PagingController<int, Comment> pagingController, String? postId, int? userId, String type, int limit) async {
     try {
-      await Future.delayed(const Duration(seconds: 4));
-      final QueryOptions options = getCommentsWithPostData(postId, userId, type, limit, offset);
+      final QueryOptions options = getCommentsWithPostData(postId, userId, type, limit, pagingController.nextPageKey!);
       final QueryResult result = await GraphQLService.instance.client.query(options);
       final List<Comment> comments = (result.data?['comments'] as List<dynamic>?)
           ?.map((dynamic item) => Comment.fromJson(item as Map<String, dynamic>)).toList() ?? [];
@@ -171,8 +176,5 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  Future<void> _handlePhotoUploadEvent(PhotoUploadEvent event, Emitter<ProfileState> emit) async {
-    photoUrl = event.file??null;
-  }
 
 }

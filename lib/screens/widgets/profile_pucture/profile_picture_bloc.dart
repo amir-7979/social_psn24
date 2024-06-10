@@ -30,7 +30,7 @@ class ProfilePictureBloc extends Bloc<ProfilePictureEvent, ProfilePictureState> 
         emit(ProfilePictureFailure('Error uploading image'));
       } else {
         print('result: ${result.data.toString()}');
-        emit(ProfilePictureSuccess(result.data!['uploadProfileImage']));
+        emit(ProfilePictureSuccess('https://media.psn24.ir/${result.data!['uploadProfileImage']}'));
       }
     } catch (e) {
       emit(ProfilePictureFailure(e.toString()));

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:social_psn/services/storage_service.dart';
@@ -8,7 +7,6 @@ import '../../repos/models/profile.dart';
 import '../../repos/models/user_permissions.dart';
 import '../../repos/repositories/profile_repository.dart';
 import '../../services/core_graphql_service.dart';
-import '../../services/graphql_service.dart';
 
 part 'setting_event.dart';
 part 'setting_state.dart';

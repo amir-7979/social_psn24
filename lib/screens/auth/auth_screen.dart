@@ -25,37 +25,35 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: BlocProvider<AuthBloc>(
-        create: (context) => AuthBloc(BlocProvider.of<SettingBloc>(context)),
-        child: Padding(
-          padding: const EdgeInsetsDirectional.all(16),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Theme.of(context).colorScheme.background,
-            ),
-            child: Stack(
-              children: [
-                Visibility(
-                  visible: _currentIndex == 0,
-                  child: Login(_changeIndex),
-                  maintainState: false,
-                ),
-                Visibility(
-                  visible: _currentIndex == 1,
-                  child: Verify(_changeIndex), // You might need to pass the phoneNumber here
-                  maintainState: false,
-                ),
-                Visibility(
-                  visible: _currentIndex == 2,
-                  child: Register(_changeIndex),
-                  maintainState: false,
-                ),
-              ],
-            ),
+    return BlocProvider<AuthBloc>(
+      create: (context) => AuthBloc(BlocProvider.of<SettingBloc>(context)),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.all(16),
+        child: Container(
+          height: double.infinity,
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Theme.of(context).colorScheme.background,
+          ),
+          child: Stack(
+            children: [
+              Visibility(
+                visible: _currentIndex == 0,
+                child: Login(_changeIndex),
+                maintainState: false,
+              ),
+              Visibility(
+                visible: _currentIndex == 1,
+                child: Verify(_changeIndex), // You might need to pass the phoneNumber here
+                maintainState: false,
+              ),
+              Visibility(
+                visible: _currentIndex == 2,
+                child: Register(_changeIndex),
+                maintainState: false,
+              ),
+            ],
           ),
         ),
       ),
