@@ -85,7 +85,6 @@ class _MainTabBarState extends State<MainTabBar>
           const SizedBox(height: 10),
           Expanded(
             child: Container(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 16, 10, 0),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.transparent),
                 color: Theme.of(context).colorScheme.background,

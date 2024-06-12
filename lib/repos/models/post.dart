@@ -1,16 +1,19 @@
+import 'package:shamsi_date/shamsi_date.dart';
+
 import 'creator.dart';
 import 'media.dart';
 
 class Post {
-  final String? id;
+  final String id;
   final int? tagId;
   final String? name;
   final String? description;
   final String? createdAt;
-  final bool? currentUserLiked;
-  final bool? currentUserUpVotes;
-  final bool? currentUserDownVotes;
-  final bool? currentUserNotificationEnabled;
+  final String? persianDate;
+   bool? currentUserLiked;
+   bool? currentUserUpVotes;
+   bool? currentUserDownVotes;
+   bool? currentUserNotificationEnabled;
   final int? postType;
   final bool? isPublish;
   final int? commentsCount;
@@ -22,11 +25,12 @@ class Post {
 
 
   Post({
-    this.id,
+    required this.id,
     this.tagId,
     this.name,
     this.description,
     this.createdAt,
+    this.persianDate,
     this.currentUserLiked,
     this.currentUserUpVotes,
     this.currentUserDownVotes,
@@ -42,12 +46,17 @@ class Post {
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
+    String createdAt = json['created_at'];
+    Jalali jalaliDate = Jalali.fromDateTime(DateTime.parse(createdAt));
+    String formattedPersianDate = '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}';
+
     return Post(
       id: json['id'],
       tagId: json['tag_id'],
       name: json['name'],
       description: json['description'],
-      createdAt: json['created_at'],
+      createdAt: createdAt,
+      persianDate: formattedPersianDate,
       currentUserLiked: json['current_user_liked'],
       currentUserUpVotes: json['current_user_up_votes'],
       currentUserDownVotes: json['current_user_down_votes'],

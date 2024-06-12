@@ -166,6 +166,7 @@ final ThemeData darkTheme = ThemeData(
 
 const cameraBackgroundColor = Color(0xFFCCEDFB);
 const imageBackgroundColor = Color(0xFFF5F9FF);
+const shadowPopUpColor = Color(0x26ffffff);
 
 const whiteColor = Colors.white;
 const blackColor = Colors.black;

@@ -23,14 +23,10 @@ class _PostScreenState extends State<PostScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
-      print(seeExpertPost);
       _pagingPostController1!.addPageRequestListener((pageKey) {
         HomeBloc.fetchPosts(_pagingPostController1!, 10, 0 ,null, 1, null, null, pageKey);
       });
-      if(seeExpertPost){
 
-      }
     });
   }
 
@@ -41,6 +37,7 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
     return seeExpertPost ? MainTabBar() : PostList(pagingController: _pagingPostController1!);
   }
 }

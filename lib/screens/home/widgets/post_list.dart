@@ -21,7 +21,7 @@ class PostList extends StatelessWidget {
         }
       },
       child: PagedListView<int, Post>(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 10, 10),
         pagingController: pagingController,
         builderDelegate: PagedChildBuilderDelegate<Post>(
           itemBuilder: (context, item, index) => PostItem(item),

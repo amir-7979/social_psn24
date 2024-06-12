@@ -99,6 +99,7 @@ flutter:
     - assets/images/profile/
     - assets/images/drawer/
     - assets/images/notification/
+    - assets/images/post/
 
   fonts:
     - family: IRANSansXV

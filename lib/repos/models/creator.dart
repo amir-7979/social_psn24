@@ -24,7 +24,7 @@ class Creator {
       id: json['id'],
       name: json['name'],
       family: json['family'],
-      username: '@' + json['username'],
+      username: json['username'],
       photo: json['photo'],
       online: json['online'],
       displayName: json['display_name'],
