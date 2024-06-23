@@ -71,15 +71,13 @@ class _MainTabBarState extends State<MainTabBar>
               ),
               labelColor: whiteColor,
               dividerColor: Colors.transparent,
-              labelStyle: iranYekanTheme.displaySmall!.copyWith(
+              labelStyle: iranYekanTheme.headlineMedium!.copyWith(
                 color: whiteColor,
-                fontWeight: FontWeight.w700,
               ),
               controller: _tabController,
               labelPadding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
-              unselectedLabelStyle: iranYekanTheme.displaySmall!.copyWith(
+              unselectedLabelStyle: iranYekanTheme.headlineMedium!.copyWith(
                 color: whiteColor,
-                fontWeight: FontWeight.w700,
               ),
               indicatorPadding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 10),
               tabs: [

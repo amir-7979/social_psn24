@@ -28,10 +28,10 @@ class _MainTabBarState extends State<MainTabBar>
     _pagingPostController1 = PagingController<int, Post>(firstPageKey: 0);
     _pagingPostController2 = PagingController<int, Post>(firstPageKey: 0);
     _pagingPostController1.addPageRequestListener((pageKey) {
-      HomeBloc.fetchPosts(_pagingPostController1, 10, 0 ,null, 1, null, null, pageKey);
+      HomeBloc.fetchPosts(_pagingPostController1, 10, 0 ,null, null, null, null);
     });
     _pagingPostController2.addPageRequestListener((pageKey) {
-      HomeBloc.fetchPosts(_pagingPostController2, 10, 1 ,null, 1, null, null, pageKey);
+      HomeBloc.fetchPosts(_pagingPostController2, 10, 1 ,null, null, null, null);
     });
   }
 
@@ -61,16 +61,15 @@ class _MainTabBarState extends State<MainTabBar>
               ),
               labelColor: whiteColor,
               dividerColor: Colors.transparent,
-              labelStyle: iranYekanTheme.displaySmall!.copyWith(
+              labelStyle: iranYekanTheme.headlineMedium!.copyWith(
                 color: whiteColor,
-                fontWeight: FontWeight.w700,
               ),
               controller: _tabController,
               labelPadding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
-              unselectedLabelStyle: iranYekanTheme.displaySmall!.copyWith(
+              unselectedLabelStyle: iranYekanTheme.headlineMedium!.copyWith(
                 color: whiteColor,
-                fontWeight: FontWeight.w700,
               ),
+
               indicatorPadding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 10),
               tabs: [
                 Tab(
@@ -95,8 +94,8 @@ class _MainTabBarState extends State<MainTabBar>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                   PostList(key: UniqueKey(), pagingController: _pagingPostController1),
-                   PostList(key: UniqueKey(), pagingController: _pagingPostController2),
+                   PostList(key: UniqueKey(), pagingController: _pagingPostController1, scrollController: ScrollController()),
+                   PostList(key: UniqueKey(), pagingController: _pagingPostController2, scrollController: ScrollController()),
                 ],
               ),
             ),

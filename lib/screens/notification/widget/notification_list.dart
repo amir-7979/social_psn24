@@ -1,35 +1,36 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../configs/localization/app_localizations.dart';
-import '../../../../configs/setting/themes.dart';
+import '../../../configs/localization/app_localizations.dart';
+import '../../../configs/setting/themes.dart';
+import '../../../repos/models/notification.dart';
+import '../notification_bloc.dart';
 import 'notification_item.dart';
 
-class NotificationBody extends StatefulWidget {
+
+class NotificationList extends StatefulWidget {
   @override
-  State<NotificationBody> createState() => _NotificationBodyState();
+  State<NotificationList> createState() => _NotificationListState();
 }
 
-class _NotificationBodyState extends State<NotificationBody>
+class _NotificationListState extends State<NotificationList>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
   CustomSegmentedController<int> customSegmentedController =
-      CustomSegmentedController(value: 0);
+  CustomSegmentedController(value: 0);
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    context.read<NotificationBloc>().add(LoadNotifications(null, false, null));
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 330,
       height: 612,
       child: Stack(
         children: [
@@ -40,7 +41,6 @@ class _NotificationBodyState extends State<NotificationBody>
                 color: Colors.transparent, // Changed color to transparent
               ),
               Container(
-                width: 330,
                 height: 562,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
@@ -83,7 +83,7 @@ class _NotificationBodyState extends State<NotificationBody>
                       controller: _tabController,
                       labelPadding: const EdgeInsetsDirectional.all(0),
                       unselectedLabelStyle:
-                          iranYekanTheme.headlineMedium!.copyWith(
+                      iranYekanTheme.headlineMedium!.copyWith(
                         color: whiteColor,
                         fontWeight: FontWeight.w700,
                       ),
@@ -100,7 +100,7 @@ class _NotificationBodyState extends State<NotificationBody>
                     Expanded(
                       child: Container(
                         padding:
-                            const EdgeInsetsDirectional.fromSTEB(10, 16, 10, 0),
+                        const EdgeInsetsDirectional.fromSTEB(10, 16, 10, 0),
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.transparent),
                           color: Theme.of(context).colorScheme.background,
@@ -215,10 +215,10 @@ class _NotificationBodyState extends State<NotificationBody>
         child: Text(
           text,
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                color: customSegmentedController.value == index
-                    ? Theme.of(context).colorScheme.tertiary
-                    : Theme.of(context).colorScheme.shadow,
-              ),
+            color: customSegmentedController.value == index
+                ? Theme.of(context).colorScheme.tertiary
+                : Theme.of(context).colorScheme.shadow,
+          ),
         ),
       ),
     );
@@ -227,52 +227,39 @@ class _NotificationBodyState extends State<NotificationBody>
   Widget buildBody(int index) {
     switch (index) {
       case 0:
-        return listItems();
+        return listItems([]);
       case 1:
         return Container();
       default:
-        return listItems();
+        return listItems([]);
     }
   }
 
-  Widget listItems() {
-    return Expanded(
-      child: ListView(
-        children: [
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Alert.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Danger.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=image.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Sound.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Success.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Text.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Video.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Alert.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Danger.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=image.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Sound.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Success.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Text.png'),
-          NotificationItem('assets/images/notification/user.png',
-              'assets/images/notification/Type=Video.png'),
-        ],
+Widget listItems(List<MyNotification> notifications) {
+  return Expanded(
+    child: ListView.separated(
+      separatorBuilder: (context, index) => Container(
+        height: 1,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).colorScheme.surface.withOpacity(0),
+              Theme.of(context).colorScheme.surface.withOpacity(0.1),
+              Theme.of(context).colorScheme.surface.withOpacity(0.2),
+              Theme.of(context).colorScheme.surface.withOpacity(0.3),
+              Theme.of(context).colorScheme.surface.withOpacity(0.4),
+            ],
+            stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+          ),
+        ),
       ),
-    );
-  }
-
-  @override
+      itemCount: notifications.length,
+      itemBuilder: (context, index) {
+        return NotificationItem(notifications[index]);
+      },
+    ),
+  );
+}  @override
   void dispose() {
     _tabController?.dispose();
     customSegmentedController.dispose();

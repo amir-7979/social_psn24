@@ -166,19 +166,6 @@ MutationOptions editUser(
   );
 }
 
-MutationOptions deleteAccount(String name) {
-  return MutationOptions(
-    document: gql('''
-      mutation deleteAccount(\$name: String) {
-        editUser(name: \$name, delete: 1) {
-          id
-        }
-      }
-    '''),
-    variables: {'name': name},
-    fetchPolicy: FetchPolicy.noCache, // Add this line
-  );
-}
 
 MutationOptions toggleAllowNotification(
     String name, String family, int notification) {
@@ -238,20 +225,6 @@ Future<MultipartFile> multipartFileFrom(File file) async {
   return multipartFile;
 }
 
-MutationOptions enableNotification(int userId) {
-  return MutationOptions(
-    document: gql('''
-      mutation enableNotification(\$userId: Int) {
-        createEnNotification(user_id: \$userId) {
-          id
-        }
-      }
-    '''),
-    variables: {'userId': userId},
-    fetchPolicy: FetchPolicy.noCache, // Add this line
-  );
-}
-
 MutationOptions deletePost(String id) {
   return MutationOptions(
     document: gql('''
@@ -264,24 +237,18 @@ MutationOptions deletePost(String id) {
   );
 }
 
-MutationOptions fetchUserPermissionsMutation() {
+MutationOptions cooperate(String name, String phone) {
   return MutationOptions(
     document: gql('''
-      mutation {
-        userPermissions {
-          id, name, display_name,
-          permissions {
-            id, name,
-          }
-          role,
-          settings {
-            id, options
-          }
+      mutation cooperate(\$name: String, \$phone: String) {
+        ContactUs(name: \$name, email: \$phone) {
+          name,
+          email,
         }
       }
     '''),
+    variables: {'name': name, 'phone': phone},
     fetchPolicy: FetchPolicy.noCache,
-
   );
-
 }
+

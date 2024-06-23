@@ -1,6 +1,6 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-QueryOptions postsQuery({String? id, int? isPublish, int? tagId, String? search, int? limit, int? offset, int? postType}) {
+QueryOptions postsQuery({String? id, int? isPublish, String? tagId, String? search, int? limit, int? offset, int? postType}) {
   Map<String, dynamic> variables = {};
   if (id != null) variables['id'] = id;
   if (isPublish != null) variables['isPublish'] = isPublish;
@@ -12,7 +12,7 @@ QueryOptions postsQuery({String? id, int? isPublish, int? tagId, String? search,
 
   return QueryOptions(
     document: gql('''
-        query postsQuery(\$id: String, \$isPublish: Int, \$tagId: Int, \$search: String, \$limit: Int, \$offset: Int, \$postType: Int) {
+        query postsQuery(\$id: String, \$isPublish: Int, \$tagId: String, \$search: String, \$limit: Int, \$offset: Int, \$postType: Int) {
           posts(id: \$id, is_publish: \$isPublish, tag_id: \$tagId, search: \$search, limit: \$limit, offset: \$offset, post_type: \$postType) {
             id, tag_id, name, description, created_at, current_user_liked, current_user_up_votes, current_user_down_votes, current_user_notification_enabled, post_type, is_publish,
             comments_count, down_votes, up_votes, view_count, medias {

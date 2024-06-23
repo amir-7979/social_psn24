@@ -5,15 +5,11 @@ import 'package:social_psn/screens/interest/widgets/interest_item.dart';
 import 'package:social_psn/screens/profile/widgets/shimmer/shimmer_content_item.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/liked.dart';
+import '../../widgets/new_page_progress_indicator.dart';
 
 class Interests extends StatelessWidget {
-
-
   final PagingController<int, Liked> pagingController;
-
   const Interests({required this.pagingController});
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,14 +76,7 @@ class Interests extends StatelessWidget {
                         itemBuilder: (context, index) => ShimmerContentItem(),
                       ),
                     ),
-                    newPageProgressIndicatorBuilder: (context) => Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 10),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                    ),
+                    newPageProgressIndicatorBuilder: (context) => NewPageProgressIndicator(),
                     newPageErrorIndicatorBuilder: (context) => Center(
                       child: Text(
                         AppLocalizations.of(context)!

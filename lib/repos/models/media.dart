@@ -22,12 +22,23 @@ class Media {
 
   String? getMediaUrl() {
     if (type!.contains('image') && loc != null) {
-      return url + (loc??'');
-    } else if (type!.contains('video') && thumbnails != null &&  thumbnails!.isNotEmpty) {
-      return thumbnails![0].loc == null ? null : url + (thumbnails![0].loc??'');
-    }else{
+      return url + (loc ?? '');
+    } else if (type!.contains('video') &&
+        thumbnails != null &&
+        thumbnails!.isNotEmpty) {
+      return thumbnails![0].loc == null
+          ? null
+          : url + (thumbnails![0].loc ?? '');
+    } else {
       return null;
     }
-    }
+  }
 
+  String? getVideoUrl() {
+    if (type!.contains('video') && loc != null) {
+      return url + (loc ?? '');
+    } else {
+      return null;
+    }
+  }
 }

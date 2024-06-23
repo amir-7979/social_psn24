@@ -8,15 +8,20 @@ import '../home_bloc.dart';
 import 'post_list.dart';
 
 class PostScreen extends StatefulWidget {
-  const PostScreen({super.key});
+  final Function refreshIndex;
+
+  PostScreen(this.refreshIndex);
 
   @override
   State<PostScreen> createState() => _PostScreenState();
 }
 
-class _PostScreenState extends State<PostScreen> {
+class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMixin{
   late bool seeExpertPost;
   PagingController<int, Post>?_pagingPostController1 = PagingController<int, Post>(firstPageKey: 0);
+
+  @override
+  bool get wantKeepAlive => true;
 
 
   @override
@@ -24,7 +29,7 @@ class _PostScreenState extends State<PostScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _pagingPostController1!.addPageRequestListener((pageKey) {
-        HomeBloc.fetchPosts(_pagingPostController1!, 10, 0 ,null, 1, null, null, pageKey);
+        HomeBloc.fetchPosts(_pagingPostController1!, 10, 0 ,null, null, null, null);
       });
 
     });
@@ -38,6 +43,6 @@ class _PostScreenState extends State<PostScreen> {
   @override
   Widget build(BuildContext context) {
     seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
-    return seeExpertPost ? MainTabBar() : PostList(pagingController: _pagingPostController1!);
+    return seeExpertPost ? MainTabBar() : PostList(pagingController: _pagingPostController1!, scrollController: ScrollController());
   }
 }

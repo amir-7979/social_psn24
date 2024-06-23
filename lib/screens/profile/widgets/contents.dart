@@ -4,6 +4,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/content.dart';
+import '../../widgets/new_page_progress_indicator.dart';
 import '../profile_bloc.dart';
 import 'content_item.dart';
 import 'shimmer/shimmer_content_item.dart';
@@ -47,14 +48,7 @@ class Contents extends StatelessWidget {
               itemBuilder: (context, index) => ShimmerContentItem(),
             ),
           ),
-          newPageProgressIndicatorBuilder: (context) => Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 10),
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
+          newPageProgressIndicatorBuilder: (context) => NewPageProgressIndicator(),
           newPageErrorIndicatorBuilder: (context) => Center(
             child: Text(
               AppLocalizations.of(context)!

@@ -7,7 +7,7 @@ import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
 import '../main_bloc.dart';
-import 'notification/notification_body.dart';
+import '../../notification/notification_screen.dart';
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
@@ -61,7 +61,7 @@ AppBar buildAppBar(BuildContext context) {
                 context: context,
                 builder: (BuildContext context) {
                   return Dialog(
-                    child: NotificationBody(),
+                    child: NotificationScreen(),
                   );
                 });
           },
@@ -87,7 +87,6 @@ AppBar buildAppBar(BuildContext context) {
                     surfaceTintColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                     insetAnimationDuration: Duration.zero,
-
                     child: SizedBox(
                         height: 110,
                         child: SearchWidget()),

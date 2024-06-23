@@ -20,7 +20,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     on<SettingLanguageEvent>(_handleSettingLanguageEvent);
     on<UpdateLoginStatus>(_handleUpdateLoginStatus);
     on<ClearInfo>(_handelClearUserInformation);
-    on<FetchUserProfileWithPermissionsEvent>(_fetchUserProfileWithPermissions); // Add this line
+    on<FetchUserProfileWithPermissionsEvent>(_fetchUserProfileWithPermissions);
     _loadSettingsFromStorage();
   }
 

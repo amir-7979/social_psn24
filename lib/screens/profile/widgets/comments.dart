@@ -3,6 +3,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:social_psn/repos/models/comment.dart';
 
 import '../../../configs/localization/app_localizations.dart';
+import '../../widgets/new_page_progress_indicator.dart';
 import 'comment_item.dart';
 import 'shimmer/shimmer_comment_item.dart';
 
@@ -24,13 +25,7 @@ class Comments extends StatelessWidget {
             itemBuilder: (context, index) => ShimmerCommentItem(),
           ),
         ),
-        newPageProgressIndicatorBuilder: (context) => Center(
-          child: Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
+        newPageProgressIndicatorBuilder: (context) => NewPageProgressIndicator(),
         newPageErrorIndicatorBuilder: (context) => Center(
           child: Text(
             AppLocalizations.of(context)!

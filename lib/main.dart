@@ -14,6 +14,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         builder: (context, state) {
           return SafeArea(
             child: MaterialApp(
+              navigatorKey: navigatorKey,
               routes: routes,
               title: 'social psn',
               debugShowCheckedModeBanner: false,

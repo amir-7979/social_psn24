@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:social_psn/screens/auth/auth_screen.dart';
 import 'package:social_psn/screens/main/widgets/guest_drawer_widget.dart';
 import 'package:social_psn/screens/main/widgets/user_drawer_widget.dart';
 import '../../configs/setting/setting_bloc.dart';
