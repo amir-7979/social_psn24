@@ -24,6 +24,8 @@ class SettingState {
   get isUserLoggedIn => token != '';
   get getProfile => profile;
   get getPermissions => permissions;
+   get languageCode => language == AppLanguage.english ? 'en' : 'fa';
+
    get seeExpertPost {
      if (permissions?.permissions != null) {
        for (var permission in permissions!.permissions!) {

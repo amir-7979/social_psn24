@@ -32,6 +32,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       settingBloc.add(ClearInfo());
       emit(LogoutState());
     });
+    on<CreateMedia>((event, emit) {
+      emit(GoCreateMediaState());
+    });
   }
   //delete info
 

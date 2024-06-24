@@ -66,6 +66,7 @@ dependencies:
   visibility_detector: ^0.4.0+2
   inview_notifier_list: ^3.0.0
   equatable: ^2.0.5
+  dotted_border: ^2.1.0
 
 
 dev_dependencies:

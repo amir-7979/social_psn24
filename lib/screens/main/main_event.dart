@@ -14,4 +14,6 @@ class AuthenticationClicked extends MainEvent {}
 
 class InterestClicked extends MainEvent {}
 
+class CreateMedia extends MainEvent {}
+
 class LogoutClicked extends MainEvent {} // New event for logout

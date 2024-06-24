@@ -83,7 +83,7 @@ class _MainTabBarState extends State<MainTabBar>
               tabs: [
                 Tab(
                     text: AppLocalizations.of(context)!
-                        .translateNested('notifications', 'content')),
+                        .translateNested('bottomBar', 'content')),
                 Tab(
                     text: AppLocalizations.of(context)!
                         .translateNested('profileScreen', 'comments')),

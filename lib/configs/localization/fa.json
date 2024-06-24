@@ -5,7 +5,19 @@
     "profile": "پروفایل",
     "home": "خانه",
     "charity": "نیکوکاری",
-    "consultation": "مشاوره"
+    "consultation": "مشاوره",
+    "content": "محتوا"
+  },
+
+  "createMedia": {
+    "createMedia": "ایجاد گفتگو",
+    "title": "عنوان",
+    "category": "دسته بندی",
+    "text": "متن",
+    "upload": "فایل های خود را در این قسمت بارگذاری نمایید",
+    "type": "نوع محتوا",
+    "general": "عمومی",
+    "expert": "تخصصی"
   },
 
   "drawer": {
@@ -33,7 +45,8 @@
     "myNotification": "اعلان های من",
     "systemNotification": "اعلان های سیستم",
     "all": "همه",
-    "content": "محتوا"
+    "comment": "نظر"
+
   },
 
   "params": {

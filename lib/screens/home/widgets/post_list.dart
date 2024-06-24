@@ -36,7 +36,7 @@ class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin 
           }
         },
         child: PagedListView<int, Post>(
-          padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 10, 10),
+          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
           scrollController: widget.scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           pagingController: widget.pagingController,

@@ -17,6 +17,10 @@ class InterestState extends MainState {
   InterestState() : super(2);
 }
 
+class GoCreateMediaState extends MainState {
+  GoCreateMediaState() : super(2);
+}
+
 class LogoutState extends MainState { // New state for logout
   LogoutState() : super(1);
 }
