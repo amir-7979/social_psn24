@@ -41,4 +41,24 @@ class Media {
       return null;
     }
   }
+
+  String? getAudioUrl() {
+    if (type!.contains('audio') && loc != null) {
+      return url + (loc ?? '');
+    } else {
+      return null;
+    }
+  }
+
+  String? getThumbnailUrl() {
+    if (type!.contains('video') &&
+        thumbnails != null &&
+        thumbnails!.isNotEmpty) {
+      return thumbnails![0].loc == null
+          ? null
+          : url + (thumbnails![0].loc ?? '');
+    } else {
+      return null;
+    }
+  }
 }

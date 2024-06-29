@@ -4,16 +4,15 @@ import 'package:flutter_svg/svg.dart';
 
 class CacheImage extends StatelessWidget {
   final String? url;
-  double? width;
-  double? height;
 
-  CacheImage(this.url);
+
+  CacheImage(this.url,);
 
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: url ?? '',
-      fit: BoxFit.cover,
+      fit: BoxFit.contain,
       errorWidget: (context, url, error) =>
           SvgPicture.asset('assets/images/profile/placeholder.svg', fit: BoxFit.cover,),
     );

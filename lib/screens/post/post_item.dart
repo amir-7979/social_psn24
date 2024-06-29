@@ -238,7 +238,7 @@ class _PostItemState extends State<PostItem> {
                                 widget.post.isNotificationEnabled ? FaIcon(
                                     size: 20,
                                     FontAwesomeIcons.solidBell,
-                                    color: Theme.of(context).colorScheme.error
+                                    color: Theme.of(context).colorScheme.tertiary
                                 ):FaIcon(
                                     size: 20,
                                     FontAwesomeIcons.lightBell,
@@ -307,7 +307,7 @@ class _PostItemState extends State<PostItem> {
                   ),
                 ],
               ),
-              widget.post.medias == null || widget.post.medias!.isEmpty ? SizedBox(height: 40) :
+              widget.post.medias == null || widget.post.medias!.isEmpty ? SizedBox(height: 24) :
               Padding(
                 padding: const EdgeInsetsDirectional.symmetric(vertical: 16),
                 child: MediaLoader(medias: widget.post.medias),
@@ -331,6 +331,7 @@ class _PostItemState extends State<PostItem> {
                 builder: (BuildContext context, BoxConstraints constraints) {
                   final style = Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.shadow,
+                    fontWeight: FontWeight.w500,
                     height: 1.5
                   );
                   final textHeight = measureTextHeight(
@@ -350,6 +351,7 @@ class _PostItemState extends State<PostItem> {
                             Text(
                               widget.post.description??'',
                               overflow: TextOverflow.ellipsis,
+
                               maxLines: 2,
                               style: style,
                             ),
@@ -401,7 +403,7 @@ class _PostItemState extends State<PostItem> {
                   );
                 },
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsetsDirectional.only(start: 10),
                 child: Row(
@@ -475,7 +477,7 @@ class _PostItemState extends State<PostItem> {
                               child: widget.post.voteDown == true ? FaIcon(
                                 size: 30,
                                 FontAwesomeIcons.solidThumbsDown,
-                                color: Theme.of(context).colorScheme.error
+                                color: Theme.of(context).hoverColor,
 
                               ) : FaIcon(
                                   size: 30,
@@ -517,7 +519,7 @@ class _PostItemState extends State<PostItem> {
                               child: widget.post.voteUp == true ? FaIcon(
                                   size: 30,
                                   FontAwesomeIcons.solidThumbsUp,
-                                  color: Theme.of(context).colorScheme.error
+                                  color: Theme.of(context).hoverColor
                               ) : FaIcon(
                                   size: 30,
                                   FontAwesomeIcons.thinThumbsUp,
@@ -542,9 +544,9 @@ class _PostItemState extends State<PostItem> {
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                       colors: [
+                        Theme.of(context).colorScheme.shadow.withOpacity(0.02),
                         Theme.of(context).colorScheme.shadow.withOpacity(0.1),
-                        Theme.of(context).colorScheme.shadow.withOpacity(0.3),
-                        Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+                        Theme.of(context).colorScheme.shadow.withOpacity(0.02),
                       ],
                     ),
                   ),

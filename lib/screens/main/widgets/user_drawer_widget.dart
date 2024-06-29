@@ -332,7 +332,7 @@ class UserDrawer extends StatelessWidget {
                           child: FittedBox(
                             fit: BoxFit.cover,
                             child:
-                            SvgPicture.asset('assets/images/drawer/exit.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
+                            SvgPicture.asset('assets/images/drawer/exit.svg', color: Theme.of(context).brightness == Brightness.light ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.error),
                           ),
                         ),
                         title: Text(
@@ -341,7 +341,7 @@ class UserDrawer extends StatelessWidget {
                           style:
                           Theme.of(context).textTheme.headlineMedium!.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: Theme.of(context).hoverColor,
+                            color:Theme.of(context).colorScheme.error,
                           ),
                         ),
                         onTap: () {

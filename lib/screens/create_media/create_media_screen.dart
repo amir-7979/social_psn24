@@ -139,7 +139,7 @@ class _CreateMediaScreenState extends State<CreateMediaScreen> {
                       decoration: InputDecoration(
                         label: Text(
                           AppLocalizations.of(context)!
-                              .translateNested("params", "category"),
+                              .translateNested("createMedia", "category"),
                           style:
                           Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w400,

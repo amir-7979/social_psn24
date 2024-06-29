@@ -94,8 +94,8 @@ class _MainTabBarState extends State<MainTabBar>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                   PostList(key: UniqueKey(), pagingController: _pagingPostController1, scrollController: ScrollController()),
-                   PostList(key: UniqueKey(), pagingController: _pagingPostController2, scrollController: ScrollController()),
+                   PostList(pagingController: _pagingPostController1, scrollController: ScrollController()),
+                   PostList(pagingController: _pagingPostController2, scrollController: ScrollController()),
                 ],
               ),
             ),

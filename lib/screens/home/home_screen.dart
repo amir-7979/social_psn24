@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/screens/home/widgets/post_screen.dart';
+import '../post/post_detailed.dart';
 import 'home_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -38,16 +39,17 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
           children: [
             Visibility(
               visible: _currentIndex == 0,
+              child: PostScreen(changeIndex), // Pass _changeIndex to PostDetailScreen
+              maintainState: false,
+            ),
+
+            Visibility(
+              visible: _currentIndex == 1,
               child: PostScreen(changeIndex),
               maintainState: false,
             ),
-/*
-              Visibility(
-                visible: _currentIndex == 1,
-                child: PostDetailScreen(changeIndex), // Pass _changeIndex to PostDetailScreen
-                maintainState: false,
-              ),
-*/
+
+
           ],
         ),
       ),

@@ -3,18 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../repos/models/media.dart';
-import 'cached_network_image.dart';
 
-class MyVideoPlayer extends StatefulWidget {
+class MyAudioPlayer extends StatefulWidget {
   final Media media;
 
-  MyVideoPlayer({required this.media});
+  MyAudioPlayer({required this.media});
 
   @override
-  State<MyVideoPlayer> createState() => _MyVideoPlayerState();
+  State<MyAudioPlayer> createState() => _MyAudioPlayerState();
 }
 
-class _MyVideoPlayerState extends State<MyVideoPlayer> {
+class _MyAudioPlayerState extends State<MyAudioPlayer> {
   late FlickManager flickManager;
 
 
@@ -23,10 +22,9 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
     super.initState();
     flickManager = FlickManager(
       videoPlayerController:
-      VideoPlayerController.networkUrl(Uri.parse(widget.media.getVideoUrl() ?? ''), videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: false),),
+      VideoPlayerController.networkUrl(Uri.parse(widget.media.getAudioUrl() ?? '')),
       autoPlay: false,
       autoInitialize: true,
-
     );
   }
 
@@ -43,12 +41,6 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
       flickManager: flickManager,
       flickVideoWithControls: FlickVideoWithControls(
         controls: FlickPortraitControls(),
-        aspectRatioWhenLoading: 16 / 9,
-        /*playerLoadingFallback: Center(
-          child: CacheImage(widget.media.getThumbnailUrl()), // Use your custom CachedNetworkImage widget as a placeholder
-        ),*/
-        //backgroundColor: Theme.of(context).colorScheme.background,
-        //videoFit: BoxFit.fill,
       ),
     );
   }
