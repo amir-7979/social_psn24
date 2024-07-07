@@ -8,32 +8,33 @@ import 'configs/setting/setting_bloc.dart';
 import 'configs/setting/themes.dart';
 import 'screens/main/main_screen.dart';
 
-
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MultiBlocProvider(
       providers: [
         BlocProvider<SettingBloc>(
-          create: (context) => SettingBloc()..add(FetchUserProfileWithPermissionsEvent()),
+          create: (context) =>
+              SettingBloc()..add(FetchUserProfileWithPermissionsEvent()),
         ),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (context, state) {
           return SafeArea(
             child: MaterialApp(
-              navigatorKey: navigatorKey,
-              routes: routes,
+              color: Theme.of(context).scaffoldBackgroundColor,
+
               title: 'social psn',
               debugShowCheckedModeBanner: false,
-              theme: state.theme == AppTheme.light ? lightTheme : darkTheme, // Use your custom light theme
+              theme: state.theme == AppTheme.light ? lightTheme : darkTheme,
+              // Use your custom light theme
               locale: state.language == AppLanguage.english
                   ? Locale('en', 'US')
                   : Locale('fa', 'IR'),

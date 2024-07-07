@@ -4,13 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
-
-import '../../../configs/consts.dart';
-import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/setting/themes.dart';
-import '../../widgets/custom_snackbar.dart';
-import '../../widgets/profile_cached_network_image.dart';
-import '../main_bloc.dart';
+import '../../configs/consts.dart';
+import '../../configs/localization/app_localizations.dart';
+import '../../configs/setting/themes.dart';
+import '../main/widgets/screen_builder.dart';
+import 'custom_snackbar.dart';
+import 'profile_cached_network_image.dart';
 
 class UserDrawer extends StatelessWidget {
   final BuildContext snackBarContext;
@@ -171,7 +170,8 @@ class UserDrawer extends StatelessWidget {
                             color: Theme.of(context).hoverColor,
                           ),
                         ),
-                        onTap: () {context.read<MainBloc>().add(InterestClicked());
+                        onTap: () {
+                          Navigator.of(context).pushNamed(AppRoutes.interest);
                         Navigator.pop(context);},
                       ),
                       ListTile(
@@ -410,9 +410,9 @@ class UserDrawer extends StatelessWidget {
                                       ),
                                     ),
                                     onPressed: () {
-                                      dialogContext.read<MainBloc>().add(LogoutClicked());
-                                      dialogContext
-                                          .read<MainBloc>().add(MainUpdate(1));
+                                      dialogContext.read<SettingBloc>().add(ClearInfo());
+                                      Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+
                                       Navigator.pop(context);
                                     },
                                   ),

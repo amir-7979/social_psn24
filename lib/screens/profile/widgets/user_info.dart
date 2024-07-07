@@ -36,6 +36,7 @@ class _UserInfoState extends State<UserInfo>
   late Animation<double> _animation;
   Widget? _lastWidget;
   bool _checked = false;
+  bool _isProfileFetched = false;
 
   @override
   void initState() {
@@ -53,8 +54,18 @@ class _UserInfoState extends State<UserInfo>
         _checked = advanceSwitchController.value;
       });
     });
-    context
-        .read<ProfileBloc>().add(FetchProfile());
+
+    }
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isProfileFetched) {
+      final int? profileId = ModalRoute.of(context)?.settings.arguments as int?;
+      context.read<ProfileBloc>().add(FetchProfile(id: profileId));
+      _isProfileFetched = true;
+    }
   }
 
   @override
@@ -65,6 +76,7 @@ class _UserInfoState extends State<UserInfo>
 
   @override
   Widget build(BuildContext context) {
+
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is ProfileError) {

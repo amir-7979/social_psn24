@@ -113,6 +113,8 @@ final ThemeData lightTheme = ThemeData(
   shadow: Colors.black,
   surface: Color(0xFFA0AFC7),
   onError: Colors.white,
+  onPrimaryContainer: Color(0xFFF5F9FF),
+  onSurface: Color(0xFFe6f0ff),
 
 ),
 );
@@ -158,9 +160,13 @@ final ThemeData darkTheme = ThemeData(
   tertiary: Color(0xFF00A6ED),
   error: Color(0xFFFF4D6D),
   errorContainer: Color(0xFFFF9770),
-  shadow: Colors.white ,
-  surface: Color(0xFFA0AFC7),
+  shadow: Colors.white,
+    onPrimaryContainer: Color(0xFF121212),
+    onSurface: Color(0xFF353535),
+
+    surface: Color(0xFFA0AFC7),
     onError: Colors.white,
+
 )
 );
 

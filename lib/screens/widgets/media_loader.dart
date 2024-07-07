@@ -77,7 +77,7 @@ class _MediaLoaderState extends State<MediaLoader> {
               position: _currentIndex.toInt(),
               decorator: DotsDecorator(
                 size: const Size.square(6.0),
-                activeSize: const Size.square(6.0),
+                activeSize: const Size.square(8.0),
                 spacing: EdgeInsets.all(4.0),
                 activeColor: Theme.of(context).primaryColor,
               ),

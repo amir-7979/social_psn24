@@ -16,6 +16,8 @@ class Comments extends StatelessWidget {
     return PagedListView<int, Comment>(
       padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
       pagingController: pagingController,
+      physics: ClampingScrollPhysics(),
+
       builderDelegate: PagedChildBuilderDelegate<Comment>(
         itemBuilder: (context, item, index) => CommentItem(item),
         firstPageProgressIndicatorBuilder: (context) => SizedBox(

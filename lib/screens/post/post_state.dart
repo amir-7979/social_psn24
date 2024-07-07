@@ -24,3 +24,4 @@ class UserVoteUpFailureState extends PostState {}
 class UserVoteDownSuccessState extends PostState {}
 
 class UserVoteDownFailureState extends PostState {}
+

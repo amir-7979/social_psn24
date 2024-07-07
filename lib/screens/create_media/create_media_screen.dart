@@ -2,10 +2,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/themes.dart';
-import '../main/main_bloc.dart';
 import '../widgets/white_circular_progress_indicator.dart';
 import 'create_media_bloc.dart';
 
@@ -359,10 +357,7 @@ class _CreateMediaScreenState extends State<CreateMediaScreen> {
                         height: 45,
                         child: ElevatedButton(
                           onPressed: () {
-                            //return to last widget
-                            BlocProvider.of<MainBloc>(context)
-                                .add(MainUpdate(1));
-
+                            Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             shadowColor: Colors.transparent,

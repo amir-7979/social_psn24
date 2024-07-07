@@ -25,7 +25,7 @@ class CommentItem extends StatelessWidget {
             width: 50,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: selectImage(comment.post.medias??[]),
+              child: selectImage(comment.post?.medias??[]),
             ),
           ),
           const SizedBox(width: 16),
@@ -39,7 +39,7 @@ class CommentItem extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        comment.post.name,
+                        comment.post?.name??'',
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               color: Theme.of(context).hoverColor,
                               fontWeight: FontWeight.w500,
@@ -55,7 +55,7 @@ class CommentItem extends StatelessWidget {
                     ),
                     SizedBox(width: 6),
                     Text(
-                      comment.persianDate,
+                      comment.persianDate??'',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: Theme.of(context).colorScheme.surface,
                             fontWeight: FontWeight.w400,
@@ -95,7 +95,7 @@ class CommentItem extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            comment.message,
+                            comment.message??'',
                             style:
                                 Theme.of(context).textTheme.bodyLarge!.copyWith(
                                       color: Theme.of(context).hoverColor,
@@ -109,8 +109,7 @@ class CommentItem extends StatelessWidget {
                 ),
                 if (comment.replies != null)
                   for (Reply reply in comment.replies!)
-                    replyWidget(context, reply),
-
+                    if(reply.message != null) replyWidget(context, reply),
                 SizedBox(height: 32),
               ],
             ),
@@ -172,7 +171,7 @@ class CommentItem extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    reply.message,
+                    reply.message??'',
                     style:
                     Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: Theme.of(context).hoverColor,

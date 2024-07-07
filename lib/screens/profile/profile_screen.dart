@@ -19,27 +19,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  initState() {
+    super.initState();
+    //get argomans from navigation
+    /*final String? id = ModalRoute.of(context)!.settings.arguments as String?;
+    print(id);*/
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context)),
-      child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
-        child: Container(
-          child: Stack(
-            children: [
-              Visibility(
-                visible: _currentIndex == 0,
-                child: UserScreen(_changeIndex),
-                maintainState: false,
-              ),
-              Visibility(
-                visible: _currentIndex == 1,
-                child: EditNormalUser(_changeIndex),
-                maintainState: false,
-              ),
-            ],
-          ),
+
+
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
+      child: Container(
+        child: Stack(
+          children: [
+            Visibility(
+              visible: _currentIndex == 0,
+              child: UserScreen(_changeIndex),
+              maintainState: false,
+            ),
+            Visibility(
+              visible: _currentIndex == 1,
+              child: EditNormalUser(_changeIndex),
+              maintainState: false,
+            ),
+          ],
         ),
       ),
     );

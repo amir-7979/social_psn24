@@ -20,7 +20,6 @@ class SearchWidget extends StatelessWidget {
                 color: Theme.of(context).hintColor,
               ),
               hintText: AppLocalizations.of(context)!.translateNested('drawer', 'search'),
-
               suffixIcon: GestureDetector(
                 onTap: (){},
                 child: Padding(

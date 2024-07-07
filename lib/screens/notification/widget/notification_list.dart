@@ -182,7 +182,7 @@ class _NotificationListState extends State<NotificationList>
                 0),
             1: secondaryTabItem(
                 AppLocalizations.of(context)!
-                    .translateNested('notifications', 'content'),
+                    .translateNested('bottomBar', 'content'),
                 1),
             2: secondaryTabItem(
                 AppLocalizations.of(context)!

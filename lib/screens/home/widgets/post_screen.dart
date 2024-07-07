@@ -8,9 +8,7 @@ import '../home_bloc.dart';
 import 'post_list.dart';
 
 class PostScreen extends StatefulWidget {
-  final Function refreshIndex;
 
-  PostScreen(this.refreshIndex);
 
   @override
   State<PostScreen> createState() => _PostScreenState();

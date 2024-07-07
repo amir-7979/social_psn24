@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
 
 import '../../configs/localization/app_localizations.dart';
-import '../main/main_bloc.dart';
 import 'auth_bloc.dart';
 import 'widgets/login.dart';
 import 'widgets/register.dart';
@@ -36,25 +35,7 @@ class _AuthScreenState extends State<AuthScreen> {
             borderRadius: BorderRadius.circular(16),
             color: Theme.of(context).colorScheme.background,
           ),
-          child: Stack(
-            children: [
-              Visibility(
-                visible: _currentIndex == 0,
-                child: Login(_changeIndex),
-                maintainState: false,
-              ),
-              Visibility(
-                visible: _currentIndex == 1,
-                child: Verify(_changeIndex), // You might need to pass the phoneNumber here
-                maintainState: false,
-              ),
-              Visibility(
-                visible: _currentIndex == 2,
-                child: Register(_changeIndex),
-                maintainState: false,
-              ),
-            ],
-          ),
+          child: Container()
         ),
       ),
     );

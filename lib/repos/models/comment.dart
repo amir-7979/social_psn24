@@ -2,15 +2,17 @@ import 'package:shamsi_date/shamsi_date.dart';
 
 import 'post_details.dart';
 import 'reply.dart';
+import 'sender.dart';
 
 class Comment {
-  final String id;
-  final String message;
-  final String createdAt;
-  final String persianDate;
+  final String? id;
+  final String? message;
+  final String? createdAt;
+  final String? persianDate;
   final String? replyTo;
   final List<Reply>? replies;
-  final PostDetails post;
+  final PostDetails? post;
+  final Sender? sender;
 
   Comment({
     required this.id,
@@ -19,13 +21,13 @@ class Comment {
     required this.persianDate,
     this.replyTo,
     this.replies,
-    required this.post,
+    this.post,
+    this.sender,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     String createdAt = json['created_at'];
     Jalali jalaliDate = Jalali.fromDateTime(DateTime.parse(createdAt));
-
     String formattedPersianDate = '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}';
 
     return Comment(
@@ -39,7 +41,9 @@ class Comment {
               .map((item) => Reply.fromJson(item as Map<String, dynamic>))
               .toList()
           : null,
-      post: PostDetails.fromJson(json['post_id']),
+      post: json['post_id'] != null ? PostDetails.fromJson(json['post_id']) : null,
+      sender: json['sender_id'] != null ? Sender.fromJson(json['sender_id']) : null,
+
     );
   }
 }

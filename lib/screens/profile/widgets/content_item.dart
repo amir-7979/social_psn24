@@ -1,13 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/configs/setting/themes.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/content.dart';
-import '../../main/main_bloc.dart';
 import '../../widgets/selectImge.dart';
 import '../profile_bloc.dart';
 
@@ -131,9 +128,6 @@ class ContentItem extends StatelessWidget {
                   onTap: () async {
                     BlocProvider.of<ProfileBloc>(context)
                         .add(DeletePost(content.id ?? ''));
-                    BlocProvider.of<MainBloc>(context).add(MainUpdate(0));
-
-
                   },
                   value: 2,
                   padding: EdgeInsets.symmetric(horizontal: 10),

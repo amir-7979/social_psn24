@@ -15,8 +15,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   HomeBloc() : super(HomeInitialState()) {
     on<RefreshPostsEvent>(_onRefreshPostsEvent);
+    on<RefreshIndexEvent>(_onRefreshIndexEvent);
 
   }
+   Future<void> _onRefreshIndexEvent(RefreshIndexEvent event, Emitter<HomeState> emit) async {
+     emit(goToDetailedPostState(event.post));
+   }
 
   Future<void> _onRefreshPostsEvent(RefreshPostsEvent event, Emitter<HomeState> emit) async {
     emit(PostRefreshSuccess());
@@ -47,4 +51,5 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 }
+
 }

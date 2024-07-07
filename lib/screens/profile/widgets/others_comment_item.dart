@@ -111,7 +111,7 @@ class OthersCommentItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          comment.message,
+                          comment.message??'',
                           style:
                               Theme.of(context).textTheme.bodyLarge!.copyWith(
                                     color: Theme.of(context).hoverColor,

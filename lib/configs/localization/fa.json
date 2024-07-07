@@ -131,9 +131,16 @@
     "notification": "دریافت اعلان",
     "delete_notification": "عدم دریافت اعلان",
     "share": "اشتراک گذاری",
-    "show_more": "نمایش بیشتر"
+    "show_more": "نمایش بیشتر",
+    "reply": "پاسخ دادن",
+    "send": "ارسال",
+    "comment_text": "متن نظر..."
+
 
   },
+
+
+
 
   "error": {
     "3": "نوع داده ورودی باید عددی باشد",
@@ -168,6 +175,7 @@
     "media_count_voice": "نمی‌توان بیشتر از {count} صوت آپلود کرد",
     "NetworkException" : "خطا در اتصال به اینترنت",
     "notEmpty" : "این فیلد نمی‌تواند خالی باشد",
-    "profileUploadException" : "خطا در بارگذاری عکس"
+    "profileUploadException" : "خطا در بارگذاری عکس",
+    "commentError": "خطا در ارسال نظر"
   }
 }

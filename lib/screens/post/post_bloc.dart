@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
+import '../../repos/models/comment.dart';
 import '../../repos/repositories/post_repository.dart';
 import '../../services/graphql_service.dart';
 part 'post_event.dart';
@@ -48,7 +50,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
-
   FutureOr<void> _onUserVoteUpEvent(UserVoteUpEvent event, Emitter<PostState> emit) async {
     try {
       final MutationOptions options = votePost(postId: event.postId, type: event.voteType);
@@ -75,6 +76,34 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       }
     } catch (e) {
       emit(UserVoteDownFailureState());
+    }
+  }
+
+  static Future<void> fetchComments(PagingController<int, Comment> pagingController, String postId, int limit, String? postType) async {
+    try {
+      final QueryOptions options = getComments(postId: postId, limit: limit, offset: pagingController.nextPageKey, type: postType);
+      final QueryResult result = await GraphQLService.instance.client.query(options);
+      if (result.hasException) {
+        print(result.exception);
+        pagingController.error = result.exception;
+      }
+      print(result.data);
+      final List<Comment> posts = (result.data?['comments'] as List<dynamic>?)
+          ?.map((dynamic item) => Comment.fromJson(item as Map<String, dynamic>)).toList() ?? [];
+      final isLastPage = posts.length < limit;
+      if (isLastPage) {
+        pagingController.appendLastPage(posts);
+      } else {
+        final nextPageKey = pagingController.nextPageKey! + posts.length;
+        pagingController.appendPage(posts, nextPageKey);
+      }
+    } catch (error) {
+      try {
+        print(error);
+        pagingController.error = error;
+      } catch (e) {
+        print(e.toString());
+      }
     }
   }
 

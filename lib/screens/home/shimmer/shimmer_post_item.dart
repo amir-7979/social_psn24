@@ -21,9 +21,9 @@ class ShimmerPostItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   shimmerContainer(context, width: 120, height: 10, radius: 16),
-                  SizedBox(height: 5),
+                  SizedBox(height: 6),
                   shimmerContainer(context, width: 50, height: 10, radius: 16),
-                  SizedBox(height: 5),
+                  SizedBox(height: 6),
                   shimmerContainer(context, width: 70, height: 10, radius: 16),
                 ],
               ),
@@ -37,8 +37,8 @@ class ShimmerPostItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsetsDirectional.symmetric(vertical: 16),
             child: shimmerContainer(context,
-                width: 400, height: 240, radius: 8),),
-          shimmerContainer(context, width: 150, height: 17, radius: 16),
+                width: 400, height: 220, radius: 8),),
+          shimmerContainer(context, width: 150, height: 15, radius: 16),
           SizedBox(height: 10),
           shimmerContainer(context, width: double.infinity, height: 11, radius: 16),
           SizedBox(height: 5),
@@ -49,11 +49,11 @@ class ShimmerPostItem extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                shimmerCircular(context, size: 38),
+                shimmerContainer(context,width : 36, height: 36, radius: 12),
                 SizedBox(width: 15),
-                shimmerCircular(context, size: 38),
+                shimmerContainer(context,width : 36, height: 36, radius: 12),
                 SizedBox(width: 15),
-                shimmerCircular(context, size: 38),
+                shimmerContainer(context,width : 36, height: 36, radius: 12),
                 SizedBox(width: 15),
               ],
             ),

@@ -6,3 +6,9 @@ class LoadPostsEvent extends HomeEvent {}
 
 class RefreshPostsEvent extends HomeEvent {}
 
+class RefreshIndexEvent extends HomeEvent {
+  final Post post;
+
+  RefreshIndexEvent(this.post);
+}
+

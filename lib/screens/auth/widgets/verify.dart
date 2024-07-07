@@ -7,141 +7,164 @@ import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../../configs/localization/app_localizations.dart';
+import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
+import '../../main/widgets/screen_builder.dart';
 import '../../widgets/white_circular_progress_indicator.dart';
 import '../auth_bloc.dart';
 
 class Verify extends StatefulWidget {
-  String? phoneNumber;
-  final Function changeIndex;
-
-  Verify(this.changeIndex,{this.phoneNumber});
   @override
   State<Verify> createState() => _VerifyState();
 }
 
 class _VerifyState extends State<Verify> {
+  late final String? phoneNumber;
+
   final TextEditingController _codeController = TextEditingController();
+
+  initState() {
+    super.initState();
+    phoneNumber = ModalRoute.of(context)!.settings.arguments as String?;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(height: 16),
-          Text(
-            AppLocalizations.of(context)!.translateNested("auth", "verify"),
-            style: iranYekanTheme.displayLarge!.copyWith(
-              color: Theme.of(context).primaryColor,
-              fontWeight: FontWeight.w900,
-              fontSize: 24,
-            ),
+    return BlocProvider<AuthBloc>(
+      create: (context) => AuthBloc(BlocProvider.of<SettingBloc>(context)),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.all(16),
+        child: Container(
+          height: double.infinity,
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Theme.of(context).colorScheme.background,
           ),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(top: 16.0),
-            child: SizedBox(
-              height: 270,
-              width: 270,
-              child: Center(
-                  child: SvgPicture.asset(
-                'assets/images/profile/logo.svg',
-                color: Theme.of(context).primaryColor,
-              )),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.symmetric(vertical: 16.0),
-            child: BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                return Text(
-                  AppLocalizations.of(context)!.translateNestedWithVariable(
-                      'auth',
-                      'insertCode',
-                      {'mobileNumber': widget.phoneNumber ?? ''}),
-                  textAlign: TextAlign.center,
-                  style:
-                      Theme.of(context).textTheme.headlineSmall!.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).hoverColor,
-                          ),
-                );
-              },
-            ),
-          ),
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: BlocConsumer<AuthBloc, AuthState>(
-              listener: (context, state) {
-                if (state is AuthResetPin) {
-                  setState(() {_codeController.clear();});
-                }else if (state is AuthRegisterState) {
-                  widget.changeIndex(2);
-                }else if(state is AuthLoginState){
-                  widget.changeIndex(0);
-                }
-              },
-              builder: (context, state) {
-                return PinCodeTextField(
-                  length: 5,
-                  controller: _codeController,
-                  obscureText: false,
-                  animationType: AnimationType.scale,
-                  keyboardType: TextInputType.number,
-                  cursorColor: Theme.of(context).colorScheme.shadow,
-                  pinTheme: PinTheme(
-                    shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(8),
-                    fieldHeight: 50,
-                    fieldWidth: 47,
-                    activeFillColor:
-                        Theme.of(context).colorScheme.background,
-                    inactiveFillColor:
-                        Theme.of(context).colorScheme.background,
-                    selectedFillColor:
-                        Theme.of(context).colorScheme.background,
-                    activeColor: Theme.of(context).hintColor,
-                    inactiveColor: Theme.of(context).hintColor,
-                    selectedColor: Theme.of(context).primaryColor,
-                    errorBorderColor: Theme.of(context).colorScheme.error,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(height: 16),
+                Text(
+                  AppLocalizations.of(context)!
+                      .translateNested("auth", "verify"),
+                  style: iranYekanTheme.displayLarge!.copyWith(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 24,
                   ),
-                  animationDuration: const Duration(milliseconds: 200),
-                  backgroundColor: Colors.transparent,
-                  enableActiveFill: true,
-                  onCompleted: (v) {
-                    if (state is! AuthLoading) {
-                      BlocProvider.of<AuthBloc>(context)
-                          .add(VerifyTokenEvent(v));
-                    }
-                  },
-                  beforeTextPaste: (text) {
-                    return true;
-                  },
-                  appContext: context,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.symmetric(vertical: 16.0),
-            child: TimerWidget(widget.phoneNumber.toString()),
-          ),
-          TextButton(
-            onPressed: () {
-              BlocProvider.of<AuthBloc>(context).add(GotoLoginEvent());
-            },
-            child: Text(
-              AppLocalizations.of(context)!
-                  .translateNested("auth", "changePhoneNumber"),
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: Theme.of(context).colorScheme.primary,
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(top: 16.0),
+                  child: SizedBox(
+                    height: 270,
+                    width: 270,
+                    child: Center(
+                        child: SvgPicture.asset(
+                      'assets/images/profile/logo.svg',
+                      color: Theme.of(context).primaryColor,
+                    )),
                   ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsetsDirectional.symmetric(vertical: 16.0),
+                  child: BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return Text(
+                        AppLocalizations.of(context)!
+                            .translateNestedWithVariable('auth', 'insertCode',
+                                {'mobileNumber': phoneNumber ?? ''}),
+                        textAlign: TextAlign.center,
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: Theme.of(context).hoverColor,
+                                ),
+                      );
+                    },
+                  ),
+                ),
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: BlocConsumer<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthResetPin) {
+                        setState(() {
+                          _codeController.clear();
+                        });
+                      } else if (state is AuthRegisterState) {
+                        Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+                      } else if (state is AuthLoginState) {
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    builder: (context, state) {
+                      return PinCodeTextField(
+                        length: 5,
+                        controller: _codeController,
+                        obscureText: false,
+                        animationType: AnimationType.scale,
+                        keyboardType: TextInputType.number,
+                        cursorColor: Theme.of(context).colorScheme.shadow,
+                        pinTheme: PinTheme(
+                          shape: PinCodeFieldShape.box,
+                          borderRadius: BorderRadius.circular(8),
+                          fieldHeight: 50,
+                          fieldWidth: 47,
+                          activeFillColor:
+                              Theme.of(context).colorScheme.background,
+                          inactiveFillColor:
+                              Theme.of(context).colorScheme.background,
+                          selectedFillColor:
+                              Theme.of(context).colorScheme.background,
+                          activeColor: Theme.of(context).hintColor,
+                          inactiveColor: Theme.of(context).hintColor,
+                          selectedColor: Theme.of(context).primaryColor,
+                          errorBorderColor: Theme.of(context).colorScheme.error,
+                        ),
+                        animationDuration: const Duration(milliseconds: 200),
+                        backgroundColor: Colors.transparent,
+                        enableActiveFill: true,
+                        onCompleted: (v) {
+                          if (state is! AuthLoading) {
+                            BlocProvider.of<AuthBloc>(context)
+                                .add(VerifyTokenEvent(v));
+                          }
+                        },
+                        beforeTextPaste: (text) {
+                          return true;
+                        },
+                        appContext: context,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsetsDirectional.symmetric(vertical: 16.0),
+                  child: TimerWidget(phoneNumber.toString()),
+                ),
+                TextButton(
+                  onPressed: () {
+                    BlocProvider.of<AuthBloc>(context).add(GotoLoginEvent());
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!
+                        .translateNested("auth", "changePhoneNumber"),
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                  ),
+                )
+              ],
             ),
-          )
-        ],
+          ),
+        ),
       ),
     );
   }

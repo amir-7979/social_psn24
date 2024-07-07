@@ -30,10 +30,8 @@ class _ProfilePictureState extends State<ProfilePicture> {
   Future<File?> _cropImage(String imageAddress, context) async {
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: imageAddress,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-      ],
-      cropStyle: CropStyle.circle,
+      aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0), // Use aspectRatio instead of aspectRatioPresets
+
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: '',
@@ -45,9 +43,11 @@ class _ProfilePictureState extends State<ProfilePicture> {
           hideBottomControls: true,
           cropGridColor: Colors.transparent,
           cropFrameColor: Theme.of(context).colorScheme.tertiary,
+          cropStyle: CropStyle.rectangle,
         ),
         IOSUiSettings(
           title: '',
+          cropStyle: CropStyle.rectangle,
         ),
       ],
     );

@@ -9,23 +9,31 @@ import '../profile_bloc.dart';
 import 'content_item.dart';
 import 'shimmer/shimmer_content_item.dart';
 
-class Contents extends StatelessWidget {
+class Contents extends StatefulWidget {
   final PagingController<int, Content> pagingController;
 
   const Contents({super.key, required this.pagingController});
 
   @override
+  State<Contents> createState() => _ContentsState();
+}
+
+class _ContentsState extends State<Contents> {
+  @override
   Widget build(BuildContext context) {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is PostDeleteSuccess) {
-          pagingController.refresh();
+          setState(() {
+            widget.pagingController.refresh();
+          });
         }
       },
       child: PagedGridView<int, Content>(
         showNewPageProgressIndicatorAsGridChild: false,
         padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-        pagingController: pagingController,
+        pagingController: widget.pagingController,
+        physics: ClampingScrollPhysics(),
         cacheExtent: 300,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,

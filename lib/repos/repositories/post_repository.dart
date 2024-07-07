@@ -253,10 +253,10 @@ MutationOptions votePost({String? postId, String? type}) {
   );
 }
 
-MutationOptions createComment({String? postId, String? message, String? replyTo}) {
+MutationOptions createComment({required String postId, required String message, String? replyTo}) {
   Map<String, dynamic> variables = {};
-  if (postId != null) variables['postId'] = postId;
-  if (message != null) variables['message'] = message;
+  variables['postId'] = postId;
+  variables['message'] = message;
   if (replyTo != null) variables['replyTo'] = replyTo;
 
   return MutationOptions(

@@ -8,17 +8,21 @@ import 'user_info.dart';
 
 class UserScreen extends StatelessWidget {
   final Function refreshIndex;
+
   UserScreen(this.refreshIndex);
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        SizedBox(height: 16),
-        UserInfo(refreshIndex),
-        SizedBox(height: 16),
-        MainTabBar(),
-      ],
+    return BlocProvider(
+      create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context)),
+      child: ListView(
+        children: [
+          SizedBox(height: 16),
+          UserInfo(refreshIndex),
+          SizedBox(height: 16),
+          MainTabBar(),
+        ],
+      ),
     );
   }
 }

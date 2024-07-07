@@ -1,50 +1,58 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:inview_notifier_list/inview_notifier_list.dart';
+import 'package:social_psn/repos/models/comment.dart';
 import '../../../configs/localization/app_localizations.dart';
-import '../../../repos/models/post.dart';
-import '../../post/post_item.dart';
 import '../../widgets/new_page_progress_indicator.dart';
-import '../home_bloc.dart';
-import '../shimmer/shimmer_post_item.dart';
+import '../post_detailed_bloc.dart';
+import 'comment_item.dart';
+import 'comment_shimmer.dart';
 
-class PostList extends StatefulWidget {
-  final PagingController<int, Post> pagingController;
+class CommentList extends StatefulWidget {
+  final String postId;
   final ScrollController scrollController;
+  final PagingController<int, Comment> pagingController;
 
-  const PostList({super.key, required this.pagingController, required this.scrollController});
+  CommentList({
+    required this.postId,
+    required this.scrollController,
+    required this.pagingController,
+  });
 
   @override
-  State<PostList> createState() => _PostListState();
+  State<CommentList> createState() => _CommentListState();
 }
 
-class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin {
-
-  @override
-  bool get wantKeepAlive => true;
-
+class _CommentListState extends State<CommentList> {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<HomeBloc, HomeState>(
+    log('CommentList build');
+    return BlocListener<PostDetailedBloc, PostDetailedState>(
       listener: (context, state) {
-        if (state is PostRefreshSuccess) {
-          widget.pagingController.refresh();
+        print(state);
+        if (state is CommentCreated) {
+          setState(() {
+            print('CommentCreated');
+            widget.pagingController.refresh();
+          });
         }
       },
-      child: PagedListView<int, Post>(
-        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
-        scrollController: widget.scrollController,
-        physics: const AlwaysScrollableScrollPhysics(),
+      child: PagedListView<int, Comment>(
+        padding: EdgeInsets.zero,
         pagingController: widget.pagingController,
-        builderDelegate: PagedChildBuilderDelegate<Post>(
-          itemBuilder: (context, item, index) => PostItem(item),
+        scrollController: widget.scrollController,
+        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
+        builderDelegate: PagedChildBuilderDelegate<Comment>(
+          itemBuilder: (context, item, index) => CommentItem(item, widget.postId),
           firstPageProgressIndicatorBuilder: (context) =>
               SizedBox(
-                height: 400,
+                height: 500,
                 child: ListView.builder(
                   itemCount: 20,
-                  itemBuilder: (context, index) => ShimmerPostItem(),
+                  itemBuilder: (context, index) => CommentItemShimmer(),
                 ),
               ),
           newPageProgressIndicatorBuilder: (context) =>
@@ -85,7 +93,7 @@ class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin 
               Center(
                 child: Text(
                   AppLocalizations.of(context)!
-                      .translateNested("profileScreen", "noPost"),
+                      .translateNested("profileScreen", "noComment"),
                   style: Theme
                       .of(context)
                       .textTheme
@@ -99,7 +107,7 @@ class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin 
               ),
         ),
       ),
+
     );
   }
-
 }

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../configs/consts.dart';
-import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/setting/themes.dart';
-import '../../widgets/custom_snackbar.dart';
-import '../main_bloc.dart';
+import '../../configs/consts.dart';
+import '../../configs/localization/app_localizations.dart';
+import '../../configs/setting/themes.dart';
+import '../main/widgets/screen_builder.dart';
+import 'custom_snackbar.dart';
 
 class GuestDrawer extends StatelessWidget {
   final BuildContext snackBarContext;
@@ -99,7 +99,7 @@ class GuestDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      BlocProvider.of<MainBloc>(context).add(AuthenticationClicked());
+                      Navigator.of(context).pushNamed(AppRoutes.login);
                       Navigator.pop(context);
                     },
                   ),
