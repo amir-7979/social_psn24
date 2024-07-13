@@ -13,8 +13,9 @@ import 'profile_cached_network_image.dart';
 
 class UserDrawer extends StatelessWidget {
   final BuildContext snackBarContext;
+  final GlobalKey<NavigatorState> navigatorKey;
 
-  UserDrawer(this.snackBarContext);
+  UserDrawer(this.snackBarContext, this.navigatorKey);
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +172,7 @@ class UserDrawer extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          Navigator.of(context).pushNamed(AppRoutes.interest);
+                          navigatorKey.currentState!.pushNamed(AppRoutes.interest);
                         Navigator.pop(context);},
                       ),
                       ListTile(
@@ -199,9 +200,7 @@ class UserDrawer extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          /*
-                              BlocProvider.of<MainBloc>(context).add(CooperatingClicked());
-              */
+                          navigatorKey.currentState!.pushNamed(AppRoutes.cooperate);
                           Navigator.pop(context);
                         },
                       ),

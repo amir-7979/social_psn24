@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:social_psn/configs/setting/themes.dart';
+import 'package:social_psn/screens/main/widgets/screen_builder.dart';
 import 'package:social_psn/screens/profile/profile_bloc.dart';
 
 import '../../../configs/localization/app_localizations.dart';
@@ -19,9 +20,7 @@ import '../../widgets/profile_cached_network_image.dart';
 import 'shimmer/shimmer_user_info.dart';
 
 class UserInfo extends StatefulWidget {
-  final Function refreshIndex;
-
-  UserInfo(this.refreshIndex);
+  UserInfo();
 
   @override
   State<UserInfo> createState() => _UserInfoState();
@@ -577,7 +576,7 @@ class _UserInfoState extends State<UserInfo>
                     ),
                   ),
                   onPressed: () {
-                   widget.refreshIndex(1);
+                   Navigator.pushNamed(context, AppRoutes.editProfile, arguments: profile);
                   },
                   child: Text(
                     AppLocalizations.of(context)!

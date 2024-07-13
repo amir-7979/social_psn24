@@ -6,6 +6,7 @@ import 'package:social_psn/configs/setting/themes.dart';
 
 import '../../../repos/models/content.dart';
 import '../../../repos/models/liked.dart';
+import '../../main/widgets/screen_builder.dart';
 import '../../widgets/cached_network_image.dart';
 import '../../widgets/selectImge.dart';
 
@@ -18,7 +19,9 @@ class InterestItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // todo go to media screen
+        Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: <String, dynamic>{
+          'postId': liked.id,
+        },);
       },
       child: Stack(
         children: <Widget>[

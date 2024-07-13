@@ -12,7 +12,7 @@ class CacheImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: url ?? '',
-      fit: BoxFit.contain,
+      fit: BoxFit.cover,
       errorWidget: (context, url, error) =>
           SvgPicture.asset('assets/images/profile/placeholder.svg', fit: BoxFit.cover,),
     );

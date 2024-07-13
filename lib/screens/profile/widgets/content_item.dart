@@ -5,6 +5,7 @@ import 'package:social_psn/configs/setting/themes.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/content.dart';
+import '../../main/widgets/screen_builder.dart';
 import '../../widgets/selectImge.dart';
 import '../profile_bloc.dart';
 
@@ -17,7 +18,9 @@ class ContentItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // todo go to media screen
+        Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: <String, dynamic>{
+          'postId': content.id,
+        },);
       },
       child: Stack(
         children: <Widget>[

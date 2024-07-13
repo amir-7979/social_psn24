@@ -169,7 +169,8 @@ class CommentItem extends StatelessWidget {
                                     value: postDetailedBloc,
                                     child: CommentBottomSheet(
                                         function: submitComment,
-                                        postId: postId),
+                                        postId: postId,
+                                        replyTo: comment.id),
                                   ),
                                   isScrollControlled: true,
                                   backgroundColor: Colors.transparent,

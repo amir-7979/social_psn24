@@ -1,8 +1,15 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:social_psn/screens/home/widgets/blur_widget.dart';
+import '../../configs/custom_navigator_observer.dart';
+import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/setting_bloc.dart';
+import '../../configs/setting/themes.dart';
 import '../home/home_screen.dart';
+import '../home/widgets/floating_action_button.dart';
 import '../widgets/appbar_widget.dart';
 import '../widgets/bottombar_widget.dart';
 import '../widgets/guest_drawer_widget.dart';
@@ -17,70 +24,52 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  bool _isAddButtonClicked = false;
+  bool isAddButtonClicked = false;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(1);
+  late CustomNavigatorObserver _navigatorObserver;
+  void changeAddButtonState(bool state) {
+    setState(() {
+      isAddButtonClicked = state;
+    });
+  }
+  @override
+  void initState() {
+    super.initState();
+    _navigatorObserver = CustomNavigatorObserver(_currentIndexNotifier);
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       drawer: context.read<SettingBloc>().state.isUserLoggedIn
-          ? UserDrawer(context)
-          : GuestDrawer(context),
+          ? UserDrawer(context, _navigatorKey)
+          : GuestDrawer(context, _navigatorKey),
       appBar: buildAppBar(context),
-      body: Navigator(
-        key: _navigatorKey,
-        initialRoute: AppRoutes.home,
-        onGenerateRoute: (RouteSettings settings) {
-          return MaterialPageRoute(
-              builder: routes[settings.name] ?? (context) => HomeScreen(), settings: settings);
-        },
+      body: Stack(
+        children: [
+          Navigator(
+            key: _navigatorKey,
+            initialRoute: AppRoutes.home,
+            observers: [_navigatorObserver],
+            onGenerateRoute: (RouteSettings settings) {
+              return MaterialPageRoute(
+                builder: routes[settings.name] ?? (context) => HomeScreen(),
+                settings: settings,
+              );
+            },
+          ),
+          if (isAddButtonClicked) BlurWidget(isAddButtonClicked)
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButton: LayoutBuilder(
-        builder: (context, constraints) {
-          bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
-          return isKeyboardOpen
-              ? Container() // Return an empty container when keyboard is open
-              : _isAddButtonClicked
-                  ? SizedBox(
-                      height: 55,
-                      width: 55,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          setState(() {
-                            _isAddButtonClicked = false;
-                          });
-                        },
-                        child: FaIcon(
-                            size: 22,
-                            FontAwesomeIcons.thinXmark,
-                            color: Colors.white),
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                        shape: CircleBorder(),
-                      ),
-                    )
-                  : FloatingActionButton(
-                      onPressed: () {
-                        setState(() {
-                          _isAddButtonClicked = true;
-                        });
-                      },
-                      child: FaIcon(
-                          size: 22,
-                          FontAwesomeIcons.thinPlus,
-                          color: Colors.white),
-                      backgroundColor: Theme.of(context).primaryColor,
-                      shape: CircleBorder(),
-                    );
-        },
-      ),
-      bottomNavigationBar: Builder(
-        builder: (context) {
-          return MyStylishBottomBar(_navigatorKey);
-        }
-      ),
+      floatingActionButton:
+          MyFloatingActionButton(isAddButtonClicked, changeAddButtonState),
+      bottomNavigationBar:
+      MyStylishBottomBar(_navigatorKey, _currentIndexNotifier, _navigatorObserver),
     );
   }
 }

@@ -23,27 +23,26 @@ class PostDetailedBadges extends StatefulWidget {
 class _PostDetailedBadgesState extends State<PostDetailedBadges> {
   bool? isUserLoggedIn;
 
+
   @override
   void initState() {
     super.initState();
     isUserLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn;
-
   }
 
-  void submitComment(String postId, String message, [String? replyId]){
-    BlocProvider.of<PostDetailedBloc>(context).add(
-        CreateCommentEvent(
-          postId: postId,
-          message: message,
-          replyId: replyId,
-        ));
+  void submitComment(String postId, String message, [String? replyId]) {
+    BlocProvider.of<PostDetailedBloc>(context).add(CreateCommentEvent(
+      postId: postId,
+      message: message,
+      replyId: replyId,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     var badgePosition = badges.BadgePosition.topEnd(end: -12, top: -2);
 
-    return  Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
@@ -62,12 +61,10 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
               '${widget.post.viewCount}',
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                color: Theme.of(context)
-                    .colorScheme
-                    .shadow
-                    .withOpacity(0.6),
-                fontWeight: FontWeight.w400,
-              ),
+                    color:
+                        Theme.of(context).colorScheme.shadow.withOpacity(0.6),
+                    fontWeight: FontWeight.w400,
+                  ),
             ),
           ],
         ),
@@ -77,15 +74,16 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
           children: [
             IconButton(
               onPressed: () {
-                final postDetailedBloc = BlocProvider.of<PostDetailedBloc>(context);
+                final postDetailedBloc =
+                    BlocProvider.of<PostDetailedBloc>(context);
 
                 showModalBottomSheet(
                   context: context,
-                  builder: (context) =>
-                      BlocProvider.value(
-                        value: postDetailedBloc,
-  child: CommentBottomSheet(function: submitComment ,postId: widget.post.id),
-),
+                  builder: (context) => BlocProvider.value(
+                    value: postDetailedBloc,
+                    child: CommentBottomSheet(
+                        function: submitComment, postId: widget.post.id),
+                  ),
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
                   isDismissible: true,
@@ -103,37 +101,30 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                     padding: EdgeInsetsDirectional.only(top: 3),
                     height: 20,
                     width: 20,
-                    child: BlocListener<PostDetailedBloc,
-                        PostDetailedState>(
+                    child: BlocListener<PostDetailedBloc, PostDetailedState>(
                       listener: (context, state) {
                         if (state is CommentCountRefresh) {
                           setState(() {
                             widget.post.commentsCount =
                                 widget.post.commentsCount! + 1;
-                            print('CommentCountRefresh');
                             print(widget.post.commentsCount);
                           });
                         }
                       },
                       child: Text(
-                          (widget.post.commentsCount ?? 0).toString(),
-                          overflow: TextOverflow.fade,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(
-                            color: whiteColor,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                        ),
-
+                        (widget.post.commentsCount ?? 0).toString(),
+                        overflow: TextOverflow.fade,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: whiteColor,
+                              fontWeight: FontWeight.w400,
+                            ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                      ),
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsetsDirectional.symmetric(
-                        vertical: 2),
+                    padding: const EdgeInsetsDirectional.symmetric(vertical: 2),
                     child: FaIcon(
                         size: 30,
                         FontAwesomeIcons.thinComment,
@@ -143,10 +134,18 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
             SizedBox(width: 8),
             IconButton(
               onPressed: () {
-                widget.post.voteDown =
-                widget.post.voteDown == false ? true : false;
-                widget.post.voteUp = false;
-                setState(() {});
+                setState(() {
+                widget.post.voteDown = !widget.post.voteDown;
+                if (widget.post.voteDown == true)
+                  widget.post.downVotes = widget.post.downVotes! + 1;
+                else
+                  widget.post.downVotes = widget.post.downVotes! - 1;
+                if (widget.post.voteUp == true) {
+                  widget.post.voteUp = false;
+                  widget.post.upVotes = widget.post.upVotes! - 1;
+                }
+
+                });
                 if (isUserLoggedIn == true) {
                   BlocProvider.of<PostDetailedBloc>(context)
                       .add(UserVoteDownEvent(widget.post.id, 'down'));
@@ -158,11 +157,11 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                 listener: (context, state) {
                   if (state is UserVoteDownSuccessState) {
                     widget.post.currentUserDownVotes =
-                    !widget.post.currentUserDownVotes;
+                        !widget.post.currentUserDownVotes;
+
                     widget.post.currentUserUpVotes = false;
                   }
-                  widget.post.voteDown =
-                      widget.post.currentUserDownVotes;
+                  widget.post.voteDown = widget.post.currentUserDownVotes;
                   widget.post.voteUp = widget.post.currentUserUpVotes;
                   setState(() {});
                 },
@@ -181,13 +180,10 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                     child: Text(
                       (widget.post.downVotes ?? 0).toString(),
                       overflow: TextOverflow.fade,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(
-                        color: whiteColor,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: whiteColor,
+                            fontWeight: FontWeight.w400,
+                          ),
                       textAlign: TextAlign.center,
                       maxLines: 1,
                     ),
@@ -198,16 +194,13 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                       SizedBox(height: 4),
                       widget.post.voteDown == true
                           ? FaIcon(
-                          size: 30,
-                          FontAwesomeIcons.solidThumbsDown,
-                          color:
-                          Theme.of(context).colorScheme.shadow)
+                              size: 30,
+                              FontAwesomeIcons.solidThumbsDown,
+                              color: Theme.of(context).colorScheme.shadow)
                           : FaIcon(
-                          size: 30,
-                          FontAwesomeIcons.thinThumbsDown,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .shadow),
+                              size: 30,
+                              FontAwesomeIcons.thinThumbsDown,
+                              color: Theme.of(context).colorScheme.shadow),
                     ],
                   ),
                 ),
@@ -218,8 +211,16 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
               onPressed: () {
                 setState(() {
                   widget.post.voteUp =
-                  widget.post.voteUp == false ? true : false;
+                      widget.post.voteUp == false ? true : false;
+                  if (widget.post.voteUp == true)
+                    widget.post.upVotes = widget.post.upVotes! + 1;
+                  else
+                    widget.post.upVotes = widget.post.upVotes! - 1;
+                  if (widget.post.voteDown == true)
+                    widget.post.downVotes = widget.post.downVotes! - 1;
+
                   widget.post.voteDown = false;
+
                 });
                 if (isUserLoggedIn == true) {
                   BlocProvider.of<PostDetailedBloc>(context)
@@ -232,12 +233,13 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                 listener: (context, state) {
                   if (state is UserVoteUpSuccessState) {
                     widget.post.currentUserUpVotes =
-                    !widget.post.currentUserUpVotes;
+                        !widget.post.currentUserUpVotes;
+
+
                     widget.post.currentUserDownVotes = false;
                   }
                   widget.post.voteUp = widget.post.currentUserUpVotes;
-                  widget.post.voteDown =
-                      widget.post.currentUserDownVotes;
+                  widget.post.voteDown = widget.post.currentUserDownVotes;
                   setState(() {});
                 },
                 child: badges.Badge(
@@ -255,13 +257,10 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                     child: Text(
                       (widget.post.upVotes ?? 0).toString(),
                       overflow: TextOverflow.fade,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(
-                        color: whiteColor,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: whiteColor,
+                            fontWeight: FontWeight.w400,
+                          ),
                       textAlign: TextAlign.center,
                       maxLines: 1,
                     ),
@@ -270,16 +269,13 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                     children: [
                       widget.post.voteUp == true
                           ? FaIcon(
-                          size: 30,
-                          FontAwesomeIcons.solidThumbsUp,
-                          color:
-                          Theme.of(context).colorScheme.shadow)
+                              size: 30,
+                              FontAwesomeIcons.solidThumbsUp,
+                              color: Theme.of(context).colorScheme.shadow)
                           : FaIcon(
-                          size: 30,
-                          FontAwesomeIcons.thinThumbsUp,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .shadow),
+                              size: 30,
+                              FontAwesomeIcons.thinThumbsUp,
+                              color: Theme.of(context).colorScheme.shadow),
                       SizedBox(height: 4),
                     ],
                   ),

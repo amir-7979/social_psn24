@@ -57,8 +57,10 @@ class _PostItemState extends State<PostItem> {
     builder: (context) {
       return InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: widget.post);
-        },
+          Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: <String, dynamic>{
+            'post': widget.post,
+            'postId': widget.post.id,
+          },);        },
         child: Padding(
           padding: const EdgeInsetsDirectional.only(top: 16),
           child: Column(
@@ -66,6 +68,7 @@ class _PostItemState extends State<PostItem> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pushNamed(AppRoutes.profile, arguments: widget.post.creator?.id?.toInt());
+                    print(AppRoutes.profile);
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,7 +393,10 @@ class _PostItemState extends State<PostItem> {
                                   height: 31,
                                   child: TextButton(
                                     onPressed: () {
-                                      // TODO: Implement your logic here
+                                      Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: <String, dynamic>{
+                                        'post': widget.post,
+                                        'postId': widget.post.id,
+                                      },);
                                     },
                                     child: Text(
                                       AppLocalizations.of(context)!.translateNested(
@@ -441,7 +447,7 @@ class _PostItemState extends State<PostItem> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              BlocProvider.of<HomeBloc>(context).add(RefreshIndexEvent(widget.post));
+                              Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: widget.post);
                             },
                             icon: SizedBox(
                               height: 27,

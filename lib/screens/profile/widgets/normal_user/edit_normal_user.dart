@@ -42,62 +42,66 @@ class _EditNormalUserState extends State<EditNormalUser> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    isExpert = BlocProvider.of<SettingBloc>(context).state.seeExpertPost ?? false;
-    context.read<ProfileBloc>().add(FetchProfileForEditScreen());
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProfileBloc, ProfileState>(
-      listener: (context, state) {
-        if (state is EditProfileError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            CustomSnackBar(content: state.message).build(context),
-          );
-        } else if (state is EditProfileInfoLoaded) {
-          widget.refreshIndex(0);
-        }
-      },
-      builder: (context, state) {
-        if (state is NewProfileInfoLoading) {
-          lastWidget = const ShimmerEditNormalUser();
-        } else if (state is NewProfileInfoLoaded) {
-          photoUrl = state.profile.photo;
-          _nameController.text = state.profile.name ??
-              AppLocalizations.of(context)!.translateNested('params', 'name');
-          _lastNameController.text = state.profile.family ??
-              AppLocalizations.of(context)!.translateNested('params', 'family');
-          _idController.text = state.profile.username ??
-              AppLocalizations.of(context)!
-                  .translateNested('params', 'username');
-          _history.text = state.profile.experience ?? '';
-          _bio.text = state.profile.biography ?? '';
-          lastWidget = buildListView(context);
-        } else if (state is NewProfileError) {
-          lastWidget = Padding(
-            padding: const EdgeInsetsDirectional.only(top: 16),
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              padding: const EdgeInsetsDirectional.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Theme.of(context).colorScheme.background,
-              ),
-              child: Center(
-                child: Text(
-                  'خطا در دریافت اطلاعات',
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        color: Theme.of(context).primaryColor,
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
+      child: BlocProvider(
+        create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context))..add(FetchProfileForEditScreen()),
+        child: Builder(
+      builder: (context) {
+        return BlocConsumer<ProfileBloc, ProfileState>(
+            listener: (context, state) {
+              if (state is EditProfileError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  CustomSnackBar(content: state.message).build(context)
+                );
+              } else if (state is EditProfileInfoLoaded) {
+                Navigator.pop(context);
+
+              }
+            },
+            builder: (context, state) {
+              if (state is NewProfileInfoLoading) {
+                lastWidget = const ShimmerEditNormalUser();
+              } else if (state is NewProfileInfoLoaded) {
+                photoUrl = state.profile.photo;
+                _nameController.text = state.profile.name ??
+                    AppLocalizations.of(context)!.translateNested('params', 'name');
+                _lastNameController.text = state.profile.family ??
+                    AppLocalizations.of(context)!.translateNested('params', 'family');
+                _idController.text = state.profile.username ??
+                    AppLocalizations.of(context)!
+                        .translateNested('params', 'username');
+                _history.text = state.profile.experience ?? '';
+                _bio.text = state.profile.biography ?? '';
+                lastWidget = buildListView(context);
+              } else if (state is NewProfileError) {
+                lastWidget = Padding(
+                  padding: const EdgeInsetsDirectional.only(top: 16),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    padding: const EdgeInsetsDirectional.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                    child: Center(
+                      child: Text(
+                        'خطا در دریافت اطلاعات',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              color: Theme.of(context).primaryColor,
+                            ),
                       ),
-                ),
-              ),
-            ),
+                    ),
+                  ),
+                );
+              }
+              return lastWidget; // return an empty container if lastWidget is null
+            },
           );
-        }
-        return lastWidget; // return an empty container if lastWidget is null
-      },
+      }
+        ),
+      ),
     );
   }
 
@@ -168,6 +172,14 @@ class _EditNormalUserState extends State<EditNormalUser> {
                           child: TextFormField(
                             controller: _nameController,
                             keyboardType: TextInputType.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context)
+                                  .hoverColor,
+                            ),
                             focusNode: _nameFocusNode,
                             decoration: InputDecoration(
                               label: Text(
@@ -220,6 +232,14 @@ class _EditNormalUserState extends State<EditNormalUser> {
                             controller: _lastNameController,
                             focusNode: _lastNameFocusNode,
                             keyboardType: TextInputType.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context)
+                                  .hoverColor,
+                            ),
                             decoration: InputDecoration(
                               label: Text(
                                 AppLocalizations.of(context)!
@@ -271,8 +291,14 @@ class _EditNormalUserState extends State<EditNormalUser> {
                               controller: _idController,
                               focusNode: _idFocusNode,
                               textDirection: TextDirection.ltr,
-                              // Set text direction to ltr
-
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context)
+                                    .hoverColor,
+                              ),
                               keyboardType: TextInputType.name,
                               decoration: InputDecoration(
                                 suffix: Padding(
@@ -456,7 +482,8 @@ class _EditNormalUserState extends State<EditNormalUser> {
                         height: 45,
                         child: ElevatedButton(
                           onPressed: () {
-                            widget.refreshIndex(0);
+                            Navigator.pop(context);
+
                           },
                           style: ElevatedButton.styleFrom(
                             shadowColor: Colors.transparent,

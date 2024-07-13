@@ -47,3 +47,19 @@ class CommentCountRefresh extends PostDetailedState {}
 class CommentListRefresh extends PostDetailedState {}
 
 class IncreasePostViewSuccess extends PostDetailedState {}
+
+class PostLoading extends PostDetailedState {}
+
+class PostFetchSuccess extends PostDetailedState {
+  final Post post;
+
+  PostFetchSuccess(this.post);
+}
+
+class PostFetchFailure extends PostDetailedState {
+   final String message;
+
+  PostFetchFailure(this.message);
+}
+
+class ViewCountIncreased extends PostDetailedState {}

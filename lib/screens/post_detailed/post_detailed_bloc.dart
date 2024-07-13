@@ -3,6 +3,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
 import '../../repos/models/comment.dart';
+import '../../repos/models/post.dart';
 import '../../repos/repositories/post_repository.dart';
 import '../../services/graphql_service.dart';
 
@@ -20,6 +21,24 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     on<UserVoteDownEvent>(_onUserVoteDownEvent);
     on<CreateCommentEvent>(_onCreateCommentEvent);
     on<IncreasePostViewEvent>(_onIncreasePostView);
+    on<FetchPostEvent>(_onFetchPostEvent);
+
+  }
+
+  Future<void> _onFetchPostEvent(FetchPostEvent event, Emitter<PostDetailedState> emit) async {
+    try {
+      emit(PostLoading());
+      final QueryOptions options = postsQuery(id: event.postId);
+      final QueryResult result = await graphQLService.query(options);
+      if (result.hasException) {
+        emit(PostFetchFailure('خطا در دریافت اطلاعات'));
+      } else {
+        final Post post = Post.fromJson(result.data?['posts'][0]);
+        emit(PostFetchSuccess(post));
+      }
+    } catch (e) {
+      emit(PostFetchFailure('خطا در دریافت اطلاعات'));
+    }
   }
 
   Future<void> _onAddToInterestEvent(
@@ -30,7 +49,6 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
       if (result.hasException) {
         emit(InterestFailureState());
       } else {
-        print(result.data);
         emit(InterestSuccessState());
       }
     } catch (e) {
@@ -43,7 +61,6 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     try {
       final MutationOptions options = enableNotification(event.postId);
       final QueryResult result = await graphQLService.mutate(options);
-      print(result.data);
       if (result.hasException) {
         emit(NotificationFailureState());
       } else {
@@ -60,7 +77,6 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
       final MutationOptions options =
           votePost(postId: event.postId, type: event.voteType);
       final QueryResult result = await graphQLService.mutate(options);
-      print(result.data);
       if (result.hasException) {
         emit(UserVoteUpFailureState());
       } else {
@@ -120,10 +136,8 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
       final QueryResult result =
           await GraphQLService.instance.client.query(options);
       if (result.hasException) {
-        print(result.exception);
         pagingController.error = result.exception;
       }
-      print(result.data);
       final List<Comment> posts = (result.data?['comments'] as List<dynamic>?)
               ?.map((dynamic item) =>
                   Comment.fromJson(item as Map<String, dynamic>))
@@ -138,7 +152,6 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
       }
     } catch (error) {
       try {
-        print(error);
         pagingController.error = error;
       } catch (e) {
         print(e.toString());
@@ -156,9 +169,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
       status: event.status,
     );
     var response = await graphQLService.mutate(options);
-    print('inc');
     if (response.hasException) {
-      print(response.exception);
     } else {
       print(response.data);
     }

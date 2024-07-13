@@ -10,7 +10,9 @@ import 'custom_snackbar.dart';
 
 class GuestDrawer extends StatelessWidget {
   final BuildContext snackBarContext;
-  GuestDrawer(this.snackBarContext);
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  GuestDrawer(this.snackBarContext, this.navigatorKey);
 
   @override
   Widget build(BuildContext context) {

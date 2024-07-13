@@ -1,13 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_psn/repos/models/reply.dart';
-import 'package:social_psn/screens/post_detailed/widget/comment_bottom_sheet.dart';
-import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/setting/themes.dart';
-import '../../../repos/models/comment.dart';
 import '../../widgets/TrianglePainter.dart';
 import '../../widgets/profile_cached_network_image.dart';
 
@@ -19,7 +12,7 @@ class ReplyItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 16),
+      padding: const EdgeInsetsDirectional.only(start: 35, top: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -48,7 +41,7 @@ class ReplyItem extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width - 138,
+                  width: MediaQuery.of(context).size.width - 153,
                   constraints: BoxConstraints(
                     minHeight: 80,
                   ),

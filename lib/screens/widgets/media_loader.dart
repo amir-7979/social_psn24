@@ -31,18 +31,16 @@ class _MediaLoaderState extends State<MediaLoader> {
           itemBuilder: (context, index, realIndex) {
             final media = widget.medias![index];
             if (media.type!.contains('image')) {
-              return Container(
-                  width: 375,
-                  height: 375,
+              return AspectRatio(
+                aspectRatio: 16 / 9,
                 child: CachedNetworkImage(
                   imageUrl: media.getMediaUrl() ?? '',
-                  height: 375,
-                  width: 375,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.fitWidth,
                   errorWidget: (context, url, error) =>
                       SvgPicture.asset('assets/images/profile/placeholder.svg', fit: BoxFit.fill),
-                )
+                ),
               );
+
             } else if (media.type!.contains('video')) {
               return SizedBox(
                   width: double.infinity,
@@ -54,7 +52,7 @@ class _MediaLoaderState extends State<MediaLoader> {
             }
           },
           options: CarouselOptions(
-            aspectRatio: 375 / 240,
+            aspectRatio: 16 / 9,
             viewportFraction: 1.0,
             initialPage: 0,
             enableInfiniteScroll: false,
@@ -71,7 +69,7 @@ class _MediaLoaderState extends State<MediaLoader> {
         ),
         if (widget.medias != null && widget.medias!.length > 1)
           Padding(
-            padding: const EdgeInsets.only(top: 10.0),
+            padding: const EdgeInsets.only(top: 5.0),
             child: DotsIndicator(
               dotsCount: widget.medias!.length,
               position: _currentIndex.toInt(),

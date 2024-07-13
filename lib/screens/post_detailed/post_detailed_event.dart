@@ -45,3 +45,10 @@ class IncreasePostViewEvent extends PostDetailedEvent {
 
   IncreasePostViewEvent({required this.postId, this.viewCount = 1, this.status = 0});
 }
+
+
+class FetchPostEvent extends PostDetailedEvent {
+  final String postId;
+
+  FetchPostEvent(this.postId);
+}
