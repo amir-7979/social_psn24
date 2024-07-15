@@ -1,13 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:social_psn/configs/setting/themes.dart';
 
-import '../../../repos/models/content.dart';
 import '../../../repos/models/liked.dart';
 import '../../main/widgets/screen_builder.dart';
-import '../../widgets/cached_network_image.dart';
 import '../../widgets/selectImge.dart';
 
 class InterestItem extends StatelessWidget {

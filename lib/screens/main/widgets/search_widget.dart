@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../configs/localization/app_localizations.dart';
 
 class SearchWidget extends StatelessWidget {

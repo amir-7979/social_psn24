@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:social_psn/screens/interest/widgets/interest_item.dart';
 import 'package:social_psn/screens/profile/widgets/shimmer/shimmer_content_item.dart';
+
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/liked.dart';
 import '../../widgets/new_page_progress_indicator.dart';

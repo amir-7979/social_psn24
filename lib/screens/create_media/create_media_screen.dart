@@ -2,6 +2,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/themes.dart';
 import '../widgets/white_circular_progress_indicator.dart';
@@ -97,6 +98,9 @@ class _CreateMediaScreenState extends State<CreateMediaScreen> {
                       controller: _titleController,
                       keyboardType: TextInputType.name,
                       focusNode: _titleFocusNode,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
                       decoration: InputDecoration(
                         label: Text(
                           AppLocalizations.of(context)!
@@ -134,6 +138,9 @@ class _CreateMediaScreenState extends State<CreateMediaScreen> {
                     TextFormField(
                       controller: _categoryController,
                       focusNode: _categoryFocusNode,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
                       decoration: InputDecoration(
                         label: Text(
                           AppLocalizations.of(context)!
@@ -154,15 +161,16 @@ class _CreateMediaScreenState extends State<CreateMediaScreen> {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            if (_categoryController.text.isNotEmpty) // Add second delete icon when there is text in the TextFormField
+                           /* if (_categoryController.text.isNotEmpty) // Add second delete icon when there is text in the TextFormField
                               IconButton(
-                                icon: Icon(Icons.delete),
+                                icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.onBackground),
                                 onPressed: () {
                                   _categoryController.clear();
                                 },
                               ),
                             PopupMenuButton<String>(
                               padding: EdgeInsets.zero,
+                              iconColor: Theme.of(context).colorScheme.onBackground,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -187,7 +195,7 @@ class _CreateMediaScreenState extends State<CreateMediaScreen> {
                                   _categoryController.text = newValue!;
                                 });
                               },
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -210,6 +218,9 @@ class _CreateMediaScreenState extends State<CreateMediaScreen> {
                         controller: _longTextController,
                         maxLines: 50,
                         // expands: true,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
                         maxLength: _maxLength,
                         decoration: InputDecoration(
                           labelText: AppLocalizations.of(context)!

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:social_psn/screens/create_media/create_media_screen.dart';
 import 'package:social_psn/screens/interest/interest_screen.dart';
 import 'package:social_psn/screens/post_detailed/post_detailed_screen.dart';
-import '../../../repos/models/post.dart';
-import '../../auth/widgets/login.dart';
-import '../../auth/widgets/register.dart';
-import '../../auth/widgets/verify.dart';
+
+import '../../auth/login/login.dart';
+import '../../auth/register/register.dart';
+import '../../auth/verify/verify.dart';
 import '../../charity/charity_screen.dart';
 import '../../consultation/consultation_screen.dart';
 import '../../cooperation/cooperation_screen.dart';
@@ -33,7 +33,13 @@ class AppRoutes {
 
 final Map<String, WidgetBuilder> routes = {
   AppRoutes.login: (BuildContext context) => Login(),
-  AppRoutes.verify: (BuildContext context) => Verify(),
+  AppRoutes.verify: (BuildContext context){
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return Verify(
+      phone: args['phone'],
+      LoginId: args['loginId'],
+    );
+  },
   AppRoutes.register: (BuildContext context) => Register(),
   AppRoutes.main: (BuildContext context) => MainScreen(),
   AppRoutes.profile: (BuildContext context) => ProfileScreen(),

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
+import '../custom_snackbar.dart';
 import '../profile_cached_network_image.dart';
 import 'profile_picture_bloc.dart';
 
@@ -116,14 +117,12 @@ class _ProfilePictureState extends State<ProfilePicture> {
                   child: BlocConsumer<ProfilePictureBloc, ProfilePictureState>(
                     listener: (context, state) {
                       if (state is ProfilePictureFailure) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              AppLocalizations.of(context)!
-                                  .translateNested('error', 'profileUploadException'),
-                            ),
-                          ),
-                        );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              CustomSnackBar(
+                                content:  AppLocalizations.of(context)!
+                                    .translateNested('error', 'profileUploadException'),
+                              ).build(context),
+                            );
                       } else if (state is ProfilePictureSuccess) {
                         widget.onImagePicked(state.imageUrl);
                         setState(() {

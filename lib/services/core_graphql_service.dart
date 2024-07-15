@@ -24,7 +24,7 @@ class CoreGraphQLService {
       getToken: () async {
         final token = await _storageService.readData('token');
         return token != null ? 'Bearer $token' : null;
-        },
+      },
     );
     final LoggingLink loggingLink = LoggingLink();
     _link = _authLink.concat(loggingLink).concat(_httpLink);
@@ -65,15 +65,8 @@ class CoreGraphQLService {
       cache: GraphQLCache(),
       link: _link,
     );
-    deleteFromStorage();
 
   }
 
-  void deleteFromStorage() {
-    _storageService.deleteData('bearer');
-    _storageService.deleteData('expiry');
-    _storageService.deleteData('token');
-    _storageService.deleteData('refreshToken');
-    _storageService.deleteData('userId');
-  }
+
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -8,8 +9,8 @@ import 'package:meta/meta.dart';
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/comment.dart';
 import '../../repos/models/content.dart';
-import '../../repos/models/user_permissions.dart';
 import '../../repos/models/profile.dart';
+import '../../repos/models/user_permissions.dart';
 import '../../repos/repositories/profile_repository.dart';
 import '../../services/core_graphql_service.dart';
 import '../../services/graphql_service.dart';
@@ -137,8 +138,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   static Future<void> fetchComment(PagingController<int, Comment> pagingController, String? postId, int? userId, String type, int limit) async {
     try {
+      print('here');
       final QueryOptions options = getCommentsWithPostData(postId, userId, type, limit, pagingController.nextPageKey!);
       final QueryResult result = await GraphQLService.instance.client.query(options);
+      if (result.hasException) {
+        print(result.exception.toString());
+      }
       final List<Comment> comments = (result.data?['comments'] as List<dynamic>?)
           ?.map((dynamic item) => Comment.fromJson(item as Map<String, dynamic>)).toList() ?? [];
       final isLastPage = comments.length < limit;
@@ -150,6 +155,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     } catch (error) {
       try {
+        print(error.toString());
         pagingController.error = error;
       } catch (e) {
         print(e.toString());

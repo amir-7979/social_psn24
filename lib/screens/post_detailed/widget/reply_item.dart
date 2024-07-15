@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/repos/models/reply.dart';
+
 import '../../widgets/TrianglePainter.dart';
 import '../../widgets/profile_cached_network_image.dart';
 

@@ -29,6 +29,7 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
   @override
   build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 16),
         InkWell(
@@ -342,6 +343,8 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
           child: MediaLoader(medias: widget.post.medias),
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Text(

@@ -14,9 +14,15 @@ class Reply {
   });
 
   factory Reply.fromJson(Map<String, dynamic> json) {
-    String createdAt = json['created_at'];
-    Jalali jalaliDate = Jalali.fromDateTime(DateTime.parse(createdAt));
-    String formattedPersianDate = '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}';
+    String formattedPersianDate = '';
+    String? createdAt = json['created_at'];
+    if(createdAt == null){
+      formattedPersianDate = '';
+    }else {
+      Jalali jalaliDate = Jalali.fromDateTime(DateTime.parse(createdAt));
+      formattedPersianDate =
+      '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}';
+    }
     return Reply(
       id: json['id'],
       message: json['message'],

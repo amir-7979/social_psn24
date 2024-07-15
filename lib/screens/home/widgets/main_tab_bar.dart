@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:social_psn/screens/home/home_bloc.dart';
 import 'package:social_psn/screens/home/widgets/post_list.dart';
+
 import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
 import '../../../repos/models/post.dart';
 

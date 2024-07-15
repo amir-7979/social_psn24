@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:inview_notifier_list/inview_notifier_list.dart';
+
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/post.dart';
 import '../../post/post_item.dart';

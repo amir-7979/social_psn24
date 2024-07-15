@@ -1,13 +1,17 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../repos/models/content.dart';
 import '../../profile_bloc.dart';
 import '../contents.dart';
 
 class ContentCustomTabBar extends StatefulWidget {
+  int? profileId;
+
+  ContentCustomTabBar(this.profileId);
+
   @override
   State<ContentCustomTabBar> createState() => _ContentCustomTabBarState();
 }
@@ -21,10 +25,10 @@ class _ContentCustomTabBarState extends State<ContentCustomTabBar> {
   @override
   void initState() {
     _pagingController0.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchContent(_pagingController0, 0, 20, null);
+      ProfileBloc.fetchContent(_pagingController0, 0, 20, widget.profileId);
     });
     _pagingController1.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchContent(_pagingController1, 1, 20, null);
+      ProfileBloc.fetchContent(_pagingController1, 1, 20, widget.profileId);
     });
     super.initState();
   }

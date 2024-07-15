@@ -3,7 +3,6 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
-import '../../repos/repositories/profile_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'cropper_event.dart';

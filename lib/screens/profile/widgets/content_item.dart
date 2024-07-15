@@ -18,6 +18,7 @@ class ContentItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        if(content.disabled == false)
         Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: <String, dynamic>{
           'postId': content.id,
         },);

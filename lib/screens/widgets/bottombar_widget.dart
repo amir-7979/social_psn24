@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
+
 import '../../configs/custom_navigator_observer.dart';
 import '../../configs/localization/app_localizations.dart';
 import '../main/widgets/screen_builder.dart';
-import '../main/main_screen.dart'; // Import the main screen to get access to the navigator observer.
 
 class MyStylishBottomBar extends StatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey;

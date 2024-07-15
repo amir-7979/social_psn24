@@ -4,6 +4,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:social_psn/repos/models/comment.dart';
 import 'package:social_psn/screens/profile/widgets/expert_user/comment_custom_tab_bar.dart';
 import 'package:social_psn/screens/profile/widgets/expert_user/content_custom_tab_bar.dart';
+
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
@@ -25,6 +26,7 @@ class _MainTabBarState extends State<MainTabBar>
   late PagingController<int, Content> _pagingContentController;
   late PagingController<int, Comment> _pagingCommentController;
   bool seeExpertPost = false;
+  int? profileId;
 
   @override
   void initState() {
@@ -34,10 +36,10 @@ class _MainTabBarState extends State<MainTabBar>
      _pagingContentController = PagingController<int, Content>(firstPageKey: 0);
      _pagingCommentController = PagingController<int, Comment>(firstPageKey: 0);
     _pagingContentController.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchContent(_pagingContentController, 0, 20, null);
+      ProfileBloc.fetchContent(_pagingContentController, 0, 20, profileId);
     });
     _pagingCommentController.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchComment(_pagingCommentController, null, null, "my", 20);
+      ProfileBloc.fetchComment(_pagingCommentController, null, profileId, "my", 20);
     });
   }
 
@@ -48,9 +50,17 @@ class _MainTabBarState extends State<MainTabBar>
     _pagingCommentController.dispose();
     super.dispose();
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    profileId = ModalRoute.of(context)?.settings.arguments as int?;
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    print("build");
     return Container(
       height: MediaQuery.of(context).size.height - 170,
       decoration: BoxDecoration(
@@ -104,8 +114,8 @@ class _MainTabBarState extends State<MainTabBar>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  seeExpertPost? ContentCustomTabBar(): Contents(pagingController: _pagingContentController),
-                  seeExpertPost? CommentCustomTabBar(): Comments(pagingController: _pagingCommentController),
+                  seeExpertPost? ContentCustomTabBar(profileId): Contents(pagingController: _pagingContentController),
+                  seeExpertPost? CommentCustomTabBar(profileId): Comments(pagingController: _pagingCommentController),
                 ],
               ),
             ),

@@ -1,9 +1,9 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
+
 import '../../configs/consts.dart';
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/themes.dart';
@@ -410,15 +410,17 @@ class UserDrawer extends StatelessWidget {
                                     ),
                                     onPressed: () {
                                       dialogContext.read<SettingBloc>().add(ClearInfo());
-                                      Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
-
                                       Navigator.pop(context);
+                                      navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+
                                     },
                                   ),
                                 ],
                               );
                             },
-                          );
+                          )..then((value) {
+                            Navigator.pop(context);
+                          });
                         },
                       ),
                     ],

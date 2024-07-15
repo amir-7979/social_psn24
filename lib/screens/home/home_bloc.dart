@@ -1,9 +1,10 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:social_psn/services/core_graphql_service.dart';
 import 'package:social_psn/services/graphql_service.dart';
+
 import '../../repos/models/post.dart';
 import '../../repos/repositories/post_repository.dart';
 

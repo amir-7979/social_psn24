@@ -5,10 +5,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
+import '../../main/widgets/screen_builder.dart';
 
 class BlurWidget extends StatefulWidget {
   bool isAddButtonClicked = false;
-  BlurWidget(this.isAddButtonClicked);
+  final GlobalKey<NavigatorState> navigatorKey;
+  Function(bool) changeAddButtonState;
+
+  BlurWidget(this.isAddButtonClicked, this.navigatorKey, this.changeAddButtonState);
 
 
   @override
@@ -20,9 +24,7 @@ class _BlurWidgetState extends State<BlurWidget> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        setState(() {
-          widget.isAddButtonClicked = false;
-        });
+        widget.changeAddButtonState(false);
       },
       child: Container(
         color: Theme.of(context).brightness == Brightness.dark
@@ -53,7 +55,11 @@ class _BlurWidgetState extends State<BlurWidget> {
                         height: 55,
                         width: 55,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            widget.changeAddButtonState(false);
+
+                            widget.navigatorKey.currentState!.pushNamed(AppRoutes.createMedia);
+                          },
                           child: FaIcon(size: 22, FontAwesomeIcons.thinCloudArrowUp, color: whiteColor),
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
@@ -82,7 +88,8 @@ class _BlurWidgetState extends State<BlurWidget> {
                           height: 55,
                           width: 55,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {                            widget.changeAddButtonState(false);
+                            },
                             child: FaIcon(size: 22, FontAwesomeIcons.thinComment, color: whiteColor),
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
@@ -110,7 +117,8 @@ class _BlurWidgetState extends State<BlurWidget> {
                         height: 55,
                         width: 55,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {                            widget.changeAddButtonState(false);
+                          },
                           child: FaIcon(size: 22, FontAwesomeIcons.thinHandsHolding, color: whiteColor),
                           style: ElevatedButton.styleFrom(
                             elevation: 0,

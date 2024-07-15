@@ -1,13 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/services.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/screens/widgets/audio_player.dart';
 
 import '../../repos/models/media.dart';
-import 'cached_network_image.dart';
 import 'video_player.dart';
 
 class MediaLoader extends StatefulWidget {

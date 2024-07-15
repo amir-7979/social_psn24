@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:social_psn/screens/post_detailed/widget/post_detailed_body.dart';
+
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/comment.dart';
 import '../../../repos/models/post.dart';

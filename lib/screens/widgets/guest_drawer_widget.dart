@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../configs/consts.dart';
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/themes.dart';
@@ -101,7 +101,7 @@ class GuestDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      Navigator.of(context).pushNamed(AppRoutes.login);
+                      navigatorKey.currentState!.pushNamed(AppRoutes.login);
                       Navigator.pop(context);
                     },
                   ),

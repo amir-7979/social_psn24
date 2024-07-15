@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import '../../configs/setting/setting_bloc.dart';
-import '../../repos/models/comment.dart';
+
 import '../../repos/models/post.dart';
 import 'post_detailed_bloc.dart';
 import 'widget/post_detailed_main_body.dart';

@@ -1,8 +1,8 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:social_psn/screens/profile/widgets/comments.dart';
+
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../repos/models/comment.dart';
 import '../../profile_bloc.dart';
@@ -10,8 +10,9 @@ import '../../profile_bloc.dart';
 import '../others_comments.dart';
 
 class CommentCustomTabBar extends StatefulWidget {
-  const CommentCustomTabBar({super.key});
+  int? profileId;
 
+  CommentCustomTabBar(this.profileId);
   @override
   State<CommentCustomTabBar> createState() => _CommentCustomTabBarState();
 }
@@ -24,11 +25,12 @@ class _CommentCustomTabBarState extends State<CommentCustomTabBar> {
 
   @override
   void initState() {
+    print("profileId: ${widget.profileId}");
     _pagingController0.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchComment(_pagingController0, null, null, "my", 20);
+      ProfileBloc.fetchComment(_pagingController0, null, widget.profileId, "my", 20);
     });
     _pagingController1.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchComment(_pagingController1, null, null, "my", 20);
+      ProfileBloc.fetchComment(_pagingController1, null, widget.profileId, "my", 20);
     });
     super.initState();
   }

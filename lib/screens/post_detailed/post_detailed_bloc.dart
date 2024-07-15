@@ -2,13 +2,13 @@ import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
+
 import '../../repos/models/comment.dart';
 import '../../repos/models/post.dart';
 import '../../repos/repositories/post_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'post_detailed_event.dart';
-
 part 'post_detailed_state.dart';
 
 class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {

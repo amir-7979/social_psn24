@@ -1,9 +1,10 @@
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_psn/configs/setting/themes.dart';
-import 'package:badges/badges.dart' as badges;
+
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/post.dart';
 import '../../main/widgets/screen_builder.dart';

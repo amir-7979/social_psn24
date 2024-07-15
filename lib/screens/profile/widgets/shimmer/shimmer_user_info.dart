@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../widgets/shimmer.dart';
 
 class ShimmerUserInfo extends StatelessWidget {

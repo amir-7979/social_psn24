@@ -4,11 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_psn/screens/widgets/media_loader.dart';
+
 import '../../../configs/consts.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/post.dart';
-import '../home/home_bloc.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/profile_cached_network_image.dart';
@@ -68,7 +68,6 @@ class _PostItemState extends State<PostItem> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pushNamed(AppRoutes.profile, arguments: widget.post.creator?.id?.toInt());
-                    print(AppRoutes.profile);
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

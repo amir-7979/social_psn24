@@ -1,27 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_psn/configs/setting/themes.dart';
 import 'package:social_psn/screens/main/widgets/screen_builder.dart';
 import 'package:social_psn/screens/profile/profile_bloc.dart';
 
 import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/profile.dart';
-import '../../../repos/models/user_permissions.dart';
-import '../../widgets/cached_network_image.dart';
 import '../../widgets/custom_snackbar.dart';
 import '../../widgets/profile_cached_network_image.dart';
 import 'shimmer/shimmer_user_info.dart';
 
 class UserInfo extends StatefulWidget {
-  UserInfo();
-
   @override
   State<UserInfo> createState() => _UserInfoState();
 }
@@ -36,6 +27,7 @@ class _UserInfoState extends State<UserInfo>
   Widget? _lastWidget;
   bool _checked = false;
   bool _isProfileFetched = false;
+  int? profileId;
 
   @override
   void initState() {
@@ -53,15 +45,13 @@ class _UserInfoState extends State<UserInfo>
         _checked = advanceSwitchController.value;
       });
     });
-
-    }
-
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isProfileFetched) {
-      final int? profileId = ModalRoute.of(context)?.settings.arguments as int?;
+      profileId = ModalRoute.of(context)?.settings.arguments as int?;
       context.read<ProfileBloc>().add(FetchProfile(id: profileId));
       _isProfileFetched = true;
     }
@@ -69,23 +59,22 @@ class _UserInfoState extends State<UserInfo>
 
   @override
   void dispose() {
-   _controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is ProfileError) {
-         ScaffoldMessenger.of(context).showSnackBar(
-           CustomSnackBar(content: state.message).build(context),
+          ScaffoldMessenger.of(context).showSnackBar(
+            CustomSnackBar(content: state.message).build(context),
           );
         }
       },
       builder: (context, state) {
-        Widget? currentWidget = infoWidget(context, state);
+        Widget? currentWidget = infoWidget(context, state, profileId);
         if (currentWidget != null && currentWidget != _lastWidget) {
           _lastWidget = currentWidget;
         }
@@ -94,7 +83,7 @@ class _UserInfoState extends State<UserInfo>
     );
   }
 
-  Widget? infoWidget(BuildContext context, ProfileState state) {
+  Widget? infoWidget(BuildContext context, ProfileState state, profileId) {
     if (state is ProfileInfoLoading) {
       return ShimmerUserInfo();
     } else if (state is ProfileError) {
@@ -115,11 +104,11 @@ class _UserInfoState extends State<UserInfo>
         ),
       );
     } else if (state is ProfileInfoLoaded) {
-      return buildBody(context, state.profile);
+      return buildBody(context, state.profile, profileId);
     }
   }
 
-  Widget buildBody(BuildContext context, Profile profile) {
+  Widget buildBody(BuildContext context, Profile profile, profileId) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -145,14 +134,17 @@ class _UserInfoState extends State<UserInfo>
                         child: Column(
                           children: [
                             Container(
-                              padding: EdgeInsetsDirectional.symmetric(vertical: 8),
+                              padding:
+                                  EdgeInsetsDirectional.symmetric(vertical: 8),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     AppLocalizations.of(context)!
-                                        .translateNested("profileScreen", "posts"),
+                                        .translateNested(
+                                            "profileScreen", "posts"),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
@@ -174,14 +166,17 @@ class _UserInfoState extends State<UserInfo>
                             ),
                             buildSeparator(context),
                             Container(
-                              padding: EdgeInsetsDirectional.symmetric(vertical: 8),
+                              padding:
+                                  EdgeInsetsDirectional.symmetric(vertical: 8),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     AppLocalizations.of(context)!
-                                        .translateNested("profileScreen", "comments"),
+                                        .translateNested(
+                                            "profileScreen", "comments"),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
@@ -203,14 +198,17 @@ class _UserInfoState extends State<UserInfo>
                             ),
                             buildSeparator(context),
                             Container(
-                              padding: EdgeInsetsDirectional.symmetric(vertical: 8),
+                              padding:
+                                  EdgeInsetsDirectional.symmetric(vertical: 8),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    AppLocalizations.of(context)!.translateNested(
-                                        "profileScreen", "agreeVotes"),
+                                    AppLocalizations.of(context)!
+                                        .translateNested(
+                                            "profileScreen", "agreeVotes"),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
@@ -232,14 +230,17 @@ class _UserInfoState extends State<UserInfo>
                             ),
                             buildSeparator(context),
                             Container(
-                              padding: EdgeInsetsDirectional.symmetric(vertical: 8),
+                              padding:
+                                  EdgeInsetsDirectional.symmetric(vertical: 8),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    AppLocalizations.of(context)!.translateNested(
-                                        "profileScreen", "disagreeVotes"),
+                                    AppLocalizations.of(context)!
+                                        .translateNested(
+                                            "profileScreen", "disagreeVotes"),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
@@ -271,28 +272,61 @@ class _UserInfoState extends State<UserInfo>
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                child: ClipOval(
-                                  child: (profile.photo != null)
-                                      ? FittedBox(
-                                          fit: BoxFit.cover,
-                                          child: Container(
-                                              child: ProfileCacheImage(profile.photo)),
-                                        )
-                                      : SvgPicture.asset(
-                                          'assets/images/profile/profile2.svg'),
-                                ),
+                              Stack(
+                                alignment: AlignmentDirectional.bottomEnd,
+                                children: [
+                                  Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: ClipOval(
+                                      child: (profile.photo != null)
+                                          ? FittedBox(
+                                              fit: BoxFit.cover,
+                                              child: Container(
+                                                  child: ProfileCacheImage(
+                                                      profile.photo)),
+                                            )
+                                          : SvgPicture.asset(
+                                              'assets/images/profile/profile2.svg'),
+                                    ),
+                                  ),
+                                  if(profileId != null)
+                                    Container(
+                                      width: 35,
+                                      height: 35,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color:  profile.currentUserNotificationEnabled ? Theme.of(context).primaryColor : cameraBackgroundColor,
+                                      ),
+                                      child: Center(
+                                        child: IconButton(
+                                          icon: profile.currentUserNotificationEnabled
+                                              ? FaIcon(
+                                              size: 20,
+                                              FontAwesomeIcons.solidBellOn,
+                                              color: whiteColor)
+                                              : FaIcon(
+                                              size: 20,
+                                              FontAwesomeIcons.solidBellPlus,
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                          onPressed: () {
+
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                               SizedBox(height: 8),
                               Text(
                                 "${profile.name} ${profile.family}",
                                 softWrap: true,
                                 overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                                 style: Theme.of(context)
                                     .textTheme
                                     .headlineMedium!
@@ -307,7 +341,9 @@ class _UserInfoState extends State<UserInfo>
                                     .textTheme
                                     .titleLarge!
                                     .copyWith(
-                                      color: Theme.of(context).colorScheme.tertiary,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary,
                                     ),
                               ),
                               SizedBox(height: 8),
@@ -378,41 +414,45 @@ class _UserInfoState extends State<UserInfo>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (profile.username != '')
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)!
-                                      .translateNested("params", "username"),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                        color: Theme.of(context).hoverColor,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                ),
-                                Text(
-                                  '@${profile.username}' ?? '',
-                                  textDirection: TextDirection.ltr,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                          color:
-                                              Theme.of(context).colorScheme.surface,
-                                          fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                            if (profile.username != '') SizedBox(height: 16),
-                            if (profile.field != null)
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     AppLocalizations.of(context)!
-                                        .translateNested("profileScreen", "field"),
+                                        .translateNested("params", "username"),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                          color: Theme.of(context).hoverColor,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                  ),
+                                  Text(
+                                    '@${profile.username}' ?? '',
+                                    textDirection: TextDirection.ltr,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                            fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            if (profile.username != '') SizedBox(height: 16),
+                            if (profile.field != null)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .translateNested(
+                                            "profileScreen", "field"),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
@@ -427,8 +467,9 @@ class _UserInfoState extends State<UserInfo>
                                         .textTheme
                                         .titleLarge!
                                         .copyWith(
-                                          color:
-                                              Theme.of(context).colorScheme.surface,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surface,
                                           fontWeight: FontWeight.w500,
                                         ),
                                   ),
@@ -437,11 +478,13 @@ class _UserInfoState extends State<UserInfo>
                             if (profile.field != null) SizedBox(height: 16),
                             if (profile.experience != null)
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     AppLocalizations.of(context)!
-                                        .translateNested("params", "experience"),
+                                        .translateNested(
+                                            "params", "experience"),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
@@ -456,14 +499,16 @@ class _UserInfoState extends State<UserInfo>
                                         .textTheme
                                         .titleLarge!
                                         .copyWith(
-                                          color:
-                                              Theme.of(context).colorScheme.surface,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surface,
                                           fontWeight: FontWeight.w500,
                                         ),
                                   ),
                                 ],
                               ),
-                            if (profile.experience != null) SizedBox(height: 16),
+                            if (profile.experience != null)
+                              SizedBox(height: 16),
                             if (profile.biography != null)
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,8 +531,9 @@ class _UserInfoState extends State<UserInfo>
                                         .textTheme
                                         .titleLarge!
                                         .copyWith(
-                                            color:
-                                                Theme.of(context).colorScheme.surface,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
                                             fontWeight: FontWeight.w500),
                                   ),
                                 ],
@@ -499,7 +545,8 @@ class _UserInfoState extends State<UserInfo>
                                 children: [
                                   Text(
                                     AppLocalizations.of(context)!
-                                        .translateNested("profileScreen", "address"),
+                                        .translateNested(
+                                            "profileScreen", "address"),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
@@ -509,15 +556,15 @@ class _UserInfoState extends State<UserInfo>
                                         ),
                                   ),
                                   SizedBox(height: 8),
-
                                   Text(
                                     profile.address ?? '',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
                                         .copyWith(
-                                          color:
-                                              Theme.of(context).colorScheme.surface,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surface,
                                           fontWeight: FontWeight.w500,
                                         ),
                                   ),
@@ -542,15 +589,17 @@ class _UserInfoState extends State<UserInfo>
                                   ),
                                   for (var office in profile.offices!)
                                     Padding(
-                                      padding: const EdgeInsetsDirectional.only(top: 8),
+                                      padding: const EdgeInsetsDirectional.only(
+                                          top: 8),
                                       child: Text(
                                         office,
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleLarge!
                                             .copyWith(
-                                              color:
-                                                  Theme.of(context).colorScheme.surface,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface,
                                               fontWeight: FontWeight.w500,
                                             ),
                                       ),
@@ -564,7 +613,7 @@ class _UserInfoState extends State<UserInfo>
                         )
                       : SizedBox.shrink(),
                 ),
-                ElevatedButton(
+                if(profileId == null) ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
                     //surfaceTintColor: Colors.transparent,
@@ -576,7 +625,8 @@ class _UserInfoState extends State<UserInfo>
                     ),
                   ),
                   onPressed: () {
-                   Navigator.pushNamed(context, AppRoutes.editProfile, arguments: profile);
+                    Navigator.pushNamed(context, AppRoutes.editProfile,
+                        arguments: profile);
                   },
                   child: Text(
                     AppLocalizations.of(context)!
@@ -605,7 +655,7 @@ class _UserInfoState extends State<UserInfo>
               ),
             ),
             child: Padding(
-              padding:  EdgeInsetsDirectional.symmetric(vertical: 7),
+              padding: EdgeInsetsDirectional.symmetric(vertical: 7),
               child: TextButton.icon(
                 onPressed: () {
                   setState(() {
@@ -625,7 +675,8 @@ class _UserInfoState extends State<UserInfo>
                       : Icon(Icons.expand_more),
                 ),
                 style: ButtonStyle(
-                  overlayColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+                  overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                    (Set<WidgetState> states) {
                       return Colors.transparent;
                     },
                   ),
@@ -641,7 +692,6 @@ class _UserInfoState extends State<UserInfo>
               ),
             ),
           ),
-
         ],
       ),
     );

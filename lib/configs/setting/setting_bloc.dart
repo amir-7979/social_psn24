@@ -7,6 +7,7 @@ import '../../repos/models/profile.dart';
 import '../../repos/models/user_permissions.dart';
 import '../../repos/repositories/profile_repository.dart';
 import '../../services/core_graphql_service.dart';
+import '../../services/graphql_service.dart';
 
 part 'setting_event.dart';
 part 'setting_state.dart';
@@ -20,6 +21,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     on<SettingLanguageEvent>(_handleSettingLanguageEvent);
     on<UpdateLoginStatus>(_handleUpdateLoginStatus);
     on<ClearInfo>(_handelClearUserInformation);
+    on<FetchUserPermissionsEvent>(_fetchUserPermissions);
     on<FetchUserProfileWithPermissionsEvent>(_fetchUserProfileWithPermissions);
     _loadSettingsFromStorage();
   }
@@ -33,6 +35,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     final QueryResult result = await coreGraphQLService.query(options);
     if (result.hasException) {
       print(result.exception.toString());
+      print('Error in fetching user profile with permissions');
+      print(result.exception.toString());
     } else {
       final Map<String, dynamic> data = result.data!;
       final Map<String, dynamic> profileData = data['profile'];
@@ -40,6 +44,21 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       final Profile profile = Profile.fromJson(profileData);
       final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
       emit(state.copyWith(profile: profile, permissions: userPermissions));
+    }
+  }
+
+  Future<void> _fetchUserPermissions(event, emit) async {
+    final QueryOptions options =  getUserPermissions() ;
+    final QueryResult result = await coreGraphQLService.query(options);
+    if (result.hasException) {
+      print(result.exception.toString());
+      print('Error in fetching user profile with permissions');
+      print(result.exception.toString());
+    } else {
+      final Map<String, dynamic> data = result.data!;
+      final Map<String, dynamic> userPermissionsData = data['userPermissions'];
+      final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
+      emit(state.copyWith(permissions: userPermissions));
     }
   }
 
@@ -81,6 +100,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await _storageService.deleteData('token');
     await _storageService.deleteData('refreshToken');
     await _storageService.deleteData('userId');
+    CoreGraphQLService.instance.removeTokenFromAuthLink();
+    GraphQLService.instance.removeTokenFromAuthLink();
     state.reset();
     emit(state.copyWith());
   }

@@ -35,6 +35,27 @@ QueryOptions getUserProfileWithPermissions() {
   );
 }
 
+QueryOptions getUserPermissions() {
+
+  return QueryOptions(
+    document: gql('''
+      query {
+        userPermissions{
+          id, name, display_name, permissions{
+            id, name,
+          }
+          role, settings{
+            id, options
+          }
+        }
+       
+      }
+    '''),
+    fetchPolicy: FetchPolicy.noCache,
+  );
+}
+
+
 QueryOptions getUserProfile(int? id) {
   Map<String, dynamic> variables = {};
   if (id != null) variables['id'] = id;

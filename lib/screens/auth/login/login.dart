@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:regexpattern/regexpattern.dart';
+import 'package:social_psn/screens/auth/login/login_bloc.dart';
+
 import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
 import '../../main/widgets/screen_builder.dart';
 import '../../widgets/white_circular_progress_indicator.dart';
-import '../auth_bloc.dart';
 
 class Login extends StatefulWidget {
+
   @override
   State<Login> createState() => _LoginState();
 }
@@ -21,8 +22,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthBloc>(
-      create: (context) => AuthBloc(BlocProvider.of<SettingBloc>(context)),
+    return BlocProvider<LoginBloc>(
+      create: (context) => LoginBloc(),
       child: Padding(
         padding: const EdgeInsetsDirectional.all(16),
         child: Container(
@@ -77,17 +78,19 @@ class _LoginState extends State<Login> {
                   ),
                   Form(
                     key: _formKey,
-                    child: BlocBuilder<AuthBloc, AuthState>(
+                    child: BlocBuilder<LoginBloc, LoginState>(
                       builder: (context, state) {
                         String? errorMessage;
-                        if (state is AuthFailure) {
-                          errorMessage = state
-                              .error; // Assuming the AuthFailure state has a 'message' property
+                        if (state is LoginFailure) {
+                          errorMessage = state.error;
                         }
                         return TextFormField(
                           focusNode: _focusNode,
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                color: Theme.of(context).colorScheme.onBackground,
+                              ),
                           textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!
@@ -143,11 +146,15 @@ class _LoginState extends State<Login> {
                   Padding(
                     padding:
                         const EdgeInsetsDirectional.symmetric(vertical: 16.0),
-                    child: BlocConsumer<AuthBloc, AuthState>(
+                    child: BlocConsumer<LoginBloc, LoginState>(
                       listener: (context, state) {
-                        if (state is AuthVerifyState) {
-                          Navigator.of(context).pushNamed(AppRoutes.verify,
-                              arguments: _phoneController.text);
+                        print('state : ${state}');
+                        if (state is LoginSuccess) {
+                          print('state : ${state.loginId}');
+                          Navigator.of(context).pushNamed(AppRoutes.verify, arguments: {
+                            'phone': state.phone,
+                            'loginId': state.loginId,
+                          });
                         }
                       },
                       builder: (context, state) {
@@ -162,9 +169,9 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                             onPressed: () {
-                              if (state is! AuthLoading) loginFunction(context);
+                              if (state is! LoginLoading) loginFunction(context);
                             },
-                            child: (state is AuthLoading)
+                            child: (state is LoginLoading)
                                 ? WhiteCircularProgressIndicator()
                                 : Text(
                                     AppLocalizations.of(context)!
@@ -195,7 +202,7 @@ class _LoginState extends State<Login> {
     print('loginFunction');
     if (_formKey.currentState!.validate()) {
       final phoneNumber = _phoneController.text;
-      BlocProvider.of<AuthBloc>(context).add(LogInEvent(phoneNumber));
+      BlocProvider.of<LoginBloc>(context).add(LogInEvent(phoneNumber));
     }
   }
 }

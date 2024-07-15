@@ -15,10 +15,10 @@ class Comment {
   final Sender? sender;
 
   Comment({
-    required this.id,
-    required this.message,
-    required this.createdAt,
-    required this.persianDate,
+    this.id,
+    this.message,
+    this.createdAt,
+    this.persianDate,
     this.replyTo,
     this.replies,
     this.post,
@@ -26,10 +26,9 @@ class Comment {
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
-    String createdAt = json['created_at'];
-    Jalali jalaliDate = Jalali.fromDateTime(DateTime.parse(createdAt));
-    String formattedPersianDate = '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}';
-
+    String? createdAt = json['created_at'];
+    Jalali? jalaliDate = createdAt != null ? Jalali.fromDateTime(DateTime.parse(createdAt)) : null;
+    String? formattedPersianDate = jalaliDate != null ? '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}' : null;
     return Comment(
       id: json['id'],
       message: json['message'],
@@ -38,12 +37,11 @@ class Comment {
       replyTo: json['reply_to'],
       replies: json['replies'] != null
           ? (json['replies'] as List<dynamic>)
-              .map((item) => Reply.fromJson(item as Map<String, dynamic>))
-              .toList()
+          .map((item) => Reply.fromJson(item as Map<String, dynamic>))
+          .toList()
           : null,
       post: json['post_id'] != null ? PostDetails.fromJson(json['post_id']) : null,
       sender: json['sender_id'] != null ? Sender.fromJson(json['sender_id']) : null,
-
     );
   }
 }

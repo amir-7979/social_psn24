@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../repos/models/media.dart';
-import 'cached_network_image.dart';
 
 class MyVideoPlayer extends StatefulWidget {
   final Media media;

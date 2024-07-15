@@ -1,13 +1,10 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_psn/screens/home/widgets/blur_widget.dart';
+
 import '../../configs/custom_navigator_observer.dart';
-import '../../configs/localization/app_localizations.dart';
+import '../../configs/custom_page_route.dart';
 import '../../configs/setting/setting_bloc.dart';
-import '../../configs/setting/themes.dart';
 import '../home/home_screen.dart';
 import '../home/widgets/floating_action_button.dart';
 import '../widgets/appbar_widget.dart';
@@ -43,6 +40,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       resizeToAvoidBottomInset: true,
       drawer: context.read<SettingBloc>().state.isUserLoggedIn
           ? UserDrawer(context, _navigatorKey)
@@ -55,13 +53,13 @@ class _MainScreenState extends State<MainScreen> {
             initialRoute: AppRoutes.home,
             observers: [_navigatorObserver],
             onGenerateRoute: (RouteSettings settings) {
-              return MaterialPageRoute(
+              return CustomPageRoute(
                 builder: routes[settings.name] ?? (context) => HomeScreen(),
                 settings: settings,
               );
             },
           ),
-          if (isAddButtonClicked) BlurWidget(isAddButtonClicked)
+          if (isAddButtonClicked) BlurWidget(isAddButtonClicked, _navigatorKey, changeAddButtonState)
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

@@ -1,13 +1,11 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:social_psn/screens/post_detailed/widget/reply_item.dart';
 import 'package:social_psn/screens/post_detailed/widget/comment_bottom_sheet.dart';
+import 'package:social_psn/screens/post_detailed/widget/reply_item.dart';
+
 import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/setting/themes.dart';
 import '../../../repos/models/comment.dart';
 import '../../widgets/TrianglePainter.dart';
 import '../../widgets/profile_cached_network_image.dart';
