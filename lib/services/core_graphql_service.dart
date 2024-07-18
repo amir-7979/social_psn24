@@ -19,54 +19,58 @@ class CoreGraphQLService {
   late Link _link;
   late GraphQLClient _client;
 
-  CoreGraphQLService._() {
-    _authLink = AuthLink(
-      getToken: () async {
-        final token = await _storageService.readData('token');
-        return token != null ? 'Bearer $token' : null;
-      },
-    );
-    final LoggingLink loggingLink = LoggingLink();
-    _link = _authLink.concat(loggingLink).concat(_httpLink);
-    _client = GraphQLClient(
-      cache: GraphQLCache(),
-      link: _link,
-    );
-  }
-
   static final CoreGraphQLService _instance = CoreGraphQLService._();
 
   static CoreGraphQLService get instance => _instance;
 
   GraphQLClient get client => _client;
 
-  void addTokenToAuthLink() {
+  CoreGraphQLService._() {
+    _initializeClient();
+
+  }
+
+  // Initialize the GraphQL client with or without an auth link
+  void _initializeClient() {
+    // Create the AuthLink and LoggingLink
     _authLink = AuthLink(
       getToken: () async {
         final token = await _storageService.readData('token');
-        return token != null ? 'Bearer $token' : null;
+        return token != null && token.isNotEmpty ? 'Bearer $token' : null;
       },
     );
     final LoggingLink loggingLink = LoggingLink();
-    _link = _authLink.concat(loggingLink).concat(_httpLink);
+
+    // Configure the link to include AuthLink if a token is present
+    _link = Link.from([
+      _authLink,
+      loggingLink,
+      _httpLink,
+    ]);
+
+    // Create the GraphQL client
     _client = GraphQLClient(
       cache: GraphQLCache(),
       link: _link,
     );
   }
 
-  void removeTokenFromAuthLink() {
+  // Add token to AuthLink and reinitialize the client
+  Future<void> addTokenToAuthLink() async {
+    final token = await _storageService.readData('token');
+    if (token != null && token.isNotEmpty) {
+      _authLink = AuthLink(
+        getToken: () async => 'Bearer $token',
+      );
+      _initializeClient();
+    }
+  }
+
+  // Remove token from AuthLink and reinitialize the client
+  Future<void> removeTokenFromAuthLink() async {
     _authLink = AuthLink(
-      getToken: () => Future.value(null),
+      getToken: () async => null, // Ensure no token is used
     );
-    final LoggingLink loggingLink = LoggingLink();
-    _link = _authLink.concat(loggingLink).concat(_httpLink);
-    _client = GraphQLClient(
-      cache: GraphQLCache(),
-      link: _link,
-    );
-
+    _initializeClient();
   }
-
-
 }

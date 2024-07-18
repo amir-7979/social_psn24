@@ -39,7 +39,7 @@ MutationOptions getEditUserOptions(String name, String family, String username, 
   if (photo != null) variables['photo'] = photo;
   return MutationOptions(
     document: gql('''
-      mutation EditUser(\$name: String!, \$family: String!, \$username: String!, \$photo: String, \$show_activity: Int!) {
+      mutation EditUser(\$name: String!, \$family: String!, \$username: String, \$photo: String, \$show_activity: Int!) {
         editUser(name: \$name, family: \$family, username: \$username, photo: \$photo, show_activity: \$show_activity) {
           id,
           name,

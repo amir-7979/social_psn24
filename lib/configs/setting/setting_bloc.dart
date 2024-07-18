@@ -35,8 +35,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     final QueryResult result = await coreGraphQLService.query(options);
     if (result.hasException) {
       print(result.exception.toString());
-      print('Error in fetching user profile with permissions');
-      print(result.exception.toString());
     } else {
       final Map<String, dynamic> data = result.data!;
       final Map<String, dynamic> profileData = data['profile'];
@@ -51,8 +49,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     final QueryOptions options =  getUserPermissions() ;
     final QueryResult result = await coreGraphQLService.query(options);
     if (result.hasException) {
-      print(result.exception.toString());
-      print('Error in fetching user profile with permissions');
       print(result.exception.toString());
     } else {
       final Map<String, dynamic> data = result.data!;
@@ -99,7 +95,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await _storageService.deleteData('expiry');
     await _storageService.deleteData('token');
     await _storageService.deleteData('refreshToken');
-    await _storageService.deleteData('userId');
     CoreGraphQLService.instance.removeTokenFromAuthLink();
     GraphQLService.instance.removeTokenFromAuthLink();
     state.reset();
@@ -111,7 +106,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await storageService.saveData('expiry', data?['verifyToken'][1]);
     await storageService.saveData('token', data?['verifyToken'][2]);
     await storageService.saveData('refreshToken', data?['verifyToken'][3]);
-    await storageService.saveData('userId', data?['verifyToken'][4]);
   }
 
 }

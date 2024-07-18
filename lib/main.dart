@@ -3,12 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'configs/localization/app_localizations_delegate.dart';
-import 'configs/routes.dart';
 import 'configs/setting/setting_bloc.dart';
 import 'configs/setting/themes.dart';
 import 'screens/main/main_screen.dart';
+import 'services/core_graphql_service.dart';
 
 void main() {
+
   runApp(MyApp());
 }
 
@@ -30,7 +31,6 @@ class MyApp extends StatelessWidget {
           return SafeArea(
             child: MaterialApp(
               color: Theme.of(context).scaffoldBackgroundColor,
-
               title: 'social psn',
               debugShowCheckedModeBanner: false,
               theme: state.theme == AppTheme.light ? lightTheme : darkTheme,

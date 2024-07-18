@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:social_psn/configs/setting/setting_bloc.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
 import '../../configs/custom_navigator_observer.dart';
@@ -42,7 +44,8 @@ class _MyStylishBottomBarState extends State<MyStylishBottomBar> {
     String targetRoute;
     switch (index) {
       case 0:
-        targetRoute = AppRoutes.myProfile;
+        bool isUserLoggedIn = BlocProvider.of<SettingBloc>(context).state.isUserLoggedIn;
+        targetRoute = isUserLoggedIn ? AppRoutes.myProfile : AppRoutes.login;
         break;
       case 1:
         targetRoute = AppRoutes.home;

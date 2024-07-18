@@ -43,8 +43,9 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
         GraphQLService.instance.addTokenToAuthLink();
         CoreGraphQLService.instance.addTokenToAuthLink();
         settingBloc.add(FetchUserProfileWithPermissionsEvent());
-        if (result.data?['verifyToken'][4] == 2)
-          emit(VerifyFinished());
+        if (result.data?['verifyToken'][4] == '1'){
+          settingBloc.add(FetchUserProfileWithPermissionsEvent());
+          emit(VerifyFinished());}
         else
           emit(VerifySuccess());
       }

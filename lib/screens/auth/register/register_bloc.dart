@@ -20,7 +20,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   }
 
   Future<void> _handleRegisterEvent(EditUserEvent event, Emitter<RegisterState> emit) async {
-    print('event: $event');
     emit(RegisterLoading());
     try {
       final QueryResult result = await coreGraphQLService.mutate(
@@ -33,6 +32,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           emit(RegisterFailure(result.exception!.graphqlErrors[0]
               .extensions!['validation']['name'][0]));
         } else {
+          print(result.exception.toString());
           emit(RegisterFailure('خطا'));
         }
       } else {
@@ -41,6 +41,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         emit(RegisterFinished('ورود با موفقیت انجام شد'));
       }
     } catch (exception) {
+      print(exception.toString());
+
       emit(RegisterFailure('خطا'));
     }
   }

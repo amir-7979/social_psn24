@@ -5,6 +5,7 @@ import '../screens/main/widgets/screen_builder.dart';
 class CustomNavigatorObserver extends NavigatorObserver {
   final ValueNotifier<int> currentIndexNotifier;
   String currentRoute = AppRoutes.home;
+
   CustomNavigatorObserver(this.currentIndexNotifier);
 
   @override
@@ -42,6 +43,9 @@ class CustomNavigatorObserver extends NavigatorObserver {
       case AppRoutes.interest:
       case AppRoutes.cooperate:
       case AppRoutes.createMedia:
+      case AppRoutes.login:
+      case AppRoutes.verify:
+      case AppRoutes.register:
         currentIndexNotifier.value = 2;
         break;
       case AppRoutes.consultation:

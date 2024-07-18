@@ -5,9 +5,11 @@ import 'package:rxdart/rxdart.dart';
 class LoggingLink extends Link {
   @override
   Stream<Response> request(Request request, [forward]) {
-    // Optionally log the request and response
+    print("Request: ${request.context}"); // Log request
     return forward!(request).doOnData((response) {
-      // Optionally log the response data
+      print("Response: ${response.data}"); // Log response
+    }).handleError((error) {
+      print("Error: $error"); // Log error
     });
   }
 }
@@ -15,11 +17,12 @@ class LoggingLink extends Link {
 class GraphQLService {
   final StorageService _storageService = StorageService();
   final HttpLink _httpLink = HttpLink('https://api.psn24.ir/graphql');
-  Link? _authLink;
+  late AuthLink _authLink;
   late Link _link;
   late GraphQLClient _client;
 
   GraphQLService._() {
+    // Initialize the client synchronously
     _initializeClient();
   }
 
@@ -29,21 +32,32 @@ class GraphQLService {
 
   GraphQLClient get client => _client;
 
+  // Initialize the GraphQL client with or without an auth link
   void _initializeClient() {
-    final LoggingLink loggingLink = LoggingLink();
+    // Create the AuthLink and LoggingLink
     _authLink = AuthLink(
       getToken: () async {
         final token = await _storageService.readData('token');
         return token != null && token.isNotEmpty ? 'Bearer $token' : null;
       },
     );
-    _link = Link.from([if (_authLink != null) _authLink!, loggingLink, _httpLink]);
+    final LoggingLink loggingLink = LoggingLink();
+
+    // Configure the link to include AuthLink if a token is present
+    _link = Link.from([
+      _authLink,
+      loggingLink,
+      _httpLink,
+    ]);
+
+    // Create the GraphQL client
     _client = GraphQLClient(
       cache: GraphQLCache(),
       link: _link,
     );
   }
 
+  // Add token to AuthLink and reinitialize the client
   Future<void> addTokenToAuthLink() async {
     final token = await _storageService.readData('token');
     if (token != null && token.isNotEmpty) {
@@ -54,17 +68,11 @@ class GraphQLService {
     }
   }
 
-  void removeTokenFromAuthLink() {
-    _authLink = null;
+  // Remove token from AuthLink and reinitialize the client
+  Future<void> removeTokenFromAuthLink() async {
+    _authLink = AuthLink(
+      getToken: () async => null, // Ensure no token is used
+    );
     _initializeClient();
-    _deleteFromStorage();
-  }
-
-  void _deleteFromStorage() {
-    _storageService.deleteData('bearer');
-    _storageService.deleteData('expiry');
-    _storageService.deleteData('token');
-    _storageService.deleteData('refreshToken');
-    _storageService.deleteData('userId');
   }
 }

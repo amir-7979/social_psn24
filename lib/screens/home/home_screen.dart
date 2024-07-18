@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:social_psn/screens/home/widgets/normal_user_post_list.dart';
 
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/post.dart';
@@ -43,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
-
     return Padding(
         padding: const EdgeInsetsDirectional.all(16),
         child: Container(
@@ -56,9 +56,7 @@ class _HomeScreenState extends State<HomeScreen>
               create: (context) => HomeBloc(),
               child: seeExpertPost
                   ? MainTabBar()
-                  : PostList(
-                      pagingController: _pagingPostController1!,
-                      scrollController: ScrollController())),
+                  : NormalUserPostList()),
         ));
   }
 }

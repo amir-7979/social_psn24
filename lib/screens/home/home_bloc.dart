@@ -28,11 +28,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   static Future<void> fetchPosts(PagingController<int, Post> pagingController, int limit, int? postType, String? id, int? isPublish, String? tagId, String? search) async {
+    print('here');
   try {
     final QueryOptions options = postsQuery(id: id, isPublish: isPublish, tagId: tagId, search: search, limit: limit, offset: pagingController.nextPageKey, postType: postType);
     final QueryResult result = await GraphQLService.instance.client.query(options);
+    print(GraphQLService.instance.client.link.toString());
     if (result.hasException) {
       pagingController.error = result.exception;
+      print(result.exception.toString());
     }
     final List<Post> posts = (result.data?['posts'] as List<dynamic>?)
         ?.map((dynamic item) => Post.fromJson(item as Map<String, dynamic>)).toList() ?? [];
