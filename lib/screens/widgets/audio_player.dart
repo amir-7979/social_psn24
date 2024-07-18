@@ -34,13 +34,16 @@ class _MyAudioPlayerState extends State<MyAudioPlayer> {
     super.dispose();
   }
 
-  @override
   Widget build(BuildContext context) {
-    //if (!widget.isInView) flickManager.flickControlManager?.pause();
-    return FlickVideoPlayer(
-      flickManager: flickManager,
-      flickVideoWithControls: FlickVideoWithControls(
-        controls: FlickPortraitControls(),
+    return Directionality(
+      textDirection: TextDirection.ltr, // or TextDirection.ltr
+      child: FlickVideoPlayer(
+        flickManager: flickManager,
+        flickVideoWithControls: FlickVideoWithControls(
+          controls: FlickPortraitControls(),
+          aspectRatioWhenLoading: 16 / 9,
+          videoFit: BoxFit.contain,
+        ),
       ),
     );
   }

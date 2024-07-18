@@ -3,20 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:social_psn/screens/widgets/cached_network_image.dart';
 import 'package:social_psn/screens/widgets/media_loader.dart';
 
 import '../../../configs/consts.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/post.dart';
+import '../../repos/models/media.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/profile_cached_network_image.dart';
+import '../widgets/video_player.dart';
 import 'post_bloc.dart';
-
 
 class PostItem extends StatefulWidget {
   final Post post;
+
   PostItem(this.post);
 
   @override
@@ -26,7 +29,7 @@ class PostItem extends StatefulWidget {
 class _PostItemState extends State<PostItem> {
   bool? isUserLoggedIn;
   late PostBloc _postBloc = PostBloc();
-
+  bool _showVideo = false;
 
   @override
   void initState() {
@@ -40,7 +43,8 @@ class _PostItemState extends State<PostItem> {
     super.dispose();
   }
 
-  double measureTextHeight(String text, TextStyle style, int maxLines, double width) {
+  double measureTextHeight(
+      String text, TextStyle style, int maxLines, double width) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       maxLines: maxLines,
@@ -48,26 +52,30 @@ class _PostItemState extends State<PostItem> {
     )..layout(minWidth: 0, maxWidth: width);
     return textPainter.size.height;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-  create: (context) => _postBloc,
-  child: Builder(
-    builder: (context) {
-      return InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: <String, dynamic>{
-            'post': widget.post,
-            'postId': widget.post.id,
-          },);        },
-        child: Padding(
-          padding: const EdgeInsetsDirectional.only(top: 16),
-          child: Column(
+      create: (context) => _postBloc,
+      child: Builder(builder: (context) {
+        return InkWell(
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              AppRoutes.postDetailed,
+              arguments: <String, dynamic>{
+                'post': widget.post,
+                'postId': widget.post.id,
+              },
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsetsDirectional.only(top: 16),
+            child: Column(
               children: [
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.profile, arguments: widget.post.creator?.id?.toInt());
+                    Navigator.of(context).pushNamed(AppRoutes.profile,
+                        arguments: widget.post.creator?.id?.toInt());
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +85,8 @@ class _PostItemState extends State<PostItem> {
                           size: Size.fromRadius(24), // Image radius
                           child: widget.post.creator?.photo != null
                               ? ProfileCacheImage(widget.post.creator?.photo)
-                              : SvgPicture.asset('assets/images/drawer/profile2.svg'),
+                              : SvgPicture.asset(
+                                  'assets/images/drawer/profile2.svg'),
                         ),
                       ),
                       SizedBox(width: 12),
@@ -94,11 +103,15 @@ class _PostItemState extends State<PostItem> {
                                   child: Text(
                                     '${widget.post.creator?.name} ${widget.post.creator?.family}',
                                     overflow: TextOverflow.ellipsis,
-                                    style:
-                                    Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                      color: Theme.of(context).colorScheme.shadow,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .shadow,
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                   ),
                                 ),
                                 SizedBox(width: 3),
@@ -112,18 +125,24 @@ class _PostItemState extends State<PostItem> {
                                         .textTheme
                                         .bodyMedium!
                                         .copyWith(
-                                      color: Theme.of(context).colorScheme.tertiary,
-                                    ),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary,
+                                        ),
                                   ),
                                 ),
                               ],
                             ),
                             Text(
                               '${widget.post.creator?.displayName}',
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                color: Theme.of(context).colorScheme.surface,
-                                fontWeight: FontWeight.w400,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.surface,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -136,10 +155,15 @@ class _PostItemState extends State<PostItem> {
                                 SizedBox(width: 6),
                                 Text(
                                   '${widget.post.persianDate}',
-                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    color: Theme.of(context).colorScheme.surface,
-                                    fontWeight: FontWeight.w400,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                 ),
                               ],
                             ),
@@ -149,18 +173,20 @@ class _PostItemState extends State<PostItem> {
                       BlocConsumer<PostBloc, PostState>(
                         listener: (context, state) {
                           if (state is InterestSuccessState) {
-                            widget.post.currentUserLiked = !widget.post.currentUserLiked;
+                            widget.post.currentUserLiked =
+                                !widget.post.currentUserLiked;
                             print(widget.post.currentUserLiked);
                             widget.post.isLiked = widget.post.currentUserLiked;
                           } else if (state is InterestFailureState) {
                             widget.post.isLiked = !widget.post.isLiked;
                           } else if (state is NotificationSuccessState) {
                             widget.post.currentUserNotificationEnabled =
-                            !widget.post.currentUserNotificationEnabled;
+                                !widget.post.currentUserNotificationEnabled;
                             widget.post.isNotificationEnabled =
                                 widget.post.currentUserNotificationEnabled;
                           } else if (state is NotificationFailureState) {
-                            widget.post.isNotificationEnabled = !widget.post.isNotificationEnabled;
+                            widget.post.isNotificationEnabled =
+                                !widget.post.isNotificationEnabled;
                           }
                           setState(() {});
                         },
@@ -193,96 +219,117 @@ class _PostItemState extends State<PostItem> {
                                   widget.post.isLiked = !widget.post.isLiked;
                                   setState(() {});
                                   if (isUserLoggedIn == true) {
-                                    BlocProvider.of<PostBloc>(context)
-                                        .add(AddToInterestEvent(widget.post.id));
+                                    BlocProvider.of<PostBloc>(context).add(
+                                        AddToInterestEvent(widget.post.id));
                                   } else {
-                                    Navigator.of(context).pushNamed(AppRoutes.login);
+                                    Navigator.of(context)
+                                        .pushNamed(AppRoutes.login);
                                   }
                                 },
                                 value: 1,
                                 padding: EdgeInsets.symmetric(horizontal: 10),
                                 child: Row(
                                   children: [
-                                    widget.post.isLiked ? FaIcon(
-                                        size: 20,
-                                        FontAwesomeIcons.solidHeart,
-                                        color: Theme.of(context).colorScheme.error
-                                    ):FaIcon(
-                                        size: 20,
-                                        FontAwesomeIcons.lightHeart,
-                                        color: Theme.of(context).colorScheme.shadow
-                                    ),
+                                    widget.post.isLiked
+                                        ? FaIcon(
+                                            size: 20,
+                                            FontAwesomeIcons.solidHeart,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .error)
+                                        : FaIcon(
+                                            size: 20,
+                                            FontAwesomeIcons.lightHeart,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .shadow),
                                     SizedBox(width: 12),
                                     Text(
-                                      AppLocalizations.of(context)!.translateNested(
-                                          "postScreen",
-                                          widget.post.isLiked ?? false
-                                              ? "delete_interest"
-                                              : "interest"),
+                                      AppLocalizations.of(context)!
+                                          .translateNested(
+                                              "postScreen",
+                                              widget.post.isLiked ?? false
+                                                  ? "delete_interest"
+                                                  : "interest"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge!
                                           .copyWith(
-                                        color: Theme.of(context).colorScheme.shadow,
-                                      ),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .shadow,
+                                          ),
                                     ),
                                   ],
                                 ),
                               ),
                               PopupMenuItem(
                                 onTap: () {
-                                  widget.post.isNotificationEnabled = !widget.post.isNotificationEnabled;
+                                  widget.post.isNotificationEnabled =
+                                      !widget.post.isNotificationEnabled;
                                   setState(() {});
                                   if (isUserLoggedIn == true) {
-                                    BlocProvider.of<PostBloc>(context)
-                                        .add(EnableNotificationEvent(widget.post.id));
+                                    BlocProvider.of<PostBloc>(context).add(
+                                        EnableNotificationEvent(
+                                            widget.post.id));
                                   } else {
-                                    Navigator.of(context).pushNamed(AppRoutes.login);
-
+                                    Navigator.of(context)
+                                        .pushNamed(AppRoutes.login);
                                   }
                                 },
                                 value: 2,
                                 padding: EdgeInsets.symmetric(horizontal: 10),
                                 child: Row(
                                   children: [
-                                    widget.post.isNotificationEnabled ? FaIcon(
-                                        size: 20,
-                                        FontAwesomeIcons.solidBell,
-                                        color: Theme.of(context).colorScheme.tertiary
-                                    ):FaIcon(
-                                        size: 20,
-                                        FontAwesomeIcons.lightBell,
-                                        color: Theme.of(context).colorScheme.shadow
-                                    ),
+                                    widget.post.isNotificationEnabled
+                                        ? FaIcon(
+                                            size: 20,
+                                            FontAwesomeIcons.solidBell,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary)
+                                        : FaIcon(
+                                            size: 20,
+                                            FontAwesomeIcons.lightBell,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .shadow),
                                     SizedBox(width: 12),
                                     Text(
-                                      AppLocalizations.of(context)!.translateNested(
-                                          "postScreen",
-                                          widget.post.isNotificationEnabled ?? false
-                                              ? "delete_notification"
-                                              : "notification"),
+                                      AppLocalizations.of(context)!
+                                          .translateNested(
+                                              "postScreen",
+                                              widget.post.isNotificationEnabled ??
+                                                      false
+                                                  ? "delete_notification"
+                                                  : "notification"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge!
                                           .copyWith(
-                                        color: Theme.of(context).colorScheme.shadow,
-                                      ),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .shadow,
+                                          ),
                                     ),
                                   ],
                                 ),
                               ),
                               PopupMenuItem(
                                 onTap: () {
-                                  FlutterClipboard.copy(inviteLink).then((value) {
+                                  FlutterClipboard.copy(inviteLink)
+                                      .then((value) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       CustomSnackBar(
-                                          function: () =>
-                                              ScaffoldMessenger.of(context)
-                                                  .hideCurrentSnackBar(),
-                                          content: AppLocalizations.of(context)!
-                                              .translateNested('drawer', 'invite'),
-                                          backgroundColor:
-                                          Theme.of(context).primaryColor)
+                                              function: () =>
+                                                  ScaffoldMessenger.of(context)
+                                                      .hideCurrentSnackBar(),
+                                              content:
+                                                  AppLocalizations.of(context)!
+                                                      .translateNested(
+                                                          'drawer', 'invite'),
+                                              backgroundColor: Theme.of(context)
+                                                  .primaryColor)
                                           .build(context),
                                     );
                                   });
@@ -295,18 +342,22 @@ class _PostItemState extends State<PostItem> {
                                       'assets/images/post/share.svg',
                                       height: 20,
                                       width: 20,
-                                      color: Theme.of(context).colorScheme.shadow,
+                                      color:
+                                          Theme.of(context).colorScheme.shadow,
                                     ),
                                     SizedBox(width: 12),
                                     Text(
                                       AppLocalizations.of(context)!
-                                          .translateNested("postScreen", "share"),
+                                          .translateNested(
+                                              "postScreen", "share"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge!
                                           .copyWith(
-                                        color: Theme.of(context).colorScheme.shadow,
-                                      ),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .shadow,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -318,11 +369,13 @@ class _PostItemState extends State<PostItem> {
                     ],
                   ),
                 ),
-                widget.post.medias == null || widget.post.medias!.isEmpty ? SizedBox(height: 24) :
-                Padding(
-                  padding: const EdgeInsetsDirectional.symmetric(vertical: 16),
-                  child: MediaLoader(medias: widget.post.medias),
-                ),
+                SizedBox(height: 16),
+                if (widget.post.medias != null && widget.post.medias!.isNotEmpty)
+                  Padding(
+                    padding:
+                        const EdgeInsetsDirectional.only(bottom: 16),
+                    child: MediaLoader(medias: widget.post.medias),
+                  ),
                 Row(
                   children: [
                     Expanded(
@@ -331,8 +384,8 @@ class _PostItemState extends State<PostItem> {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.shadow,
-                        ),
+                              color: Theme.of(context).colorScheme.shadow,
+                            ),
                       ),
                     ),
                   ],
@@ -340,13 +393,15 @@ class _PostItemState extends State<PostItem> {
                 SizedBox(height: 8),
                 LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
-                    final style = Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.shadow,
-                      fontWeight: FontWeight.w500,
-                      height: 1.5
-                    );
+                    final style = Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(
+                            color: Theme.of(context).colorScheme.shadow,
+                            fontWeight: FontWeight.w500,
+                            height: 1.5);
                     final textHeight = measureTextHeight(
-                      widget.post.description??'',
+                      widget.post.description ?? '',
                       style,
                       2,
                       constraints.maxWidth,
@@ -359,12 +414,13 @@ class _PostItemState extends State<PostItem> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.post.description??'',
+                                widget.post.description ?? '',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                                 style: style,
                               ),
-                              if (textHeight > style.fontSize! * 2) SizedBox(height: style.fontSize! * 2),
+                              if (textHeight > style.fontSize! * 2)
+                                SizedBox(height: style.fontSize! * 2),
                             ],
                           ),
                         ),
@@ -379,7 +435,10 @@ class _PostItemState extends State<PostItem> {
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Theme.of(context).colorScheme.background.withOpacity(0.3),
+                                  Theme.of(context)
+                                      .colorScheme
+                                      .background
+                                      .withOpacity(0.3),
                                   Theme.of(context).colorScheme.background,
                                 ],
                               ),
@@ -392,14 +451,18 @@ class _PostItemState extends State<PostItem> {
                                   height: 31,
                                   child: TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: <String, dynamic>{
-                                        'post': widget.post,
-                                        'postId': widget.post.id,
-                                      },);
+                                      Navigator.of(context).pushNamed(
+                                        AppRoutes.postDetailed,
+                                        arguments: <String, dynamic>{
+                                          'post': widget.post,
+                                          'postId': widget.post.id,
+                                        },
+                                      );
                                     },
                                     child: Text(
-                                      AppLocalizations.of(context)!.translateNested(
-                                          'postScreen', 'show_more'),
+                                      AppLocalizations.of(context)!
+                                          .translateNested(
+                                              'postScreen', 'show_more'),
                                       style: TextStyle(
                                         color: Theme.of(context).primaryColor,
                                         fontSize: 12,
@@ -414,7 +477,6 @@ class _PostItemState extends State<PostItem> {
                     );
                   },
                 ),
-                //SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsetsDirectional.only(start: 10),
                   child: Row(
@@ -435,10 +497,14 @@ class _PostItemState extends State<PostItem> {
                           Text(
                             '${widget.post.viewCount}',
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: Theme.of(context).colorScheme.shadow.withOpacity(0.6),
-                              fontWeight: FontWeight.w400,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .shadow
+                                          .withOpacity(0.6),
+                                      fontWeight: FontWeight.w400,
+                                    ),
                           ),
                         ],
                       ),
@@ -446,7 +512,9 @@ class _PostItemState extends State<PostItem> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              Navigator.of(context).pushNamed(AppRoutes.postDetailed, arguments: widget.post);
+                              Navigator.of(context).pushNamed(
+                                  AppRoutes.postDetailed,
+                                  arguments: widget.post);
                             },
                             icon: SizedBox(
                               height: 27,
@@ -460,15 +528,16 @@ class _PostItemState extends State<PostItem> {
                           SizedBox(width: 8),
                           IconButton(
                             onPressed: () {
-                              widget.post.voteDown = widget.post.voteDown == false ? true : false;
+                              widget.post.voteDown =
+                                  widget.post.voteDown == false ? true : false;
                               widget.post.voteUp = false;
                               setState(() {});
                               if (isUserLoggedIn == true) {
-                                BlocProvider.of<PostBloc>(context)
-                                    .add(UserVoteDownEvent(widget.post.id, 'down'));
+                                BlocProvider.of<PostBloc>(context).add(
+                                    UserVoteDownEvent(widget.post.id, 'down'));
                               } else {
-                                Navigator.of(context).pushNamed(AppRoutes.login);
-
+                                Navigator.of(context)
+                                    .pushNamed(AppRoutes.login);
                               }
                             },
                             icon: SizedBox(
@@ -478,39 +547,44 @@ class _PostItemState extends State<PostItem> {
                                 listener: (context, state) {
                                   if (state is UserVoteDownSuccessState) {
                                     widget.post.currentUserDownVotes =
-                                    !widget.post.currentUserDownVotes;
+                                        !widget.post.currentUserDownVotes;
                                     widget.post.currentUserUpVotes = false;
                                   }
-                                  widget.post.voteDown = widget.post.currentUserDownVotes;
-                                  widget.post.voteUp = widget.post.currentUserUpVotes;
+                                  widget.post.voteDown =
+                                      widget.post.currentUserDownVotes;
+                                  widget.post.voteUp =
+                                      widget.post.currentUserUpVotes;
                                   setState(() {});
                                 },
-                                child: widget.post.voteDown == true ? FaIcon(
-                                  size: 30,
-                                  FontAwesomeIcons.solidThumbsDown,
-                                  color: Theme.of(context).hoverColor,
-
-                                ) : FaIcon(
-                                    size: 30,
-                                    FontAwesomeIcons.thinThumbsDown,
-                                  color: Theme.of(context).colorScheme.shadow
+                                child: widget.post.voteDown == true
+                                    ? FaIcon(
+                                        size: 30,
+                                        FontAwesomeIcons.solidThumbsDown,
+                                        color: Theme.of(context).hoverColor,
+                                      )
+                                    : FaIcon(
+                                        size: 30,
+                                        FontAwesomeIcons.thinThumbsDown,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .shadow),
                               ),
                             ),
-                          ),
                           ),
                           SizedBox(width: 8),
                           IconButton(
                             onPressed: () {
                               setState(() {
-                                widget.post.voteUp = widget.post.voteUp == false ? true : false;
+                                widget.post.voteUp =
+                                    widget.post.voteUp == false ? true : false;
                                 widget.post.voteDown = false;
                               });
                               if (isUserLoggedIn == true) {
                                 BlocProvider.of<PostBloc>(context)
                                     .add(UserVoteUpEvent(widget.post.id, 'up'));
                               } else {
-                                Navigator.of(context).pushNamed(AppRoutes.login);
-
+                                Navigator.of(context)
+                                    .pushNamed(AppRoutes.login);
                               }
                             },
                             icon: SizedBox(
@@ -520,22 +594,26 @@ class _PostItemState extends State<PostItem> {
                                 listener: (context, state) {
                                   if (state is UserVoteUpSuccessState) {
                                     widget.post.currentUserUpVotes =
-                                    !widget.post.currentUserUpVotes;
+                                        !widget.post.currentUserUpVotes;
                                     widget.post.currentUserDownVotes = false;
                                   }
-                                  widget.post.voteUp = widget.post.currentUserUpVotes;
-                                  widget.post.voteDown = widget.post.currentUserDownVotes;
+                                  widget.post.voteUp =
+                                      widget.post.currentUserUpVotes;
+                                  widget.post.voteDown =
+                                      widget.post.currentUserDownVotes;
                                   setState(() {});
                                 },
-                                child: widget.post.voteUp == true ? FaIcon(
-                                    size: 30,
-                                    FontAwesomeIcons.solidThumbsUp,
-                                    color: Theme.of(context).hoverColor
-                                ) : FaIcon(
-                                    size: 30,
-                                    FontAwesomeIcons.thinThumbsUp,
-                                    color: Theme.of(context).colorScheme.shadow
-                                ),
+                                child: widget.post.voteUp == true
+                                    ? FaIcon(
+                                        size: 30,
+                                        FontAwesomeIcons.solidThumbsUp,
+                                        color: Theme.of(context).hoverColor)
+                                    : FaIcon(
+                                        size: 30,
+                                        FontAwesomeIcons.thinThumbsUp,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .shadow),
                               ),
                             ),
                           ),
@@ -555,9 +633,15 @@ class _PostItemState extends State<PostItem> {
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                         colors: [
-                          Theme.of(context).colorScheme.shadow.withOpacity(0.02),
+                          Theme.of(context)
+                              .colorScheme
+                              .shadow
+                              .withOpacity(0.02),
                           Theme.of(context).colorScheme.shadow.withOpacity(0.1),
-                          Theme.of(context).colorScheme.shadow.withOpacity(0.02),
+                          Theme.of(context)
+                              .colorScheme
+                              .shadow
+                              .withOpacity(0.02),
                         ],
                       ),
                     ),
@@ -565,10 +649,10 @@ class _PostItemState extends State<PostItem> {
                 ),
               ],
             ),
-        ),
-      );
-    }
-  ),
-);
+          ),
+        );
+      }),
+    );
   }
+
 }

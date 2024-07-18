@@ -23,7 +23,7 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
     flickManager = FlickManager(
       videoPlayerController:
       VideoPlayerController.networkUrl(Uri.parse(widget.media.getVideoUrl() ?? ''), videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: false),),
-      autoPlay: false,
+      autoPlay: true,
       autoInitialize: true,
 
     );
@@ -37,17 +37,15 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    //if (!widget.isInView) flickManager.flickControlManager?.pause();
-    return FlickVideoPlayer(
-      flickManager: flickManager,
-      flickVideoWithControls: FlickVideoWithControls(
-        controls: FlickPortraitControls(),
-        aspectRatioWhenLoading: 16 / 9,
-        /*playerLoadingFallback: Center(
-          child: CacheImage(widget.media.getThumbnailUrl()), // Use your custom CachedNetworkImage widget as a placeholder
-        ),*/
-        //backgroundColor: Theme.of(context).colorScheme.background,
-        //videoFit: BoxFit.fill,
+    return Directionality(
+      textDirection: TextDirection.ltr, // or TextDirection.ltr
+      child: FlickVideoPlayer(
+        flickManager: flickManager,
+        flickVideoWithControls: FlickVideoWithControls(
+          controls: FlickPortraitControls(),
+          aspectRatioWhenLoading: 16 / 9,
+          videoFit: BoxFit.contain,
+        ),
       ),
     );
   }

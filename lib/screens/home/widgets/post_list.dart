@@ -20,12 +20,26 @@ class PostList extends StatefulWidget {
 }
 
 class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin {
+  late ScrollController _customScrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _customScrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _customScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocListener<HomeBloc, HomeState>(
       listener: (context, state) {
         if (state is PostRefreshSuccess) {
@@ -34,72 +48,76 @@ class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin 
       },
       child: PagedListView<int, Post>(
         padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
-        scrollController: widget.scrollController,
-        physics: const AlwaysScrollableScrollPhysics(),
+        scrollController: _customScrollController,
+        physics: const CustomScrollPhysics(), // Custom scroll physics for better control
         pagingController: widget.pagingController,
         builderDelegate: PagedChildBuilderDelegate<Post>(
-          itemBuilder: (context, item, index) => PostItem(item),
-          firstPageProgressIndicatorBuilder: (context) =>
-              SizedBox(
-                height: 400,
-                child: ListView.builder(
-                  itemCount: 20,
-                  itemBuilder: (context, index) => ShimmerPostItem(),
-                ),
+          itemBuilder: (context, item, index) => RepaintBoundary(
+            child: PostItem(item),
+          ),
+          firstPageProgressIndicatorBuilder: (context) => SizedBox(
+            height: 400,
+            child: ListView.builder(
+              itemCount: 20,
+              itemBuilder: (context, index) => RepaintBoundary(
+                child: ShimmerPostItem(),
               ),
-          newPageProgressIndicatorBuilder: (context) =>
-              NewPageProgressIndicator(),
-          newPageErrorIndicatorBuilder: (context) =>
-              Center(
-                child: Text(
-                  AppLocalizations.of(context)!
-                      .translateNested("profileScreen", "fetchError"),
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .titleLarge!
-                      .copyWith(
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
-                  ),
-                ),
+            ),
+          ),
+          newPageProgressIndicatorBuilder: (context) => NewPageProgressIndicator(),
+          newPageErrorIndicatorBuilder: (context) => Center(
+            child: Text(
+              AppLocalizations.of(context)!.translateNested("profileScreen", "fetchError"),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                color: Theme.of(context).primaryColor,
               ),
-          firstPageErrorIndicatorBuilder: (context) =>
-              Center(
-                child: Text(
-                  AppLocalizations.of(context)!
-                      .translateNested("profileScreen", "fetchError"),
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .titleLarge!
-                      .copyWith(
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
-                  ),
-                ),
+            ),
+          ),
+          firstPageErrorIndicatorBuilder: (context) => Center(
+            child: Text(
+              AppLocalizations.of(context)!.translateNested("profileScreen", "fetchError"),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                color: Theme.of(context).primaryColor,
               ),
-          noItemsFoundIndicatorBuilder: (context) =>
-              Center(
-                child: Text(
-                  AppLocalizations.of(context)!
-                      .translateNested("profileScreen", "noPost"),
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .titleLarge!
-                      .copyWith(
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
-                  ),
-                ),
+            ),
+          ),
+          noItemsFoundIndicatorBuilder: (context) => Center(
+            child: Text(
+              AppLocalizations.of(context)!.translateNested("profileScreen", "noPost"),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                color: Theme.of(context).primaryColor,
               ),
+            ),
+          ),
         ),
       ),
     );
   }
 
+  void scrollToTop() {
+    _customScrollController.animateTo(
+      0.0,
+      duration: const Duration(seconds: 1), // Adjust duration to control speed
+      curve: Curves.easeInOut, // Smooth animation curve
+    );
+  }
+}
+
+class CustomScrollPhysics extends ScrollPhysics {
+  const CustomScrollPhysics({ScrollPhysics? parent}) : super(parent: parent);
+
+  @override
+  CustomScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return CustomScrollPhysics(parent: buildParent(ancestor));
+  }
+
+  @override
+  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    return offset * 0.8;
+  }
+
+  @override
+  double applyBoundaryConditions(ScrollMetrics position, double value) {
+    return super.applyBoundaryConditions(position, value);
+  }
 }

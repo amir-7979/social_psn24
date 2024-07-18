@@ -3,9 +3,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:social_psn/configs/setting/themes.dart';
 import 'package:social_psn/screens/widgets/audio_player.dart';
 
 import '../../repos/models/media.dart';
+import 'post_media_cached_network_image.dart';
 import 'video_player.dart';
 
 class MediaLoader extends StatefulWidget {
@@ -19,6 +21,8 @@ class MediaLoader extends StatefulWidget {
 
 class _MediaLoaderState extends State<MediaLoader> {
   int _currentIndex = 0;
+  bool _showVideo = false;
+  bool _showAudio = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,29 +32,14 @@ class _MediaLoaderState extends State<MediaLoader> {
           itemCount: widget.medias?.length ?? 0,
           itemBuilder: (context, index, realIndex) {
             final media = widget.medias![index];
-            if (media.type!.contains('image')) {
-              return AspectRatio(
+            return RepaintBoundary(
+              child: AspectRatio(
                 aspectRatio: 16 / 9,
-                child: CachedNetworkImage(
-                  imageUrl: media.getMediaUrl() ?? '',
-                  fit: BoxFit.fitWidth,
-                  errorWidget: (context, url, error) =>
-                      SvgPicture.asset('assets/images/profile/placeholder.svg', fit: BoxFit.fill),
-                ),
-              );
-
-            } else if (media.type!.contains('video')) {
-              return SizedBox(
-                  width: double.infinity,
-                  child: MyVideoPlayer(media: media));
-            }else if(media.type!.contains('audio')){
-              return MyAudioPlayer(media: media);
-            } else {
-              return Container();
-            }
+                child: _buildMediaContent(media),
+              ),
+            );
           },
           options: CarouselOptions(
-            aspectRatio: 16 / 9,
             viewportFraction: 1.0,
             initialPage: 0,
             enableInfiniteScroll: false,
@@ -61,6 +50,8 @@ class _MediaLoaderState extends State<MediaLoader> {
             onPageChanged: (index, reason) {
               setState(() {
                 _currentIndex = index;
+                _showVideo = false;
+                _showAudio = false;
               });
             },
           ),
@@ -70,16 +61,83 @@ class _MediaLoaderState extends State<MediaLoader> {
             padding: const EdgeInsets.only(top: 5.0),
             child: DotsIndicator(
               dotsCount: widget.medias!.length,
-              position: _currentIndex.toInt(),
+              position: _currentIndex,
               decorator: DotsDecorator(
                 size: const Size.square(6.0),
                 activeSize: const Size.square(8.0),
-                spacing: EdgeInsets.all(4.0),
+                spacing: const EdgeInsets.all(4.0),
                 activeColor: Theme.of(context).primaryColor,
               ),
             ),
           ),
       ],
     );
+  }
+
+  Widget _buildMediaContent(Media media) {
+    if (media.type!.contains('video')) {
+      return _showVideo
+          ? MyVideoPlayer(media: media)
+          : GestureDetector(
+                  onTap: () => setState(() => _showVideo = true),
+                  child: Container(
+          padding: EdgeInsetsDirectional.zero,
+          color: blackColor,
+          child: Stack(
+            alignment: Alignment.center,
+            fit: StackFit.expand,
+            children: [
+              PostMediaCachedNetworkImage(url: media.getThumbnailUrl() ?? ''),
+              Center(
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.7),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Icon(Icons.play_arrow,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+                  ),
+                );
+    } else if (media.type!.contains('audio')) {
+      return _showAudio
+          ? MyAudioPlayer(media: media)
+          : GestureDetector(
+        onTap: () => setState(() => _showAudio = true),
+        child: Container(
+          color: blackColor,
+          child: Center(
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.7),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Icon(Icons.play_arrow,
+                  color: Colors.black,
+                  size: 30,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    } else if (media.type!.contains('image')) {
+      return PostMediaCachedNetworkImage(
+        url: media.getMediaUrl() ?? '',
+      );
+    }
+    return SizedBox(); // Fallback for other media types
   }
 }
