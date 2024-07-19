@@ -22,12 +22,23 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<SettingBloc>(
-          create: (context) =>
-              SettingBloc()..add(FetchUserProfileWithPermissionsEvent()),
+          create: (context) {
+            final settingBloc = SettingBloc();
+            if (settingBloc.state.isUserLoggedIn) {
+              settingBloc.add(FetchUserProfileWithPermissionsEvent());
+              print('here');
+            } else {
+              settingBloc.add(FetchUserPermissionsEvent());
+            }
+            return settingBloc;
+          },
         ),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (context, state) {
+          print(state.profile?.phone??"");
+          print(state.permissions?.role??"");
+
           return SafeArea(
             child: MaterialApp(
               color: Theme.of(context).scaffoldBackgroundColor,

@@ -41,8 +41,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         emit(RegisterFinished('ورود با موفقیت انجام شد'));
       }
     } catch (exception) {
-      print(exception.toString());
-
       emit(RegisterFailure('خطا'));
     }
   }

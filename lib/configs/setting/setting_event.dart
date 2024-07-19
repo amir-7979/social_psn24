@@ -28,8 +28,8 @@ class UpdateIsExpert extends SettingEvent {
 
 class UpdateLoginStatus extends SettingEvent {
   final Map<String, dynamic>? data;
-
-  UpdateLoginStatus(this.data);
+  final Completer<void>? completer;
+  UpdateLoginStatus(this.data, {this.completer});
 }
 
 class UpdateInfoEvent extends SettingEvent {

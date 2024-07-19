@@ -5,11 +5,8 @@ import 'package:rxdart/rxdart.dart';
 class LoggingLink extends Link {
   @override
   Stream<Response> request(Request request, [forward]) {
-    print("Request: ${request.context}"); // Log request
     return forward!(request).doOnData((response) {
-      print("Response: ${response.data}"); // Log response
     }).handleError((error) {
-      print("Error: $error"); // Log error
     });
   }
 }

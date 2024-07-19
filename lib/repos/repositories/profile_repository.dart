@@ -1,16 +1,8 @@
 import 'dart:io';
-import 'package:crypto/crypto.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
-import 'package:async/async.dart';
 import 'package:mime/mime.dart';
 
 QueryOptions getUserProfileWithPermissions() {

@@ -31,30 +31,47 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> _fetchUserProfileWithPermissions(event, emit) async {
-    final QueryOptions options =  getUserProfileWithPermissions() ;
-    final QueryResult result = await coreGraphQLService.query(options);
-    if (result.hasException) {
-      print(result.exception.toString());
-    } else {
-      final Map<String, dynamic> data = result.data!;
-      final Map<String, dynamic> profileData = data['profile'];
-      final Map<String, dynamic> userPermissionsData = data['userPermissions'];
-      final Profile profile = Profile.fromJson(profileData);
-      final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
-      emit(state.copyWith(profile: profile, permissions: userPermissions));
+    print('_fetchUserProfileWithPermissions');
+
+    try {
+      final QueryOptions options = getUserProfileWithPermissions();
+      final QueryResult result = await coreGraphQLService.query(options);
+      if (result.hasException) {
+        print(result.exception.toString());
+        } else {
+        final Map<String, dynamic> data = result.data!;
+        final Map<String, dynamic> profileData = data['profile'];
+        final Map<String,
+            dynamic> userPermissionsData = data['userPermissions'];
+        print('copy profile');
+        print(profileData.toString());
+        final Profile profile = Profile.fromJson(profileData);
+        final UserPermissions userPermissions = UserPermissions.fromJson(
+            userPermissionsData);
+        emit(state.copyWith(profile: profile, permissions: userPermissions));
+      }
+    }catch(error){
+      print(error.toString());
     }
   }
 
   Future<void> _fetchUserPermissions(event, emit) async {
-    final QueryOptions options =  getUserPermissions() ;
-    final QueryResult result = await coreGraphQLService.query(options);
-    if (result.hasException) {
-      print(result.exception.toString());
-    } else {
-      final Map<String, dynamic> data = result.data!;
-      final Map<String, dynamic> userPermissionsData = data['userPermissions'];
-      final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
-      emit(state.copyWith(permissions: userPermissions));
+    print('_fetchUserPermissions');
+    try {
+      final QueryOptions options = getUserPermissions();
+      final QueryResult result = await coreGraphQLService.query(options);
+      if (result.hasException) {
+        print(result.exception.toString());
+      } else {
+        final Map<String, dynamic> data = result.data!;
+        final Map<String,
+            dynamic> userPermissionsData = data['userPermissions'];
+        final UserPermissions userPermissions = UserPermissions.fromJson(
+            userPermissionsData);
+        emit(state.copyWith(permissions: userPermissions));
+      }
+    }catch(error){
+      print(error.toString());
     }
   }
 
@@ -62,17 +79,18 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     AppTheme theme = (await _storageService.readData('theme')) == 'AppTheme.dark' ? AppTheme.dark : AppTheme.light;
     AppLanguage language = (await _storageService.readData('language')) == 'english' ? AppLanguage.english : AppLanguage.persian;
     String? token = await _storageService.readData('token');
-    emit(state.copyWith(theme: theme, language: language, token: token));
+    emit(state.copyWith(theme: theme, language: language, token: token??''));
   }
 
 
   Future<void> _handleUpdateLoginStatus(event, emit) async {
     await writeInStorage(_storageService, event.data);
     emit(state.copyWith(token: event.data?['verifyToken'][2]));
+    event.completer?.complete();
   }
 
   Future<void> _handleSettingLanguageEvent(event, emit) async {
-    await _storageService.saveData('language', event.language.toString()); // Save the language to storage
+    await _storageService.saveData('language', event.language.toString());
     if (event.language == AppLanguage.english) {
       emit(state.copyWith(language: AppLanguage.english));
     } else {
