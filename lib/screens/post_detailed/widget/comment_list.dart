@@ -29,13 +29,11 @@ class CommentList extends StatefulWidget {
 class _CommentListState extends State<CommentList> {
   @override
   Widget build(BuildContext context) {
-    log('CommentList build');
     return BlocListener<PostDetailedBloc, PostDetailedState>(
       listener: (context, state) {
         print(state);
         if (state is CommentCreated) {
           setState(() {
-            print('CommentCreated');
             widget.pagingController.refresh();
           });
         }

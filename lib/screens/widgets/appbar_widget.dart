@@ -75,7 +75,7 @@ AppBar buildAppBar(BuildContext context) {
             color: Theme.of(context).appBarTheme.iconTheme!.color,
           ),
           onPressed: () {
-            showDialog(
+            /*showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return const Dialog(
@@ -90,7 +90,7 @@ AppBar buildAppBar(BuildContext context) {
                         height: 110,
                         child: SearchWidget()),
                   );
-                });
+                });*/
           },
         ),
       ),

@@ -60,7 +60,7 @@ class _PostItemState extends State<PostItem> {
       child: Builder(builder: (context) {
         return InkWell(
           onTap: () {
-            Navigator.of(context).pushNamed(
+            Navigator.of(context).pushReplacementNamed(
               AppRoutes.postDetailed,
               arguments: <String, dynamic>{
                 'post': widget.post,
@@ -99,7 +99,6 @@ class _PostItemState extends State<PostItem> {
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Flexible(
-                                  flex: 2,
                                   child: Text(
                                     '${widget.post.creator?.name} ${widget.post.creator?.family}',
                                     overflow: TextOverflow.ellipsis,
@@ -451,7 +450,7 @@ class _PostItemState extends State<PostItem> {
                                   height: 31,
                                   child: TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pushNamed(
+                                      Navigator.of(context).pushReplacementNamed(
                                         AppRoutes.postDetailed,
                                         arguments: <String, dynamic>{
                                           'post': widget.post,
@@ -654,5 +653,4 @@ class _PostItemState extends State<PostItem> {
       }),
     );
   }
-
 }

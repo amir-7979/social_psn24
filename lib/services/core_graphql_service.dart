@@ -5,9 +5,8 @@ import 'package:rxdart/rxdart.dart';
 class LoggingLink extends Link {
   @override
   Stream<Response> request(Request request, [forward]) {
-    //print('Request: ${request.hashCode}');
     return forward!(request).doOnData((response) {
-      //print('Response: ${response.data}');
+      print('Response: ${response.data}');
     });
   }
 }

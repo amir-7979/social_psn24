@@ -1,2 +1,18 @@
-todo edit user
-to do bottom sheet textfield
+//section1
+todo notif widget in user profile
+todo have id for creating comment
+todo text direction
+todo fix persian numbers
+todo check textfield styles
+todo online svg
+todo 100 length of subject text filed
+todo admin setting
+todo reset sms time
+todo calculate K, M for posts
+todo animation for popup buttons
+
+//section2
+todo complete upload media
+todo search system
+todo bug in showing user created media
+

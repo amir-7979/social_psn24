@@ -99,6 +99,7 @@ class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin 
       0.0,
       duration: const Duration(seconds: 1), // Adjust duration to control speed
       curve: Curves.easeInOut, // Smooth animation curve
+
     );
   }
 }

@@ -81,20 +81,45 @@ class CommentItem extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Expanded(
-                              child: Text(
-                                '${comment.sender?.name ?? ''} ${comment.sender?.family ?? ''}',
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.shadow,
-                                      fontWeight: FontWeight.w400,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      '${comment.sender?.name} ${comment.sender?.family}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .shadow,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
+                                  ),
+                                  SizedBox(width: 3),
+                                  if(comment.sender?.username != null)Flexible(
+                                    child: Text(
+                                      '(${comment.sender?.username})',
+                                      textDirection: TextDirection.ltr,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .tertiary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 3),
+                           SizedBox(width: 3),
                             SvgPicture.asset(
                               'assets/images/profile/calendar.svg',
                               width: 10,
@@ -114,34 +139,6 @@ class CommentItem extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 4),
-                        if (comment.sender?.username != null)
-                          SizedBox(
-                            height: 15,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    '(${comment.sender?.username ?? ''})',
-                                    textDirection: TextDirection.rtl,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium!
-                                        .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .tertiary,
-                                        ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         SizedBox(height: 8),
                         Text(
                           comment.message?.trim() ?? '',

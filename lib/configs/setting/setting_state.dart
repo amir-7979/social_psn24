@@ -36,6 +36,17 @@ class SettingState {
      }
      return false;
    }
+
+   get canChangeOnlineStatus {
+     if (permissions?.permissions != null) {
+       for (var permission in permissions!.permissions!) {
+         if (permission.id == 30) {
+           return true;
+         }
+       }
+     }
+     return false;
+   }
 /*
   set newTheme(AppTheme value) {
      theme = value;

@@ -9,7 +9,6 @@ import 'screens/main/main_screen.dart';
 import 'services/core_graphql_service.dart';
 
 void main() {
-
   runApp(MyApp());
 }
 
@@ -22,22 +21,13 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<SettingBloc>(
-          create: (context) {
-            final settingBloc = SettingBloc();
-            if (settingBloc.state.isUserLoggedIn) {
-              settingBloc.add(FetchUserProfileWithPermissionsEvent());
-              print('here');
-            } else {
-              settingBloc.add(FetchUserPermissionsEvent());
-            }
-            return settingBloc;
-          },
+          create: (context) => SettingBloc(),
         ),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (context, state) {
-          print(state.profile?.phone??"");
-          print(state.permissions?.role??"");
+          print(state.profile?.phone ?? "");
+          print(state.permissions?.role ?? "");
 
           return SafeArea(
             child: MaterialApp(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_psn/screens/main/widgets/screen_builder.dart';
 import 'package:social_psn/screens/profile/profile_bloc.dart';
 
 import '../../../../configs/localization/app_localizations.dart';
@@ -56,7 +57,7 @@ class _EditNormalUserState extends State<EditNormalUser> {
                   CustomSnackBar(content: state.message).build(context)
                 );
               } else if (state is EditProfileInfoLoaded) {
-                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, AppRoutes.myProfile);
 
               }
             },

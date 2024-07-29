@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:social_psn/screens/main/widgets/screen_builder.dart';
 import 'package:social_psn/screens/profile/profile_bloc.dart';
 
 import '../../../configs/localization/app_localizations.dart';
+import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/profile.dart';
 import '../../widgets/custom_snackbar.dart';
 import '../../widgets/profile_cached_network_image.dart';
@@ -272,54 +274,121 @@ class _UserInfoState extends State<UserInfo>
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Stack(
-                                alignment: AlignmentDirectional.bottomEnd,
-                                children: [
-                                  Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: ClipOval(
-                                      child: (profile.photo != null)
-                                          ? FittedBox(
-                                              fit: BoxFit.cover,
-                                              child: Container(
-                                                  child: ProfileCacheImage(
-                                                      profile.photo)),
-                                            )
-                                          : SvgPicture.asset(
-                                              'assets/images/profile/profile2.svg'),
-                                    ),
-                                  ),
-                                  if(profileId != null)
+                              Container(
+                                width: 110,
+                                height: 110,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Stack(
+                                  children: [
                                     Container(
-                                      width: 35,
-                                      height: 35,
+                                      width: 100,
+                                      height: 100,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color:  profile.currentUserNotificationEnabled ? Theme.of(context).primaryColor : cameraBackgroundColor,
                                       ),
-                                      child: Center(
-                                        child: IconButton(
-                                          icon: profile.currentUserNotificationEnabled
-                                              ? FaIcon(
-                                              size: 20,
-                                              FontAwesomeIcons.solidBellOn,
-                                              color: whiteColor)
-                                              : FaIcon(
-                                              size: 20,
-                                              FontAwesomeIcons.solidBellPlus,
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          onPressed: () {
+                                      child: Stack(
+                                        children: [
+                                          ClipOval(
+                                            child: (profile.photo != null)
+                                                ? FittedBox(
+                                                    fit: BoxFit.cover,
+                                                    child: Container(
+                                                        child: ProfileCacheImage(
+                                                            profile.photo)),
+                                                  )
+                                                : SvgPicture.asset(
+                                                    'assets/images/profile/profile2.svg'),
+                                          ),
+                                          if (profileId == null &&
+                                              profile.online == false)
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional
+                                                  .only(start: 7, top: 7),
+                                              child: Align(
+                                                alignment:
+                                                    AlignmentDirectional.topStart,
+                                                child: Container(
+                                                  height: 15,
+                                                  width: 15,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .background,
+                                                  ),
+                                                  padding:
+                                                      EdgeInsetsDirectional.all(
+                                                          2.5),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Theme.of(context)
+                                                          .primaryColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
 
-                                          },
-                                        ),
+                                        ],
                                       ),
                                     ),
-                                ],
+                                    if (profileId != null)
+                                      Align(
+                                        alignment: AlignmentDirectional
+                                            .bottomEnd,
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 0, 5, 5),
+                                          child: Container(
+                                            padding: EdgeInsetsDirectional.all(2),
+                                            decoration: BoxDecoration(
+
+                                              shape: BoxShape.circle,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .background,
+                                            ),
+                                            child: Container(
+                                              width: 35,
+                                              height: 35,
+                                              padding: EdgeInsetsDirectional.zero,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: profile
+                                                    .currentUserNotificationEnabled
+                                                    ? Theme.of(context)
+                                                    .primaryColor
+                                                    : cameraBackgroundColor,
+                                              ),
+                                              child: Center(
+                                                child: IconButton(
+                                                  padding: EdgeInsetsDirectional.zero,
+                                                  icon:
+                                                  profile.currentUserNotificationEnabled
+                                                      ? FaIcon(
+                                                      size: 20,
+                                                      FontAwesomeIcons
+                                                          .solidBellOn,
+                                                      color: whiteColor)
+                                                      : FaIcon(
+                                                      size: 20,
+                                                      FontAwesomeIcons
+                                                          .solidBellPlus,
+                                                      color: Theme.of(
+                                                          context)
+                                                          .primaryColor),
+                                                  onPressed: () {},
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
                               SizedBox(height: 8),
                               Text(
@@ -348,56 +417,73 @@ class _UserInfoState extends State<UserInfo>
                               ),
                               SizedBox(height: 8),
                               // i want to show switch button here
-/*
-                              BlocProvider.of<SettingBloc>(context).state.isExpert?? false ? AdvancedSwitch(
-                                controller: advanceSwitchController,
-                                thumb: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      2, 2, 0, 2),
-                                  child: Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: whiteColor,
-                                    ),
-                                  ),
-                                ),
-                                activeColor: Theme.of(context).primaryColor,
-                                inactiveColor: Theme.of(context).hintColor,
-                                height: 28,
-                                width: 75,
-                                inactiveChild: Padding(
-                                  padding: const EdgeInsetsDirectional.only(end: 8),
-                                  child: Text(
-                                    AppLocalizations.of(context)!
-                                        .translateNested("profileScreen", "online"),
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              if (profileId == null)
+                                BlocProvider.of<SettingBloc>(context)
+                                            .state
+                                            .canChangeOnlineStatus ??
+                                        false
+                                    ? AdvancedSwitch(
+                                        controller: advanceSwitchController,
+                                        thumb: Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(2, 2, 0, 2),
+                                          child: Container(
+                                            width: 20,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
                                               color: whiteColor,
-                                              fontWeight: FontWeight.w400,
                                             ),
-                                  ),
-                                ),
-                                activeChild: Padding(
-                                  padding: const EdgeInsetsDirectional.only(start: 10),
-                                  child: Text(
-                                    AppLocalizations.of(context)!
-                                        .translateNested("profileScreen", "offline"),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(
-                                          color: Theme.of(context).colorScheme.shadow,
-                                          fontWeight: FontWeight.w400,
+                                          ),
                                         ),
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  BlocProvider.of<ProfileBloc>(context).add(ChangeStatusEvent(value));
-                                },
-                              ) : Container(),
-*/
+                                        activeColor:
+                                            Theme.of(context).primaryColor,
+                                        inactiveColor:
+                                            Theme.of(context).hintColor,
+                                        height: 28,
+                                        width: 75,
+                                        inactiveChild: Padding(
+                                          padding:
+                                              const EdgeInsetsDirectional.only(
+                                                  end: 8),
+                                          child: Text(
+                                            AppLocalizations.of(context)!
+                                                .translateNested(
+                                                    "profileScreen", "online"),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                  color: whiteColor,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                          ),
+                                        ),
+                                        activeChild: Padding(
+                                          padding:
+                                              const EdgeInsetsDirectional.only(
+                                                  start: 10),
+                                          child: Text(
+                                            AppLocalizations.of(context)!
+                                                .translateNested(
+                                                    "profileScreen", "offline"),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .shadow,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                          ),
+                                        ),
+                                        onChanged: (value) {
+                                          BlocProvider.of<ProfileBloc>(context)
+                                              .add(ChangeStatusEvent(value));
+                                        },
+                                      )
+                                    : Container(),
                             ],
                           ),
                         ),
@@ -613,30 +699,32 @@ class _UserInfoState extends State<UserInfo>
                         )
                       : SizedBox.shrink(),
                 ),
-                if(profileId == null) ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    //surfaceTintColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    //foregroundColor: Theme.of(context).colorScheme.tertiary,
-                    backgroundColor: Color(0x3300A6ED),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                if (profileId == null)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                      //surfaceTintColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      //foregroundColor: Theme.of(context).colorScheme.tertiary,
+                      backgroundColor: Color(0x3300A6ED),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.editProfile,
+                          arguments: profile);
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!
+                          .translateNested("profileScreen", "editUserInfo"),
+                      style:
+                          Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.tertiary,
+                              ),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.editProfile,
-                        arguments: profile);
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!
-                        .translateNested("profileScreen", "editUserInfo"),
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: Theme.of(context).colorScheme.tertiary,
-                        ),
-                  ),
-                ),
                 SizedBox(height: 16),
               ],
             ),

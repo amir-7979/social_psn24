@@ -65,20 +65,44 @@ class ReplyItem extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Expanded(
-                            child: Text(
-                              '${reply.sender?.name ?? ''} ${reply.sender?.family ?? ''}',
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                color: Theme.of(context).colorScheme.shadow,
-                                fontWeight: FontWeight.w400,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${reply.sender?.name} ${reply.sender?.family}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .shadow,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                SizedBox(width: 3),
+                                if(reply.sender?.username != null)
+                                  Flexible(
+                                  child: Text(
+                                    '(${reply.sender?.username})',
+                                    textDirection: TextDirection.ltr,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           SizedBox(width: 3),
-
                           SvgPicture.asset(
                             'assets/images/profile/calendar.svg',
                             width: 10,
@@ -98,35 +122,7 @@ class ReplyItem extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 4),
 
-                      if (reply.sender?.username != null)
-                        SizedBox(
-                          height: 15,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '(${reply.sender?.username ?? ''})',
-                                  textDirection: TextDirection.rtl,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .tertiary,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       SizedBox(height: 8),
                       Text(
                         reply.message?.trim() ?? '',

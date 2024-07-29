@@ -18,7 +18,9 @@ class PostMediaCachedNetworkImage extends StatelessWidget {
         child: shimmerContainer(context, width: double.infinity, height: double.infinity, radius: 0),
       ),
       errorWidget: (context, url, error) =>
-          SvgPicture.asset('assets/images/profile/placeholder.svg', fit: BoxFit.contain),
+          AspectRatio(
+              aspectRatio: 16 / 9,
+              child: SvgPicture.asset('assets/images/profile/placeholder.svg', fit: BoxFit.fitWidth)),
     );
   }
 }

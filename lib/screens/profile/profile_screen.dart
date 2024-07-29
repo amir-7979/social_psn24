@@ -20,6 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: BlocProvider(
         create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context)),
         child: ListView(
+          physics: ClampingScrollPhysics(),
           children: [
             SizedBox(height: 16),
             UserInfo(),

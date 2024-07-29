@@ -41,7 +41,8 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
         Completer<void> completer = Completer<void>();
 
         settingBloc.add(UpdateLoginStatus(result.data, completer: completer));
-        await completer.future;        await GraphQLService.instance.addTokenToAuthLink();
+        await completer.future;
+        await GraphQLService.instance.addTokenToAuthLink();
         await CoreGraphQLService.instance.addTokenToAuthLink();
         if (result.data?['verifyToken'][4] == '1'){
           settingBloc.add(FetchUserProfileWithPermissionsEvent());

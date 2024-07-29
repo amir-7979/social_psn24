@@ -15,6 +15,8 @@ part 'setting_state.dart';
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final StorageService _storageService = StorageService();
   final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
+  final Completer<void> _settingsLoadedCompleter = Completer<void>();
+  final List<SettingEvent> _eventQueue = [];
 
   SettingBloc() : super(_handleInitialSetting()) {
     on<SettingThemeEvent>(_handleSettingThemeEvent);
@@ -31,31 +33,29 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> _fetchUserProfileWithPermissions(event, emit) async {
-    print('_fetchUserProfileWithPermissions');
-
+    await _settingsLoadedCompleter.future;
     try {
       final QueryOptions options = getUserProfileWithPermissions();
       final QueryResult result = await coreGraphQLService.query(options);
       if (result.hasException) {
         print(result.exception.toString());
-        } else {
+      } else {
         final Map<String, dynamic> data = result.data!;
         final Map<String, dynamic> profileData = data['profile'];
-        final Map<String,
-            dynamic> userPermissionsData = data['userPermissions'];
+        final Map<String, dynamic> userPermissionsData = data['userPermissions'];
         print('copy profile');
         print(profileData.toString());
         final Profile profile = Profile.fromJson(profileData);
-        final UserPermissions userPermissions = UserPermissions.fromJson(
-            userPermissionsData);
+        final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
         emit(state.copyWith(profile: profile, permissions: userPermissions));
       }
-    }catch(error){
+    } catch (error) {
       print(error.toString());
     }
   }
 
   Future<void> _fetchUserPermissions(event, emit) async {
+    await _settingsLoadedCompleter.future;
     print('_fetchUserPermissions');
     try {
       final QueryOptions options = getUserPermissions();
@@ -64,13 +64,11 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         print(result.exception.toString());
       } else {
         final Map<String, dynamic> data = result.data!;
-        final Map<String,
-            dynamic> userPermissionsData = data['userPermissions'];
-        final UserPermissions userPermissions = UserPermissions.fromJson(
-            userPermissionsData);
+        final Map<String, dynamic> userPermissionsData = data['userPermissions'];
+        final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
         emit(state.copyWith(permissions: userPermissions));
       }
-    }catch(error){
+    } catch (error) {
       print(error.toString());
     }
   }
@@ -79,27 +77,43 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     AppTheme theme = (await _storageService.readData('theme')) == 'AppTheme.dark' ? AppTheme.dark : AppTheme.light;
     AppLanguage language = (await _storageService.readData('language')) == 'english' ? AppLanguage.english : AppLanguage.persian;
     String? token = await _storageService.readData('token');
-    emit(state.copyWith(theme: theme, language: language, token: token??''));
+    emit(state.copyWith(theme: theme, language: language, token: token ?? ''));
+    _settingsLoadedCompleter.complete();
+    _processEventQueue();
+
+    // Trigger fetching profile or permissions after settings are loaded
+    if (state.isUserLoggedIn) {
+      add(FetchUserProfileWithPermissionsEvent());
+    } else {
+      add(FetchUserPermissionsEvent());
+    }
   }
 
+  void _processEventQueue() {
+    while (_eventQueue.isNotEmpty) {
+      add(_eventQueue.removeAt(0));
+    }
+  }
 
   Future<void> _handleUpdateLoginStatus(event, emit) async {
+    await _settingsLoadedCompleter.future;
     await writeInStorage(_storageService, event.data);
     emit(state.copyWith(token: event.data?['verifyToken'][2]));
     event.completer?.complete();
   }
 
   Future<void> _handleSettingLanguageEvent(event, emit) async {
+    await _settingsLoadedCompleter.future;
     await _storageService.saveData('language', event.language.toString());
     if (event.language == AppLanguage.english) {
       emit(state.copyWith(language: AppLanguage.english));
     } else {
       emit(state.copyWith(language: AppLanguage.persian));
     }
-
   }
 
   Future<void> _handleSettingThemeEvent(event, emit) async {
+    await _settingsLoadedCompleter.future;
     if (event.theme == AppTheme.light) {
       emit(state.copyWith(theme: AppTheme.light));
     } else {
@@ -109,6 +123,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   FutureOr<void> _handelClearUserInformation(event, emit) async {
+    await _settingsLoadedCompleter.future;
     await _storageService.deleteData('bearer');
     await _storageService.deleteData('expiry');
     await _storageService.deleteData('token');
@@ -126,4 +141,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await storageService.saveData('refreshToken', data?['verifyToken'][3]);
   }
 
+  @override
+  void onEvent(SettingEvent event) {
+    if (!_settingsLoadedCompleter.isCompleted) {
+      _eventQueue.add(event);
+    } else {
+      super.onEvent(event);
+    }
+  }
 }
