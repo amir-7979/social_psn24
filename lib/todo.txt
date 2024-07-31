@@ -1,5 +1,4 @@
 //section1
-todo text direction
 todo reset sms time
 
 //section2

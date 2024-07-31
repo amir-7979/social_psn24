@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/configs/setting/themes.dart';
 
 import '../../../configs/localization/app_localizations.dart';
+import '../../../configs/utilities.dart';
 import '../../../repos/models/content.dart';
 import '../../main/widgets/screen_builder.dart';
 import '../../widgets/selectImge.dart';
@@ -46,7 +47,7 @@ class ContentItem extends StatelessWidget {
             child: Align(
                 alignment: AlignmentDirectional.bottomStart,
                 child: Container(
-                  padding: const EdgeInsetsDirectional.fromSTEB(7, 3, 0, 3),
+                  padding: const EdgeInsetsDirectional.fromSTEB(7, 3, 7, 3),
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
@@ -54,19 +55,22 @@ class ContentItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          content.name ?? '',
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(
-                                color: whiteColor,
-                                fontWeight: FontWeight.w400,
-                              ),
+                      Directionality(
+                        textDirection: detectDirection(content.name),
+                        child: Expanded(
+                          child: Text(
+                            content.name ?? '',
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                          ),
                         ),
                       ), // white text
                     ],

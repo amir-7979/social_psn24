@@ -74,15 +74,13 @@ class _UserInfoState extends State<UserInfo>
           ScaffoldMessenger.of(context).showSnackBar(
             CustomSnackBar(content: state.message).build(context),
           );
-        }else if (state is ToggleNotificationFailure) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(
-            CustomSnackBar(
-                content: state.message)
-                .build(context),
+        } else if (state is ToggleNotificationFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            CustomSnackBar(content: state.message).build(context),
           );
-        }else if(state is ToggleNotificationSuccess){
-          BlocProvider.of<ProfileBloc>(context).add(FetchProfile(id: profileId));
+        } else if (state is ToggleNotificationSuccess) {
+          BlocProvider.of<ProfileBloc>(context)
+              .add(FetchProfile(id: profileId));
         }
       },
       builder: (context, state) {
@@ -312,36 +310,47 @@ class _UserInfoState extends State<UserInfo>
                                                 : SvgPicture.asset(
                                                     'assets/images/profile/profile2.svg'),
                                           ),
-                                          if (profileId == null &&
-                                              profile.online == false)
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsetsDirectional
-                                                      .only(start: 7, top: 7),
-                                              child: Align(
-                                                alignment: AlignmentDirectional
-                                                    .topStart,
-                                                child: Container(
-                                                  height: 15,
-                                                  width: 15,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .background,
-                                                  ),
+
+                                            BlocBuilder<ProfileBloc,
+                                                ProfileState>(
+                                              builder: (context, state) {
+                                                profile.online = state is ChangeOnlineStatusSucceed ? state.status : profile.online;
+                                                return profileId == null &&
+                                                    (profile.online == true) ?  Padding(
                                                   padding:
-                                                      EdgeInsetsDirectional.all(
-                                                          2.5),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: Theme.of(context)
-                                                          .primaryColor,
+                                                      const EdgeInsetsDirectional
+                                                          .only(
+                                                          start: 7, top: 7),
+                                                  child: Align(
+                                                    alignment:
+                                                        AlignmentDirectional
+                                                            .topStart,
+                                                    child: Container(
+                                                      height: 15,
+                                                      width: 15,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .background,
+                                                      ),
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .all(2.5),
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ),
+                                                ) : Container();
+                                              },
                                             ),
                                         ],
                                       ),
@@ -362,7 +371,8 @@ class _UserInfoState extends State<UserInfo>
                                                   .colorScheme
                                                   .background,
                                             ),
-                                            child: BlocBuilder<ProfileBloc, ProfileState>(
+                                            child: BlocBuilder<ProfileBloc,
+                                                ProfileState>(
                                               builder: (context, state) {
                                                 return Container(
                                                   width: 35,
@@ -374,34 +384,49 @@ class _UserInfoState extends State<UserInfo>
                                                     color: profile
                                                             .currentUserNotificationEnabled
                                                         ? Theme.of(context)
-                                                            .colorScheme.tertiary
+                                                            .colorScheme
+                                                            .tertiary
                                                         : cameraBackgroundColor,
                                                   ),
-                                                  child: state is TogglingNotificationState ? Padding(
-                                                    padding: const EdgeInsetsDirectional.all(8.0),
-                                                    child: WhiteCircularProgressIndicator(),
-                                                  ) : Center(
-                                                    child: IconButton(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .zero,
-                                                      icon: profile
-                                                              .currentUserNotificationEnabled
-                                                          ? FaIcon(
-                                                              size: 20,
-                                                              FontAwesomeIcons
-                                                                  .solidBellOn,
-                                                              color: whiteColor)
-                                                          : FaIcon(
-                                                              size: 20,
-                                                              FontAwesomeIcons
-                                                                  .lightBellPlus,
-                                                              color: Theme.of(
+                                                  child: state
+                                                          is TogglingNotificationState
+                                                      ? Padding(
+                                                          padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .all(8.0),
+                                                          child:
+                                                              WhiteCircularProgressIndicator(),
+                                                        )
+                                                      : Center(
+                                                          child: IconButton(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .zero,
+                                                            icon: profile
+                                                                    .currentUserNotificationEnabled
+                                                                ? FaIcon(
+                                                                    size: 20,
+                                                                    FontAwesomeIcons
+                                                                        .solidBellOn,
+                                                                    color:
+                                                                        whiteColor)
+                                                                : FaIcon(
+                                                                    size: 20,
+                                                                    FontAwesomeIcons
+                                                                        .lightBellPlus,
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .tertiary),
+                                                            onPressed: () {
+                                                              BlocProvider.of<
+                                                                          ProfileBloc>(
                                                                       context)
-                                                                  .colorScheme.tertiary),
-                                                      onPressed: () {BlocProvider.of<ProfileBloc>(context).add(ToggleNotificationEvent(profileId));},
-                                                    ),
-                                                  ),
+                                                                  .add(ToggleNotificationEvent(
+                                                                      profileId));
+                                                            },
+                                                          ),
+                                                        ),
                                                 );
                                               },
                                             ),
@@ -444,6 +469,7 @@ class _UserInfoState extends State<UserInfo>
                                             .canChangeOnlineStatus ??
                                         false
                                     ? AdvancedSwitch(
+                                        initialValue: profile.online ?? false,
                                         controller: advanceSwitchController,
                                         thumb: Padding(
                                           padding: const EdgeInsetsDirectional

@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../configs/consts.dart';
 import '../../../configs/localization/app_localizations.dart';
+import '../../../configs/utilities.dart';
 import '../../../repos/models/post.dart';
 import '../../main/widgets/screen_builder.dart';
 import '../../widgets/custom_snackbar.dart';
@@ -346,28 +347,39 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Text(
-                '${widget.post.name}',
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-                style:
-                Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.shadow,
+            Directionality(
+              textDirection: detectDirection(widget.post.name),
+              child: Expanded(
+                child: Text(
+                  '${widget.post.name}',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style:
+                  Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.shadow,
+                  ),
                 ),
               ),
             ),
           ],
         ),
         SizedBox(height: 8),
-        Text(
-          widget.post.description ?? '',
-          overflow: TextOverflow.ellipsis,
-          maxLines: null,
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              color: Theme.of(context).colorScheme.shadow,
-              fontWeight: FontWeight.w500,
-              height: 1.5),
+        Directionality(
+          textDirection: detectDirection(widget.post.description),
+          child: Row(
+            children: [
+              Text(
+                widget.post.description ?? '',
+                overflow: TextOverflow.ellipsis,
+                maxLines: null,
+                textDirection: detectDirection(widget.post.description),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.shadow,
+                    fontWeight: FontWeight.w500,
+                    height: 1.5),
+              ),
+            ],
+          ),
         ),
         SizedBox(height: 24),
         PostDetailedBadges(widget.post, widget.isUserLoggedIn),

@@ -10,6 +10,7 @@ import '../../../configs/consts.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/post.dart';
+import '../../configs/utilities.dart';
 import '../../repos/models/media.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
@@ -377,114 +378,111 @@ class _PostItemState extends State<PostItem> {
                   ),
                 Row(
                   children: [
-                    Text(
-                      '1',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.shadow,
-                        fontFamily: 'IRANSansX',
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        '${widget.post.name}',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              color: Theme.of(context).colorScheme.shadow,
-                          fontFamily: 'IRANSansX',
-                            ),
+                    Directionality(
+                      textDirection: detectDirection(widget.post.name),
+                      child: Expanded(
+                        child: Text(
+                          '${widget.post.name}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                color: Theme.of(context).colorScheme.shadow,
+                            fontFamily: 'IRANSansX',
+                              ),
+                        ),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: 8),
-                LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    final style = Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(
-                            color: Theme.of(context).colorScheme.shadow,
-                            fontWeight: FontWeight.w500,
-                            height: 1.5);
-                    final textHeight = measureTextHeight(
-                      widget.post.description ?? '',
-                      style,
-                      2,
-                      constraints.maxWidth,
-                    );
-                    return Stack(
-                      children: [
-                        Container(
-                          width: constraints.maxWidth,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.post.description ?? '',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: style,
-                              ),
-                              if (textHeight > style.fontSize! * 2)
-                                SizedBox(height: style.fontSize! * 2),
-                            ],
-                          ),
-                        ),
-                        if (textHeight > style.fontSize! * 2)
+                Directionality(
+                  textDirection: detectDirection(widget.post.description),
+                  child: LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      final style = Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(
+                              color: Theme.of(context).colorScheme.shadow,
+                              fontWeight: FontWeight.w500,
+                              height: 1.5);
+                      final textHeight = measureTextHeight(
+                        widget.post.description ?? '',
+                        style,
+                        2,
+                        constraints.maxWidth,
+                      );
+                      return Stack(
+                        children: [
                           Container(
-                            padding: EdgeInsets.zero,
-                            alignment: Alignment.bottomCenter,
                             width: constraints.maxWidth,
-                            height: style.fontSize! * 5 + 10,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Theme.of(context)
-                                      .colorScheme
-                                      .background
-                                      .withOpacity(0.3),
-                                  Theme.of(context).colorScheme.background,
-                                ],
-                              ),
-                            ),
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  padding: EdgeInsetsDirectional.zero,
-                                  height: 31,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pushReplacementNamed(
-                                        AppRoutes.postDetailed,
-                                        arguments: <String, dynamic>{
-                                          'post': widget.post,
-                                          'postId': widget.post.id,
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .translateNested(
-                                              'postScreen', 'show_more'),
-                                      style: TextStyle(
-                                        color: Theme.of(context).primaryColor,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
+                                Text(
+                                  widget.post.description ?? '',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: style,
                                 ),
+                                if (textHeight > style.fontSize! * 2)
+                                  SizedBox(height: style.fontSize! * 2),
                               ],
                             ),
                           ),
-                      ],
-                    );
-                  },
+                          if (textHeight > style.fontSize! * 2)
+                            Container(
+                              padding: EdgeInsets.zero,
+                              alignment: Alignment.bottomCenter,
+                              width: constraints.maxWidth,
+                              height: style.fontSize! * 5 + 10,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Theme.of(context)
+                                        .colorScheme
+                                        .background
+                                        .withOpacity(0.3),
+                                    Theme.of(context).colorScheme.background,
+                                  ],
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsetsDirectional.zero,
+                                    height: 31,
+                                    child: TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pushReplacementNamed(
+                                          AppRoutes.postDetailed,
+                                          arguments: <String, dynamic>{
+                                            'post': widget.post,
+                                            'postId': widget.post.id,
+                                          },
+                                        );
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)!
+                                            .translateNested(
+                                                'postScreen', 'show_more'),
+                                        style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsetsDirectional.only(start: 10),

@@ -75,12 +75,13 @@ class PostDeleteFailure extends ProfileState {
   PostDeleteFailure(this.error);
 }
 
-class ChangeOnlineStatus extends ProfileEvent {
+class ChangeOnlineStatusFailed extends ProfileState {}
+
+class ChangeOnlineStatusSucceed extends ProfileState {
   final bool status;
 
-  ChangeOnlineStatus(this.status);
+  ChangeOnlineStatusSucceed(this.status);
 }
-
 class NavigationToProfileScreenState extends ProfileState {}
 
 class NavigationToEditScreenState extends ProfileState {}

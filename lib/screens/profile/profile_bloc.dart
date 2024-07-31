@@ -172,12 +172,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final MutationOptions options = changeOnlineStatus();
       final QueryResult result = await coreGraphQLService.mutate(options);
       if (result.hasException) {
-        print(result.exception.toString());
+        emit(ChangeOnlineStatusFailed());
       } else {
-        print(result.data.toString());
+        emit(ChangeOnlineStatusSucceed(result.data!['ChangeOnlineStatus']['status']));
       }
     } catch (e) {
-      print(e.toString());
+      emit(ChangeOnlineStatusFailed());
     }
   }
 
