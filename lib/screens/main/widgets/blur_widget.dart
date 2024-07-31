@@ -1,6 +1,4 @@
-import 'dart:math';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -9,12 +7,11 @@ import '../../../configs/setting/themes.dart';
 import '../../main/widgets/screen_builder.dart';
 
 class BlurWidget extends StatefulWidget {
-  bool isAddButtonClicked = false;
+  final bool isAddButtonClicked;
   final GlobalKey<NavigatorState> navigatorKey;
-  Function(bool) changeAddButtonState;
+  final Function(bool) changeAddButtonState;
 
   BlurWidget(this.isAddButtonClicked, this.navigatorKey, this.changeAddButtonState);
-
 
   @override
   State<BlurWidget> createState() => _BlurWidgetState();
@@ -46,6 +43,7 @@ class _BlurWidgetState extends State<BlurWidget> with SingleTickerProviderStateM
 
   void _closeWidget() {
     _controller.reverse().then((_) {
+      // Animation completed, now update the state
       widget.changeAddButtonState(false);
     });
   }

@@ -66,15 +66,17 @@ class _EditNormalUserState extends State<EditNormalUser> {
                 lastWidget = const ShimmerEditNormalUser();
               } else if (state is NewProfileInfoLoaded) {
                 photoUrl = state.profile.photo;
-                _nameController.text = state.profile.name ??
-                    AppLocalizations.of(context)!.translateNested('params', 'name');
-                _lastNameController.text = state.profile.family ??
-                    AppLocalizations.of(context)!.translateNested('params', 'family');
-                _idController.text = state.profile.username ??
-                    AppLocalizations.of(context)!
-                        .translateNested('params', 'username');
-                _history.text = state.profile.experience ?? '';
-                _bio.text = state.profile.biography ?? '';
+                if(state.profile.name != null && state.profile.name!.isNotEmpty)
+                  _nameController.text = state.profile.name!;
+                if(state.profile.family != null && state.profile.family!.isNotEmpty)
+                  _lastNameController.text = state.profile.family!;
+                if(state.profile.username != null && state.profile.username != '@')
+                  _idController.text = state.profile.username!;
+
+                if(state.profile.experience != null && state.profile.experience!.isNotEmpty)
+                  _history.text = state.profile.experience!;
+                if(state.profile.biography != null && state.profile.biography!.isNotEmpty)
+                  _bio.text = state.profile.biography!;
                 lastWidget = buildListView(context);
               } else if (state is NewProfileError) {
                 lastWidget = Padding(

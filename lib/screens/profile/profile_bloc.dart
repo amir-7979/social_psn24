@@ -32,6 +32,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<EditProfile>(handleEditProfileEvent);
     on<DeletePost>(handleDeletePost);
     on<ChangeStatusEvent>(handleChangeStatusEvent);
+    on<ToggleNotificationEvent>(handleToggleNotificationEvent);
   }
 
   Future<void> handleDeletePost(event, emit) async {
@@ -76,7 +77,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(NewProfileInfoLoading());
     try {
       final QueryOptions options = getUserProfile(event.id);
-
       final QueryResult result = await coreGraphQLService.query(options);
       if (result.data == null) {
         emit(NewProfileError('خطا در دریافت اطلاعات'));
@@ -167,7 +167,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(NavigationToEditScreenState());
   }
 
-  Future<FutureOr<void>> handleChangeStatusEvent(ChangeStatusEvent event, Emitter<ProfileState> emit) async {
+  FutureOr<void> handleChangeStatusEvent(ChangeStatusEvent event, Emitter<ProfileState> emit) async {
     try {
       final MutationOptions options = changeOnlineStatus();
       final QueryResult result = await coreGraphQLService.mutate(options);
@@ -175,12 +175,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         print(result.exception.toString());
       } else {
         print(result.data.toString());
-
       }
     } catch (e) {
       print(e.toString());
     }
   }
 
-
+  Future<void> handleToggleNotificationEvent(ToggleNotificationEvent event, Emitter<ProfileState> emit) async {
+    try {
+      emit(TogglingNotificationState());
+      final MutationOptions options = enableNotification(event.id);
+      final QueryResult result = await coreGraphQLService.mutate(options);
+      if (result.hasException) {
+        emit(ToggleNotificationFailure('خطا در عملیات'));
+      } else {
+        emit(ToggleNotificationSuccess());
+      }
+    } catch (e) {
+      emit(ToggleNotificationFailure('خطا در عملیات'));
+    }
+  }
 }

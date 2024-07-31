@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:social_psn/configs/localization/app_localizations.dart';
 import 'package:social_psn/configs/setting/themes.dart';
 
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/post.dart';
 import '../../main/widgets/screen_builder.dart';
+import '../../widgets/custom_snackbar.dart';
 import '../post_detailed_bloc.dart';
 import 'comment_bottom_sheet.dart';
 
@@ -59,7 +61,7 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
               ),
             ),
             Text(
-              '${widget.post.viewCount}',
+              '${widget.post.viewCountString}',
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color:
@@ -75,20 +77,27 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
           children: [
             IconButton(
               onPressed: () {
-                final postDetailedBloc =
-                    BlocProvider.of<PostDetailedBloc>(context);
-
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => BlocProvider.value(
-                    value: postDetailedBloc,
-                    child: CommentBottomSheet(
-                        function: submitComment, postId: widget.post.id),
-                  ),
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  isDismissible: true,
-                );
+                if(
+                BlocProvider.of<SettingBloc>(context).state.hasUsername){
+                  final postDetailedBloc = BlocProvider.of<PostDetailedBloc>(
+                      context);
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) =>
+                        BlocProvider.value(
+                          value: postDetailedBloc,
+                          child: CommentBottomSheet(
+                              function: submitComment, postId: widget.post.id),
+                        ),
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    isDismissible: true,
+                  );
+                }else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    CustomSnackBar(content: AppLocalizations.of(context)!.translateNested('postScreen', 'setUsername')).build(context),
+                  );
+                }
               },
               icon: badges.Badge(
                   badgeStyle: badges.BadgeStyle(
@@ -113,7 +122,7 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                         }
                       },
                       child: Text(
-                        (widget.post.commentsCount ?? 0).toString(),
+                        widget.post.commentsCountString,
                         overflow: TextOverflow.fade,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: whiteColor,
@@ -179,7 +188,7 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                     height: 20,
                     width: 20,
                     child: Text(
-                      (widget.post.downVotes ?? 0).toString(),
+                      widget.post.upVotesString,
                       overflow: TextOverflow.fade,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: whiteColor,
@@ -219,9 +228,7 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                     widget.post.upVotes = widget.post.upVotes! - 1;
                   if (widget.post.voteDown == true)
                     widget.post.downVotes = widget.post.downVotes! - 1;
-
                   widget.post.voteDown = false;
-
                 });
                 if (isUserLoggedIn == true) {
                   BlocProvider.of<PostDetailedBloc>(context)
@@ -256,7 +263,7 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                     height: 20,
                     width: 20,
                     child: Text(
-                      (widget.post.upVotes ?? 0).toString(),
+                      widget.post.upVotesString,
                       overflow: TextOverflow.fade,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: whiteColor,

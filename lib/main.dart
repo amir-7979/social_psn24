@@ -36,9 +36,10 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               theme: state.theme == AppTheme.light ? lightTheme : darkTheme,
               // Use your custom light theme
-              locale: state.language == AppLanguage.english
+              /*locale: state.language == AppLanguage.english
                   ? Locale('en', 'US')
-                  : Locale('fa', 'IR'),
+                  : Locale('fa', 'IR'),*/
+              locale: Locale('fa', 'IR'),
               localizationsDelegates: const [
                 AppLocalizationsDelegate(),
                 GlobalMaterialLocalizations.delegate,

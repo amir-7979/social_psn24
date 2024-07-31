@@ -38,41 +38,41 @@ TextTheme iranYekanTheme = const TextTheme(
 TextTheme iranSansTheme = const TextTheme(
   displayLarge: TextStyle(
     fontSize: 24,
-    fontFamily: 'IRANSansXV', // specify the font family here
+    fontFamily: 'IRANSansX', // specify the font family here
   ),
   displayMedium: TextStyle(
     fontSize: 20,
-    fontFamily: 'IRANSansXV', // specify the font family here
+    fontFamily: 'IRANSansX', // specify the font family here
   ),
   displaySmall: TextStyle(
     fontSize: 18,
-    fontFamily: 'IRANSansXV', // specify the font family here
+    fontFamily: 'IRANSansX', // specify the font family here
   ),
   headlineMedium: TextStyle(
     fontSize: 16,
-    fontFamily: 'IRANSansXV', // specify the font family here
+    fontFamily: 'IRANSansX', // specify the font family here
   ),
   headlineSmall: TextStyle(
     fontSize: 15,
-    fontFamily: 'IRANSansXV', // specify the font family here
+    fontFamily: 'IRANSansX', // specify the font family here
   ),
   titleLarge: TextStyle(
     fontSize: 14,
-    fontFamily: 'IRANSansXV', // specify the font family here
+    fontFamily: 'IRANSansX', // specify the font family here
   ),
   bodyLarge: TextStyle(
     fontSize: 12,
-    fontFamily: 'IRANSansXV', // specify the font family here
+    fontFamily: 'IRANSansX', // specify the font family here
   ),
   bodyMedium: TextStyle(
     locale: Locale('fa', 'IR'),
     fontSize: 10,
-    fontFamily: 'IRANSansXV', // specify the font family here
+    fontFamily: 'IRANSansX', // specify the font family here
   ),
 );
 
 final ThemeData lightTheme = ThemeData(
-  fontFamily: 'IRANSansXV',
+  fontFamily: 'IRANSansX',
   dialogTheme: const DialogTheme(
     backgroundColor: Colors.transparent,
     //surfaceTintColor: Colors.white,
@@ -120,7 +120,7 @@ final ThemeData lightTheme = ThemeData(
 );
 
 final ThemeData darkTheme = ThemeData(
-    fontFamily: 'IRANSansXV',
+    fontFamily: 'IRANSansX',
     dialogTheme: const DialogTheme(
       backgroundColor: Colors.transparent,
       //surfaceTintColor: Colors.white,

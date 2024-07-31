@@ -6,7 +6,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
 QueryOptions getUserProfileWithPermissions() {
-
   return QueryOptions(
     document: gql('''
       query {
@@ -19,7 +18,7 @@ QueryOptions getUserProfileWithPermissions() {
           }
         }
         profile {
-          id, name, family, display_name, photo, phone
+          id, name, family, display_name, photo, phone, username
         }
       }
     '''),
@@ -180,20 +179,21 @@ MutationOptions editUser(
 }
 
 
-MutationOptions toggleAllowNotification(
-    String name, String family, int notification) {
+MutationOptions enableNotification(int userId) {
   return MutationOptions(
     document: gql('''
-      mutation toggleAllowNotification(\$name: String!, \$family: String!, \$notification: Int!) {
-        editUser(name: \$name, family: \$family, allow_notification: \$notification) {
-          allow_notification
+      mutation enableNotification(\$userId: Int!) {
+        createEnNotification(user_id: \$userId) {
+          id
+          __typename
         }
       }
     '''),
-    variables: {'name': name, 'family': family, 'notification': notification},
-    fetchPolicy: FetchPolicy.noCache, // Add this line
+    variables: {'userId': userId},
+    fetchPolicy: FetchPolicy.noCache, // Retain this line if you want to avoid caching
   );
 }
+
 
 MutationOptions changeOnlineStatus() {
   return MutationOptions(

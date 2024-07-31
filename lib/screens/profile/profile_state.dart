@@ -85,4 +85,14 @@ class NavigationToProfileScreenState extends ProfileState {}
 
 class NavigationToEditScreenState extends ProfileState {}
 
+class TogglingNotificationState extends ProfileState {}
+
+class ToggleNotificationFailure extends ProfileState {
+  final String message;
+
+  ToggleNotificationFailure(this.message);
+}
+
+class ToggleNotificationSuccess extends ProfileState {}
+
 

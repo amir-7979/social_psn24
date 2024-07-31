@@ -114,7 +114,7 @@ class _PostItemState extends State<PostItem> {
                                   ),
                                 ),
                                 SizedBox(width: 3),
-                                Flexible(
+                                if(widget.post.creator?.username != null && widget.post.creator!.username!.isNotEmpty && widget.post.creator?.username != '@')Flexible(
                                   child: Text(
                                     '(${widget.post.creator?.username})',
                                     textDirection: TextDirection.ltr,
@@ -377,6 +377,15 @@ class _PostItemState extends State<PostItem> {
                   ),
                 Row(
                   children: [
+                    Text(
+                      '1',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.shadow,
+                        fontFamily: 'IRANSansX',
+                      ),
+                    ),
                     Expanded(
                       child: Text(
                         '${widget.post.name}',
@@ -384,6 +393,7 @@ class _PostItemState extends State<PostItem> {
                         maxLines: 2,
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
                               color: Theme.of(context).colorScheme.shadow,
+                          fontFamily: 'IRANSansX',
                             ),
                       ),
                     ),
@@ -494,7 +504,7 @@ class _PostItemState extends State<PostItem> {
                             ),
                           ),
                           Text(
-                            '${widget.post.viewCount}',
+                            '${widget.post.viewCountString}',
                             overflow: TextOverflow.ellipsis,
                             style:
                                 Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -511,9 +521,13 @@ class _PostItemState extends State<PostItem> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              Navigator.of(context).pushNamed(
-                                  AppRoutes.postDetailed,
-                                  arguments: widget.post);
+                              Navigator.of(context).pushReplacementNamed(
+                                AppRoutes.postDetailed,
+                                arguments: <String, dynamic>{
+                                  'post': widget.post,
+                                  'postId': widget.post.id,
+                                },
+                              );
                             },
                             icon: SizedBox(
                               height: 27,

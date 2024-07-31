@@ -49,9 +49,12 @@ class Profile {
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     String? username = json['username'] as String?;
-    if (username != null && username.startsWith('@')) {
+    if(username != null && username =='@'){
+      username = null;
+    }else if (username != null && username.startsWith('@')) {
       username = username.substring(1);
     }
+    print('username ${username}');
     return Profile(
       id: json['id'] as int?,
       name: json['name'] as String?,

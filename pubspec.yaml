@@ -119,12 +119,20 @@ flutter:
     - assets/images/post/
 
   fonts:
-    - family: IRANSansXV
+    - family: IRANSansX
       fonts:
-        - asset: assets/fonts/IRANSansXV.ttf
-        - asset: assets/fonts/IRANSansX-Regular.ttf
-        - asset: assets/fonts/IRANSansX-Bold.ttf
+        - asset: assets/fonts/IRANSansXFaNum-Black.ttf
+        - asset: assets/fonts/IRANSansXFaNum-Bold.ttf
           weight: 700
+        - asset: assets/fonts/IRANSansXFaNum-DemiBold.ttf
+        - asset: assets/fonts/IRANSansXFaNum-ExtraBold.ttf
+        - asset: assets/fonts/IRANSansXFaNum-ExtraBlack.ttf
+        - asset: assets/fonts/IRANSansXFaNum-Heavy.ttf
+        - asset: assets/fonts/IRANSansXFaNum-Light.ttf
+        - asset: assets/fonts/IRANSansXFaNum-Medium.ttf
+        - asset: assets/fonts/IRANSansXFaNum-Regular.ttf
+        - asset: assets/fonts/IRANSansXFaNum-Thin.ttf
+        - asset: assets/fonts/IRANSansXFaNum-Ultralight.ttf
 
     - family: Iranyekan
       fonts:

@@ -52,3 +52,8 @@ class ChangeStatusEvent extends ProfileEvent {
   ChangeStatusEvent(this.status);
 }
 
+class ToggleNotificationEvent extends ProfileEvent {
+  final int id;
+  ToggleNotificationEvent(this.id);
+}
+

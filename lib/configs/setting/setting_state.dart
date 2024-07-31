@@ -26,6 +26,8 @@ class SettingState {
   get getPermissions => permissions;
    get languageCode => language == AppLanguage.english ? 'en' : 'fa';
 
+   get hasUsername => profile?.username != null && profile!.username!.isNotEmpty;
+
    get seeExpertPost {
      if (permissions?.permissions != null) {
        for (var permission in permissions!.permissions!) {

@@ -86,4 +86,27 @@ class Post {
       isNotificationEnabled: json['current_user_notification_enabled'] ?? false,
     );
   }
+
+  String _formatCount(int? count) {
+    if (count == null || count == 0) {
+      return '0';
+    } else if (count >= 1000000) {
+      return '${(count / 1000000).toStringAsFixed(0)}M';
+    } else if (count >= 1000) {
+      return '${(count / 1000).toStringAsFixed(0)}K';
+    } else {
+      return count.toString();
+    }
+  }
+
+  String get viewCountString => _formatCount(commentsCount);
+
+  /// Formatted string for comments count.
+  String get commentsCountString => _formatCount(commentsCount);
+
+  /// Formatted string for down votes.
+  String get downVotesString => _formatCount(downVotes);
+
+  /// Formatted string for up votes.
+  String get upVotesString => _formatCount(upVotes);
 }
