@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:meta/meta.dart';
+import 'package:social_psn/repos/models/media.dart';
+import 'package:social_psn/repos/models/post.dart';
+import 'package:social_psn/repos/repositories/post_repository.dart';
 
-import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/create_new_post.dart';
-import '../../repos/models/post_media.dart';
 import '../../repos/repositories/create_post.dart';
-import '../../services/core_graphql_service.dart';
 import '../../services/graphql_service.dart';
 
 part 'create_post_event.dart';
@@ -36,8 +36,8 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         if (result.hasException) {
           emit(MediaUploadFailed('خطا در آپلود محتوا'));
         } else {
-          PostMedia postMedia = PostMedia.fromJson(result.data!['PostMedia']);
-          emit(MediaUploaded(postMedia));
+          Media media = Media.fromJson(result.data!['PostMedia']);
+          emit(MediaUploaded(media));
         }
     } catch (e) {
       emit(MediaUploadFailed('خطا در آپلود محتوا'));
@@ -74,12 +74,23 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       emit(CreatingNewPost());
       final MutationOptions options = createNewPost();
       final QueryResult result = await graphQLService.mutate(options);
+      print(result.toString());
       if (result.hasException) {
         emit(PostCreationFailed('خطا در ایجاد پست'));
         return;
       }else {
         NewPost = CreateNewPost.fromJson(result.data!['createPost']);
-        emit(PostCreationSucceed(NewPost!));
+        final QueryOptions options = postsQuery(id: NewPost!.id!);
+        final QueryResult result2 = await graphQLService.query(options);
+        print(result2.toString());
+
+        if (result2.hasException) {
+          emit(PostCreationFailed('خطا در ایجاد پست'));
+          return;
+      }else{
+         final Post post = Post.fromJson(result2.data!['posts'][0]);
+         emit(PostCreationSucceed(post));
+        }
       }
     } catch (e) {
       emit(PostCreationFailed('خطا در ایجاد پست'));

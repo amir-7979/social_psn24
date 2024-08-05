@@ -77,7 +77,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   return false;
                 },
                 builder: (context, state) {
-                  return state is PostCreationSucceed ? MyForm() : state is CreatingNewPost ? NewPageProgressIndicator() : Center(
+                  return state is PostCreationSucceed ? MyForm(state.post) : state is CreatingNewPost ? NewPageProgressIndicator() : Center(
                     child: Text(
                       AppLocalizations.of(context)!
                           .translateNested("error", "loadingPageError"),

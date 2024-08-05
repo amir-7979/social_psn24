@@ -13,14 +13,14 @@ final class PostCreationFailed extends CreatePostState {
 }
 
 final class PostCreationSucceed  extends CreatePostState {
-  final CreateNewPost postCreated;
-  PostCreationSucceed(this.postCreated);
+  final Post post;
+  PostCreationSucceed(this.post);
 }
 
 final class MediaUploading extends CreatePostState {}
 
 final class MediaUploaded extends CreatePostState {
-  final PostMedia postMedia;
+  final Media postMedia;
 
   MediaUploaded(this.postMedia);
 }
