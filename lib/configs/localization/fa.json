@@ -180,6 +180,7 @@
     "NetworkException" : "خطا در اتصال به اینترنت",
     "notEmpty" : "این فیلد نمی‌تواند خالی باشد",
     "profileUploadException" : "خطا در بارگذاری عکس",
-    "commentError": "خطا در ارسال نظر"
+    "commentError": "خطا در ارسال نظر",
+    "loadingPageError": "خطا در بارگذاری صفحه"
   }
 }

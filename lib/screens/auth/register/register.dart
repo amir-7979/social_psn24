@@ -26,9 +26,6 @@ class _RegisterState extends State<Register> {
   final _lastNameController = TextEditingController();
   final _idController = TextEditingController();
 
-  void _newPickedImage(String? value) {
-    BlocProvider.of<RegisterBloc>(context).add(PhotoUploadEvent(value));
-  }
 
   @override
   Widget build(BuildContext context) {

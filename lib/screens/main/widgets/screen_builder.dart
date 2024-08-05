@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:social_psn/screens/create_media/create_media_screen.dart';
+import 'package:social_psn/screens/create_post/create_post_screen.dart';
 import 'package:social_psn/screens/interest/interest_screen.dart';
 import 'package:social_psn/screens/post_detailed/post_detailed_screen.dart';
 
@@ -48,7 +48,7 @@ final Map<String, WidgetBuilder> routes = {
   AppRoutes.consultation: (BuildContext context) => ConsultationScreen(),
   AppRoutes.charity: (BuildContext context) => CharityScreen(),
   AppRoutes.editProfile: (BuildContext context) => EditNormalUser(() {}),
-  AppRoutes.createMedia: (BuildContext context) => CreateMediaScreen(),
+  AppRoutes.createMedia: (BuildContext context) => CreatePostScreen(),
   AppRoutes.postDetailed: (BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return PostDetailedScreen(

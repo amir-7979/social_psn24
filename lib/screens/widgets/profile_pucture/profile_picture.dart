@@ -128,7 +128,6 @@ class _ProfilePictureState extends State<ProfilePicture> {
                         setState(() {
                           firstTime = false;
                           lastPickedImage = cropPath;
-                          print('state.imageUrl: ${state.imageUrl}');
                         });
                       }
                     },

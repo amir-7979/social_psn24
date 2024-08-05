@@ -60,19 +60,6 @@ QueryOptions topPosts() {
   );
 }
 
-QueryOptions getTags() {
-  return QueryOptions(
-    document: gql('''
-        query getTags {
-          tags {
-            id, title, type
-          }
-        }
-      '''),
-    fetchPolicy: FetchPolicy.noCache,
-  );
-}
-
 QueryOptions getComments({String? postId, String? type, int? userId, int? limit, int? offset}) {
   Map<String, dynamic> variables = {};
   if (postId != null) variables['postId'] = postId;
@@ -134,19 +121,6 @@ QueryOptions getCommentsWithPostData({String? postId, String? type, int? userId,
   );
 }
 
-MutationOptions createPost() {
-  return MutationOptions(
-    document: gql('''
-        mutation createPost {
-          createPost(status: 0, is_publish: 0) {
-            id,
-          }
-        }
-      '''),
-    fetchPolicy: FetchPolicy.noCache,
-  );
-}
-
 MutationOptions editPost({String? id, String? title, String? text, int? tag, int? status, int? postType, int? isPublish}) {
   Map<String, dynamic> variables = {};
   if (id != null) variables['id'] = id;
@@ -181,24 +155,6 @@ MutationOptions increasePostView({String? id, int? status, int? viewCount}) {
         mutation increasePostView(\$id: String!, \$status: Int!, \$viewCount: Int!) {
           editPost(id: \$id, status: \$status, view_count: \$viewCount) {
             view_count
-          }
-        }
-      '''),
-    variables: variables,
-    fetchPolicy: FetchPolicy.noCache,
-  );
-}
-
-MutationOptions uploadMediaFile({dynamic mediaFile, String? postId}) {
-  Map<String, dynamic> variables = {};
-  if (mediaFile != null) variables['mediaFile'] = mediaFile;
-  if (postId != null) variables['postId'] = postId;
-
-  return MutationOptions(
-    document: gql('''
-        mutation uploadMediaFile(\$mediaFile: Upload!, \$postId: String!) {
-          PostMedia(mediaFile: \$mediaFile, post_id: \$postId) {
-            id, loc, type,
           }
         }
       '''),
@@ -272,18 +228,6 @@ MutationOptions createComment({required String postId, required String message, 
   );
 }
 
-MutationOptions deleteMedia(String mediaId) {
-  return MutationOptions(
-    document: gql('''
-        mutation deleteMedia(\$mediaId: String!) {
-          DeleteMedia(id: \$mediaId)
-        }
-      '''),
-    variables: {'mediaId': mediaId},
-    fetchPolicy: FetchPolicy.noCache,
-  );
-}
-
 MutationOptions deletePost(String id) {
   return MutationOptions(
     document: gql('''
@@ -295,3 +239,5 @@ MutationOptions deletePost(String id) {
     fetchPolicy: FetchPolicy.noCache,
   );
 }
+
+

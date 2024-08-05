@@ -26,9 +26,6 @@ class MyApp extends StatelessWidget {
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (context, state) {
-          print(state.profile?.phone ?? "");
-          print(state.permissions?.role ?? "");
-
           return SafeArea(
             child: MaterialApp(
               color: Theme.of(context).scaffoldBackgroundColor,

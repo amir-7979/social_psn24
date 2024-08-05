@@ -46,7 +46,6 @@ QueryOptions getUserPermissions() {
   );
 }
 
-
 QueryOptions getUserProfile(int? id) {
   Map<String, dynamic> variables = {};
   if (id != null) variables['id'] = id;
@@ -228,7 +227,6 @@ Future<MultipartFile> multipartFileFrom(File file) async {
   List<int> fileBytes = await file.readAsBytes();
   String filename = file.path.split('/').last;
   String? mimeType = lookupMimeType(file.path);
-
   final multipartFile = http.MultipartFile.fromBytes(
     'profilePicture', // field name
     fileBytes, // file bytes
