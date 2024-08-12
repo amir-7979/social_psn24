@@ -61,7 +61,7 @@ class _PostItemState extends State<PostItem> {
       child: Builder(builder: (context) {
         return InkWell(
           onTap: () {
-            Navigator.of(context).pushReplacementNamed(
+            Navigator.of(context).pushNamed(
               AppRoutes.postDetailed,
               arguments: <String, dynamic>{
                 'post': widget.post,
@@ -457,7 +457,7 @@ class _PostItemState extends State<PostItem> {
                                     height: 31,
                                     child: TextButton(
                                       onPressed: () {
-                                        Navigator.of(context).pushReplacementNamed(
+                                        Navigator.of(context).pushNamed(
                                           AppRoutes.postDetailed,
                                           arguments: <String, dynamic>{
                                             'post': widget.post,
@@ -519,7 +519,7 @@ class _PostItemState extends State<PostItem> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              Navigator.of(context).pushReplacementNamed(
+                              Navigator.of(context).pushNamed(
                                 AppRoutes.postDetailed,
                                 arguments: <String, dynamic>{
                                   'post': widget.post,

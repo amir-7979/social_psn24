@@ -49,3 +49,5 @@ class ClearInfo extends SettingEvent {
 class FetchUserProfileWithPermissionsEvent extends SettingEvent {}
 
 class FetchUserPermissionsEvent extends SettingEvent {}
+
+class FetchTagsEvent extends SettingEvent {}

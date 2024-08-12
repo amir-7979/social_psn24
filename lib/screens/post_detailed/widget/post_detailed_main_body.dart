@@ -14,8 +14,9 @@ import 'comment_list.dart';
 class PostDetailedMainBody extends StatefulWidget {
   final Post? post;
   final String postId;
+  final int? index;
 
-  PostDetailedMainBody({this.post, required this.postId});
+  PostDetailedMainBody({this.post, required this.postId, this.index});
 
   @override
   State<PostDetailedMainBody> createState() => _PostDetailedMainBodyState();

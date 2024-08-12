@@ -9,6 +9,7 @@ class SettingState {
    UserPermissions? permissions;
    Profile? profile;
   String token = '';
+  List<Tag>? tags;
 
 
   SettingState({
@@ -17,7 +18,7 @@ class SettingState {
     this.permissions,
     this.profile,
     required this.token,
-
+    this.tags,
   });
 
 
@@ -49,6 +50,8 @@ class SettingState {
      }
      return false;
    }
+
+   get tagsList => tags;
 /*
   set newTheme(AppTheme value) {
      theme = value;
@@ -62,6 +65,7 @@ class SettingState {
     UserPermissions? permissions,
     Profile? profile,
     String? token,
+    List<Tag>? tags,
 
   }) {
     return SettingState(
@@ -70,6 +74,7 @@ class SettingState {
       permissions: permissions ?? this.permissions,
       profile: profile ?? this.profile,
       token: token ?? this.token,
+      tags: tags ?? this.tags,
     );
   }
 
@@ -79,5 +84,6 @@ class SettingState {
     this.permissions = UserPermissions();
     this.profile = Profile();
     this.token = '';
+    this.tags = null;
   }
 }

@@ -136,7 +136,9 @@ class _MediaLoaderState extends State<MediaLoader> {
     } else if (media.type!.contains('image')) {
       return PostMediaCachedNetworkImage(
         url: media.getMediaUrl() ?? '',
+        thumbnailUrl: media.getThumbnailUrl()?.isNotEmpty == true ? media.getThumbnailUrl() : null,
       );
+
     }
     return SizedBox(); // Fallback for other media types
   }

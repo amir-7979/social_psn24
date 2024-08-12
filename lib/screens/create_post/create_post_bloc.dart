@@ -83,12 +83,11 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         final QueryOptions options = postsQuery(id: NewPost!.id!);
         final QueryResult result2 = await graphQLService.query(options);
         print(result2.toString());
-
         if (result2.hasException) {
           emit(PostCreationFailed('خطا در ایجاد پست'));
           return;
       }else{
-         final Post post = Post.fromJson(result2.data!['posts'][0]);
+          final Post post = Post.fromJson(result2.data!['posts'][0]);
          emit(PostCreationSucceed(post));
         }
       }

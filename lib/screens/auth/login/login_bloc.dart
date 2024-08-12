@@ -1,49 +1,37 @@
 import 'package:bloc/bloc.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
-
-import '../../../repos/repositories/auth_repository.dart';
-import '../../../services/core_graphql_service.dart';
-
+import '../../../repos/repositories/dio_auth_repository.dart';
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
+  final AuthRepository _authRepository = AuthRepository();
   late String loginId;
+
   LoginBloc() : super(LoginInitial()) {
     on<LogInEvent>(_handleLogInEvent);
-
   }
 
-  Future<void> _handleLogInEvent(
-      LogInEvent event, Emitter<LoginState> emit) async {
+  Future<void> _handleLogInEvent(LogInEvent event, Emitter<LoginState> emit) async {
     emit(LoginLoading());
     try {
-      final QueryResult result =
-      await coreGraphQLService.mutate(getLogInOptions(event.phoneNumber));
-      if (result.hasException) {
-        print(result.exception.toString());
-
-        if (result.exception!.graphqlErrors.isNotEmpty &&
-            result.exception!.graphqlErrors.first.extensions!['validation']['code'][0] == 'کد قبلی قابل استفاده است') {
-          print(result.exception!.graphqlErrors.first.extensions!['validation']['code'][0]);
-          emit(LoginSuccess(event.phoneNumber, loginId));
-        } else if (result.exception!.graphqlErrors.isNotEmpty &&
-            result.exception!.graphqlErrors.first.extensions!['validation']
-            ['phone'] !=
-                null) {
-          emit(LoginFailure(result.exception!.graphqlErrors.first.extensions!['validation']
-          ['phone']));
-        }
+      Response<dynamic> response = await _authRepository.logIn(event.phoneNumber);
+      if (response.statusCode == 200) {
+        loginId = response.data['data']['id'].toString();
+        emit(LoginSuccess(event.phoneNumber, loginId));
       } else {
-        loginId = result.data!['logIn'];
-        emit(LoginSuccess(event.phoneNumber,loginId));
+        emit(LoginFailure('خطا در ورود'));
       }
-    } catch (exception) {
-      emit(LoginFailure('خطا'));
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.statusCode == 422 && e.response!.data['message'].toString().contains('کد قبلی قابل استفاده است')) {
+        emit(LoginSuccess(event.phoneNumber, loginId));
+      } else {
+        emit(LoginFailure(e.response!.data['message'].toString()));
+      }
+    } catch (e) {
+      emit(LoginFailure('خطا در ورود'));
     }
   }
-
 
 }

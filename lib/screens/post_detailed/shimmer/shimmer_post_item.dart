@@ -58,6 +58,8 @@ class ShimmerPostItem extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: 16),
+
         ],
       ),
     );

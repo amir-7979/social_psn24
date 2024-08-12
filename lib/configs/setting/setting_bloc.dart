@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:social_psn/repos/repositories/create_post.dart';
 import 'package:social_psn/services/storage_service.dart';
 
 import '../../repos/models/profile.dart';
+import '../../repos/models/tag.dart';
 import '../../repos/models/user_permissions.dart';
 import '../../repos/repositories/profile_repository.dart';
 import '../../services/core_graphql_service.dart';
@@ -15,6 +17,7 @@ part 'setting_state.dart';
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final StorageService _storageService = StorageService();
   final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
+  final GraphQLClient graphQLService = GraphQLService.instance.client;
   final Completer<void> _settingsLoadedCompleter = Completer<void>();
   final List<SettingEvent> _eventQueue = [];
 
@@ -25,6 +28,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     on<ClearInfo>(_handelClearUserInformation);
     on<FetchUserPermissionsEvent>(_fetchUserPermissions);
     on<FetchUserProfileWithPermissionsEvent>(_fetchUserProfileWithPermissions);
+    on<FetchTagsEvent>(_fetchTags);
     _loadSettingsFromStorage();
   }
 
@@ -80,13 +84,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     emit(state.copyWith(theme: theme, language: language, token: token ?? ''));
     _settingsLoadedCompleter.complete();
     _processEventQueue();
-
-    // Trigger fetching profile or permissions after settings are loaded
     if (state.isUserLoggedIn) {
       add(FetchUserProfileWithPermissionsEvent());
     } else {
       add(FetchUserPermissionsEvent());
     }
+    add(FetchTagsEvent());
   }
 
   void _processEventQueue() {
@@ -98,7 +101,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   Future<void> _handleUpdateLoginStatus(event, emit) async {
     await _settingsLoadedCompleter.future;
     await writeInStorage(_storageService, event.data);
-    emit(state.copyWith(token: event.data?['verifyToken'][2]));
+    emit(state.copyWith(token: event.data?['access_token']));
     event.completer?.complete();
   }
 
@@ -135,10 +138,10 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> writeInStorage(StorageService storageService, Map<String, dynamic>? data) async {
-    await storageService.saveData('bearer', data?['verifyToken'][0]);
-    await storageService.saveData('expiry', data?['verifyToken'][1]);
-    await storageService.saveData('token', data?['verifyToken'][2]);
-    await storageService.saveData('refreshToken', data?['verifyToken'][3]);
+    await storageService.saveData('bearer', data?['Bearer']);
+    await storageService.saveData('expiry', data?['expires_in']);
+    await storageService.saveData('token', data?['access_token']);
+    await storageService.saveData('refreshToken', data?['refresh_token']);
   }
 
   @override
@@ -147,6 +150,17 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       _eventQueue.add(event);
     } else {
       super.onEvent(event);
+    }
+  }
+
+  Future<FutureOr<void>> _fetchTags(FetchTagsEvent event, Emitter<SettingState> emit) async {
+    final QueryOptions options = getTags();
+    final QueryResult result = await graphQLService.query(options);
+    if (result.hasException) {
+      print(result.exception.toString());
+    } else {
+      final List<Tag> tags = (result.data!['tags'] as List).map((tag) => Tag.fromJson(tag)).toList();
+      emit(state.copyWith(tags: tags));
     }
   }
 }

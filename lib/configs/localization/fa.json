@@ -41,6 +41,16 @@
     "invite": "آدرس سامانه در کلیپ برد ذخیره شد، اکنون می توانید دوستان خود را دعوت کنید!"
   },
 
+  "search": {
+    "search": "جستجو...",
+    "searchUser": "جستجوی کاربر",
+    "searchContent": "جستجوی محتوا",
+    "searchCharity": "جستجوی نیکوکاری",
+    "searchConsultation": "جستجوی مشاوره",
+    "searchResult": "نتایج جستجو",
+    "noResult": "نتیجه ای یافت نشد"
+  },
+
   "notifications": {
     "myNotification": "اعلان های من",
     "systemNotification": "اعلان های سیستم",
@@ -142,9 +152,6 @@
     "comment_text": "متن نظر...",
     "setUsername": "ابتدا نام کاربری خود را ثبت کنید"
   },
-
-
-
 
   "error": {
     "3": "نوع داده ورودی باید عددی باشد",

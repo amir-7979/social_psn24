@@ -1,11 +1,16 @@
 //section1
 todo reset sms time
+todo cache post_list screen
+todo search system
+todo cache profile information
+todo cache post list
+todo cache post detail
+todo cache post comments
 
 //section2
 todo 100 length of subject text filed
 todo admin setting
 todo complete upload media
-todo search system
 todo online svg
 todo bug in showing user created media
 

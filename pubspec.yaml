@@ -72,6 +72,7 @@ dependencies:
   chewie: ^1.8.1
   modal_bottom_sheet: ^3.0.0
   reorderables: ^0.6.0
+  dio: ^5.5.0+1
 
 dev_dependencies:
   flutter_test:
@@ -117,6 +118,7 @@ flutter:
     - assets/images/drawer/
     - assets/images/notification/
     - assets/images/post/
+    - assets/images/search/
 
   fonts:
     - family: IRANSansX
