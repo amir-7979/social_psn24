@@ -240,4 +240,47 @@ MutationOptions deletePost(String id) {
   );
 }
 
+QueryOptions getTags({int? limit, int? offset, String? search}) {
+  Map<String, dynamic> variables = {};
+  if (limit != null) variables['limit'] = limit;
+  if (offset != null) variables['offset'] = offset;
+  if (search != null) variables['search'] = search;
 
+  return QueryOptions(
+    document: gql('''
+      query getTags(\$limit: Int, \$offset: Int, \$search: String) {
+        tags(limit: \$limit, offset: \$offset, search: \$search) {
+          id
+          title
+          type
+          __typename
+        }
+      }
+    '''),
+    variables: variables,
+    fetchPolicy: FetchPolicy.cacheAndNetwork,
+  );
+}
+
+
+QueryOptions searchUser({String? search, }) {
+  Map<String, dynamic> variables = {};
+  if (search != null) variables['search'] = search;
+
+  return QueryOptions(
+    document: gql('''
+      query searchUser(\$search: String) {
+          currentUser(search: \$search) {
+            name
+            family
+            username
+            id
+            photo
+            __typename
+          }
+        }
+    '''),
+    variables: variables,
+    fetchPolicy: FetchPolicy.cacheAndNetwork,
+  );
+}

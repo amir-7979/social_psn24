@@ -17,6 +17,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitialState()) {
     on<RefreshPostsEvent>(_onRefreshPostsEvent);
     on<RefreshIndexEvent>(_onRefreshIndexEvent);
+    on<SearchPostsEvent>(_onSearchPostsEvent);
 
   }
    Future<void> _onRefreshIndexEvent(RefreshIndexEvent event, Emitter<HomeState> emit) async {
@@ -28,14 +29,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   static Future<void> fetchPosts(PagingController<int, Post> pagingController, int limit, int? postType, String? id, int? isPublish, String? tagId, String? search) async {
-    print('here');
   try {
     final QueryOptions options = postsQuery(id: id, isPublish: isPublish, tagId: tagId, search: search, limit: limit, offset: pagingController.nextPageKey, postType: postType);
     final QueryResult result = await GraphQLService.instance.client.query(options);
-    print(GraphQLService.instance.client.link.toString());
     if (result.hasException) {
       pagingController.error = result.exception;
-      print(result.exception.toString());
     }
     final List<Post> posts = (result.data?['posts'] as List<dynamic>?)
         ?.map((dynamic item) => Post.fromJson(item as Map<String, dynamic>)).toList() ?? [];
@@ -56,4 +54,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 }
 
+
+  FutureOr<void> _onSearchPostsEvent(SearchPostsEvent event, Emitter<HomeState> emit) {
+    emit(SearchParams(event.query, event.tag, event.type));
+  }
 }

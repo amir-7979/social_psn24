@@ -7,6 +7,7 @@ import '../../configs/custom_page_route.dart';
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/setting_bloc.dart';
 import '../../configs/setting/themes.dart';
+import '../../configs/utilities.dart';
 import '../home/home_screen.dart';
 import '../widgets/appbar_widget.dart';
 import '../widgets/bottombar_widget.dart';
@@ -21,7 +22,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
   bool isAddButtonClicked = false;
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
   final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(1);
   late CustomNavigatorObserver _navigatorObserver;
   late AnimationController _animationController;
@@ -70,13 +71,13 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       resizeToAvoidBottomInset: true,
       drawer: context.read<SettingBloc>().state.isUserLoggedIn
-          ? UserDrawer(context, _navigatorKey)
-          : GuestDrawer(context, _navigatorKey),
+          ? UserDrawer(context, navigatorKey)
+          : GuestDrawer(context, navigatorKey),
       appBar: buildAppBar(context),
       body: Stack(
         children: [
           Navigator(
-            key: _navigatorKey,
+            key: navigatorKey,
             initialRoute: AppRoutes.home,
             observers: [_navigatorObserver],
             onGenerateRoute: (RouteSettings settings) {
@@ -95,7 +96,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
         isAddButtonClicked,
         (){_handleFABPressed();},
       ),
-      bottomNavigationBar: MyStylishBottomBar(_navigatorKey, _currentIndexNotifier, _navigatorObserver),
+      bottomNavigationBar: MyStylishBottomBar(navigatorKey, _currentIndexNotifier, _navigatorObserver),
     );
   }
 
@@ -125,7 +126,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                         FontAwesomeIcons.thinCloudArrowUp,
                             () {
                           _handleFABPressed();
-                          _navigatorKey.currentState!.pushNamed(AppRoutes.createMedia);
+                          navigatorKey.currentState!.pushNamed(AppRoutes.createMedia);
                         },
                       ),
                       Padding(

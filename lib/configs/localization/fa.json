@@ -48,7 +48,13 @@
     "searchCharity": "جستجوی نیکوکاری",
     "searchConsultation": "جستجوی مشاوره",
     "searchResult": "نتایج جستجو",
-    "noResult": "نتیجه ای یافت نشد"
+    "noResult": "نتیجه ای یافت نشد",
+    "all": "همه",
+    "public": "عمومی",
+    "expert": "تخصصی",
+    "category": "دسته بندی",
+    "users": "کاربران"
+
   },
 
   "notifications": {

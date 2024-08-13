@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 TextDirection detectDirection(String? text) {
   if (text == null || text.isEmpty) {
     return TextDirection.rtl; // Default to RTL if the input is null or empty
@@ -30,3 +32,5 @@ TextDirection detectDirection(String? text) {
 
   return TextDirection.rtl; // Default to RTL if no Latin characters are found
 }
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:social_psn/screens/home/widgets/normal_user_post_list.dart';
-
+import 'package:social_psn/screens/home/widgets/search_list.dart';
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/post.dart';
 import 'home_bloc.dart';
 import 'widgets/main_tab_bar.dart';
-import 'widgets/post_list.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -54,9 +53,16 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           child: BlocProvider(
               create: (context) => HomeBloc(),
-              child: seeExpertPost
-                  ? MainTabBar()
-                  : NormalUserPostList()),
+              child: Builder(builder: (context) {
+                return BlocBuilder<HomeBloc, HomeState>(
+                  builder: (context, state) {
+                    return state is SearchParams ? SearchList(query: state.query, tag: state.tag, type: state.type) : Container(
+                        child: seeExpertPost
+                            ? MainTabBar()
+                            : NormalUserPostList());
+                  },
+                );
+              })),
         ));
   }
 }

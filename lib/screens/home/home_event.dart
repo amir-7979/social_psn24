@@ -12,3 +12,10 @@ class RefreshIndexEvent extends HomeEvent {
   RefreshIndexEvent(this.post);
 }
 
+class SearchPostsEvent extends HomeEvent {
+  final String? query;
+  final String? tag;
+  final int? type;
+  SearchPostsEvent(this.query, this.tag, this.type);
+}
+

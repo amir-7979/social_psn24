@@ -6,7 +6,7 @@ import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
 import '../notification/notification_screen.dart';
-import '../search/post_search/post_search_screen.dart';
+import '../post_search/post_search_screen.dart';
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
@@ -85,7 +85,7 @@ AppBar buildAppBar(BuildContext context) {
                   surfaceTintColor: Colors.transparent,
                   shadowColor: Colors.transparent,
                   insetAnimationDuration: Duration.zero,
-                  child: PostSearchWidget(),
+                  child: PostSearchScreen(),
                 );
               },
             );
@@ -94,4 +94,5 @@ AppBar buildAppBar(BuildContext context) {
       ),
     ],
   );
+
 }

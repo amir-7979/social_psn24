@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:social_psn/repos/repositories/create_post.dart';
 import 'package:social_psn/services/storage_service.dart';
 
 import '../../repos/models/profile.dart';
 import '../../repos/models/tag.dart';
 import '../../repos/models/user_permissions.dart';
+import '../../repos/repositories/post_repository.dart';
 import '../../repos/repositories/profile_repository.dart';
 import '../../services/core_graphql_service.dart';
 import '../../services/graphql_service.dart';

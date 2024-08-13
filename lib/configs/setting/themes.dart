@@ -173,6 +173,7 @@ final ThemeData darkTheme = ThemeData(
 const cameraBackgroundColor = Color(0xFFCCEDFB);
 const imageBackgroundColor = Color(0xFFF5F9FF);
 const shadowPopUpColor = Color(0x26ffffff);
+const searchBorderColor = Color(0xffECEFF4);
 
 const whiteColor = Colors.white;
 const blackColor = Colors.black;

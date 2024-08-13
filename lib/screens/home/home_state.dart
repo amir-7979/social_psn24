@@ -14,7 +14,6 @@ class goToDetailedPostState extends HomeState {
   goToDetailedPostState(this.post);
 }
 
-
 class CreatingComment extends HomeState {}
 
 class CommentCreated extends HomeState {
@@ -27,4 +26,12 @@ class CommentFailure extends HomeState {
   final String error;
 
   CommentFailure({required this.error});
+}
+
+class SearchParams extends HomeState{
+  final String? query;
+  final String? tag;
+  final int? type;
+
+  SearchParams(this.query, this.tag, this.type);
 }

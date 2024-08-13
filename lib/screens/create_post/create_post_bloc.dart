@@ -8,7 +8,7 @@ import 'package:social_psn/repos/models/post.dart';
 import 'package:social_psn/repos/repositories/post_repository.dart';
 
 import '../../repos/models/create_new_post.dart';
-import '../../repos/repositories/create_post.dart';
+import '../../repos/repositories/create_post_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'create_post_event.dart';

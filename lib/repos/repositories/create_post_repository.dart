@@ -5,27 +5,6 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
-QueryOptions getTags({int? limit, int? offset, String? search}) {
-  Map<String, dynamic> variables = {};
-  if (limit != null) variables['limit'] = limit;
-  if (offset != null) variables['offset'] = offset;
-  if (search != null) variables['search'] = search;
-
-  return QueryOptions(
-    document: gql('''
-      query getTags(\$limit: Int, \$offset: Int, \$search: String) {
-        tags(limit: \$limit, offset: \$offset, search: \$search) {
-          id
-          title
-          type
-          __typename
-        }
-      }
-    '''),
-    variables: variables,
-    fetchPolicy: FetchPolicy.noCache,
-  );
-}
 
 Future<MutationOptions<Object?>> uploadMediaFile(File file, String postId, {int? order}) async {
   Map<String, dynamic> variables = {
