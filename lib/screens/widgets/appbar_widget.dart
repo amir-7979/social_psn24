@@ -8,7 +8,8 @@ import '../../../configs/setting/themes.dart';
 import '../notification/notification_screen.dart';
 import '../post_search/post_search_screen.dart';
 
-AppBar buildAppBar(BuildContext context) {
+AppBar buildAppBar(BuildContext context, Function function) {
+
   return AppBar(
     title: Text(
       AppLocalizations.of(context)!.translate('appTitle'),
@@ -75,20 +76,8 @@ AppBar buildAppBar(BuildContext context) {
             color: Theme.of(context).appBarTheme.iconTheme!.color,
           ),
           onPressed: () {
-            showDialog(
-              context: context,
-              barrierDismissible: true,
-              builder: (BuildContext context) {
-                return Dialog(
-                  insetPadding: EdgeInsets.zero,
-                  elevation: 0,
-                  surfaceTintColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  insetAnimationDuration: Duration.zero,
-                  child: PostSearchScreen(),
-                );
-              },
-            );
+            function();
+
           },
         ),
       ),

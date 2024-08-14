@@ -23,7 +23,7 @@ class PostSearchScreen extends StatelessWidget {
         ], [
           'all',
           'public',
-          'expert'
+          'private'
         ]),
       ),
     );

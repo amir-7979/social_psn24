@@ -1,15 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:social_psn/screens/home/home_bloc.dart';
-import '../../../../configs/localization/app_localizations.dart';
-import '../../../../configs/setting/themes.dart';
-import '../../../../repos/models/tag.dart';
+import '../../../configs/localization/app_localizations.dart';
+import '../../../configs/setting/themes.dart';
 import '../../../configs/utilities.dart';
 import '../../../repos/models/profile.dart';
+import '../../../repos/models/tag.dart';
+import '../../home/home_bloc.dart';
 import '../../main/widgets/screen_builder.dart';
+import '../../widgets/new_page_progress_indicator.dart';
 import '../../widgets/profile_cached_network_image.dart';
 import '../post_search_bloc.dart';
 
@@ -36,9 +39,10 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
   @override
   void initState() {
     super.initState();
-    _controller.addListener(_onTextChanged);
     _pagingController.addPageRequestListener((pageKey) {
-      context.read<PostSearchBloc>().add(PostSearch(pageKey, _pageSize, _searchQuery));
+      context
+          .read<PostSearchBloc>()
+          .add(NewPostSearch(pageKey, _pageSize, _searchQuery));
     });
     context.read<PostSearchBloc>().stream.listen((state) {
       if (state is TagsLoadedState) {
@@ -56,9 +60,9 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
       } else if (state is UserErrorState) {
       }
       setState(() {});
-
     });
   }
+
 
 
 
@@ -72,20 +76,18 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
   }
 
   void _onTextChanged() {
-
-    setState(() {
-      _searchQuery = _controller.text.length > 2 ? _controller.text : null;
-    });
-    if (_searchQuery != null) {
-      context.read<PostSearchBloc>().add(UserSearch(_searchQuery!));
+    _searchQuery = _controller.text;
+    context.read<PostSearchBloc>().add(NewUserSearch(_searchQuery!));
+    if (_controller.text.isEmpty || _controller.text == '') {
+      _searchQuery = null;
     }
     _pagingController.refresh();
-
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+   return Scaffold(
       backgroundColor: Colors.transparent,
       body: Align(
         alignment: Alignment.topCenter,
@@ -118,13 +120,19 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
               child: SizedBox(
                 height: 40,
                 child: TextField(
+                  textDirection: detectDirection(_controller.text),
                   controller: _controller,
+
+                  onChanged: (value) {
+                    _onTextChanged();
+                  },
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         color: Theme.of(context).colorScheme.shadow,
                         fontWeight: FontWeight.w500,
                       ),
                   maxLines: 1,
                   decoration: InputDecoration(
+
                     contentPadding:
                         EdgeInsetsDirectional.symmetric(vertical: 8),
                     // Adjust vertical padding
@@ -158,11 +166,13 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                 ),
               ),
             ),
-            SizedBox(width: 8),
             IconButton(
                 padding: EdgeInsets.zero,
                 iconSize: 40,
-                onPressed: _onTextChanged,
+                onPressed: (){
+                  Navigator.of(context).pop();
+                  BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(_controller.text, null ,index == 0 || index ==1 ? 0 : 1 ));
+                },
                 icon: SvgPicture.asset('assets/images/search/search.svg')),
           ],
         ),
@@ -265,7 +275,7 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
           splashColor: Colors.transparent,
           onTap: () {
             Navigator.of(context).pop();
-            BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(_controller.text, tag.title ,index == 0 || index ==1 ? 0 : 1 ));
+            BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(_controller.text, tag.id ,index == 0 || index ==1 ? 0 : 1 ));
           },
           child: Container(
             padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
@@ -303,9 +313,7 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
   }
 
   Widget buildSubTagsList() {
-     if (_controller.text.length > 2 &&
-        _pagingController.itemList != null &&
-        _pagingController.itemList!.isNotEmpty) return Container(
+     return Container(
       color: (_controller.text.length > 2 &&
               _pagingController.itemList != null &&
               _pagingController.itemList!.isNotEmpty)
@@ -345,10 +353,14 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                         ? buildSubTag(context, tag)
                         : Container();
                 },
-                /*firstPageProgressIndicatorBuilder: (context) => SizedBox(
-                    height:10,
-                    width: 10,
-                    child: NewPageProgressIndicator()),*/
+                firstPageProgressIndicatorBuilder: (context) => Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                      start: 16, end: 16, top: 8, bottom: 8),
+                  child: SizedBox(
+                      height:10,
+                      width: 10,
+                      child: NewPageProgressIndicator()),
+                ),
               ),
             ),
           ),
@@ -356,8 +368,6 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
         ],
       ),
     );
-     else
-       return Container();
   }
 
   Widget buildUsersList() {
@@ -428,10 +438,11 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                 height: 40,
                 width: 40,
                 child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
                   child: user.photo != null
                       ? ProfileCacheImage(user.photo)
                       : SvgPicture.asset(
-                      'assets/images/drawer/profile2.svg'),
+                      'assets/images/search/rectangular_profile_placeholder.svg'),
                 ),
               ),
               SizedBox(width: 10),

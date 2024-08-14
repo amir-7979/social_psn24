@@ -73,7 +73,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       drawer: context.read<SettingBloc>().state.isUserLoggedIn
           ? UserDrawer(context, navigatorKey)
           : GuestDrawer(context, navigatorKey),
-      appBar: buildAppBar(context),
       body: Stack(
         children: [
           Navigator(

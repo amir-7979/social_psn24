@@ -19,17 +19,14 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
   GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
 
   PostSearchBloc() : super(PostSearchInitial()) {
-    on<PostSearch>(_handlePostSearch);
-    on<UserSearch>(_handleUserSearch);
+    on<NewPostSearch>(_handlePostSearch);
+    on<NewUserSearch>(_handleUserSearch);
   }
 
-  void _handlePostSearch(PostSearch event, Emitter<PostSearchState> emit) async {
-    print('${event.searchQuery}, ${event.pageSize}, ${event.pageKey}');
+  void _handlePostSearch(NewPostSearch event, Emitter<PostSearchState> emit) async {
     try {
       final QueryOptions options = getTags(search: event.searchQuery, limit: event.pageSize, offset: event.pageKey);
       final QueryResult result = await graphQLService.query(options);
-      print(result.data);
-
       if (result.hasException) {
         print(result.exception);
         emit(TagsErrorState(result.exception.toString()));
@@ -46,13 +43,11 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
   }
 
 
-  void _handleUserSearch(UserSearch event, Emitter<PostSearchState> emit) async {
+  void _handleUserSearch(NewUserSearch event, Emitter<PostSearchState> emit) async {
     try {
       final QueryOptions options = searchUser(search: event.searchQuery);
       final QueryResult result = await coreGraphQLService.query(options);
-
       if (result.hasException) {
-        print(result.exception);
         emit(UserErrorState(result.exception.toString()));
         return;
       }

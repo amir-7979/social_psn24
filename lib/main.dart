@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_psn/screens/home/home_bloc.dart';
 import 'configs/localization/app_localizations_delegate.dart';
 import 'configs/setting/setting_bloc.dart';
 import 'configs/setting/themes.dart';
@@ -20,9 +21,8 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MultiBlocProvider(
       providers: [
-        BlocProvider<SettingBloc>(
-          create: (context) => SettingBloc(),
-        ),
+        BlocProvider<SettingBloc>(create: (context) => SettingBloc()),
+        BlocProvider<HomeBloc>(create: (context) => HomeBloc()),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (context, state) {
@@ -32,11 +32,9 @@ class MyApp extends StatelessWidget {
               title: 'social psn',
               debugShowCheckedModeBanner: false,
               theme: state.theme == AppTheme.light ? lightTheme : darkTheme,
-              // Use your custom light theme
-              /*locale: state.language == AppLanguage.english
+              locale: state.language == AppLanguage.english
                   ? Locale('en', 'US')
-                  : Locale('fa', 'IR'),*/
-              locale: Locale('fa', 'IR'),
+                  : Locale('fa', 'IR'),
               localizationsDelegates: const [
                 AppLocalizationsDelegate(),
                 GlobalMaterialLocalizations.delegate,

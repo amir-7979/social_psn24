@@ -13,11 +13,10 @@ class ProfileCacheImage extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: url ?? '',
       fit: BoxFit.cover,
-      progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+      placeholder: (context, url) => Center(
         child: Padding(
           padding: const EdgeInsetsDirectional.all(25),
           child: CircularProgressIndicator(
-            value: downloadProgress.progress,
             strokeWidth: 2,
           ),
         ),

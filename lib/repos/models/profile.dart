@@ -20,6 +20,7 @@ class Profile {
    dynamic currentUserNotificationEnabled;
   final int? showActivity;
   String? fullName;
+  final String url = 'https://media.psn24.ir/';
 
   Profile({
     this.id,
@@ -54,14 +55,19 @@ class Profile {
     }else if (username != null && username.startsWith('@')) {
       username = username.substring(1);
     }
-    print('username ${username}');
+
+    String? photoUrl = json['photo'];
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      photoUrl = 'https://media.psn24.ir/$photoUrl';
+    }
+
     return Profile(
       id: json['id'] as int?,
       name: json['name'] as String?,
       family: json['family'] as String?,
       displayName: json['display_name'] as String?,
       username: username,
-      photo: json['photo'] as String?,
+      photo: photoUrl,
       phone: json['phone'] as String?,
       commentsCreated: json['commentsCreated'] as int?,
       contentCreated: json['contentCreated'] as int?,
