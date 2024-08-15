@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:social_psn/screens/home/widgets/normal_user_post_list.dart';
-import 'package:social_psn/screens/home/widgets/search_bar.dart';
-import 'package:social_psn/screens/home/widgets/search_list.dart';
+
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/post.dart';
 import '../post_search/post_search_screen.dart';
 import '../widgets/appbar_widget.dart';
 import 'home_bloc.dart';
+import 'shimmer/shimmer_post_item.dart';
 import 'widgets/main_tab_bar.dart';
+import 'widgets/my_search_bar.dart';
+import 'widgets/normal_user_post_list.dart';
+import 'widgets/search_list.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -56,8 +58,12 @@ class _HomeScreenState extends State<HomeScreen>
       builder: (context, state) {
     return Scaffold(
       appBar: state is SearchParams ? AppBar(
+        automaticallyImplyLeading: false,
         title: MySearchBar(state.query),
-      ) : buildAppBar(context, (){
+      ) : state is SearchLoadingState ? AppBar(
+      automaticallyImplyLeading: false,
+      title: MySearchBar(state.query),
+    ) :  buildAppBar(context, (){
         showDialog(
           context: context,
           barrierDismissible: true,
@@ -81,7 +87,19 @@ class _HomeScreenState extends State<HomeScreen>
               borderRadius: BorderRadius.circular(16),
               color: Theme.of(context).colorScheme.background,
             ),
-            child:  state is SearchParams ? SearchList(query: state.query, tag: state.tag, type: state.type) : Container(
+            child:  state is SearchParams ? SearchList(query: state.query, tag: state.tag, type: state.type) : state is SearchLoadingState ? SizedBox(
+            height: 800,
+            child: ListView.builder(
+              itemCount: 20,
+              itemBuilder: (context, index) => RepaintBoundary(
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
+                  child: ShimmerPostItem(),
+                ),
+
+              ),
+            ),
+          ) : Container(
                 child: seeExpertPost
                     ? MainTabBar()
                     : NormalUserPostList()),

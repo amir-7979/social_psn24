@@ -56,9 +56,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 }
 
 
-  FutureOr<void> _onSearchPostsEvent(SearchPostsEvent event, Emitter<HomeState> emit) {
+  Future<FutureOr<void>> _onSearchPostsEvent(SearchPostsEvent event, Emitter<HomeState> emit) async {
+    emit(SearchLoadingState(event.query,));
+    await Future.delayed(Duration(milliseconds: 80));
     emit(SearchParams(event.query, event.tag, event.type));
   }
+
    void resetState() {
      emit(HomeInitialState());
    }

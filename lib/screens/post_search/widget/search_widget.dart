@@ -29,9 +29,8 @@ class PostSearchWidget extends StatefulWidget {
 class _PostSearchWidgetState extends State<PostSearchWidget> {
   final TextEditingController _controller = TextEditingController();
   List<Profile> _users = [];
-
-  final PagingController<int, Tag> _pagingController =
-      PagingController(firstPageKey: 0);
+  final FocusNode _focusNode = FocusNode();
+  final PagingController<int, Tag> _pagingController = PagingController(firstPageKey: 0);
   final int _pageSize = 20;
   int index = 0;
   String? _searchQuery;
@@ -39,6 +38,9 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
     _pagingController.addPageRequestListener((pageKey) {
       context
           .read<PostSearchBloc>()
@@ -57,21 +59,17 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
         _pagingController.error = state.error;
       } else if (state is UserLoadedState) {
         _users = state.users;
-      } else if (state is UserErrorState) {
-      }
+      } else if (state is UserErrorState) {}
       setState(() {});
     });
   }
-
-
-
-
 
   @override
   void dispose() {
     _controller.removeListener(_onTextChanged);
     _controller.dispose();
     _pagingController.dispose();
+    _focusNode.dispose(); // Dispose of the FocusNode
     super.dispose();
   }
 
@@ -87,7 +85,7 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
       backgroundColor: Colors.transparent,
       body: Align(
         alignment: Alignment.topCenter,
@@ -98,8 +96,10 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
           children: [
             buildSearchField(context),
             buildMainTag(context),
-            buildSubTagsList(),
-            buildUsersList(),  // New method to build users list
+            (_searchQuery != null && _searchQuery!.length > 2 &&
+                _pagingController.itemList != null &&
+                _pagingController.itemList!.isEmpty) ? Container() : buildSubTagsList(),
+            buildUsersList(), // New method to build users list
           ],
         ),
       ),
@@ -108,6 +108,8 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
 
   Container buildSearchField(BuildContext context) {
     return Container(
+      padding: EdgeInsetsDirectional.symmetric(horizontal: 16),
+      height: 50,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
       ),
@@ -122,7 +124,14 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                 child: TextField(
                   textDirection: detectDirection(_controller.text),
                   controller: _controller,
-
+                  focusNode: _focusNode,
+                  onSubmitted: (_) {
+                    Navigator.of(context).pop();
+                    BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(
+                        _controller.text,
+                        null,
+                        index == 0 || index == 1 ? 0 : 1));
+                  },
                   onChanged: (value) {
                     _onTextChanged();
                   },
@@ -132,7 +141,6 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                       ),
                   maxLines: 1,
                   decoration: InputDecoration(
-
                     contentPadding:
                         EdgeInsetsDirectional.symmetric(vertical: 8),
                     // Adjust vertical padding
@@ -166,14 +174,21 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                 ),
               ),
             ),
-            IconButton(
-                padding: EdgeInsets.zero,
-                iconSize: 40,
-                onPressed: (){
-                  Navigator.of(context).pop();
-                  BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(_controller.text, null ,index == 0 || index ==1 ? 0 : 1 ));
-                },
-                icon: SvgPicture.asset('assets/images/search/search.svg')),
+            SizedBox(
+              height: 40,
+              width: 40,
+              child: IconButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 40,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(
+                        _controller.text,
+                        null,
+                        index == 0 || index == 1 ? 0 : 1));
+                  },
+                  icon: SvgPicture.asset('assets/images/search/search.svg')),
+            ),
           ],
         ),
       ),
@@ -215,8 +230,7 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                             padding: const EdgeInsetsDirectional.symmetric(
                                 horizontal: 16),
                             decoration: BoxDecoration(
-                              color:
-                                  Theme.of(context).colorScheme.background,
+                              color: Theme.of(context).colorScheme.background,
                               borderRadius: BorderRadius.circular(30),
                               border: Border.all(
                                 color: index == i
@@ -275,7 +289,8 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
           splashColor: Colors.transparent,
           onTap: () {
             Navigator.of(context).pop();
-            BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(_controller.text, tag.id ,index == 0 || index ==1 ? 0 : 1 ));
+            BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(
+                null, tag.id, index == 0 || index == 1 ? 0 : 1));
           },
           child: Container(
             padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
@@ -313,7 +328,7 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
   }
 
   Widget buildSubTagsList() {
-     return Container(
+    return Container(
       color: (_controller.text.length > 2 &&
               _pagingController.itemList != null &&
               _pagingController.itemList!.isNotEmpty)
@@ -357,9 +372,7 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                   padding: const EdgeInsetsDirectional.only(
                       start: 16, end: 16, top: 8, bottom: 8),
                   child: SizedBox(
-                      height:10,
-                      width: 10,
-                      child: NewPageProgressIndicator()),
+                      height: 10, width: 10, child: NewPageProgressIndicator()),
                 ),
               ),
             ),
@@ -385,9 +398,9 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                 AppLocalizations.of(context)!
                     .translateNested('search', 'users'),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.surface,
-                  fontWeight: FontWeight.w600,
-                ),
+                      color: Theme.of(context).colorScheme.surface,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
             SizedBox(
@@ -415,7 +428,8 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
       splashColor: Colors.transparent,
       onTap: () {
         Navigator.of(context).pop();
-        navigatorKey.currentState!.pushNamed(AppRoutes.profile,arguments: user.id?.toInt());
+        navigatorKey.currentState!
+            .pushNamed(AppRoutes.profile, arguments: user.id?.toInt());
       },
       child: Padding(
         padding: const EdgeInsetsDirectional.only(start: 16),
@@ -442,7 +456,7 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                   child: user.photo != null
                       ? ProfileCacheImage(user.photo)
                       : SvgPicture.asset(
-                      'assets/images/search/rectangular_profile_placeholder.svg'),
+                          'assets/images/search/rectangular_profile_placeholder.svg'),
                 ),
               ),
               SizedBox(width: 10),
@@ -450,30 +464,28 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user.fullName??'',  // Display user's name or other properties
+                    user.fullName ?? '',
+                    // Display user's name or other properties
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.shadow,
-                      fontWeight: FontWeight.w400,
-                    ),
+                          color: Theme.of(context).colorScheme.shadow,
+                          fontWeight: FontWeight.w400,
+                        ),
                   ),
                   SizedBox(height: 2),
-                  if(user.username != null && user.username!.isNotEmpty && user.username != '@')Flexible(
-                    child: Text(
-                      '(@${user.username})',
-                      textDirection: TextDirection.ltr,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .tertiary,
+                  if (user.username != null &&
+                      user.username!.isNotEmpty &&
+                      user.username != '@')
+                    Flexible(
+                      child: Text(
+                        '(@${user.username})',
+                        textDirection: TextDirection.ltr,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.tertiary,
+                            ),
                       ),
                     ),
-                  ),
-
                 ],
               ),
             ],

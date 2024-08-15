@@ -35,3 +35,9 @@ class SearchParams extends HomeState{
 
   SearchParams(this.query, this.tag, this.type);
 }
+class SearchLoadingState extends HomeState {
+  final String? query;
+  SearchLoadingState(this.query);
+
+}
+

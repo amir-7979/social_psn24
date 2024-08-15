@@ -42,6 +42,7 @@ class _MySearchBarState extends State<MySearchBar> {
 
   Container buildSearchField(BuildContext context) {
     return Container(
+      height: 50,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
       ),
@@ -57,7 +58,7 @@ class _MySearchBarState extends State<MySearchBar> {
                   textDirection: detectDirection(_controller.text),
                   controller: _controller,
                   onTap: () {
-                    Navigator.of(context).pop();
+                    //Navigator.of(context).pop();
                     showDialog(
                       context: context,
                       barrierDismissible: true,
@@ -79,7 +80,6 @@ class _MySearchBarState extends State<MySearchBar> {
                   ),
                   maxLines: 1,
                   decoration: InputDecoration(
-
                     contentPadding:
                     EdgeInsetsDirectional.symmetric(vertical: 8),
                     // Adjust vertical padding
@@ -90,37 +90,27 @@ class _MySearchBarState extends State<MySearchBar> {
                       fontWeight: FontWeight.w500,
                     ),
                     border: InputBorder.none,
-                    suffixIconConstraints: BoxConstraints(
-                      minWidth: 40,
-                      minHeight: 40,
-                    ),
-                    suffixIcon: _controller.text.isNotEmpty
-                        ? IconButton(
-                      padding: EdgeInsets.zero,
-                      iconSize: 22,
-                      onPressed: () {
-                        _controller.clear();
-                      },
-                      icon: SvgPicture.asset(
-                          'assets/images/search/cross.svg',
-                          height: 22,
-                          width: 22),
-                    )
-                        : null,
                     isDense: true,
                   ),
                   textAlignVertical: TextAlignVertical.center,
                 ),
               ),
             ),
-            IconButton(
-                padding: EdgeInsets.zero,
-                iconSize: 40,
-                onPressed: (){
-                  //Navigator.of(context).pop();
-                  BlocProvider.of<HomeBloc>(context).resetState();
-                },
-                icon: SvgPicture.asset('assets/images/search/close.svg')),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 16),
+              child: SizedBox(
+                height: 40,
+                width: 40,
+                child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 40,
+                    onPressed: (){
+                      //Navigator.of(context).pop();
+                      BlocProvider.of<HomeBloc>(context).resetState();
+                    },
+                    icon: SvgPicture.asset('assets/images/search/close.svg')),
+              ),
+            ),
           ],
         ),
       ),
