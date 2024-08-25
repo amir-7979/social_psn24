@@ -3,7 +3,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:meta/meta.dart';
 
 import '../../repos/models/notification.dart';
-import '../../repos/repositories/setting_repository.dart';
+import '../../repos/repositories/graphql/setting_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'notification_event.dart';

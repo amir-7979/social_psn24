@@ -9,7 +9,7 @@ import '../../configs/setting/setting_bloc.dart';
 import '../../configs/setting/themes.dart';
 import '../../configs/utilities.dart';
 import '../home/home_screen.dart';
-import '../widgets/appbar_widget.dart';
+import '../widgets/appbar/appbar_widget.dart';
 import '../widgets/bottombar_widget.dart';
 import '../widgets/guest_drawer_widget.dart';
 import '../widgets/user_drawer_widget.dart';
@@ -70,6 +70,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       resizeToAvoidBottomInset: true,
+      appBar: SocialAppBar(),
       drawer: context.read<SettingBloc>().state.isUserLoggedIn
           ? UserDrawer(context, navigatorKey)
           : GuestDrawer(context, navigatorKey),

@@ -5,7 +5,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:meta/meta.dart';
 import '../../../configs/setting/setting_bloc.dart';
 
-import '../../../repos/repositories/dio_auth_repository.dart';
+import '../../../repos/repositories/dio/dio_auth_repository.dart';
 import '../../../services/core_graphql_service.dart';
 import '../../../services/graphql_service.dart';
 

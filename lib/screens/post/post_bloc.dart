@@ -6,7 +6,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
 
 import '../../repos/models/comment.dart';
-import '../../repos/repositories/post_repository.dart';
+import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'post_event.dart';

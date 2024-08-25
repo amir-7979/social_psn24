@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../../services/dio_auth_service.dart';
+import '../../../services/dio_auth_service.dart';
 
 class AuthRepository {
   final Dio _dio = DioAuthService.instance.client;

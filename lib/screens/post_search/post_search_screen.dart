@@ -5,6 +5,10 @@ import 'post_search_bloc.dart';
 import 'widget/search_widget.dart';
 
 class PostSearchScreen extends StatelessWidget {
+  final String title;
+
+  PostSearchScreen(this.title);
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -24,7 +28,7 @@ class PostSearchScreen extends StatelessWidget {
           'all',
           'public',
           'private'
-        ]),
+        ], title),
       ),
     );
   }

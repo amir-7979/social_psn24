@@ -4,12 +4,9 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/post.dart';
-import '../post_search/post_search_screen.dart';
-import '../widgets/appbar_widget.dart';
 import 'home_bloc.dart';
 import 'shimmer/shimmer_post_item.dart';
 import 'widgets/main_tab_bar.dart';
-import 'widgets/my_search_bar.dart';
 import 'widgets/normal_user_post_list.dart';
 import 'widgets/search_list.dart';
 
@@ -56,38 +53,15 @@ class _HomeScreenState extends State<HomeScreen>
     seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
-    return Scaffold(
-      appBar: state is SearchParams ? AppBar(
-        automaticallyImplyLeading: false,
-        title: MySearchBar(state.query),
-      ) : state is SearchLoadingState ? AppBar(
-      automaticallyImplyLeading: false,
-      title: MySearchBar(state.query),
-    ) :  buildAppBar(context, (){
-        showDialog(
-          context: context,
-          barrierDismissible: true,
-          builder: (BuildContext context) {
-            return Dialog(
-              insetPadding: EdgeInsets.zero,
-              elevation: 0,
-              surfaceTintColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              insetAnimationDuration: Duration.zero,
-              child: PostSearchScreen(),
-            );
-          },
-        );
-      }),
-      body: Padding(
-          padding: const EdgeInsetsDirectional.all(16),
-          child: Container(
-            height: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Theme.of(context).colorScheme.background,
-            ),
-            child:  state is SearchParams ? SearchList(query: state.query, tag: state.tag, type: state.type) : state is SearchLoadingState ? SizedBox(
+    return Padding(
+        padding: const EdgeInsetsDirectional.all(16),
+        child: Container(
+          height: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Theme.of(context).colorScheme.background,
+          ),
+          child:  state is SearchParams ? SearchList(query: state.query, tag: state.tag, type: state.type) : state is SearchLoadingState ? SizedBox(
             height: 800,
             child: ListView.builder(
               itemCount: 20,
@@ -100,11 +74,10 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
           ) : Container(
-                child: seeExpertPost
-                    ? MainTabBar()
-                    : NormalUserPostList()),
-          )),
-    );
+              child: seeExpertPost
+                  ? MainTabBar()
+                  : NormalUserPostList()),
+        ));
   },
 );
   }

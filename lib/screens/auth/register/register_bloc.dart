@@ -1,16 +1,14 @@
 import 'package:bloc/bloc.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:dio/src/response.dart';
 import 'package:meta/meta.dart';
-
 import '../../../configs/setting/setting_bloc.dart';
-import '../../../repos/repositories/auth_repository.dart';
-import '../../../services/core_graphql_service.dart';
+import '../../../repos/repositories/dio/dio_profile_repository.dart';
 
 part 'register_event.dart';
 part 'register_state.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
-  final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
+  final ProfileRepository _profileRepository = ProfileRepository();
   final SettingBloc settingBloc;
   String? photoUrl;
 
@@ -22,26 +20,16 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   Future<void> _handleRegisterEvent(EditUserEvent event, Emitter<RegisterState> emit) async {
     emit(RegisterLoading());
     try {
-      final QueryResult result = await coreGraphQLService.mutate(
-          getEditUserOptions(event.name, event.family, event.username, photoUrl, event.showActivity));
-      if (result.hasException) {
-        if (result.exception!.graphqlErrors.isNotEmpty &&
-            result.exception!.graphqlErrors.first.extensions!['validation']
-            ['name'] !=
-                null) {
-          emit(RegisterFailure(result.exception!.graphqlErrors[0]
-              .extensions!['validation']['name'][0]));
-        } else {
-          print(result.exception.toString());
-          emit(RegisterFailure('خطا'));
-        }
-      } else {
+      Response response = await _profileRepository.updateProfile(firstName: event.name, lastName: event.family, username: event.username, photo: photoUrl);
+      if (response == 200) {
         settingBloc.add(FetchUserProfileWithPermissionsEvent());
         photoUrl = null;
         emit(RegisterFinished('ورود با موفقیت انجام شد'));
+      } else {
+        emit(RegisterFailure('خطا در ثبت نام'));
       }
     } catch (exception) {
-      emit(RegisterFailure('خطا'));
+      emit(RegisterFailure('خطا در ثبت نام'));
     }
   }
 

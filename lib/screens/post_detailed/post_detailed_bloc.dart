@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 
 import '../../repos/models/comment.dart';
 import '../../repos/models/post.dart';
-import '../../repos/repositories/post_repository.dart';
+import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'post_detailed_event.dart';

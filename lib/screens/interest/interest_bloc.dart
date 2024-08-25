@@ -4,7 +4,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
 
 import '../../repos/models/liked.dart';
-import '../../repos/repositories/profile_repository.dart';
+
+import '../../repos/repositories/graphql/profile_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'interest_event.dart';

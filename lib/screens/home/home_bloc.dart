@@ -6,7 +6,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:social_psn/services/graphql_service.dart';
 
 import '../../repos/models/post.dart';
-import '../../repos/repositories/post_repository.dart';
+import '../../repos/repositories/graphql/post_repository.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';

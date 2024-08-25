@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:meta/meta.dart';
-
-import '../../../repos/repositories/profile_repository.dart';
+import '../../../repos/repositories/graphql/profile_repository.dart';
 import '../../../services/core_graphql_service.dart';
 import '../../../services/graphql_service.dart';
 

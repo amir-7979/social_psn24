@@ -12,6 +12,7 @@ import '../../../repos/models/profile.dart';
 import '../../../repos/models/tag.dart';
 import '../../home/home_bloc.dart';
 import '../../main/widgets/screen_builder.dart';
+import '../../widgets/appbar/appbar_bloc.dart';
 import '../../widgets/new_page_progress_indicator.dart';
 import '../../widgets/profile_cached_network_image.dart';
 import '../post_search_bloc.dart';
@@ -19,8 +20,9 @@ import '../post_search_bloc.dart';
 class PostSearchWidget extends StatefulWidget {
   List<String> mainTags;
   List<String> type;
+  String title;
 
-  PostSearchWidget(this.mainTags, this.type);
+  PostSearchWidget(this.mainTags, this.type, this.title);
 
   @override
   State<PostSearchWidget> createState() => _PostSearchWidgetState();
@@ -38,6 +40,7 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
   @override
   void initState() {
     super.initState();
+    _controller.text = widget.title;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -127,6 +130,8 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                   focusNode: _focusNode,
                   onSubmitted: (_) {
                     Navigator.of(context).pop();
+                    BlocProvider.of<AppbarBloc>(context)
+                        .add(AppbarSearch(_controller.text));
                     BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(
                         _controller.text,
                         null,
@@ -289,6 +294,8 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
           splashColor: Colors.transparent,
           onTap: () {
             Navigator.of(context).pop();
+            BlocProvider.of<AppbarBloc>(context)
+                .add(AppbarSearch(tag.title.toString()));
             BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(
                 null, tag.id, index == 0 || index == 1 ? 0 : 1));
           },

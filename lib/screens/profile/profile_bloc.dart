@@ -11,7 +11,8 @@ import '../../repos/models/comment.dart';
 import '../../repos/models/content.dart';
 import '../../repos/models/profile.dart';
 import '../../repos/models/user_permissions.dart';
-import '../../repos/repositories/profile_repository.dart';
+
+import '../../repos/repositories/graphql/profile_repository.dart';
 import '../../services/core_graphql_service.dart';
 import '../../services/graphql_service.dart';
 

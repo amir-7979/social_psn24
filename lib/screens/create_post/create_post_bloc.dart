@@ -5,10 +5,10 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:meta/meta.dart';
 import 'package:social_psn/repos/models/media.dart';
 import 'package:social_psn/repos/models/post.dart';
-import 'package:social_psn/repos/repositories/post_repository.dart';
+import 'package:social_psn/repos/repositories/graphql/post_repository.dart';
 
 import '../../repos/models/create_new_post.dart';
-import '../../repos/repositories/create_post_repository.dart';
+import '../../repos/repositories/graphql/create_post_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'create_post_event.dart';
