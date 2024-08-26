@@ -75,6 +75,8 @@ dependencies:
   dio: ^5.5.0+1
   firebase_core: ^3.3.0
   firebase_messaging: ^15.0.4
+  searchfield: ^1.0.9
+  flutter_typeahead: ^5.2.0
 
 dev_dependencies:
   flutter_test:

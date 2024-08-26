@@ -17,7 +17,15 @@ final class PostCreationSucceed  extends CreatePostState {
   PostCreationSucceed(this.post);
 }
 
-final class MediaUploading extends CreatePostState {}
+final class MediaUploading extends CreatePostState {
+  final File mediaFile;
+  MediaUploading(this.mediaFile);
+}
+
+final class MediaUploadingPlaceholder extends CreatePostState {
+  final File mediaFile;
+  MediaUploadingPlaceholder(this.mediaFile);
+}
 
 final class MediaUploaded extends CreatePostState {
   final Media postMedia;

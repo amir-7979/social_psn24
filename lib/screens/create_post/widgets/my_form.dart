@@ -4,12 +4,15 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:searchfield/searchfield.dart';
 import 'package:social_psn/repos/models/post.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
+import '../../../configs/utilities.dart';
 import '../../../repos/models/media.dart';
 import '../../widgets/white_circular_progress_indicator.dart';
 import '../create_post_bloc.dart';
@@ -18,8 +21,9 @@ import 'media_item.dart';
 import 'package:reorderables/reorderables.dart'; // Add this import
 
 class MyForm extends StatefulWidget {
-  final Post newPost;
-  MyForm(this.newPost, {Key? key}) : super(key: key);
+  final Post? newPost;
+
+  MyForm({this.newPost, Key? key}) : super(key: key);
 
   @override
   State<MyForm> createState() => _MyFormState();
@@ -37,7 +41,12 @@ class _MyFormState extends State<MyForm> {
   final _longTextFocusNode = FocusNode();
   String? _selectedCategory;
   final advanceSwitchController = ValueNotifier<bool>(false);
-  List<String> _categories = ['Category 1', 'Category 2', 'Category 3'];
+  List<String> _categories = [
+    'Category 1',
+    'Category 2',
+    'Category 3',
+    'sgdfg'
+  ];
   final int _maxLength = 200;
   File? lastPickedImage;
   File? cropPath;
@@ -48,7 +57,7 @@ class _MyFormState extends State<MyForm> {
   void initState() {
     super.initState();
     _longTextController.addListener(_updateCounter);
-    postMedias = widget.newPost.medias ?? <Media>[];
+    postMedias = widget.newPost?.medias ?? <Media>[];
   }
 
   @override
@@ -112,8 +121,8 @@ class _MyFormState extends State<MyForm> {
           AppLocalizations.of(context)!
               .translateNested("createMedia", 'createMedia'),
           style: Theme.of(context).textTheme.displayMedium!.copyWith(
-            color: Theme.of(context).primaryColor,
-          ),
+                color: Theme.of(context).primaryColor,
+              ),
         ),
         SizedBox(height: 8),
         Container(
@@ -138,68 +147,125 @@ class _MyFormState extends State<MyForm> {
                 keyboardType: TextInputType.name,
                 focusNode: _titleFocusNode,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
                 decoration: InputDecoration(
                   label: Text(
                     AppLocalizations.of(context)!
-                        .translateNested("params", "name"),
+                        .translateNested("createMedia", "subject"),
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: _titleFocusNode.hasFocus
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).hintColor,
-                    ),
+                          fontWeight: FontWeight.w400,
+                          color: _titleFocusNode.hasFocus
+                              ? Theme.of(context).primaryColor
+                              : Theme.of(context).hintColor,
+                        ),
                   ),
                   enabledBorder: borderStyle,
                   errorBorder: errorBorderStyle,
                   border: borderStyle,
                   focusedErrorBorder: errorBorderStyle,
                   contentPadding:
-                  const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                      const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return AppLocalizations.of(context)!
                         .translateNested('error', 'notEmpty');
-                  } else if (value.length > 30) {
+                  } else if (value.length > 100) {
                     return AppLocalizations.of(context)!
                         .translateNested('error', 'length_exceed');
                   }
                   return null;
                 },
                 onFieldSubmitted: (value) {
-                  _categoryFocusNode.requestFocus();
+                  setState(() {
+                    _titleFocusNode.unfocus();
+                    _categoryFocusNode.requestFocus();
+                  });
+                },
+                onTap: () {
+                  setState(() {});
                 },
               ),
               SizedBox(height: 16),
-              TextFormField(
+              SearchField<String>(
+                suggestions: _categories
+                    .map((category) => SearchFieldListItem<String>(category))
+                    .toList(),
                 controller: _categoryController,
                 focusNode: _categoryFocusNode,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
-                decoration: InputDecoration(
+                suggestionState: Suggestion.expand,
+                searchStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+                suggestionStyle:
+                    Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                searchInputDecoration: InputDecoration(
                   label: Text(
                     AppLocalizations.of(context)!
                         .translateNested("createMedia", "category"),
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: _titleFocusNode.hasFocus
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).hintColor,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: _categoryFocusNode.hasFocus
+                              ? Theme.of(context).primaryColor
+                              : Theme.of(context).hintColor,
+                        ),
                   ),
                   enabledBorder: borderStyle,
                   errorBorder: errorBorderStyle,
                   border: borderStyle,
                   focusedErrorBorder: errorBorderStyle,
+                  contentPadding:
+                      const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                  //close icon
+                  suffixIcon: (_categoryController.text.isNotEmpty)
+                      ? IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _categoryController.clear();
+                            });
+                          },
+                          icon: FaIcon(
+                              size: 25,
+                              FontAwesomeIcons.solidCircleXmark,
+                              color: Theme.of(context).colorScheme.surface))
+                      : null,
                 ),
-                onChanged: (value) {
+                itemHeight: 50,
+                maxSuggestionsInViewPort: 4,
+                suggestionItemDecoration: SuggestionDecoration(
+                  color: Theme.of(context).colorScheme.background,
+                  boxShadow: null,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                suggestionsDecoration: SuggestionDecoration(
+                  color: Theme.of(context).colorScheme.background,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Category must not be empty';
+                  } else if (!_categories.contains(value)) {
+                    return 'Invalid Category';
+                  }
+                  return null;
+                },
+
+                onTap: () {
                   setState(() {});
                 },
-                onFieldSubmitted: (value) {
-                  _longTextFocusNode.requestFocus();
+                onSuggestionTap: (suggestion) {
+                  setState(() {
+                    _selectedCategory = suggestion.item;
+                  });
+                },
+                onSubmit: (value) {
+                  setState(() {
+                    _categoryFocusNode.unfocus();
+                    _longTextFocusNode.requestFocus();
+                  });
                 },
               ),
               SizedBox(height: 16),
@@ -210,19 +276,19 @@ class _MyFormState extends State<MyForm> {
                   controller: _longTextController,
                   maxLines: 50,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
                   maxLength: _maxLength,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!
                         .translateNested("createMedia", "text"),
                     labelStyle:
-                    Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: _longTextFocusNode.hasFocus
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).hintColor,
-                    ),
+                        Theme.of(context).textTheme.titleLarge!.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: _longTextFocusNode.hasFocus
+                                  ? Theme.of(context).primaryColor
+                                  : Theme.of(context).hintColor,
+                            ),
                     alignLabelWithHint: true,
                     constraints: BoxConstraints(
                       minHeight: 130.0,
@@ -234,20 +300,25 @@ class _MyFormState extends State<MyForm> {
                   ),
                   buildCounter: (context,
                       {required currentLength,
-                        required maxLength,
-                        required bool isFocused}) {
+                      required maxLength,
+                      required bool isFocused}) {
                     return Text(
                       '$_maxLength/$currentLength',
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: _longTextFocusNode.hasFocus
-                            ? Theme.of(context).primaryColor
-                            : Theme.of(context).hintColor,
-                      ),
+                            fontWeight: FontWeight.w400,
+                            color: _longTextFocusNode.hasFocus
+                                ? Theme.of(context).primaryColor
+                                : Theme.of(context).hintColor,
+                          ),
                     );
                   },
+                  onTap: () {
+                    setState(() {});
+                  },
                   onFieldSubmitted: (value) {
-                    FocusScope.of(context).unfocus();
+                    setState(() {
+                      FocusScope.of(context).unfocus();
+                    });
                   },
                 ),
               ),
@@ -262,9 +333,9 @@ class _MyFormState extends State<MyForm> {
               AppLocalizations.of(context)!
                   .translateNested("createMedia", "type"),
               style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                color: Theme.of(context).hoverColor,
-                fontWeight: FontWeight.w400,
-              ),
+                    color: Theme.of(context).hoverColor,
+                    fontWeight: FontWeight.w400,
+                  ),
             ),
             AdvancedSwitch(
               controller: advanceSwitchController,
@@ -285,6 +356,25 @@ class _MyFormState extends State<MyForm> {
               width: 90,
               borderRadius: BorderRadius.circular(20),
               enabled: true,
+              activeChild: Text(
+                AppLocalizations.of(context)!
+                    .translateNested("createMedia", "general"),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: whiteColor,
+                    ),
+              ),
+              inactiveChild: Text(
+                AppLocalizations.of(context)!
+                    .translateNested("createMedia", "expert"),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: whiteColor,
+                    ),
+              ),
+              onChanged: (_){
+                setState(() {
+                  _categoryController.clear();
+                });
+              },
             ),
           ],
         ),
@@ -303,37 +393,43 @@ class _MyFormState extends State<MyForm> {
             child: BlocListener<CreatePostBloc, CreatePostState>(
               listener: (context, state) {
                 if (state is MediaDeleted) {
-                  postMedias.removeWhere((element) => element.id == state.mediaId);
-                  setState(() {
-                  });
-                }else if (state is MediaUploaded) {
-                  print('media uploaded');
+                  postMedias
+                      .removeWhere((element) => element.id == state.mediaId);
+                  setState(() {});
+                } else if (state is MediaUploaded) {
                   postMedias.add(state.postMedia);
-                  setState(() {
-
-                  });
+                  setState(() {});
+                } else if (state is MediaUploadingPlaceholder) {
+                  postMedias.add(Media(id: 'placeholder', loc: '', type: 'image'));
+                  setState(() {});
                 }
               },
-              child: (postMedias.isEmpty) ? Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  //load upload.png
-                  Image.asset('assets/images/post/upload.png', height: 100, width: 100),
-                  SizedBox(height: 20),
-                  Center(
-                    child: Text(
-                      AppLocalizations.of(context)!
-                          .translateNested("createMedia", "upload"),
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.tertiary,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ],
-              ) : _buildReorderableWrap(context),
-),
+              child: (postMedias.isEmpty)
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        //load upload.png
+                        Image.asset('assets/images/post/upload.png',
+                            height: 100, width: 100),
+                        SizedBox(height: 20),
+                        Center(
+                          child: Text(
+                            AppLocalizations.of(context)!
+                                .translateNested("createMedia", "upload"),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : _buildReorderableWrap(context),
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -342,31 +438,28 @@ class _MyFormState extends State<MyForm> {
           children: <Widget>[
             Expanded(
                 child: SizedBox(
-                  height: 45,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shadowColor: Colors.transparent,
-                      backgroundColor: Color(0x3300A6ED),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!
-                          .translateNested('profileScreen', 'return'),
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(
+              height: 45,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  shadowColor: Colors.transparent,
+                  backgroundColor: Color(0x3300A6ED),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!
+                      .translateNested('profileScreen', 'return'),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontWeight: FontWeight.w400,
                         color: Theme.of(context).colorScheme.tertiary,
                       ),
-                    ),
-                  ),
-                )),
+                ),
+              ),
+            )),
             const SizedBox(width: 16),
             Expanded(
               child: SizedBox(
@@ -376,8 +469,7 @@ class _MyFormState extends State<MyForm> {
                     //todo upload media
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                    Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -387,17 +479,16 @@ class _MyFormState extends State<MyForm> {
                       return state is SubmittingPostLoading
                           ? WhiteCircularProgressIndicator()
                           : Text(
-                        AppLocalizations.of(context)!
-                            .translateNested(
-                            'profileScreen', 'save'),
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge!
-                            .copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: whiteColor,
-                        ),
-                      );
+                              AppLocalizations.of(context)!
+                                  .translateNested('profileScreen', 'save'),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: whiteColor,
+                                  ),
+                            );
                     },
                   ),
                 ),
@@ -409,7 +500,6 @@ class _MyFormState extends State<MyForm> {
       ],
     );
   }
-
 
   Widget _buildReorderableWrap(BuildContext context) {
     return ReorderableWrap(
@@ -426,12 +516,29 @@ class _MyFormState extends State<MyForm> {
         });
       },
       children: List.generate(postMedias.length, (index) {
-        return SizedBox(
+        if (postMedias[index].id == 'placeholder') {
+          return Stack(
+            children: [
+              SizedBox(
+                width: 110,
+                height: 110,
+                child: MediaItem(postMedias[index], index + 1),
+              ),
+              Positioned.fill(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ],
+          );
+        } else {
+          return SizedBox(
             width: 110,
-            height: 110,child: MediaItem(postMedias[index], index + 1)); // Pass the index
+            height: 110,
+            child: MediaItem(postMedias[index], index + 1),
+          );
+        }
       }),
     );
   }
-
 }
-

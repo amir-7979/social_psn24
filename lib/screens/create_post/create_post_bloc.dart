@@ -29,10 +29,9 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
 
   Future<void> _onUploadMedia(UploadMediaEvent event, Emitter<CreatePostState> emit) async {
     try {
-      emit(MediaUploading());
+      emit(MediaUploading(event.mediaFile));
       final MutationOptions options = await uploadMediaFile(event.mediaFile, NewPost!.id!);
       final QueryResult result = await graphQLService.mutate(options);
-      print(result.data);
         if (result.hasException) {
           emit(MediaUploadFailed('خطا در آپلود محتوا'));
         } else {
@@ -74,7 +73,6 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       emit(CreatingNewPost());
       final MutationOptions options = createNewPost();
       final QueryResult result = await graphQLService.mutate(options);
-      print(result.toString());
       if (result.hasException) {
         emit(PostCreationFailed('خطا در ایجاد پست'));
         return;
@@ -82,7 +80,6 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         NewPost = CreateNewPost.fromJson(result.data!['createPost']);
         final QueryOptions options = postsQuery(id: NewPost!.id!);
         final QueryResult result2 = await graphQLService.query(options);
-        print(result2.toString());
         if (result2.hasException) {
           emit(PostCreationFailed('خطا در ایجاد پست'));
           return;

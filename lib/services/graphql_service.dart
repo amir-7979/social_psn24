@@ -6,7 +6,9 @@ class LoggingLink extends Link {
   @override
   Stream<Response> request(Request request, [forward]) {
     return forward!(request).doOnData((response) {
+      print('Response: ${response.data}');
     }).handleError((error) {
+      print('Error: $error');
     });
   }
 }
@@ -19,7 +21,6 @@ class GraphQLService {
   late GraphQLClient _client;
 
   GraphQLService._() {
-    // Initialize the client synchronously
     _initializeClient();
   }
 
