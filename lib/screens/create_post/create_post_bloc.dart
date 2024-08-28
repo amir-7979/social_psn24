@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -24,6 +25,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     on<DeleteMediaEvent>(_onDeleteMedia);
     on<ChangeMediaOrderEvent>(_onChangeMediaOrder);
     on<CreateNewPostEvent>(_onCreatePost);
+    on<ResetCategoryEvent>(_onResetCategory);
     add(CreateNewPostEvent());
   }
 
@@ -108,5 +110,9 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     } catch (e) {
       emit(SubmittingCreateFailed('خطا در ایجاد پست'));
     }
+  }
+
+  FutureOr<void> _onResetCategory(ResetCategoryEvent event, Emitter<CreatePostState> emit) {
+    emit(ResetCategoryState());
   }
 }

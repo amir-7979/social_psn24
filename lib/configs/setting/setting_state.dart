@@ -7,6 +7,7 @@ class SettingState {
    AppTheme theme;
    AppLanguage language;
    UserPermissions? permissions;
+   AdminSettings? adminSettings;
    Profile? profile;
   String token = '';
   List<Tag>? tags;
@@ -16,6 +17,7 @@ class SettingState {
     required this.theme,
     required this.language,
     this.permissions,
+    this.adminSettings,
     this.profile,
     required this.token,
     this.tags,
@@ -52,6 +54,7 @@ class SettingState {
    }
 
    get tagsList => tags;
+   get adminSettingsData => adminSettings;
 /*
   set newTheme(AppTheme value) {
      theme = value;
@@ -63,6 +66,7 @@ class SettingState {
     AppTheme? theme,
     AppLanguage? language,
     UserPermissions? permissions,
+    AdminSettings? adminSettings,
     Profile? profile,
     String? token,
     List<Tag>? tags,
@@ -72,6 +76,7 @@ class SettingState {
       theme: theme ?? this.theme,
       language: language ?? this.language,
       permissions: permissions ?? this.permissions,
+      adminSettings: adminSettings ?? this.adminSettings,
       profile: profile ?? this.profile,
       token: token ?? this.token,
       tags: tags ?? this.tags,
@@ -83,6 +88,7 @@ class SettingState {
     this.language = AppLanguage.persian;
     this.permissions = UserPermissions();
     this.profile = Profile();
+    this.adminSettings = AdminSettings();
     this.token = '';
     this.tags = null;
   }

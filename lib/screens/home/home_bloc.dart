@@ -35,7 +35,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (result.hasException) {
       pagingController.error = result.exception;
     }
-    print(result.data);
     final List<Post> posts = (result.data?['posts'] as List<dynamic>?)
         ?.map((dynamic item) => Post.fromJson(item as Map<String, dynamic>)).toList() ?? [];
 

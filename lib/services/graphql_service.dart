@@ -6,9 +6,9 @@ class LoggingLink extends Link {
   @override
   Stream<Response> request(Request request, [forward]) {
     return forward!(request).doOnData((response) {
-      print('Response: ${response.data}');
+      //print('Response: ${response.data}');
     }).handleError((error) {
-      print('Error: $error');
+      //print('Error: $error');
     });
   }
 }

@@ -69,3 +69,5 @@ final class  SubmittingCreateFailed extends CreatePostState {
 
   SubmittingCreateFailed(this.message);
 }
+
+final class ResetCategoryState extends CreatePostState {}

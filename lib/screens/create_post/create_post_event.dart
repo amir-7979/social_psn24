@@ -20,3 +20,5 @@ class ChangeMediaOrderEvent extends CreatePostEvent {
 }
 
 class CreateNewPostEvent extends CreatePostEvent {}
+
+class ResetCategoryEvent extends CreatePostEvent {}

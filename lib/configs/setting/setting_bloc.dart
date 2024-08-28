@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:social_psn/services/storage_service.dart';
 
+import '../../repos/models/admin_setting.dart';
 import '../../repos/models/profile.dart';
 import '../../repos/models/tag.dart';
 import '../../repos/models/user_permissions.dart';
@@ -47,11 +48,11 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         final Map<String, dynamic> data = result.data!;
         final Map<String, dynamic> profileData = data['profile'];
         final Map<String, dynamic> userPermissionsData = data['userPermissions'];
-        print('copy profile');
-        print(profileData.toString());
+        final Map<String, dynamic> adminSettings = data['adminSettings'][0];
         final Profile profile = Profile.fromJson(profileData);
         final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
-        emit(state.copyWith(profile: profile, permissions: userPermissions));
+        final AdminSettings userAdminSettings = AdminSettings.fromJson(adminSettings);
+        emit(state.copyWith(profile: profile, permissions: userPermissions, adminSettings: userAdminSettings));
       }
     } catch (error) {
       print(error.toString());
@@ -60,7 +61,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   Future<void> _fetchUserPermissions(event, emit) async {
     await _settingsLoadedCompleter.future;
-    print('_fetchUserPermissions');
     try {
       final QueryOptions options = getUserPermissions();
       final QueryResult result = await coreGraphQLService.query(options);
@@ -69,8 +69,10 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       } else {
         final Map<String, dynamic> data = result.data!;
         final Map<String, dynamic> userPermissionsData = data['userPermissions'];
+        final Map<String, dynamic> adminSettings = data['adminSettings'][0];
+        final AdminSettings userAdminSettings = AdminSettings.fromJson(adminSettings);
         final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
-        emit(state.copyWith(permissions: userPermissions));
+        emit(state.copyWith(permissions: userPermissions, adminSettings: userAdminSettings));
       }
     } catch (error) {
       print(error.toString());

@@ -31,7 +31,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   child: Builder(
     builder: (context) {
       return Padding(
-          padding: const EdgeInsetsDirectional.all(16),
+          padding: const EdgeInsetsDirectional.all(14),
           child: InkWell(
             highlightColor: Colors.transparent,
             splashColor: Colors.transparent,

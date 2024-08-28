@@ -17,9 +17,55 @@ QueryOptions getUserProfileWithPermissions() {
             id, options
           }
         }
+        adminSettings {
+          max_size_for_media_mb
+          max_size_for_pic_MB
+          max_size_for_pic_PrivateMB
+          max_size_for_video_MB
+          max_size_for_video_PrivateMB
+          max_size_for_voice_MB
+          max_size_for_voice_PrivateMB
+          max_time_for_video_PrivateSec
+          max_time_for_video_Sec
+          max_time_for_voice_PrivateSec
+          max_time_for_voice_Sec
+          allowed_formats_for_Pic
+          allowed_formats_for_Video
+          allowed_formats_for_Voice
+          allowed_formats_for_PrivatePic
+          allowed_formats_for_PrivateVideo
+          allowed_formats_for_PrivateVoice
+          max_count_for_pic_PrivateSlide
+          max_count_for_pic_Slide
+          max_count_for_text_PrivateSlide
+          max_count_for_text_Slide
+          max_count_for_video_PrivateSlide
+          max_count_for_video_Slide
+          max_count_for_voice_PrivateSlide
+          max_count_for_voice_Slide
+          max_characters_for_pic_Post
+          max_characters_for_pic_PrivatePost
+          max_characters_for_post
+          max_characters_for_text_Post
+          max_characters_for_video_Post
+          max_characters_for_video_PrivatePost
+          max_characters_for_voice_Post
+          max_characters_for_voice_PrivatePost
+          max_characters_for_comment
+          max_session_count
+          resend_sms_time_sec
+          time_to_set_offline_sec
+          token_expire_time_sec
+          draft_storage_max_time_sec
+          failed_login_max_count
+          id
+          is_active
+          __typename
+        }
         profile {
           id, name, family, display_name, photo, phone, username
         }
+        
       }
     '''),
     fetchPolicy: FetchPolicy.noCache,
@@ -39,7 +85,51 @@ QueryOptions getUserPermissions() {
             id, options
           }
         }
-       
+       adminSettings {
+          max_size_for_media_mb
+          max_size_for_pic_MB
+          max_size_for_pic_PrivateMB
+          max_size_for_video_MB
+          max_size_for_video_PrivateMB
+          max_size_for_voice_MB
+          max_size_for_voice_PrivateMB
+          max_time_for_video_PrivateSec
+          max_time_for_video_Sec
+          max_time_for_voice_PrivateSec
+          max_time_for_voice_Sec
+          allowed_formats_for_Pic
+          allowed_formats_for_Video
+          allowed_formats_for_Voice
+          allowed_formats_for_PrivatePic
+          allowed_formats_for_PrivateVideo
+          allowed_formats_for_PrivateVoice
+          max_count_for_pic_PrivateSlide
+          max_count_for_pic_Slide
+          max_count_for_text_PrivateSlide
+          max_count_for_text_Slide
+          max_count_for_video_PrivateSlide
+          max_count_for_video_Slide
+          max_count_for_voice_PrivateSlide
+          max_count_for_voice_Slide
+          max_characters_for_pic_Post
+          max_characters_for_pic_PrivatePost
+          max_characters_for_post
+          max_characters_for_text_Post
+          max_characters_for_video_Post
+          max_characters_for_video_PrivatePost
+          max_characters_for_voice_Post
+          max_characters_for_voice_PrivatePost
+          max_characters_for_comment
+          max_session_count
+          resend_sms_time_sec
+          time_to_set_offline_sec
+          token_expire_time_sec
+          draft_storage_max_time_sec
+          failed_login_max_count
+          id
+          is_active
+          __typename
+        }
       }
     '''),
     fetchPolicy: FetchPolicy.noCache,

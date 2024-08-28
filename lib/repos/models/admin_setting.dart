@@ -1,4 +1,4 @@
-class UploadSettings {
+class AdminSettings {
   final int? maxSizeForMediaMb;
   final int? maxSizeForPicMB;
   final int? maxSizeForPicPrivateMB;
@@ -43,7 +43,7 @@ class UploadSettings {
   final bool? isActive;
   final String? typename;
 
-  UploadSettings({
+  AdminSettings({
     this.maxSizeForMediaMb,
     this.maxSizeForPicMB,
     this.maxSizeForPicPrivateMB,
@@ -89,12 +89,12 @@ class UploadSettings {
     this.typename,
   });
 
-  factory UploadSettings.fromJson(Map<String, dynamic> json) {
+  factory AdminSettings.fromJson(Map<String, dynamic> json) {
     List<String>? parseList(String? value) {
-      return value?.split(',').map((e) => e.trim()).toList();
+      return value?.split(',').map((e) => e.toString().trim()).toList();
     }
 
-    return UploadSettings(
+    return AdminSettings(
       maxSizeForMediaMb: int.tryParse(json['max_size_for_media_mb']),
       maxSizeForPicMB: int.tryParse(json['max_size_for_pic_MB']),
       maxSizeForPicPrivateMB: int.tryParse(json['max_size_for_pic_PrivateMB']),
@@ -138,6 +138,35 @@ class UploadSettings {
       id: json['id'],
       isActive: json['is_active'] == '1',
       typename: json['__typename'],
+    );
+  }
+  String getConcatenatedAllowedFormats({
+    List<String>? picFormats,
+    List<String>? videoFormats,
+    List<String>? voiceFormats,
+  }) {
+    final List<String> concatenatedFormats = [];
+    if (picFormats != null) concatenatedFormats.addAll(picFormats);
+    if (videoFormats != null) concatenatedFormats.addAll(videoFormats);
+    if (voiceFormats != null) concatenatedFormats.addAll(voiceFormats);
+    return concatenatedFormats.join(', ');
+  }
+
+  // Function to get public allowed formats as a comma-separated string
+  String getPublicAllowedFormats() {
+    return getConcatenatedAllowedFormats(
+      picFormats: allowedFormatsForPic,
+      videoFormats: allowedFormatsForVideo,
+      voiceFormats: allowedFormatsForVoice,
+    );
+  }
+
+  // Function to get private allowed formats as a comma-separated string
+  String getPrivateAllowedFormats() {
+    return getConcatenatedAllowedFormats(
+      picFormats: allowedFormatsForPrivatePic,
+      videoFormats: allowedFormatsForPrivateVideo,
+      voiceFormats: allowedFormatsForPrivateVoice,
     );
   }
 }
