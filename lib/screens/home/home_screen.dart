@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:social_psn/screens/widgets/dialogs/my_alert_dialog.dart';
 
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/post.dart';
+import '../widgets/dialogs/my_confirm_dialog.dart';
 import 'home_bloc.dart';
 import 'shimmer/shimmer_post_item.dart';
 import 'widgets/main_tab_bar.dart';
@@ -51,34 +53,59 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-    return Padding(
-        padding: const EdgeInsetsDirectional.all(16),
-        child: Container(
-          height: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: Theme.of(context).colorScheme.background,
-          ),
-          child:  state is SearchParams ? SearchList(query: state.query, tag: state.tag, type: state.type) : state is SearchLoadingState ? SizedBox(
-            height: 800,
-            child: ListView.builder(
-              itemCount: 20,
-              itemBuilder: (context, index) => RepaintBoundary(
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
-                  child: ShimmerPostItem(),
-                ),
+    return InkWell(
+      onTap: () {
+        showDialog(
+          context: context,
+          barrierDismissible: true,
+          useSafeArea: true,
+          builder: (BuildContext context) {
+            return MyConfirmDialog(
+              title: "سلام",
+              description: "TdetectDirection(title)ion of the custom dialog.",
+              onConfirm: () {
+                Navigator.of(context).pop(); // Close the dialog
+                // Add your confirm logic here
+              },
+              onCancel: () {
+                Navigator.of(context).pop(); // Close the dialog
+                // Add your cancel logic here
+              }, confirmText: 'تایید',
+              cancelText: 'انصراف',
 
-              ),
+            );
+          },
+        );
+      },
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+      return Padding(
+          padding: const EdgeInsetsDirectional.all(16),
+          child: Container(
+            height: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.background,
             ),
-          ) : Container(
-              child: seeExpertPost
-                  ? MainTabBar()
-                  : NormalUserPostList()),
-        ));
-  },
-);
+            child:  state is SearchParams ? SearchList(query: state.query, tag: state.tag, type: state.type) : state is SearchLoadingState ? SizedBox(
+              height: 800,
+              child: ListView.builder(
+                itemCount: 20,
+                itemBuilder: (context, index) => RepaintBoundary(
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
+                    child: ShimmerPostItem(),
+                  ),
+
+                ),
+              ),
+            ) : Container(
+                child: seeExpertPost
+                    ? MainTabBar()
+                    : NormalUserPostList()),
+          ));
+        },
+      ),
+    );
   }
 }

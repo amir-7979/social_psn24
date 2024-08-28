@@ -33,4 +33,8 @@ TextDirection detectDirection(String? text) {
   return TextDirection.rtl; // Default to RTL if no Latin characters are found
 }
 
+bool isAppLanguageFarsi(BuildContext context) {
+  return Localizations.localeOf(context).languageCode == 'fa';
+}
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

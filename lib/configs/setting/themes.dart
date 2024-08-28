@@ -177,6 +177,8 @@ const cameraBackgroundColor = Color(0xFFCCEDFB);
 const imageBackgroundColor = Color(0xFFF5F9FF);
 const shadowPopUpColor = Color(0x26ffffff);
 const searchBorderColor = Color(0xffECEFF4);
+const elevatedButtonBackColor = Color(0x3300A6ED);
+const redBackGroundColor = Color(0xffffdbe2);
 
 const whiteColor = Colors.white;
 const blackColor = Colors.black;
@@ -185,6 +187,7 @@ final Color lightBaseColor = Colors.grey[300]!;
 final Color lightHighlightColor = Colors.grey[100]!;
 final Color darkBaseColor = Colors.grey[700]!;
 final Color darkHighlightColor = Colors.grey[600]!;
+
 
 final OutlineInputBorder borderStyle = OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
