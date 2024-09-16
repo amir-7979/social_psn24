@@ -10,13 +10,16 @@ import 'configs/setting/setting_bloc.dart';
 import 'configs/setting/themes.dart';
 import 'firebase_options.dart';
 import 'screens/main/main_screen.dart';
+import 'screens/notification/notification_bloc.dart';
+import 'services/firebase_notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  /*await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );*/
-  
+  );
+  FirebaseNotificationService notificationService = FirebaseNotificationService();
+  await notificationService.initialize();
   runApp(MyApp());
 }
 
@@ -31,6 +34,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<SettingBloc>(create: (context) => SettingBloc()),
         BlocProvider<AppbarBloc>(create: (context) => AppbarBloc()),
         BlocProvider<HomeBloc>(create: (context) => HomeBloc()),
+        BlocProvider<NotificationBloc>(create: (context) => NotificationBloc()..add(LoadNotifications())),
       ],
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (context, state) {

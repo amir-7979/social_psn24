@@ -25,7 +25,6 @@ class _NotificationListState extends State<NotificationList>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    context.read<NotificationBloc>().add(LoadNotifications(null, false, null));
   }
 
   @override
@@ -227,7 +226,7 @@ class _NotificationListState extends State<NotificationList>
   Widget buildBody(int index) {
     switch (index) {
       case 0:
-        return listItems([]);
+        return listItems(BlocProvider.of<NotificationBloc>(context).notifications);
       case 1:
         return Container();
       default:
@@ -255,6 +254,7 @@ Widget listItems(List<MyNotification> notifications) {
       ),
       itemCount: notifications.length,
       itemBuilder: (context, index) {
+        print('notification: ${notifications[index].message}');
         return NotificationItem(notifications[index]);
       },
     ),

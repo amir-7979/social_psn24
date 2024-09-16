@@ -71,3 +71,9 @@ final class  SubmittingCreateFailed extends CreatePostState {
 }
 
 final class ResetCategoryState extends CreatePostState {}
+
+
+final class CancelUploadMediaEvent extends CreatePostEvent {
+  final File mediaFile;
+  CancelUploadMediaEvent(this.mediaFile);
+}

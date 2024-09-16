@@ -1,124 +1,108 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:dio/dio.dart';
+import 'package:graphql_flutter/graphql_flutter.dart' as gql;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
-
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/comment.dart';
 import '../../repos/models/content.dart';
 import '../../repos/models/profile.dart';
-import '../../repos/models/user_permissions.dart';
-
-import '../../repos/repositories/graphql/profile_repository.dart';
-import '../../services/core_graphql_service.dart';
+import '../../repos/repositories/dio/dio_profile_repository.dart';
+import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
 
-
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final GraphQLClient graphQLService = GraphQLService.instance.client;
-  final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
+  final ProfileRepository profileRepository = ProfileRepository();
+  final gql.GraphQLClient graphQLService = GraphQLService.instance.client;
   final SettingBloc settingBloc;
 
   ProfileBloc(this.settingBloc) : super(ProfileInitial()) {
     on<FetchProfile>(fetchProfile);
     on<FetchProfileForEditScreen>(fetchProfileForEditScreen);
-    on<NavigateToEditProfile>(navigateToEditProfile);
-    on<NavigateToInitialScreen>(navigateToInitialScreen);
     on<EditProfile>(handleEditProfileEvent);
     on<DeletePost>(handleDeletePost);
-    on<ChangeStatusEvent>(handleChangeStatusEvent);
-    on<ToggleNotificationEvent>(handleToggleNotificationEvent);
+   /* on<ChangeStatusEvent>(handleChangeStatusEvent);
+    on<ToggleNotificationEvent>(handleToggleNotificationEvent);*/
   }
 
-  Future<void> handleDeletePost(event, emit) async {
-    emit(PostDeleting(event.postId));
-    try {
-      final MutationOptions options = deletePost(event.postId);
-      final QueryResult result = await graphQLService.mutate(options);
-      if (result.hasException) {
-        emit(PostDeleteFailure(result.exception.toString()));
-      } else {
-        emit(PostDeleteSuccess());
-      }
-    } catch (e) {
-      emit(PostDeleteFailure(e.toString()));
-    }
-  }
 
-  FutureOr<void> navigateToInitialScreen(event, emit) {
-    emit(NavigationToProfileScreenState());
-  }
-
+  // Fetch Profile
   FutureOr<void> fetchProfile(FetchProfile event, Emitter<ProfileState> emit) async {
     emit(ProfileInfoLoading());
     try {
-      final QueryOptions options = getUserProfile(event.id);
-
-      final QueryResult result = await coreGraphQLService.query(options);
+      Response result = await profileRepository.getProfile();
       if (result.data == null) {
         emit(ProfileError('خطا در دریافت اطلاعات'));
         return;
       }
-      await Future.delayed(Duration(seconds: 2));
-      final Map<String, dynamic> data = result.data!;
-      final Profile profile = Profile.fromJson(data['profile']);
+      final Profile profile = Profile.fromJson(result.data['profile']);
       emit(ProfileInfoLoaded(profile: profile));
     } catch (exception) {
       emit(ProfileError('خطا در دریافت اطلاعات'));
     }
   }
 
+  // Fetch Profile for Edit Screen
   FutureOr<void> fetchProfileForEditScreen(FetchProfileForEditScreen event, Emitter<ProfileState> emit) async {
     emit(NewProfileInfoLoading());
     try {
-      final QueryOptions options = getUserProfile(event.id);
-      final QueryResult result = await coreGraphQLService.query(options);
+      Response result = await profileRepository.getProfile();
       if (result.data == null) {
         emit(NewProfileError('خطا در دریافت اطلاعات'));
         return;
       }
-      final Map<String, dynamic> data = result.data!;
-      final Profile profile = Profile.fromJson(data['profile']);
+      final Profile profile = Profile.fromJson(result.data['profile']);
       emit(NewProfileInfoLoaded(profile: profile));
     } catch (exception) {
       emit(NewProfileError('خطا در دریافت اطلاعات'));
     }
   }
 
+  // Handle Edit Profile Event
   FutureOr<void> handleEditProfileEvent(EditProfile event, Emitter<ProfileState> emit) async {
     emit(EditProfileInfoLoading());
     try {
-      final MutationOptions options = editUser(
-        event.name,
-        event.family,
-        "@${event.username}",
-        event.photoUrl,
-        event.biography,
-        event.experience,
+      Response result = await profileRepository.updateProfile(
+        firstName: event.name!,
+        lastName: event.family!,
+        username: event.username,
+        photo: event.photoUrl,
       );
-      final QueryResult result = await coreGraphQLService.mutate(options);
-      if (result.hasException) {
-        emit(EditProfileError('خطا در ثبت اطلاعات'));
-        return;
-      }
-
       emit(EditProfileInfoLoaded());
     } catch (exception) {
-      print(exception.toString());
       emit(EditProfileError('خطا در ثبت اطلاعات'));
     }
   }
+/*
+  // Handle Change Status Event (You may add it to ProfileRepository)
+  FutureOr<void> handleChangeStatusEvent(ChangeStatusEvent event, Emitter<ProfileState> emit) async {
+    try {
+      Response result = await profileRepository.changeStatus();
+      emit(ChangeOnlineStatusSucceed(result.data['status']));
+    } catch (e) {
+      emit(ChangeOnlineStatusFailed());
+    }
+  }
 
+  // Handle Toggle Notification Event (You may add it to ProfileRepository)
+  Future<void> handleToggleNotificationEvent(ToggleNotificationEvent event, Emitter<ProfileState> emit) async {
+    emit(TogglingNotificationState());
+    try {
+      Response result = await profileRepository.toggleNotification(event.id);
+      emit(ToggleNotificationSuccess());
+    } catch (e) {
+      emit(ToggleNotificationFailure('خطا در عملیات'));
+    }
+  }
+  */
   static Future<void> fetchContent(PagingController<int, Content> pagingController, int postType, int limit, int? userId) async {
     try {
-      final QueryOptions options = getUserPosts(postType, limit, pagingController.nextPageKey!, userId);
-      final QueryResult result = await GraphQLService.instance.client.query(options);
+      final gql.QueryOptions options = getUserPosts(postType, limit, pagingController.nextPageKey!, userId);
+      final gql.QueryResult result = await GraphQLService.instance.client.query(options);
       final List<Content> contents = (result.data?['mycontents'] as List<dynamic>?)
           ?.map((dynamic item) => Content.fromJson(item as Map<String, dynamic>)).toList() ?? [];
       final isLastPage = contents.length < limit;
@@ -139,9 +123,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   static Future<void> fetchComment(PagingController<int, Comment> pagingController, String? postId, int? userId, String type, int limit) async {
     try {
-      print('here');
-      final QueryOptions options = getCommentsWithPostData(postId, userId, type, limit, pagingController.nextPageKey!);
-      final QueryResult result = await GraphQLService.instance.client.query(options);
+      final gql.QueryOptions options = getCommentsWithPostData(postId: postId, userId: userId, type: type, limit: limit, offset: pagingController.nextPageKey!);
+      final gql.QueryResult result = await GraphQLService.instance.client.query(options);
       if (result.hasException) {
         print(result.exception.toString());
       }
@@ -164,36 +147,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  void navigateToEditProfile(NavigateToEditProfile event, Emitter<ProfileState> emit) {
-    emit(NavigationToEditScreenState());
-  }
-
-  FutureOr<void> handleChangeStatusEvent(ChangeStatusEvent event, Emitter<ProfileState> emit) async {
+  Future<void> handleDeletePost(event, emit) async {
+    emit(PostDeleting(event.postId));
     try {
-      final MutationOptions options = changeOnlineStatus();
-      final QueryResult result = await coreGraphQLService.mutate(options);
+      final gql.MutationOptions options = deletePost(event.postId);
+      final gql.QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
-        emit(ChangeOnlineStatusFailed());
+        emit(PostDeleteFailure(result.exception.toString()));
       } else {
-        emit(ChangeOnlineStatusSucceed(result.data!['ChangeOnlineStatus']['status']));
+        emit(PostDeleteSuccess());
       }
     } catch (e) {
-      emit(ChangeOnlineStatusFailed());
-    }
-  }
-
-  Future<void> handleToggleNotificationEvent(ToggleNotificationEvent event, Emitter<ProfileState> emit) async {
-    try {
-      emit(TogglingNotificationState());
-      final MutationOptions options = enableNotification(event.id);
-      final QueryResult result = await coreGraphQLService.mutate(options);
-      if (result.hasException) {
-        emit(ToggleNotificationFailure('خطا در عملیات'));
-      } else {
-        emit(ToggleNotificationSuccess());
-      }
-    } catch (e) {
-      emit(ToggleNotificationFailure('خطا در عملیات'));
+      emit(PostDeleteFailure(e.toString()));
     }
   }
 }

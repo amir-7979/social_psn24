@@ -7,7 +7,12 @@ import 'package:video_player/video_player.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/admin_setting.dart';
+import '../../repos/models/media.dart';
 import 'create_post_bloc.dart';
+import 'widgets/media_item/media_item.dart';
+import 'widgets/media_item/media_item.dart';
+import 'widgets/media_item/media_item_bloc.dart';
+import 'widgets/post_content.dart';
 
 Future<File?> cropImage(String imagePath, BuildContext context) async {
   final croppedFile = await ImageCropper().cropImage(
@@ -35,21 +40,14 @@ Future<File?> cropImage(String imagePath, BuildContext context) async {
   return croppedFile != null ? File(croppedFile.path) : null;
 }
 
-Future<void> pickMedia(BuildContext context, bool mySwitch) async {
+Future<File?>? pickMedia(BuildContext context, bool mySwitch) async {
   final settings = BlocProvider.of<SettingBloc>(context).state.adminSettings;
-  if (settings == null) return;
-
-  // Lists based on mySwitch
+  if (settings == null) return null;
   final photoList = mySwitch ? settings.allowedFormatsForPic : settings.allowedFormatsForPrivatePic;
   final videoList = mySwitch ? settings.allowedFormatsForVideo : settings.allowedFormatsForPrivateVideo;
   final audioList = mySwitch ? settings.allowedFormatsForVoice : settings.allowedFormatsForPrivateVoice;
-
-  final pickedFiles = await FilePicker.platform.pickFiles(allowMultiple: true);
-  if (pickedFiles == null) return;
-
-  final List<File> validFiles = [];
-  final List<File> invalidFiles = [];
-
+  final pickedFiles = await FilePicker.platform.pickFiles(allowMultiple: false);
+  if (pickedFiles == null) return null;
   for (var pickedFile in pickedFiles.files) {
     final file = File(pickedFile.path!);
     final pickedFileType = pickedFile.extension?.toLowerCase();
@@ -67,19 +65,12 @@ Future<void> pickMedia(BuildContext context, bool mySwitch) async {
     }
 
     if (validationResult['isValid']) {
-      validFiles.add(file);
+    return file;
     } else {
-      invalidFiles.add(file);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(validationResult['message'])));
     }
   }
-
-  // Add valid files to the bloc
-  for (var validFile in validFiles) {
-    BlocProvider.of<CreatePostBloc>(context).add(UploadMediaEvent(validFile));
-  }
-
-  // Optionally handle invalid files (e.g., show a summary)
+  return null;
 }
 
 Future<Map<String, dynamic>> _validatePhoto(File file, String? fileType, int fileSize, AdminSettings settings, bool mySwitch) async {

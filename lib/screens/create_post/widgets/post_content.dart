@@ -11,28 +11,20 @@ import '../../../configs/setting/themes.dart';
 import '../../../repos/models/media.dart';
 import '../create_post_bloc.dart';
 import '../utilities.dart';
-import 'media_item.dart';
+import 'media_item/media_item.dart';
+import 'media_item/media_item_bloc.dart';
 
 class PostContent extends StatefulWidget {
-  final List<Media> postMedias;
-  final Function onSwitchToggle;
-  final advanceSwitchController = ValueNotifier<bool>(false);
-  final ScrollController scrollController;
-
-  PostContent({
-    Key? key,
-    required this.postMedias,
-    required this.onSwitchToggle,
-    required this.scrollController,
-  }) : super(key: key);
 
   @override
   State<PostContent> createState() => _PostContentState();
 }
 
 class _PostContentState extends State<PostContent> {
+  ValueNotifier<bool> advanceSwitchController = ValueNotifier<bool>(false);
   final picker = ImagePicker();
   File? cropPath;
+  List<MediaItem> mediaItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +43,7 @@ class _PostContentState extends State<PostContent> {
               ),
             ),
             AdvancedSwitch(
-              controller: widget.advanceSwitchController,
+              controller: advanceSwitchController,
               thumb: Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(2, 2, 0, 2),
                 child: Container(
@@ -96,14 +88,24 @@ class _PostContentState extends State<PostContent> {
         if(BlocProvider.of<SettingBloc>(context).state.adminSettings != null)
           Padding(
             padding: const EdgeInsetsDirectional.only(bottom: 4),
-            child: Text(widget.advanceSwitchController.value == true ? BlocProvider.of<SettingBloc>(context).state.adminSettings!.getPrivateAllowedFormats(): BlocProvider.of<SettingBloc>(context).state.adminSettings!.getPublicAllowedFormats(),
+            child: Text(advanceSwitchController.value == true ? BlocProvider.of<SettingBloc>(context).state.adminSettings!.getPrivateAllowedFormats(): BlocProvider.of<SettingBloc>(context).state.adminSettings!.getPublicAllowedFormats(),
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Theme.of(context).hintColor, fontWeight: FontWeight.w400),
             textAlign: TextAlign.end,
               maxLines: 5,
             ),
           ),
-        InkWell(
-          onTap: () => pickMedia(context, !widget.advanceSwitchController.value),
+        /*InkWell(
+          onTap: () async {
+            File? file = await pickMedia(context, !advanceSwitchController.value);
+            final mediaItemBloc = MediaItemBloc(createPostBloc: BlocProvider.of<CreatePostBloc>(context));
+            final mediaItem = BlocProvider(
+              create: (_) => MediaItemBloc(createPostBloc: BlocProvider.of<CreatePostBloc>(context)),
+              child: MediaItem(Media(id: 'placeholder'), 0),
+            );
+            mediaItemBloc.add(UploadMediaItemEvent(file!));
+            PostContent.addMediaItem(mediaItem);
+
+          },
           child: SizedBox(
             width: double.infinity,
             child: DottedBorder(
@@ -139,12 +141,12 @@ class _PostContentState extends State<PostContent> {
             textAlign: TextAlign.end,
             maxLines: 5,
           ),
-        ),
+        ),*/
 
       ],
     );
   }
-
+/*
   Widget _buildContent(BuildContext context) {
     return widget.postMedias.isEmpty
         ? Column(
@@ -205,7 +207,7 @@ class _PostContentState extends State<PostContent> {
         }
       }),
     );
-  }
+  }*/
 
   String _buildMediaInfoText(BuildContext context, bool isPrivate) {
     final settings = BlocProvider.of<SettingBloc>(context).state.adminSettings!;

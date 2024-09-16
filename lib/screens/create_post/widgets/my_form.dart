@@ -16,7 +16,7 @@ import '../../../configs/utilities.dart';
 import '../../../repos/models/media.dart';
 import '../../widgets/white_circular_progress_indicator.dart';
 import '../create_post_bloc.dart';
-import 'media_item.dart';
+import 'media_item/media_item.dart';
 
 import 'package:reorderables/reorderables.dart';
 
@@ -64,12 +64,7 @@ class _MyFormState extends State<MyForm> {
         SizedBox(height: 16),
         PostForm(),
         const SizedBox(height: 16),
-        PostContent(
-          postMedias: widget.newPost?.medias ?? <Media>[],
-          onSwitchToggle: () {
-          },
-          scrollController: _scrollController,
-        ),
+        PostContent(),
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

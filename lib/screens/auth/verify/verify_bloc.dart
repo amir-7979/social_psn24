@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'package:social_psn/repos/repositories/dio/dio_notification_repository.dart';
 import '../../../configs/setting/setting_bloc.dart';
-
 import '../../../repos/repositories/dio/dio_auth_repository.dart';
-import '../../../services/core_graphql_service.dart';
+import '../../../services/firebase_notification_service.dart';
 import '../../../services/graphql_service.dart';
 
 part 'verify_event.dart';
@@ -14,7 +14,7 @@ part 'verify_state.dart';
 
 class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
   final AuthRepository _authRepository = AuthRepository();
-  final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
+  final NotificationRepository _notifRepository = NotificationRepository();
   final SettingBloc settingBloc;
   late String loginId;
 
@@ -28,16 +28,18 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
     emit(VerifyLoading());
     try {
       var response = await _authRepository.verifyToken(int.parse(event.loginId), event.code);
+      //print(response.data);
       if (response.statusCode == 200) {
         Completer<void> completer = Completer<void>();
         settingBloc.add(UpdateLoginStatus(response.data['data'], completer: completer));
         await completer.future;
         await GraphQLService.instance.addTokenToAuthLink();
-        await CoreGraphQLService.instance.addTokenToAuthLink();
+        settingBloc.add(FetchUserProfileWithPermissionsEvent());
+        await setFCM();
         if (response.data?['data']['status'] == '1'){
           settingBloc.add(FetchUserProfileWithPermissionsEvent());
-          emit(VerifyFinished());}
-        else
+          emit(VerifyFinished());
+        } else
           emit(VerifySuccess());
       } else {
         emit(VerifyFailure('خطا در ورود'));
@@ -51,5 +53,16 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
     } catch (e) {
       emit(VerifyFailure('خطا در ورود'));
     }
+
   }
+
+  Future<void> setFCM() async {
+    String? fcmToken = await FirebaseNotificationService().getToken();
+    if (fcmToken != null) {
+      print('FCM Token: $fcmToken');
+      var response = await _notifRepository.setFirebaseToken(fcmToken);
+      print(response.data);
+    }
+  }
+
 }

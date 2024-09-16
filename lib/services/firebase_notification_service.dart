@@ -1,37 +1,56 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import '../screens/notification/notification_bloc.dart';
 
 class FirebaseNotificationService {
-  // Singleton Pattern
   static final FirebaseNotificationService _instance = FirebaseNotificationService._internal();
-
-  factory FirebaseNotificationService() {
-    return _instance;
-  }
-
+  factory FirebaseNotificationService() => _instance;
   FirebaseNotificationService._internal();
 
-  // Firebase Messaging Instance
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  // Initialize Firebase (without getting token)
   Future<void> initialize() async {
     await Firebase.initializeApp();
-
-    // Request permissions (iOS only)
+    await _initializeLocalNotifications();
     await _requestPermission();
 
-    // Handle foreground messages
     FirebaseMessaging.onMessage.listen(_onMessageHandler);
-
-    // Handle background messages
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-    // Handle notification click when app is in background or terminated
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedAppHandler);
   }
 
-  // Request notification permissions for iOS
+  Future<void> _initializeLocalNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+
+     DarwinInitializationSettings initializationSettingsDarwin =
+    DarwinInitializationSettings(onDidReceiveLocalNotification: _onDidReceiveLocalNotification);
+
+     InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsDarwin);
+
+    await _localNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: _onDidReceiveNotificationResponse,
+    );
+
+    // Create a notification channel for Android
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'your_channel_id', // ID
+      'Your Channel Name', // Name
+      description: 'This channel is used for important notifications.', // Description
+      importance: Importance.max,
+    );
+
+    // Register the channel with the system
+    await _localNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
+
   Future<void> _requestPermission() async {
     NotificationSettings settings = await _messaging.requestPermission();
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
@@ -43,46 +62,73 @@ class FirebaseNotificationService {
     }
   }
 
-  // Handler for foreground messages
-  void _onMessageHandler(RemoteMessage message) {
-    print('Received a message while in the foreground!');
+  void _onMessageHandler(RemoteMessage message) async {
+
     if (message.notification != null) {
-      print('Notification Title: ${message.notification?.title}');
-      print('Notification Body: ${message.notification?.body}');
-      // You can show a local notification or handle the message data here
+      _showNotification(
+        message.notification!.title ?? '',
+        message.notification!.body ?? '',
+      );
     }
   }
 
-  // Handler for when the app is opened via notification click
-  void _onMessageOpenedAppHandler(RemoteMessage message) {
-    print('Message clicked!');
-    // Handle what happens when the notification is clicked
+  Future<void> _showNotification(String title, String body) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your_channel_id',
+      'your_channel_name',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      icon: '@drawable/logo',
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await _localNotificationsPlugin.show(
+      0,
+      title,
+      body,
+      platformChannelSpecifics,
+      //payload: 'Notification Payload',
+    );
   }
 
-  // Background message handler (this should be a top-level function)
+  void _onMessageOpenedAppHandler(RemoteMessage message) {
+    print('Message clicked!');
+  }
+
+  Future<void> _onDidReceiveNotificationResponse(
+      NotificationResponse notificationResponse) async {
+    // Handle notification tap by navigating to the appropriate screen
+    if (notificationResponse.payload != null) {
+      print('Notification payload: ${notificationResponse.payload.toString()}');
+    }
+  }
+
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
     print("Handling a background message: ${message.messageId}");
-    // Handle background message data here
   }
 
-  // Method to get FCM token (use when user logs in)
   Future<String?> getToken() async {
     String? token = await _messaging.getToken();
-    print('FCM Token: $token');
+    //print('FCM Token: $token');
     return token;
   }
 
-  // Method to subscribe to a topic
   Future<void> subscribeToTopic(String topic) async {
     await _messaging.subscribeToTopic(topic);
-    print('Subscribed to topic: $topic');
+    //print('Subscribed to topic: $topic');
   }
 
-  // Method to unsubscribe from a topic
   Future<void> unsubscribeFromTopic(String topic) async {
     await _messaging.unsubscribeFromTopic(topic);
-    print('Unsubscribed from topic: $topic');
+    //print('Unsubscribed from topic: $topic');
+  }
+
+  // Optional: Handle notifications received on iOS when the app is in the foreground
+  Future<void> _onDidReceiveLocalNotification(int id, String? title, String? body, String? payload) async {
+    // Handle the foreground notification (iOS)
   }
 }

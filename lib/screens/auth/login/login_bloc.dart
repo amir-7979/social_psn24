@@ -17,14 +17,17 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(LoginLoading());
     try {
       Response<dynamic> response = await _authRepository.logIn(event.phoneNumber);
+      print(response.data);
       if (response.statusCode == 200) {
         loginId = response.data['data']['id'].toString();
+        emit(LoginSuccess(event.phoneNumber, loginId));
+      }else if(response.data['status'] == 422){
         emit(LoginSuccess(event.phoneNumber, loginId));
       } else {
         emit(LoginFailure('خطا در ورود'));
       }
     } on DioException catch (e) {
-      if (e.response != null && e.response!.statusCode == 422 && e.response!.data['message'].toString().contains('کد قبلی قابل استفاده است')) {
+      if (e.response!.data['status'] == 422) {
         emit(LoginSuccess(event.phoneNumber, loginId));
       } else {
         emit(LoginFailure(e.response!.data['message'].toString()));

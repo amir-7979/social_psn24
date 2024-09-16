@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../secret.dart';
 import '../services/storage_service.dart';
 
 class DioAuthService {
@@ -16,10 +17,12 @@ class DioAuthService {
   void _initializeClient() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: 'https://core.psn24.ir/u', // Set your base URL here
+        baseUrl: 'https://core.psn24.ir/u',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Http-Service-Type': 'mobile',
+          'Http-Service-Secret':Secret
         },
       ),
     );

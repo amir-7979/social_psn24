@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 
 import '../../repos/models/liked.dart';
 
-import '../../repos/repositories/graphql/profile_repository.dart';
+import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
 
 part 'interest_event.dart';

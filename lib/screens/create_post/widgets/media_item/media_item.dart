@@ -4,8 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_psn/configs/setting/themes.dart';
 import 'package:social_psn/screens/widgets/cached_network_image.dart';
 import 'package:social_psn/screens/widgets/white_circular_progress_indicator.dart';
-import '../../../repos/models/media.dart';
-import '../create_post_bloc.dart';
+import '../../../../repos/models/media.dart';
+import '../../create_post_bloc.dart';
 
 class MediaItem extends StatelessWidget {
   Media postMedia;

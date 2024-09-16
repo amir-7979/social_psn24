@@ -79,6 +79,7 @@ dependencies:
   permission_handler: ^10.2.0
   file_picker: ^8.0.7
   just_audio: ^0.9.40
+  flutter_local_notifications: ^17.2.2
 
 dev_dependencies:
   flutter_test:

@@ -53,59 +53,34 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
-    return InkWell(
-      onTap: () {
-        showDialog(
-          context: context,
-          barrierDismissible: true,
-          useSafeArea: true,
-          builder: (BuildContext context) {
-            return MyConfirmDialog(
-              title: "سلام",
-              description: "TdetectDirection(title)ion of the custom dialog.",
-              onConfirm: () {
-                Navigator.of(context).pop(); // Close the dialog
-                // Add your confirm logic here
-              },
-              onCancel: () {
-                Navigator.of(context).pop(); // Close the dialog
-                // Add your cancel logic here
-              }, confirmText: 'تایید',
-              cancelText: 'انصراف',
-
-            );
-          },
-        );
-      },
-      child: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-      return Padding(
-          padding: const EdgeInsetsDirectional.all(16),
-          child: Container(
-            height: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Theme.of(context).colorScheme.background,
-            ),
-            child:  state is SearchParams ? SearchList(query: state.query, tag: state.tag, type: state.type) : state is SearchLoadingState ? SizedBox(
-              height: 800,
-              child: ListView.builder(
-                itemCount: 20,
-                itemBuilder: (context, index) => RepaintBoundary(
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
-                    child: ShimmerPostItem(),
-                  ),
-
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+    return Padding(
+        padding: const EdgeInsetsDirectional.all(16),
+        child: Container(
+          height: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Theme.of(context).colorScheme.background,
+          ),
+          child:  state is SearchParams ? SearchList(query: state.query, tag: state.tag, type: state.type) : state is SearchLoadingState ? SizedBox(
+            height: 800,
+            child: ListView.builder(
+              itemCount: 20,
+              itemBuilder: (context, index) => RepaintBoundary(
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
+                  child: ShimmerPostItem(),
                 ),
+
               ),
-            ) : Container(
-                child: seeExpertPost
-                    ? MainTabBar()
-                    : NormalUserPostList()),
-          ));
-        },
-      ),
+            ),
+          ) : Container(
+              child: seeExpertPost
+                  ? MainTabBar()
+                  : NormalUserPostList()),
+        ));
+      },
     );
   }
 }

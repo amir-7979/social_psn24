@@ -54,9 +54,8 @@ class EditProfileInfoWithNameLoading extends ProfileState {}
 
 class EditProfileInfoWithNameLoaded extends ProfileState {
   final Profile profile;
-  final UserPermissions? userPermissions;
 
-  EditProfileInfoWithNameLoaded({required this.profile, this.userPermissions});
+  EditProfileInfoWithNameLoaded({required this.profile});
 }
 
 class EditProfileInfoWithNameError extends ProfileState {}

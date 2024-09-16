@@ -2,22 +2,20 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:social_psn/services/storage_service.dart';
-
 import '../../repos/models/admin_setting.dart';
 import '../../repos/models/profile.dart';
 import '../../repos/models/tag.dart';
 import '../../repos/models/user_permissions.dart';
+import '../../repos/repositories/dio/dio_profile_repository.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
-import '../../repos/repositories/graphql/profile_repository.dart';
-import '../../services/core_graphql_service.dart';
 import '../../services/graphql_service.dart';
 
 part 'setting_event.dart';
 part 'setting_state.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
+  final ProfileRepository _profileRepository = ProfileRepository();
   final StorageService _storageService = StorageService();
-  final GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
   final GraphQLClient graphQLService = GraphQLService.instance.client;
   final Completer<void> _settingsLoadedCompleter = Completer<void>();
   final List<SettingEvent> _eventQueue = [];
@@ -27,7 +25,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     on<SettingLanguageEvent>(_handleSettingLanguageEvent);
     on<UpdateLoginStatus>(_handleUpdateLoginStatus);
     on<ClearInfo>(_handelClearUserInformation);
-    on<FetchUserPermissionsEvent>(_fetchUserPermissions);
     on<FetchUserProfileWithPermissionsEvent>(_fetchUserProfileWithPermissions);
     on<FetchTagsEvent>(_fetchTags);
     _loadSettingsFromStorage();
@@ -40,12 +37,9 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   Future<void> _fetchUserProfileWithPermissions(event, emit) async {
     await _settingsLoadedCompleter.future;
     try {
-      final QueryOptions options = getUserProfileWithPermissions();
-      final QueryResult result = await coreGraphQLService.query(options);
-      if (result.hasException) {
-        print(result.exception.toString());
-      } else {
-        final Map<String, dynamic> data = result.data!;
+      var response = await _profileRepository.getProfile();
+      print(response.data);
+        final Map<String, dynamic> data = response.data!;
         final Map<String, dynamic> profileData = data['profile'];
         final Map<String, dynamic> userPermissionsData = data['userPermissions'];
         final Map<String, dynamic> adminSettings = data['adminSettings'][0];
@@ -53,31 +47,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
         final AdminSettings userAdminSettings = AdminSettings.fromJson(adminSettings);
         emit(state.copyWith(profile: profile, permissions: userPermissions, adminSettings: userAdminSettings));
-      }
+
     } catch (error) {
       print(error.toString());
     }
   }
 
-  Future<void> _fetchUserPermissions(event, emit) async {
-    await _settingsLoadedCompleter.future;
-    try {
-      final QueryOptions options = getUserPermissions();
-      final QueryResult result = await coreGraphQLService.query(options);
-      if (result.hasException) {
-        print(result.exception.toString());
-      } else {
-        final Map<String, dynamic> data = result.data!;
-        final Map<String, dynamic> userPermissionsData = data['userPermissions'];
-        final Map<String, dynamic> adminSettings = data['adminSettings'][0];
-        final AdminSettings userAdminSettings = AdminSettings.fromJson(adminSettings);
-        final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
-        emit(state.copyWith(permissions: userPermissions, adminSettings: userAdminSettings));
-      }
-    } catch (error) {
-      print(error.toString());
-    }
-  }
 
   Future<void> _loadSettingsFromStorage() async {
     AppTheme theme = (await _storageService.readData('theme')) == 'AppTheme.dark' ? AppTheme.dark : AppTheme.light;
@@ -129,19 +104,17 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   FutureOr<void> _handelClearUserInformation(event, emit) async {
     await _settingsLoadedCompleter.future;
-    await _storageService.deleteData('bearer');
-    await _storageService.deleteData('expiry');
+   /* await _storageService.deleteData('bearer');
+    await _storageService.deleteData('expiry');*/
     await _storageService.deleteData('token');
     await _storageService.deleteData('refreshToken');
-    CoreGraphQLService.instance.removeTokenFromAuthLink();
     GraphQLService.instance.removeTokenFromAuthLink();
     state.reset();
     emit(state.copyWith());
   }
 
   Future<void> writeInStorage(StorageService storageService, Map<String, dynamic>? data) async {
-    await storageService.saveData('bearer', data?['Bearer']);
-    await storageService.saveData('expiry', data?['expires_in']);
+    //await storageService.saveData('expiry', data?['expires_in']);
     await storageService.saveData('token', data?['access_token']);
     await storageService.saveData('refreshToken', data?['refresh_token']);
   }

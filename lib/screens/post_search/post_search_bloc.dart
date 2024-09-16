@@ -8,7 +8,6 @@ import 'package:meta/meta.dart';
 import '../../repos/models/profile.dart';
 import '../../repos/models/tag.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
-import '../../services/core_graphql_service.dart';
 import '../../services/graphql_service.dart';
 
 part 'post_search_event.dart';
@@ -16,7 +15,6 @@ part 'post_search_state.dart';
 
 class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
   GraphQLClient graphQLService = GraphQLService.instance.client;
-  GraphQLClient coreGraphQLService = CoreGraphQLService.instance.client;
 
   PostSearchBloc() : super(PostSearchInitial()) {
     on<NewPostSearch>(_handlePostSearch);
@@ -46,7 +44,7 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
   void _handleUserSearch(NewUserSearch event, Emitter<PostSearchState> emit) async {
     try {
       final QueryOptions options = searchUser(search: event.searchQuery);
-      final QueryResult result = await coreGraphQLService.query(options);
+      final QueryResult result = await graphQLService.query(options);
       if (result.hasException) {
         emit(UserErrorState(result.exception.toString()));
         return;

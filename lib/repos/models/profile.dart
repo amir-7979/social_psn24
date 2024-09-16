@@ -1,5 +1,6 @@
 class Profile {
   final int? id;
+  final int? globalId;
   final String? name;
   final String? family;
   final String? displayName;
@@ -15,15 +16,19 @@ class Profile {
   final String? experience;
   final String? address;
   final List<dynamic>? offices;
-   bool? online;
-   int? allowNotification;
-   dynamic currentUserNotificationEnabled;
+  bool? online;
+  final int? allowNotification;
+  final dynamic currentUserNotificationEnabled;
   final int? showActivity;
-  String? fullName;
+  final String? fullName;
+  final bool? status;
+  final List<String>? role;
+  final List<String>? permissions;
   final String url = 'https://media.psn24.ir/';
 
   Profile({
     this.id,
+    this.globalId,
     this.name,
     this.family,
     this.displayName,
@@ -43,26 +48,28 @@ class Profile {
     this.allowNotification,
     this.currentUserNotificationEnabled,
     this.showActivity,
-  }){
-    fullName = '${name} ${family}';
-
-  }
+    this.fullName,
+    this.status,
+    this.role,
+    this.permissions,
+  });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     String? username = json['username'] as String?;
-    if(username != null && username =='@'){
+    if (username != null && username == '@') {
       username = null;
-    }else if (username != null && username.startsWith('@')) {
+    } else if (username != null && username.startsWith('@')) {
       username = username.substring(1);
     }
 
     String? photoUrl = json['photo'];
-    if (photoUrl != null && photoUrl.isNotEmpty) {
+    if (photoUrl != null && photoUrl.isNotEmpty && !photoUrl.startsWith('http')) {
       photoUrl = 'https://media.psn24.ir/$photoUrl';
     }
 
     return Profile(
       id: json['id'] as int?,
+      globalId: json['global_id'] as int?,
       name: json['name'] as String?,
       family: json['family'] as String?,
       displayName: json['display_name'] as String?,
@@ -82,6 +89,10 @@ class Profile {
       allowNotification: json['allow_notification'] as int?,
       currentUserNotificationEnabled: json['current_user_notification_enabled'],
       showActivity: json['show_activity'] as int?,
+      fullName: json['full_name'] as String?,
+      status: json['status'] as bool?,
+      role: (json['role'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      permissions: (json['permissions'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
   }
 }

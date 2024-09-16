@@ -9,6 +9,8 @@ class AuthRepository {
   }
 
   Future<Response<dynamic>> verifyToken(int loginId, String code) async {
-    return _dio.post('/verify', data: {'id': loginId, 'code': code,});
+    return _dio.post('/login/verify', data: {'id': loginId, 'code': code,});
   }
+
+
 }
