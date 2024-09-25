@@ -355,7 +355,7 @@ class _UserInfoState extends State<UserInfo>
                                         ],
                                       ),
                                     ),
-                                    if (profileId != null)
+                                    if (profileId != null && profile.currentUserNotificationEnabled != null)
                                       Align(
                                         alignment:
                                             AlignmentDirectional.bottomEnd,
@@ -449,7 +449,7 @@ class _UserInfoState extends State<UserInfo>
                                       color: Theme.of(context).hoverColor,
                                     ),
                               ),
-                              SizedBox(height: 8),
+                              /*SizedBox(height: 8),
                               Text(
                                 "(${profile.displayName})",
                                 style: Theme.of(context)
@@ -460,8 +460,8 @@ class _UserInfoState extends State<UserInfo>
                                           .colorScheme
                                           .tertiary,
                                     ),
-                              ),
-                              SizedBox(height: 8),
+                              ),*/
+                              SizedBox(height: 10),
                               // i want to show switch button here
                               if (profileId == null)
                                 BlocProvider.of<SettingBloc>(context)

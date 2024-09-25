@@ -25,7 +25,7 @@ QueryOptions postsQuery({String? id, int? isPublish, String? tagId, String? sear
                 id, loc, type
               }
             }, creator {
-              id, name, family, username, photo, online, display_name, show_activity
+              id,global_id, name, family, username, photo, online, display_name, show_activity
             }
           }
         }
@@ -75,16 +75,16 @@ QueryOptions getComments({String? postId, String? type, int? userId, int? limit,
 
   return QueryOptions(
     document: gql('''
-        query getComments(\$postId: String, \$type: String, \$userId: Int, \$limit: Int, \$offset: Int) {
+        query getComments(\$postId: String, \$type: String, \$userId: Float, \$limit: Int, \$offset: Int) {
           comments(post_id: \$postId, type: \$type, user_id: \$userId, limit: \$limit, offset: \$offset) {
             id, message, created_at, reply_to,
             replies {
               id, message, created_at, reply_to, sender_id {
-                id, name, family, photo, username,
+                id, global_id, name, family, photo, username,
               }
             }
             sender_id {
-              id, name, family, photo, username,
+              id, global_id, name, family, photo, username,
             }
           }
         }
@@ -104,7 +104,7 @@ QueryOptions getCommentsWithPostData({String? postId, String? type, int? userId,
 
   return QueryOptions(
     document: gql('''
-        query getCommentsWithPostData(\$postId: String, \$type: String, \$userId: Int, \$limit: Int, \$offset: Int) {
+        query getCommentsWithPostData(\$postId: String, \$type: String, \$userId: Float, \$limit: Int, \$offset: Int) {
           comments(post_id: \$postId, type: \$type, user_id: \$userId, limit: \$limit, offset: \$offset) {
             id, message, created_at, reply_to,
             replies {
@@ -451,7 +451,7 @@ QueryOptions getUserPosts(int postType, int limit, int offset, int? userId) {
 
   return QueryOptions(
     document: gql('''
-      query getUserPosts(\$postType: Int, \$limit: Int, \$offset: Int, \$userId: Int) {
+      query getUserPosts(\$postType: Int, \$limit: Int, \$offset: Int, \$userId: Float) {
         mycontents(post_type: \$postType, limit: \$limit, offset: \$offset, user_id: \$userId) {
           id, name, post_type, disable, medias {
             id, loc, type, thumbnails {

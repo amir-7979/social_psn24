@@ -9,7 +9,7 @@ class NotificationRepository {
   }
 
   Future<Response<dynamic>> markAsRead() async {
-    return _dio.post('/notification/mark-as-seen');
+    return _dio.post('/notification/mark-as-read');
   }
 
   Future<Response<dynamic>> setFirebaseToken(String token) async {

@@ -6,9 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
 import '../../../repos/models/notification.dart';
+import '../../widgets/custom_snackbar.dart';
 import '../notification_bloc.dart';
 import 'notification_item.dart';
-
 
 class NotificationList extends StatefulWidget {
   @override
@@ -19,7 +19,7 @@ class _NotificationListState extends State<NotificationList>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
   CustomSegmentedController<int> customSegmentedController =
-  CustomSegmentedController(value: 0);
+      CustomSegmentedController(value: 0);
 
   @override
   void initState() {
@@ -29,129 +29,141 @@ class _NotificationListState extends State<NotificationList>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 612,
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              Container(
-                height: 30,
-                color: Colors.transparent, // Changed color to transparent
-              ),
-              Container(
-                height: 562,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Theme.of(context).colorScheme.primary,
+    return BlocConsumer<NotificationBloc, NotificationState>(
+        listener: (context, state) {
+      if (state is NotificationError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          CustomSnackBar(content: state.message).build(context),
+        );
+      }
+    }, builder: (context, state) {
+      return state is NotificationLoaded ? SizedBox(
+        height: 662,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Container(
+                  height: 30,
+                  color: Colors.transparent, // Changed color to transparent
                 ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(
-                              0, 10, 10, 0),
-                          child: GestureDetector(
-                            child: SvgPicture.asset(
-                              'assets/images/bottom_navbar/cross.svg',
-                              width: 30,
-                              height: 30,
-                              fit: BoxFit.fill,
+                Container(
+                  height: 612,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 10, 10, 0),
+                            child: GestureDetector(
+                              child: SvgPicture.asset(
+                                'assets/images/bottom_navbar/cross.svg',
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.fill,
+                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
                             ),
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
                           ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      TabBar(
+                        indicator: UnderlineTabIndicator(
+                          borderSide: BorderSide(width: 2.0, color: whiteColor),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    TabBar(
-                      indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(width: 2.0, color: whiteColor),
-                      ),
-                      labelColor: whiteColor,
-                      dividerColor: Colors.transparent,
-                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                      labelStyle: iranYekanTheme.headlineMedium!.copyWith(
-                        color: whiteColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      controller: _tabController,
-                      labelPadding: const EdgeInsetsDirectional.all(0),
-                      unselectedLabelStyle:
-                      iranYekanTheme.headlineMedium!.copyWith(
-                        color: whiteColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      tabs: [
-                        Tab(
-                            text: AppLocalizations.of(context)!.translateNested(
-                                'notifications', 'myNotification')),
-                        Tab(
-                            text: AppLocalizations.of(context)!.translateNested(
-                                'notifications', 'systemNotification')),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    Expanded(
-                      child: Container(
+                        labelColor: whiteColor,
+                        dividerColor: Colors.transparent,
                         padding:
-                        const EdgeInsetsDirectional.fromSTEB(10, 16, 10, 0),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.transparent),
-                          color: Theme.of(context).colorScheme.background,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(16),
+                            const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                        labelStyle: iranYekanTheme.headlineMedium!.copyWith(
+                          color: whiteColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        controller: _tabController,
+                        labelPadding: const EdgeInsetsDirectional.all(0),
+                        unselectedLabelStyle:
+                            iranYekanTheme.headlineMedium!.copyWith(
+                          color: whiteColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        tabs: [
+                          Tab(
+                              text: AppLocalizations.of(context)!
+                                  .translateNested(
+                                      'notifications', 'myNotification')),
+                          Tab(
+                              text: AppLocalizations.of(context)!
+                                  .translateNested(
+                                      'notifications', 'systemNotification')),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              10, 16, 10, 0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.transparent),
+                            color: Theme.of(context).colorScheme.background,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(16),
+                            ),
+                          ),
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              mainTabBar(),
+                              const Center(child: Text('Tab 2')),
+                            ],
                           ),
                         ),
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            mainTabBar(),
-                            const Center(child: Text('Tab 2')),
-                          ],
-                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 30),
-            child: Align(
-              alignment: AlignmentDirectional.topStart,
-              child: Container(
-                height: 90,
-                width: 90,
-
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 0,
-                      blurRadius: 10,
-                      offset: const Offset(0, -5), // Adjust the offset as needed
-                    ),
-                  ],
-                ),
-                child: SvgPicture.asset(
-                  'assets/images/notification/notification.svg',
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 30),
+              child: Align(
+                alignment: AlignmentDirectional.topStart,
+                child: Container(
                   height: 90,
                   width: 90,
-                  fit: BoxFit.cover,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 0,
+                        blurRadius: 10,
+                        offset:
+                            const Offset(0, -5), // Adjust the offset as needed
+                      ),
+                    ],
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/images/notification/notification.svg',
+                    height: 90,
+                    width: 90,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      ) : const Center(child: CircularProgressIndicator());
+    });
   }
 
   Widget mainTabBar() {
@@ -214,10 +226,10 @@ class _NotificationListState extends State<NotificationList>
         child: Text(
           text,
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: customSegmentedController.value == index
-                ? Theme.of(context).colorScheme.tertiary
-                : Theme.of(context).colorScheme.shadow,
-          ),
+                color: customSegmentedController.value == index
+                    ? Theme.of(context).colorScheme.tertiary
+                    : Theme.of(context).colorScheme.shadow,
+              ),
         ),
       ),
     );
@@ -226,7 +238,8 @@ class _NotificationListState extends State<NotificationList>
   Widget buildBody(int index) {
     switch (index) {
       case 0:
-        return listItems(BlocProvider.of<NotificationBloc>(context).notifications);
+        return listItems(
+            BlocProvider.of<NotificationBloc>(context).notifications);
       case 1:
         return Container();
       default:
@@ -234,32 +247,33 @@ class _NotificationListState extends State<NotificationList>
     }
   }
 
-Widget listItems(List<MyNotification> notifications) {
-  return Expanded(
-    child: ListView.separated(
-      separatorBuilder: (context, index) => Container(
-        height: 1,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Theme.of(context).colorScheme.surface.withOpacity(0),
-              Theme.of(context).colorScheme.surface.withOpacity(0.1),
-              Theme.of(context).colorScheme.surface.withOpacity(0.2),
-              Theme.of(context).colorScheme.surface.withOpacity(0.3),
-              Theme.of(context).colorScheme.surface.withOpacity(0.4),
-            ],
-            stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+  Widget listItems(List<MyNotification> notifications) {
+    return Expanded(
+      child: ListView.separated(
+        separatorBuilder: (context, index) => Container(
+          height: 1,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.surface.withOpacity(0),
+                Theme.of(context).colorScheme.surface.withOpacity(0.1),
+                Theme.of(context).colorScheme.surface.withOpacity(0.2),
+                Theme.of(context).colorScheme.surface.withOpacity(0.3),
+                Theme.of(context).colorScheme.surface.withOpacity(0.4),
+              ],
+              stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+            ),
           ),
         ),
+        itemCount: notifications.length,
+        itemBuilder: (context, index) {
+          return NotificationItem(notifications[index]);
+        },
       ),
-      itemCount: notifications.length,
-      itemBuilder: (context, index) {
-        print('notification: ${notifications[index].message}');
-        return NotificationItem(notifications[index]);
-      },
-    ),
-  );
-}  @override
+    );
+  }
+
+  @override
   void dispose() {
     _tabController?.dispose();
     customSegmentedController.dispose();

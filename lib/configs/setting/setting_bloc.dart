@@ -5,7 +5,6 @@ import 'package:social_psn/services/storage_service.dart';
 import '../../repos/models/admin_setting.dart';
 import '../../repos/models/profile.dart';
 import '../../repos/models/tag.dart';
-import '../../repos/models/user_permissions.dart';
 import '../../repos/repositories/dio/dio_profile_repository.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
@@ -38,16 +37,11 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await _settingsLoadedCompleter.future;
     try {
       var response = await _profileRepository.getProfile();
-      print(response.data);
-        final Map<String, dynamic> data = response.data!;
-        final Map<String, dynamic> profileData = data['profile'];
-        final Map<String, dynamic> userPermissionsData = data['userPermissions'];
+      final Profile profile = Profile.fromJson(response.data!['data']);
+      /*final Map<String, dynamic> userPermissionsData = data['userPermissions'];
         final Map<String, dynamic> adminSettings = data['adminSettings'][0];
-        final Profile profile = Profile.fromJson(profileData);
-        final UserPermissions userPermissions = UserPermissions.fromJson(userPermissionsData);
-        final AdminSettings userAdminSettings = AdminSettings.fromJson(adminSettings);
-        emit(state.copyWith(profile: profile, permissions: userPermissions, adminSettings: userAdminSettings));
-
+        final AdminSettings userAdminSettings = AdminSettings.fromJson(adminSettings);*/
+        emit(state.copyWith(profile: profile));
     } catch (error) {
       print(error.toString());
     }

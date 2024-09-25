@@ -62,7 +62,7 @@ class UserDrawer extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(height: 3),
+                    SizedBox(height: 5),
                     Text(
                       BlocProvider.of<SettingBloc>(context).state.profile?.phone?? '',
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -72,7 +72,7 @@ class UserDrawer extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 5),
-                    Container(
+                    /*Container(
                       padding:
                       const EdgeInsetsDirectional.fromSTEB(16, 2, 16, 2),
                       decoration: BoxDecoration(
@@ -86,7 +86,7 @@ class UserDrawer extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
               ),

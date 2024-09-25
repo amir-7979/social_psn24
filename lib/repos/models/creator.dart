@@ -1,5 +1,6 @@
 class Creator {
   final int? id;
+  final int? globalId;
   final String? name;
   final String? family;
   final String? username;
@@ -11,6 +12,7 @@ class Creator {
 
   Creator({
     this.id,
+    this.globalId,
     this.name,
     this.family,
     this.username,
@@ -28,6 +30,7 @@ class Creator {
 
     return Creator(
       id: json['id'],
+      globalId: json['global_id'],
       name: json['name'],
       family: json['family'],
       username: json['username'],

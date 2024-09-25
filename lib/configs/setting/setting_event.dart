@@ -14,11 +14,6 @@ class SettingLanguageEvent extends SettingEvent {
   SettingLanguageEvent(this.language);
 }
 
-class UpdateUserPermissions extends SettingEvent {
-  final UserPermissions permissions;
-
-  UpdateUserPermissions(this.permissions);
-}
 
 class UpdateIsExpert extends SettingEvent {
   final bool isExpert;

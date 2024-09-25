@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/repos/models/reply.dart';
 
+import '../../main/widgets/screen_builder.dart';
 import '../../widgets/TrianglePainter.dart';
 import '../../widgets/profile_cached_network_image.dart';
 
@@ -17,12 +18,18 @@ class ReplyItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipOval(
-            child: SizedBox.fromSize(
-              size: Size.fromRadius(18), // Image radius
-              child: reply.sender?.photo != null
-                  ? ProfileCacheImage(reply.sender?.photo)
-                  : SvgPicture.asset('assets/images/drawer/profile2.svg'),
+          InkWell(
+            onTap: (){
+              Navigator.of(context).pushNamed(AppRoutes.profile,
+                  arguments: reply.sender?.globalId);
+            },
+            child: ClipOval(
+              child: SizedBox.fromSize(
+                size: Size.fromRadius(18), // Image radius
+                child: reply.sender?.photo != null
+                    ? ProfileCacheImage(reply.sender?.photo)
+                    : SvgPicture.asset('assets/images/drawer/profile2.svg'),
+              ),
             ),
           ),
           SizedBox(width: 8),
@@ -64,27 +71,28 @@ class ReplyItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Expanded(
+                          Flexible(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Text(
-                                  '${reply.sender?.name} ${reply.sender?.family}',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .shadow,
-                                    fontWeight: FontWeight.w400,
+                                Flexible(
+                                  child: Text(
+                                    '${reply.sender?.name} ${reply.sender?.family}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .shadow,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(width: 3),
                                 if(reply.sender?.username != null)
-                                  Flexible(
-                                  child: Text(
+                                  Text(
                                     '(${reply.sender?.username})',
                                     textDirection: TextDirection.ltr,
                                     overflow: TextOverflow.ellipsis,
@@ -98,7 +106,6 @@ class ReplyItem extends StatelessWidget {
                                           .tertiary,
                                     ),
                                   ),
-                                ),
                               ],
                             ),
                           ),

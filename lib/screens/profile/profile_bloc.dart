@@ -39,7 +39,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(ProfileError('خطا در دریافت اطلاعات'));
         return;
       }
-      final Profile profile = Profile.fromJson(result.data['profile']);
+      final Profile profile = Profile.fromJson(result.data['data']);
       emit(ProfileInfoLoaded(profile: profile));
     } catch (exception) {
       emit(ProfileError('خطا در دریافت اطلاعات'));
@@ -55,7 +55,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(NewProfileError('خطا در دریافت اطلاعات'));
         return;
       }
-      final Profile profile = Profile.fromJson(result.data['profile']);
+      final Profile profile = Profile.fromJson(result.data['data']);
       emit(NewProfileInfoLoaded(profile: profile));
     } catch (exception) {
       emit(NewProfileError('خطا در دریافت اطلاعات'));
@@ -103,6 +103,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final gql.QueryOptions options = getUserPosts(postType, limit, pagingController.nextPageKey!, userId);
       final gql.QueryResult result = await GraphQLService.instance.client.query(options);
+      if (result.hasException) {
+        print(result.exception.toString());
+      }
       final List<Content> contents = (result.data?['mycontents'] as List<dynamic>?)
           ?.map((dynamic item) => Content.fromJson(item as Map<String, dynamic>)).toList() ?? [];
       final isLastPage = contents.length < limit;

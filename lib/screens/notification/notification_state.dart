@@ -9,7 +9,6 @@ class NotificationLoading extends NotificationState {}
 
 class NotificationLoaded extends NotificationState {
   final List<MyNotification> notifications;
-
   NotificationLoaded(this.notifications);
 }
 

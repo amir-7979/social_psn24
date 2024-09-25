@@ -36,7 +36,7 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
         InkWell(
           onTap: () {
             Navigator.of(context).pushNamed(AppRoutes.profile,
-                arguments: widget.post.creator?.id);
+                arguments: widget.post.creator?.globalId);
           },
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

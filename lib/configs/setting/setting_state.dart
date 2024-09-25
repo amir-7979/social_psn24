@@ -6,7 +6,6 @@ enum AppLanguage { english, persian }
 class SettingState {
    AppTheme theme;
    AppLanguage language;
-   UserPermissions? permissions;
    AdminSettings? adminSettings;
    Profile? profile;
   String token = '';
@@ -16,7 +15,6 @@ class SettingState {
   SettingState({
     required this.theme,
     required this.language,
-    this.permissions,
     this.adminSettings,
     this.profile,
     required this.token,
@@ -26,15 +24,15 @@ class SettingState {
 
   get isUserLoggedIn => token != '';
   get getProfile => profile;
-  get getPermissions => permissions;
+  get getPermissions => profile?.permissions;
    get languageCode => language == AppLanguage.english ? 'en' : 'fa';
 
    get hasUsername => profile?.username != null && profile!.username!.isNotEmpty;
 
    get seeExpertPost {
-     if (permissions?.permissions != null) {
-       for (var permission in permissions!.permissions!) {
-         if (permission.id == 25 || permission.id == 29) {
+     if (profile?.permissions != null) {
+       for (var permission in profile!.permissions!) {
+         if (permission == "view expert posts") {
            return true;
          }
        }
@@ -43,9 +41,9 @@ class SettingState {
    }
 
    get canChangeOnlineStatus {
-     if (permissions?.permissions != null) {
-       for (var permission in permissions!.permissions!) {
-         if (permission.id == 30) {
+     if (profile?.permissions != null) {
+       for (var permission in profile!.permissions!) {
+         if (permission == "change online status") {
            return true;
          }
        }
@@ -53,6 +51,16 @@ class SettingState {
      return false;
    }
 
+   get canCreateExpertPost {
+     if (profile?.permissions != null) {
+       for (var permission in profile!.permissions!) {
+         if (permission == "create expert post") {
+           return true;
+         }
+       }
+     }
+     return false;
+   }
    get tagsList => tags;
    get adminSettingsData => adminSettings;
 /*
@@ -65,7 +73,6 @@ class SettingState {
   SettingState copyWith({
     AppTheme? theme,
     AppLanguage? language,
-    UserPermissions? permissions,
     AdminSettings? adminSettings,
     Profile? profile,
     String? token,
@@ -75,7 +82,6 @@ class SettingState {
     return SettingState(
       theme: theme ?? this.theme,
       language: language ?? this.language,
-      permissions: permissions ?? this.permissions,
       adminSettings: adminSettings ?? this.adminSettings,
       profile: profile ?? this.profile,
       token: token ?? this.token,
@@ -86,7 +92,6 @@ class SettingState {
   void reset() {
     this.theme = AppTheme.light;
     this.language = AppLanguage.persian;
-    this.permissions = UserPermissions();
     this.profile = Profile();
     this.adminSettings = AdminSettings();
     this.token = '';

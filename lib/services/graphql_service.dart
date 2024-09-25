@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../services/storage_service.dart';
 import 'package:rxdart/rxdart.dart';
@@ -44,7 +46,7 @@ class GraphQLService {
     // Configure the link to include AuthLink if a token is present
     _link = Link.from([
       _authLink,
-      loggingLink,
+      //loggingLink,
       _httpLink,
     ]);
 
@@ -59,6 +61,7 @@ class GraphQLService {
   Future<void> addTokenToAuthLink() async {
     final token = await _storageService.readData('token');
     if (token != null && token.isNotEmpty) {
+      log('Token: $token');
       _authLink = AuthLink(
         getToken: () async => 'Bearer $token',
       );

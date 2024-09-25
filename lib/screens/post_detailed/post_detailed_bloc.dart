@@ -126,17 +126,19 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
       PagingController<int, Comment> pagingController,
       String postId,
       int limit,
-      String? postType) async {
+      ) async {
     try {
       final QueryOptions options = getComments(
           postId: postId,
           limit: limit,
           offset: pagingController.nextPageKey,
-          type: postType);
+          );
       final QueryResult result =
           await GraphQLService.instance.client.query(options);
+      print(result.data);
       if (result.hasException) {
         pagingController.error = result.exception;
+        print(result.exception);
       }
       final List<Comment> posts = (result.data?['comments'] as List<dynamic>?)
               ?.map((dynamic item) =>
@@ -153,6 +155,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     } catch (error) {
       try {
         pagingController.error = error;
+        print(error);
       } catch (e) {
         print(e.toString());
       }

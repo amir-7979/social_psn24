@@ -7,6 +7,7 @@ import 'package:social_psn/screens/post_detailed/widget/reply_item.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../repos/models/comment.dart';
+import '../../main/widgets/screen_builder.dart';
 import '../../widgets/TrianglePainter.dart';
 import '../../widgets/profile_cached_network_image.dart';
 import '../post_detailed_bloc.dart';
@@ -33,12 +34,18 @@ class CommentItem extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipOval(
-              child: SizedBox.fromSize(
-                size: Size.fromRadius(20), // Image radius
-                child: comment.sender?.photo != null
-                    ? ProfileCacheImage(comment.sender?.photo)
-                    : SvgPicture.asset('assets/images/drawer/profile2.svg'),
+            InkWell(
+              onTap: (){
+                Navigator.of(context).pushNamed(AppRoutes.profile,
+                    arguments: comment.sender?.globalId);
+              },
+              child: ClipOval(
+                child: SizedBox.fromSize(
+                  size: Size.fromRadius(20), // Image radius
+                  child: comment.sender?.photo != null
+                      ? ProfileCacheImage(comment.sender?.photo)
+                      : SvgPicture.asset('assets/images/drawer/profile2.svg'),
+                ),
               ),
             ),
             SizedBox(width: 8),
@@ -80,10 +87,11 @@ class CommentItem extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Expanded(
+                            // Wrapping entire name and username in Flexible
+                            Flexible(
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
+                                  // Name and family with Flexible
                                   Flexible(
                                     child: Text(
                                       '${comment.sender?.name} ${comment.sender?.family}',
@@ -92,16 +100,14 @@ class CommentItem extends StatelessWidget {
                                           .textTheme
                                           .bodyLarge!
                                           .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .shadow,
+                                        color: Theme.of(context).colorScheme.shadow,
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                   ),
                                   SizedBox(width: 3),
-                                  if(comment.sender?.username != null)Flexible(
-                                    child: Text(
+                                  if (comment.sender?.username != null)
+                                    Text(
                                       '(${comment.sender?.username})',
                                       textDirection: TextDirection.ltr,
                                       overflow: TextOverflow.ellipsis,
@@ -110,16 +116,13 @@ class CommentItem extends StatelessWidget {
                                           .textTheme
                                           .bodyMedium!
                                           .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .tertiary,
+                                        color: Theme.of(context).colorScheme.tertiary,
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
-                           SizedBox(width: 3),
+                            SizedBox(width: 3),
                             SvgPicture.asset(
                               'assets/images/profile/calendar.svg',
                               width: 10,
@@ -128,14 +131,10 @@ class CommentItem extends StatelessWidget {
                             SizedBox(width: 6),
                             Text(
                               '${comment.persianDate ?? ''}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                    fontWeight: FontWeight.w400,
-                                  ),
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                color: Theme.of(context).colorScheme.surface,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ],
                         ),

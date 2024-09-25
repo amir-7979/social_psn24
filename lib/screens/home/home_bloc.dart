@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -37,7 +38,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
     final List<Post> posts = (result.data?['posts'] as List<dynamic>?)
         ?.map((dynamic item) => Post.fromJson(item as Map<String, dynamic>)).toList() ?? [];
-
     final isLastPage = posts.length < limit;
     if (isLastPage) {
       pagingController.appendLastPage(posts);

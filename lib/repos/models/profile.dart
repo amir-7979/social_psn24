@@ -15,7 +15,7 @@ class Profile {
   final String? biography;
   final String? experience;
   final String? address;
-  final List<dynamic>? offices;
+  final List<String>? offices;
   bool? online;
   final int? allowNotification;
   final dynamic currentUserNotificationEnabled;
@@ -84,7 +84,9 @@ class Profile {
       biography: json['biography'] as String?,
       experience: json['experience'] as String?,
       address: json['address'] as String?,
-      offices: json['offices'] as List<dynamic>?,
+      offices: (json['offices'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       online: json['online'] as bool?,
       allowNotification: json['allow_notification'] as int?,
       currentUserNotificationEnabled: json['current_user_notification_enabled'],
@@ -92,7 +94,9 @@ class Profile {
       fullName: json['full_name'] as String?,
       status: json['status'] as bool?,
       role: (json['role'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      permissions: (json['permissions'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      permissions: (json['permissions'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
   }
 }

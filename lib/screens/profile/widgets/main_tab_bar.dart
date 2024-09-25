@@ -32,15 +32,11 @@ class _MainTabBarState extends State<MainTabBar>
   void initState() {
     super.initState();
      seeExpertPost =  context.read<SettingBloc>().state.seeExpertPost ?? false;
+
     _tabController = TabController(length: 2, vsync: this);
      _pagingContentController = PagingController<int, Content>(firstPageKey: 0);
      _pagingCommentController = PagingController<int, Comment>(firstPageKey: 0);
-    _pagingContentController.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchContent(_pagingContentController, 0, 20, profileId);
-    });
-    _pagingCommentController.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchComment(_pagingCommentController, null, profileId, "my", 20);
-    });
+
   }
 
   @override
@@ -55,8 +51,14 @@ class _MainTabBarState extends State<MainTabBar>
   void didChangeDependencies() {
     super.didChangeDependencies();
     profileId = ModalRoute.of(context)?.settings.arguments as int?;
+    print("profileId: $profileId");
 
-
+    _pagingContentController.addPageRequestListener((pageKey) {
+      ProfileBloc.fetchContent(_pagingContentController, 0, 20, profileId);
+    });
+    _pagingCommentController.addPageRequestListener((pageKey) {
+      ProfileBloc.fetchComment(_pagingCommentController, null, profileId, "my", 20);
+    });
   }
 
   @override

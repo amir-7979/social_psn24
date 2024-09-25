@@ -18,6 +18,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc() : super(NotificationInitial()) {
     on<LoadNotifications>(_onLoadNotificationsEvent);
     on<NotificationsMarked>(_onMarkAsReadEvent);
+    on<AddNotification>(_onAddNotification);
+    on<ClearNotifications>(_onAddNotifications);
   }
 
   Future<void> _onLoadNotificationsEvent(
@@ -25,7 +27,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     emit(NotificationLoading());
     try {
       Response result = await _notificationRepository.fetchNotifications();
-        notifications = (result.data!['notifications'] as List)
+        notifications = (result.data!['data']['notifications'] as List)
             .map((notification) => MyNotification.fromJson(notification))
             .toList();
         emit(NotificationLoaded(notifications));
@@ -39,12 +41,20 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     try {
       await _notificationRepository.markAsRead();
       Response result = await _notificationRepository.fetchNotifications();
-      notifications = (result.data!['notifications'] as List)
+      print(result.toString());
+      notifications = (result.data!['data']['notifications'] as List)
           .map((notification) => MyNotification.fromJson(notification))
           .toList();
       emit(NotificationLoaded(notifications));
     } catch (exception) {
+      print(exception.toString());
       emit(NotificationError(exception.toString()));
     }
+  }
+
+  FutureOr<void> _onAddNotification(AddNotification event, Emitter<NotificationState> emit) {
+  }
+
+  FutureOr<void> _onAddNotifications(ClearNotifications event, Emitter<NotificationState> emit) {
   }
 }

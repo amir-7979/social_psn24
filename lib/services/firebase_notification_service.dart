@@ -63,7 +63,6 @@ class FirebaseNotificationService {
   }
 
   void _onMessageHandler(RemoteMessage message) async {
-
     if (message.notification != null) {
       _showNotification(
         message.notification!.title ?? '',

@@ -89,7 +89,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         print(result.exception);
         pagingController.error = result.exception;
       }
-      print(result.data);
       final List<Comment> posts = (result.data?['comments'] as List<dynamic>?)
           ?.map((dynamic item) => Comment.fromJson(item as Map<String, dynamic>)).toList() ?? [];
       final isLastPage = posts.length < limit;

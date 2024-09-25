@@ -165,8 +165,12 @@ class _SocialAppBarState extends State<SocialAppBar> {
                   onPressed: () {
                     showDialog(
                         context: context,
+                        useSafeArea: true,
+                        barrierDismissible: true,
+                        useRootNavigator: true,
                         builder: (BuildContext context) {
                           return Dialog(
+                            elevation: 1,
                             child: NotificationScreen(),
                           );
                         });

@@ -76,7 +76,8 @@ class _PostItemState extends State<PostItem> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pushNamed(AppRoutes.profile,
-                        arguments: widget.post.creator?.id?.toInt());
+                        arguments: widget.post.creator?.globalId);
+                    print(widget.post.creator?.globalId);
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
