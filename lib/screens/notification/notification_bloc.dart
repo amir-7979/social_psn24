@@ -13,13 +13,12 @@ part 'notification_state.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   List<MyNotification> notifications = [];
+  int unreadNotifications = 0;
   final NotificationRepository _notificationRepository = NotificationRepository();
 
   NotificationBloc() : super(NotificationInitial()) {
     on<LoadNotifications>(_onLoadNotificationsEvent);
     on<NotificationsMarked>(_onMarkAsReadEvent);
-    on<AddNotification>(_onAddNotification);
-    on<ClearNotifications>(_onAddNotifications);
   }
 
   Future<void> _onLoadNotificationsEvent(
@@ -30,7 +29,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         notifications = (result.data!['data']['notifications'] as List)
             .map((notification) => MyNotification.fromJson(notification))
             .toList();
-        emit(NotificationLoaded(notifications));
+      checkUnreadNotifications();
+        emit(NotificationLoaded(notifications, unreadNotifications));
     } catch (exception) {
       emit(NotificationError(exception.toString()));
     }
@@ -45,16 +45,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       notifications = (result.data!['data']['notifications'] as List)
           .map((notification) => MyNotification.fromJson(notification))
           .toList();
-      emit(NotificationLoaded(notifications));
+      checkUnreadNotifications();
+      emit(NotificationLoaded(notifications, unreadNotifications));
     } catch (exception) {
       print(exception.toString());
       emit(NotificationError(exception.toString()));
     }
   }
 
-  FutureOr<void> _onAddNotification(AddNotification event, Emitter<NotificationState> emit) {
+  //i  need a function to check if there is unreadNotifications or not.
+  void checkUnreadNotifications() {
+    unreadNotifications = notifications.where((element) => element.seen == 0).length;
   }
 
-  FutureOr<void> _onAddNotifications(ClearNotifications event, Emitter<NotificationState> emit) {
-  }
 }

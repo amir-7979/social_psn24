@@ -44,7 +44,7 @@ class _PostDetailedMainBodyState extends State<PostDetailedMainBody> {
   }
 
   void _fetchComments(int pageKey) {
-    PostDetailedBloc.fetchComments(pagingController, widget.post?.id ?? '', 10);
+    PostDetailedBloc.fetchComments(pagingController, widget.postId?? '', 10);
   }
 
   @override

@@ -31,7 +31,6 @@ class _CommentListState extends State<CommentList> {
   Widget build(BuildContext context) {
     return BlocListener<PostDetailedBloc, PostDetailedState>(
       listener: (context, state) {
-        print(state);
         if (state is CommentCreated) {
           setState(() {
             widget.pagingController.refresh();

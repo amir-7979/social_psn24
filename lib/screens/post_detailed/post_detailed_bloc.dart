@@ -41,8 +41,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     }
   }
 
-  Future<void> _onAddToInterestEvent(
-      AddToInterestEvent event, Emitter<PostDetailedState> emit) async {
+  Future<void> _onAddToInterestEvent(AddToInterestEvent event, Emitter<PostDetailedState> emit) async {
     try {
       final MutationOptions options = likePost(event.itemId);
       final QueryResult result = await graphQLService.mutate(options);
@@ -56,8 +55,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     }
   }
 
-  Future<void> _onEnableNotificationEvent(
-      EnableNotificationEvent event, Emitter<PostDetailedState> emit) async {
+  Future<void> _onEnableNotificationEvent(EnableNotificationEvent event, Emitter<PostDetailedState> emit) async {
     try {
       final MutationOptions options = enableNotification(event.postId);
       final QueryResult result = await graphQLService.mutate(options);
@@ -71,8 +69,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     }
   }
 
-  Future<void> _onUserVoteUpEvent(
-      UserVoteUpEvent event, Emitter<PostDetailedState> emit) async {
+  Future<void> _onUserVoteUpEvent(UserVoteUpEvent event, Emitter<PostDetailedState> emit) async {
     try {
       final MutationOptions options =
           votePost(postId: event.postId, type: event.voteType);
@@ -87,8 +84,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     }
   }
 
-  Future<void> _onUserVoteDownEvent(
-      UserVoteDownEvent event, Emitter<PostDetailedState> emit) async {
+  Future<void> _onUserVoteDownEvent(UserVoteDownEvent event, Emitter<PostDetailedState> emit) async {
     try {
       final MutationOptions options =
           votePost(postId: event.postId, type: event.voteType);
@@ -103,14 +99,14 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     }
   }
 
-  Future<void> _onCreateCommentEvent(
-      CreateCommentEvent event, Emitter<PostDetailedState> emit) async {
+  Future<void> _onCreateCommentEvent(CreateCommentEvent event, Emitter<PostDetailedState> emit) async {
     emit(CreatingComment());
     try {
       final MutationOptions options = createComment(
           postId: event.postId, replyTo: event.replyId, message: event.message);
       final QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
+        print(result.exception);
         emit(CommentFailure(error: result.exception.toString()));
       } else {
         emit(CommentCreated(message: ''));
@@ -118,23 +114,19 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
         emit(CommentListRefresh());
       }
     } catch (e) {
+      print(e.toString());
       emit(CommentFailure(error: e.toString()));
     }
   }
 
-  static Future<void> fetchComments(
-      PagingController<int, Comment> pagingController,
-      String postId,
-      int limit,
-      ) async {
+  static Future<void> fetchComments(PagingController<int, Comment> pagingController, String postId, int limit,) async {
     try {
       final QueryOptions options = getComments(
           postId: postId,
           limit: limit,
           offset: pagingController.nextPageKey,
           );
-      final QueryResult result =
-          await GraphQLService.instance.client.query(options);
+      final QueryResult result = await GraphQLService.instance.client.query(options);
       print(result.data);
       if (result.hasException) {
         pagingController.error = result.exception;
@@ -143,8 +135,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
       final List<Comment> posts = (result.data?['comments'] as List<dynamic>?)
               ?.map((dynamic item) =>
                   Comment.fromJson(item as Map<String, dynamic>))
-              .toList() ??
-          [];
+              .toList() ?? [];
       final isLastPage = posts.length < limit;
       if (isLastPage) {
         pagingController.appendLastPage(posts);
@@ -162,10 +153,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     }
   }
 
-  Future<void> _onIncreasePostView(
-    IncreasePostViewEvent event,
-    Emitter<PostDetailedState> emit,
-  ) async {
+  Future<void> _onIncreasePostView(IncreasePostViewEvent event, Emitter<PostDetailedState> emit,) async {
     final MutationOptions options = increasePostView(
       id: event.postId,
       viewCount: event.viewCount,

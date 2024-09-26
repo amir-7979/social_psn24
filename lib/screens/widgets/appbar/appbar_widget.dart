@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../configs/setting/setting_bloc.dart';
 import '../../../../configs/setting/themes.dart';
 import '../../../configs/utilities.dart';
 import '../../home/home_bloc.dart';
+import '../../notification/notification_bloc.dart';
 import '../../notification/notification_screen.dart';
 import '../../post_search/post_search_screen.dart';
 import 'appbar_bloc.dart';
@@ -154,28 +157,74 @@ class _SocialAppBarState extends State<SocialAppBar> {
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsetsDirectional.only(end: 8),
-                child: IconButton(
-                  color: Theme.of(context).appBarTheme.iconTheme!.color,
-                  icon: SvgPicture.asset(
-                    'assets/images/appbar/bell.svg',
-                    color: Theme.of(context).appBarTheme.iconTheme!.color,
-                  ),
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        useSafeArea: true,
-                        barrierDismissible: true,
-                        useRootNavigator: true,
-                        builder: (BuildContext context) {
-                          return Dialog(
-                            elevation: 1,
-                            child: NotificationScreen(),
-                          );
-                        });
-                  },
-                ),
+              BlocBuilder<NotificationBloc, NotificationState>(
+                builder: (context, state) {
+                  return Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 8),
+                    child: IconButton(
+                      color: Theme.of(context).appBarTheme.iconTheme!.color,
+                      icon: state is NotificationLoaded && state.unreadNotifications > 0
+                          ? badges.Badge(
+                              badgeStyle: badges.BadgeStyle(
+                                shape: badges.BadgeShape.circle,
+                                badgeColor:
+                                    Theme.of(context).primaryColor,
+                                padding: EdgeInsets.all(2),
+                                elevation: 0,
+                              ),
+                              position: badges.BadgePosition.topEnd(
+                                  end: -8, top: -3),
+                              badgeContent: Container(
+                                height: 15,
+                                width: 15,
+                                child: Text(
+                                    state.unreadNotifications.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                    color: whiteColor,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsetsDirectional.symmetric(
+                                    vertical: 2),
+                                child: SvgPicture.asset(
+                                  'assets/images/appbar/bell.svg',
+                                  color: Theme.of(context)
+                                      .appBarTheme
+                                      .iconTheme!
+                                      .color,
+                                ),
+                              ),
+                            )
+                          : SvgPicture.asset(
+                              'assets/images/appbar/bell.svg',
+                              color: Theme.of(context)
+                                  .appBarTheme
+                                  .iconTheme!
+                                  .color,
+                            ),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            useSafeArea: true,
+                            barrierDismissible: true,
+                            useRootNavigator: true,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                elevation: 1,
+                                child: NotificationScreen(),
+                              );
+                            });
+                      },
+                    ),
+                  );
+                },
               ),
               Padding(
                 padding: const EdgeInsetsDirectional.only(end: 15.0),
@@ -186,20 +235,20 @@ class _SocialAppBarState extends State<SocialAppBar> {
                     color: Theme.of(context).appBarTheme.iconTheme!.color,
                   ),
                   onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          //todo show dialog based on screen
-                          return Dialog(
-                            insetPadding: EdgeInsets.zero,
-                            elevation: 0,
-                            surfaceTintColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            insetAnimationDuration: Duration.zero,
-                            child: PostSearchScreen(''),
-                          );
-                        },
-                      );
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        //todo show dialog based on screen
+                        return Dialog(
+                          insetPadding: EdgeInsets.zero,
+                          elevation: 0,
+                          surfaceTintColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          insetAnimationDuration: Duration.zero,
+                          child: PostSearchScreen(''),
+                        );
+                      },
+                    );
                   },
                 ),
               ),

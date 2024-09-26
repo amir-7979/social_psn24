@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../configs/utilities.dart';
 import '../screens/notification/notification_bloc.dart';
 
 class FirebaseNotificationService {
@@ -17,7 +18,6 @@ class FirebaseNotificationService {
     await Firebase.initializeApp();
     await _initializeLocalNotifications();
     await _requestPermission();
-
     FirebaseMessaging.onMessage.listen(_onMessageHandler);
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedAppHandler);
@@ -69,6 +69,8 @@ class FirebaseNotificationService {
         message.notification!.body ?? '',
       );
     }
+    print('_______________________\nMessage received!');
+    BlocProvider.of<NotificationBloc>(navigatorKey.currentContext!).add(LoadNotifications());
   }
 
   Future<void> _showNotification(String title, String body) async {
@@ -93,12 +95,15 @@ class FirebaseNotificationService {
   }
 
   void _onMessageOpenedAppHandler(RemoteMessage message) {
+    print('_______________________\nMessage clicked!');
+
     print('Message clicked!');
   }
 
   Future<void> _onDidReceiveNotificationResponse(
       NotificationResponse notificationResponse) async {
-    // Handle notification tap by navigating to the appropriate screen
+    print('_______________________\nMessage payload!');
+
     if (notificationResponse.payload != null) {
       print('Notification payload: ${notificationResponse.payload.toString()}');
     }

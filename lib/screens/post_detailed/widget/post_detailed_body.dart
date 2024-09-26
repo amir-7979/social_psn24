@@ -136,7 +136,6 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
                   if (state is InterestSuccessState) {
                     widget.post.currentUserLiked =
                     !widget.post.currentUserLiked;
-                    print(widget.post.currentUserLiked);
                     widget.post.isLiked =
                         widget.post.currentUserLiked;
                   } else if (state is InterestFailureState) {

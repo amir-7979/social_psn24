@@ -26,7 +26,6 @@ class PostDetailedBadges extends StatefulWidget {
 class _PostDetailedBadgesState extends State<PostDetailedBadges> {
   bool? isUserLoggedIn;
 
-
   @override
   void initState() {
     super.initState();
@@ -77,84 +76,84 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
           children: [
             IconButton(
               onPressed: () {
-                if(
-                BlocProvider.of<SettingBloc>(context).state.hasUsername){
-                  final postDetailedBloc = BlocProvider.of<PostDetailedBloc>(
-                      context);
+                if (BlocProvider.of<SettingBloc>(context).state.hasUsername) {
+                  final postDetailedBloc =
+                      BlocProvider.of<PostDetailedBloc>(context);
                   showModalBottomSheet(
                     context: context,
-                    builder: (context) =>
-                        BlocProvider.value(
-                          value: postDetailedBloc,
-                          child: CommentBottomSheet(
-                              function: submitComment, postId: widget.post.id),
-                        ),
+                    builder: (context) => BlocProvider.value(
+                      value: postDetailedBloc,
+                      child: CommentBottomSheet(
+                          function: submitComment, postId: widget.post.id),
+                    ),
                     isScrollControlled: true,
                     backgroundColor: Colors.transparent,
                     isDismissible: true,
                   );
-                }else {
+                } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    CustomSnackBar(content: AppLocalizations.of(context)!.translateNested('postScreen', 'setUsername')).build(context),
+                    CustomSnackBar(
+                            content: AppLocalizations.of(context)!
+                                .translateNested('postScreen', 'setUsername'))
+                        .build(context),
                   );
                 }
               },
               icon: badges.Badge(
-                  badgeStyle: badges.BadgeStyle(
-                    shape: badges.BadgeShape.circle,
-                    badgeColor: Theme.of(context).primaryColor,
-                    padding: EdgeInsets.all(2),
-                    elevation: 0,
-                  ),
-                  position: badgePosition,
-                  badgeContent: Container(
-                    padding: EdgeInsetsDirectional.only(top: 3),
-                    height: 20,
-                    width: 20,
-                    child: BlocListener<PostDetailedBloc, PostDetailedState>(
-                      listener: (context, state) {
-                        if (state is CommentCountRefresh) {
-                          setState(() {
-                            widget.post.commentsCount =
-                                widget.post.commentsCount! + 1;
-                            print(widget.post.commentsCount);
-                          });
-                        }
-                      },
-                      child: Text(
-                        widget.post.commentsCountString,
-                        overflow: TextOverflow.fade,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: whiteColor,
-                              fontWeight: FontWeight.w400,
-                            ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                      ),
+                badgeStyle: badges.BadgeStyle(
+                  shape: badges.BadgeShape.circle,
+                  badgeColor: Theme.of(context).primaryColor,
+                  padding: EdgeInsets.all(2),
+                  elevation: 0,
+                ),
+                position: badgePosition,
+                badgeContent: Container(
+                  padding: EdgeInsetsDirectional.only(top: 3),
+                  height: 20,
+                  width: 20,
+                  child: BlocListener<PostDetailedBloc, PostDetailedState>(
+                    listener: (context, state) {
+                      if (state is CommentCountRefresh) {
+                        setState(() {
+                          widget.post.commentsCount =
+                              widget.post.commentsCount! + 1;
+                        });
+                      }
+                    },
+                    child: Text(
+                      widget.post.commentsCountString,
+                      overflow: TextOverflow.fade,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: whiteColor,
+                            fontWeight: FontWeight.w400,
+                          ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.symmetric(vertical: 2),
-                    child: FaIcon(
-                        size: 30,
-                        FontAwesomeIcons.thinComment,
-                        color: Theme.of(context).colorScheme.shadow),
-                  )),
+                ),
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.symmetric(vertical: 2),
+                  child: FaIcon(
+                      size: 30,
+                      FontAwesomeIcons.thinComment,
+                      color: Theme.of(context).colorScheme.shadow),
+                ),
+              ),
             ),
             SizedBox(width: 8),
             IconButton(
               onPressed: () {
                 setState(() {
-                widget.post.voteDown = !widget.post.voteDown;
-                if (widget.post.voteDown == true)
-                  widget.post.downVotes = widget.post.downVotes! + 1;
-                else
-                  widget.post.downVotes = widget.post.downVotes! - 1;
-                if (widget.post.voteUp == true) {
-                  widget.post.voteUp = false;
-                  widget.post.upVotes = widget.post.upVotes! - 1;
-                }
-
+                  widget.post.voteDown = !widget.post.voteDown;
+                  if (widget.post.voteDown == true)
+                    widget.post.downVotes = widget.post.downVotes! + 1;
+                  else
+                    widget.post.downVotes = widget.post.downVotes! - 1;
+                  if (widget.post.voteUp == true) {
+                    widget.post.voteUp = false;
+                    widget.post.upVotes = widget.post.upVotes! - 1;
+                  }
                 });
                 if (isUserLoggedIn == true) {
                   BlocProvider.of<PostDetailedBloc>(context)
@@ -242,7 +241,6 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                   if (state is UserVoteUpSuccessState) {
                     widget.post.currentUserUpVotes =
                         !widget.post.currentUserUpVotes;
-
 
                     widget.post.currentUserDownVotes = false;
                   }

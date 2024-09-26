@@ -58,7 +58,7 @@ class NotificationItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
                           color: Theme.of(context).hoverColor,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: notification.seen == 1 ? FontWeight.w400 : FontWeight.bold ,
                         ),
                   ),
                   Padding(

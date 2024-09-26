@@ -21,7 +21,6 @@ class CommentBottomSheet extends StatefulWidget {
 
 class _CommentBottomSheetState extends State<CommentBottomSheet> {
   final _longTextController = TextEditingController();
-  final _longTextFocusNode = FocusNode();
   final int _maxLength = 200; // Set your max length here
   int _currentLength = 0; // Set your max length here
 
