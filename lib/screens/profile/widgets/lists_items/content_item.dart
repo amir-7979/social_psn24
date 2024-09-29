@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/configs/setting/themes.dart';
 
-import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/utilities.dart';
-import '../../../repos/models/content.dart';
-import '../../main/widgets/screen_builder.dart';
-import '../../widgets/selectImge.dart';
-import '../profile_bloc.dart';
+import '../../../../configs/localization/app_localizations.dart';
+import '../../../../configs/utilities.dart';
+import '../../../../repos/models/content.dart';
+import '../../../main/widgets/screen_builder.dart';
+import '../../../widgets/selectImge.dart';
+import '../../profile_bloc.dart';
 
 class ContentItem extends StatelessWidget {
   final Content content;
@@ -89,7 +89,9 @@ class ContentItem extends StatelessWidget {
               color: Theme.of(context).colorScheme.background,
               surfaceTintColor: Theme.of(context).colorScheme.background,
               shadowColor: Colors.transparent,
+              useRootNavigator: true,
               icon: BlocBuilder<ProfileBloc, ProfileState>(
+
                 builder: (context, state) {
                   return Container(
                       height: 25,
@@ -135,7 +137,7 @@ class ContentItem extends StatelessWidget {
                 PopupMenuItem(
                   onTap: () async {
                     BlocProvider.of<ProfileBloc>(context)
-                        .add(DeletePost(content.id ?? ''));
+                        .add(DeletePostEvent(content.id ?? ''));
                   },
                   value: 2,
                   padding: EdgeInsets.symmetric(horizontal: 10),
@@ -157,13 +159,7 @@ class ContentItem extends StatelessWidget {
                   ),
                 ),
               ],
-              onSelected: (value) {
-                if (value == 1) {
-                  // Handle edit action
-                } else if (value == 2) {
-                  // Handle delete action
-                }
-              },
+
             ),
           ),
         ],

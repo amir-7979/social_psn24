@@ -9,9 +9,9 @@ import '../../auth/verify/verify.dart';
 import '../../charity/charity_screen.dart';
 import '../../consultation/consultation_screen.dart';
 import '../../cooperation/cooperation_screen.dart';
+import '../../edit_profile/edit_profile_screen.dart';
 import '../../home/home_screen.dart';
 import '../../profile/profile_screen.dart';
-import '../../profile/widgets/normal_user/edit_normal_user.dart';
 import '../main_screen.dart';
 
 class AppRoutes {
@@ -47,7 +47,7 @@ final Map<String, WidgetBuilder> routes = {
   AppRoutes.home: (BuildContext context) => HomeScreen(),
   AppRoutes.consultation: (BuildContext context) => ConsultationScreen(),
   AppRoutes.charity: (BuildContext context) => CharityScreen(),
-  AppRoutes.editProfile: (BuildContext context) => EditNormalUser(() {}),
+  AppRoutes.editProfile: (BuildContext context) => EditProfileScreen(),
   AppRoutes.createMedia: (BuildContext context) => CreatePostScreen(),
   AppRoutes.postDetailed: (BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;

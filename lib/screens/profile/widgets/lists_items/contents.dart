@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-import '../../../configs/localization/app_localizations.dart';
-import '../../../repos/models/content.dart';
-import '../../widgets/new_page_progress_indicator.dart';
-import '../profile_bloc.dart';
+import '../../../../configs/localization/app_localizations.dart';
+import '../../../../repos/models/content.dart';
+import '../../../widgets/new_page_progress_indicator.dart';
+import '../../profile_bloc.dart';
 import 'content_item.dart';
-import 'shimmer/shimmer_content_item.dart';
+import '../shimmer/shimmer_content_item.dart';
 
 class Contents extends StatefulWidget {
   final PagingController<int, Content> pagingController;

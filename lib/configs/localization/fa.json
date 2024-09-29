@@ -117,11 +117,12 @@
     "normalUser": "کابر عادی",
     "expertUser": "کابر حرفه ای",
     "programmerUser": "برنامه نویس سامانه",
-    "editUserInfo": "ویرایش اطلاعات کاربری",
+    "editUserInfo": "تنظیمات من",
     "normalContent": "محتوای عمومی",
     "expertContent": "محتوای تخصصی",
     "userComments": "نظرات کاربر",
-    "othersComments": "نظرات دیگران درباره کابر",
+    "othersComments": "نظرات دیگران درباره من",
+    "othersUserComments": "نظرات دیگران درباره من",
     "field": "زمینه خبرگی",
     "experience": "سابقه",
     "address": "آدرس محل کار",
@@ -144,7 +145,10 @@
     "edit": "ویرایش",
     "delete": "حذف",
     "online" : "آنلاین",
-    "offline": "آفلاین"
+    "offline": "آفلاین",
+    "myInfo": "درباره من",
+    "activities": "فعالیت\u200Cها",
+    "myComments": "نظرات من"
   },
 
   "postScreen": {
@@ -187,6 +191,7 @@
     "17": "انجام این عملیات محدود شده است",
     "phone_start_0": "شماره تلفن وارد شده صحیح نیست.",
     "length_exceed": "حداکثر طول مجاز رد شده است ",
+    "minimum_username_length": "نام کاربری باید حداقل 5 کاراکتر باشد.",
     "persian_name": "نام باید فارسی باشد",
     "persian_lastname": "نام خانوادگی باید فارسی باشد",
     "english_username": "نام کاربری می‌تواند ترکیبی از حروف انگلیسی و اعداد و علامت های _ - . باشد",

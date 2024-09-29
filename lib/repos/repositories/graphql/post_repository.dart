@@ -182,10 +182,24 @@ MutationOptions likePost(String postId) {
   );
 }
 
+MutationOptions enableUserNotification(int userId) {
+  return MutationOptions(
+    document: gql('''
+        mutation enableNotification(\$userId: Float!) {
+          createEnNotification(user_id: \$userId) {
+            id
+          }
+        }
+      '''),
+    variables: {'userId': userId},
+    fetchPolicy: FetchPolicy.noCache,
+  );
+}
+
 MutationOptions enableNotification(String postId) {
   return MutationOptions(
     document: gql('''
-        mutation enableNotification(\$postId: String) {
+        mutation enableNotification(\$postId: String!) {
           createEnNotification(post_id: \$postId) {
             id
           }
@@ -428,10 +442,10 @@ QueryOptions getUserProfile(int? id) {
 
   return QueryOptions(
     document: gql('''
-      query getUserProfile(\$id: Int) {
+      query getUserProfile(\$id: Float) {
         profile(id: \$id) {
           id, name, family, display_name, username, photo, phone, commentsCreated, contentCreated, upvotes, downvotes, field, biography, experience,
-          address, offices, online, allow_notification, current_user_notification_enabled, show_activity
+          address, offices, online, allow_notification, current_user_notification_enabled, last_activity
         }
       }
     '''),

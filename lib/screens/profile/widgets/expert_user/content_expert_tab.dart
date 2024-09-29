@@ -1,37 +1,45 @@
-/*
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:social_psn/repos/models/comment.dart';
-import 'package:social_psn/screens/profile/widgets/expert_user/comment_custom_tab_bar.dart';
-import 'package:social_psn/screens/profile/widgets/expert_user/content_custom_tab_bar.dart';
+import '../../../../configs/localization/app_localizations.dart';
+import '../../../../configs/setting/themes.dart';
+import '../../../../repos/models/content.dart';
+import '../../profile_bloc.dart';
+import '../lists_items/contents.dart';
 
-import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/setting/setting_bloc.dart';
-import '../../../configs/setting/themes.dart';
-import '../../../repos/models/content.dart';
-import '../profile_bloc.dart';
-import 'lists_items/comments.dart';
-import 'lists_items/contents.dart';
 
-class ContentInfo extends StatefulWidget {
-  const ContentInfo({super.key});
+class ContentExpertTab extends StatefulWidget {
+   int? profileId;
+  ContentExpertTab({this.profileId});
 
   @override
-  State<ContentInfo> createState() => _ContentInfoState();
+  State<ContentExpertTab> createState() => _ContentExpertTabState();
 }
 
-class _ContentInfoState extends State<ContentInfo>
-    with SingleTickerProviderStateMixin {
-  bool seeExpertPost = false;
-  int? profileId;
+class _ContentExpertTabState extends State<ContentExpertTab> with SingleTickerProviderStateMixin{
+  TabController? _tabController;
+  final _pagingController0 = PagingController<int, Content>(firstPageKey: 0);
+  final _pagingController1 = PagingController<int, Content>(firstPageKey: 0);
+
 
   @override
   void initState() {
     super.initState();
-    seeExpertPost =  context.read<SettingBloc>().state.seeExpertPost ?? false;
+    _tabController = TabController(length: 2, vsync: this);
+    _pagingController0.addPageRequestListener((pageKey) {
+      ProfileBloc.fetchContent(_pagingController0, 0, 20, widget.profileId);
+    });
+    _pagingController1.addPageRequestListener((pageKey) {
+      ProfileBloc.fetchContent(_pagingController1, 1, 20, widget.profileId);
+    });
   }
 
+  @override
+  void dispose() {
+    if (_tabController != null) _tabController!.dispose();
+    _pagingController0.dispose();
+    _pagingController1.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +52,7 @@ class _ContentInfoState extends State<ContentInfo>
       child: Column(
         children: [
           const SizedBox(
-            height: 1,
+            height: 10,
           ),
           SizedBox(
             height: 60,
@@ -58,6 +66,7 @@ class _ContentInfoState extends State<ContentInfo>
               labelStyle: iranYekanTheme.headlineMedium!.copyWith(
                 color: whiteColor,
               ),
+              controller: _tabController,
               labelPadding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
               unselectedLabelStyle: iranYekanTheme.headlineMedium!.copyWith(
                 color: whiteColor,
@@ -66,10 +75,10 @@ class _ContentInfoState extends State<ContentInfo>
               tabs: [
                 Tab(
                     text: AppLocalizations.of(context)!
-                        .translateNested('bottomBar', 'content')),
+                        .translateNested('profileScreen', 'normalContent')),
                 Tab(
                     text: AppLocalizations.of(context)!
-                        .translateNested('profileScreen', 'comments')),
+                        .translateNested('profileScreen', 'normalContent')),
               ],
             ),
           ),
@@ -85,8 +94,10 @@ class _ContentInfoState extends State<ContentInfo>
                 ),
               ),
               child: TabBarView(
+                controller: _tabController,
                 children: [
-
+                  Contents(pagingController: _pagingController0),
+                  Contents(pagingController: _pagingController1),
                 ],
               ),
             ),
@@ -98,4 +109,3 @@ class _ContentInfoState extends State<ContentInfo>
 
 
 }
-*/

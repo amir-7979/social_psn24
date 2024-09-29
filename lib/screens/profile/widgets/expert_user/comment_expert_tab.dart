@@ -1,64 +1,53 @@
+import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:social_psn/repos/models/comment.dart';
-import 'package:social_psn/screens/profile/widgets/expert_user/comment_custom_tab_bar.dart';
-import 'package:social_psn/screens/profile/widgets/expert_user/content_custom_tab_bar.dart';
 
-import '../../../configs/localization/app_localizations.dart';
-import '../../../configs/setting/setting_bloc.dart';
-import '../../../configs/setting/themes.dart';
-import '../../../repos/models/content.dart';
-import '../profile_bloc.dart';
-import 'comments.dart';
-import 'contents.dart';
+import '../../../../configs/localization/app_localizations.dart';
+import '../../../../configs/setting/themes.dart';
+import '../../../../repos/models/comment.dart';
+import '../../../../repos/models/content.dart';
+import '../../profile_bloc.dart';
+import '../lists_items/comments.dart';
+import '../lists_items/contents.dart';
 
-class MainTabBar extends StatefulWidget {
-  const MainTabBar({super.key});
+class CommentExpertTab extends StatefulWidget {
+  int? profileId;
+
+  CommentExpertTab(this.profileId);
 
   @override
-  State<MainTabBar> createState() => _MainTabBarState();
+  State<CommentExpertTab> createState() => _CommentExpertTabState();
 }
 
-class _MainTabBarState extends State<MainTabBar>
-    with SingleTickerProviderStateMixin {
+class _CommentExpertTabState extends State<CommentExpertTab> with SingleTickerProviderStateMixin {
+  CustomSegmentedController<int> customSegmentedController = CustomSegmentedController(value: 0);
   TabController? _tabController;
-  late PagingController<int, Content> _pagingContentController;
-  late PagingController<int, Comment> _pagingCommentController;
-  bool seeExpertPost = false;
-  int? profileId;
+
+  final _pagingController0 = PagingController<int, Comment>(firstPageKey: 0);
+  final _pagingController1 = PagingController<int, Comment>(firstPageKey: 0);
 
   @override
   void initState() {
-    super.initState();
-     seeExpertPost =  context.read<SettingBloc>().state.seeExpertPost ?? false;
-
     _tabController = TabController(length: 2, vsync: this);
-     _pagingContentController = PagingController<int, Content>(firstPageKey: 0);
-     _pagingCommentController = PagingController<int, Comment>(firstPageKey: 0);
-
+    _pagingController0.addPageRequestListener((pageKey) {
+      ProfileBloc.fetchComment(_pagingController0, null, widget.profileId, "my", 20);
+    });
+    _pagingController1.addPageRequestListener((pageKey) {
+      ProfileBloc.fetchComment(_pagingController1, null, widget.profileId, "other", 20);
+    });
+    super.initState();
   }
+
+
+
+
 
   @override
   void dispose() {
     if (_tabController != null) _tabController!.dispose();
-    _pagingContentController.dispose();
-    _pagingCommentController.dispose();
+    _pagingController0.dispose();
+    _pagingController1.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    profileId = ModalRoute.of(context)?.settings.arguments as int?;
-    print("profileId: $profileId");
-
-    _pagingContentController.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchContent(_pagingContentController, 0, 20, profileId);
-    });
-    _pagingCommentController.addPageRequestListener((pageKey) {
-      ProfileBloc.fetchComment(_pagingCommentController, null, profileId, "my", 20);
-    });
   }
 
   @override
@@ -95,10 +84,10 @@ class _MainTabBarState extends State<MainTabBar>
               tabs: [
                 Tab(
                     text: AppLocalizations.of(context)!
-                        .translateNested('bottomBar', 'content')),
+                        .translateNested('profileScreen', widget.profileId == null ? 'myComments' : 'userComments')),
                 Tab(
                     text: AppLocalizations.of(context)!
-                        .translateNested('profileScreen', 'comments')),
+                        .translateNested('profileScreen', widget.profileId == null ? 'othersComments' : 'othersUserComments')),
               ],
             ),
           ),
@@ -116,8 +105,8 @@ class _MainTabBarState extends State<MainTabBar>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  seeExpertPost? ContentCustomTabBar(profileId): Contents(pagingController: _pagingContentController),
-                  seeExpertPost? CommentCustomTabBar(profileId): Comments(pagingController: _pagingCommentController),
+                  Comments(pagingController: _pagingController0),
+                  Comments(pagingController: _pagingController1),
                 ],
               ),
             ),
@@ -126,6 +115,5 @@ class _MainTabBarState extends State<MainTabBar>
       ),
     );
   }
-
 
 }

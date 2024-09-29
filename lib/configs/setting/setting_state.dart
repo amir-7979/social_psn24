@@ -39,6 +39,16 @@ class SettingState {
      }
      return false;
    }
+   get seeExpertComment {
+     if (profile?.permissions != null) {
+       for (var permission in profile!.permissions!) {
+         if (permission == "view expert comments") {
+           return true;
+         }
+       }
+     }
+     return false;
+   }
 
    get canChangeOnlineStatus {
      if (profile?.permissions != null) {

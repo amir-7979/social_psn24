@@ -18,7 +18,7 @@ class Profile {
   final List<String>? offices;
   bool? online;
   final int? allowNotification;
-  final dynamic currentUserNotificationEnabled;
+  int? currentUserNotificationEnabled;
   final int? showActivity;
   final String? fullName;
   final bool? status;

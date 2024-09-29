@@ -1,8 +1,10 @@
 part of 'profile_bloc.dart';
 
 @immutable
-abstract class ProfileState {
-}
+abstract class ProfileState {}
+
+
+//profile loading section
 
 class ProfileInitial extends ProfileState {}
 
@@ -20,45 +22,8 @@ class ProfileError extends ProfileState {
   ProfileError(this.message);
 }
 
-//---------------------
 
-class NewProfileInfoLoading extends ProfileState {}
-
-class NewProfileInfoLoaded extends ProfileState {
-  final Profile profile;
-
-  NewProfileInfoLoaded({required this.profile});
-}
-
-class NewProfileError extends ProfileState {
-  final String message;
-
-  NewProfileError(this.message);
-}
-
-//---------------------
-
-class EditProfileInfoLoading extends ProfileState {}
-
-class EditProfileInfoLoaded extends ProfileState {
-  EditProfileInfoLoaded();
-}
-
-class EditProfileError extends ProfileState {
-  String message;
-
-  EditProfileError(this.message);
-}
-
-class EditProfileInfoWithNameLoading extends ProfileState {}
-
-class EditProfileInfoWithNameLoaded extends ProfileState {
-  final Profile profile;
-
-  EditProfileInfoWithNameLoaded({required this.profile});
-}
-
-class EditProfileInfoWithNameError extends ProfileState {}
+//post deleting section
 
 class PostDeleting extends ProfileState {
   final String id;
@@ -74,6 +39,9 @@ class PostDeleteFailure extends ProfileState {
   PostDeleteFailure(this.error);
 }
 
+
+//change status section
+
 class ChangeOnlineStatusFailed extends ProfileState {}
 
 class ChangeOnlineStatusSucceed extends ProfileState {
@@ -81,9 +49,9 @@ class ChangeOnlineStatusSucceed extends ProfileState {
 
   ChangeOnlineStatusSucceed(this.status);
 }
-class NavigationToProfileScreenState extends ProfileState {}
 
-class NavigationToEditScreenState extends ProfileState {}
+
+//toggle notification section
 
 class TogglingNotificationState extends ProfileState {}
 
@@ -94,5 +62,11 @@ class ToggleNotificationFailure extends ProfileState {
 }
 
 class ToggleNotificationSuccess extends ProfileState {}
+
+// change content section
+class ChangeToPostState extends ProfileState {}
+
+class ChangeToCommentState extends ProfileState {}
+
 
 

@@ -20,7 +20,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   Future<void> _handleRegisterEvent(EditUserEvent event, Emitter<RegisterState> emit) async {
     emit(RegisterLoading());
     try {
-      Response response = await _profileRepository.updateProfile(firstName: event.name, lastName: event.family, username: event.username, photo: photoUrl);
+      Response response = await _profileRepository.editProfile(firstName: event.name, lastName: event.family, username: event.username, photo: photoUrl);
       if (response == 200) {
         settingBloc.add(FetchUserProfileWithPermissionsEvent());
         photoUrl = null;
