@@ -1,9 +1,3 @@
-//section0
-todo fetch profile(with permissions)
-
-//section1
-todo reset sms time
-//
 
 //section2
 todo 100 length of subject text filed

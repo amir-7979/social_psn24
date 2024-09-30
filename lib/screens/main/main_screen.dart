@@ -65,38 +65,50 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     }
   }
 
+  Future<bool> _onWillPop() async {
+    // Check if the inner navigator can pop
+    if (await navigatorKey.currentState?.maybePop() ?? false) {
+      return false; // Prevent the app from exiting if it can pop
+    }
+    return true; // Allow the app to exit if no more screens can be popped
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      resizeToAvoidBottomInset: true,
-      appBar: SocialAppBar(),
-      drawer: context.read<SettingBloc>().state.isUserLoggedIn
-          ? UserDrawer(context, navigatorKey)
-          : GuestDrawer(context, navigatorKey),
-      body: Stack(
-        children: [
-          Navigator(
-            key: navigatorKey,
-            initialRoute: AppRoutes.home,
-            observers: [_navigatorObserver],
-            onGenerateRoute: (RouteSettings settings) {
-              return CustomPageRoute(
-                builder: routes[settings.name] ?? (context) => HomeScreen(),
-                settings: settings,
-              );
-            },
-          ),
-          if (isAddButtonClicked) _buildBlurScreen(),
-        ],
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        resizeToAvoidBottomInset: true,
+        appBar: SocialAppBar(),
+        drawer: context.read<SettingBloc>().state.isUserLoggedIn
+            ? UserDrawer(context, navigatorKey)
+            : GuestDrawer(context, navigatorKey),
+        body: Stack(
+          children: [
+            Navigator(
+              key: navigatorKey,
+
+              initialRoute: AppRoutes.home,
+              observers: [_navigatorObserver],
+              onGenerateRoute: (RouteSettings settings) {
+                return CustomPageRoute(
+                  builder: routes[settings.name] ?? (context) => HomeScreen(),
+                  settings: settings,
+                );
+              },
+            ),
+            if (isAddButtonClicked) _buildBlurScreen(),
+          ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+        floatingActionButton: MyFloatingActionButton(
+          isAddButtonClicked,
+          (){_handleFABPressed();},
+        ),
+        bottomNavigationBar: MyStylishBottomBar(navigatorKey, _currentIndexNotifier, _navigatorObserver),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButton: MyFloatingActionButton(
-        isAddButtonClicked,
-        (){_handleFABPressed();},
-      ),
-      bottomNavigationBar: MyStylishBottomBar(navigatorKey, _currentIndexNotifier, _navigatorObserver),
     );
   }
 
@@ -196,7 +208,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   }
 }
 
-// MyFloatingActionButton class
 class MyFloatingActionButton extends StatelessWidget {
   final bool isAddButtonClicked;
   final Function changeAddButtonState;
