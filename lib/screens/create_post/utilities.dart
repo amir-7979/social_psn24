@@ -7,12 +7,6 @@ import 'package:video_player/video_player.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/admin_setting.dart';
-import '../../repos/models/media.dart';
-import 'create_post_bloc.dart';
-import 'widgets/media_item/media_item.dart';
-import 'widgets/media_item/media_item.dart';
-import 'widgets/media_item/media_item_bloc.dart';
-import 'widgets/post_content.dart';
 
 Future<File?> cropImage(String imagePath, BuildContext context) async {
   final croppedFile = await ImageCropper().cropImage(

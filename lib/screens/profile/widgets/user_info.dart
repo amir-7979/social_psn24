@@ -34,20 +34,32 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _activitiesController = AnimationController(vsync: this, duration: Duration(milliseconds: 300),);
-    _activitiesAnimation = CurvedAnimation(parent: _activitiesController, curve: Curves.easeInOut,);
-    _infoController = AnimationController(vsync: this, duration: Duration(milliseconds: 300),);
-    _infoAnimation = CurvedAnimation(parent: _infoController, curve: Curves.easeInOut,);
-    advanceSwitchController.addListener(() {
-      advanceSwitchController.value = !advanceSwitchController.value;
-    });
+    _activitiesController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+    _activitiesAnimation = CurvedAnimation(
+      parent: _activitiesController,
+      curve: Curves.easeInOut,
+    );
+    _infoController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+    _infoAnimation = CurvedAnimation(
+      parent: _infoController,
+      curve: Curves.easeInOut,
+    );
 
   }
 
   @override
   void didChangeDependencies() {
     profileId = ModalRoute.of(context)?.settings.arguments as int?;
-    context.read<ProfileBloc>().add(FetchProfileEvent(id: profileId));
+    if(profileId != null){context.read<ProfileBloc>().add(FetchProfileEvent(id: profileId));}else{
+      context.read<ProfileBloc>().add(FetchMyProfileEvent());
+
+    }
     super.didChangeDependencies();
   }
 
@@ -94,14 +106,15 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
               child: Text(
                 state.message,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).primaryColor,
-                ),
+                      color: Theme.of(context).primaryColor,
+                    ),
               ),
             ),
           );
         } else if (state is ProfileInfoLoaded) {
+          context.read<ProfileBloc>().add(FetchMyActivityEvent(id: state.profile.globalId));
           return buildBody(context, state.profile, profileId);
-        }else{
+        } else {
           return Container(
             height: 250,
             padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
@@ -111,10 +124,11 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
             ),
             child: Center(
               child: Text(
-                AppLocalizations.of(context)!.translateNested("profileScreen", "fetchError"),
+                AppLocalizations.of(context)!
+                    .translateNested("profileScreen", "fetchError"),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).primaryColor,
-                ),
+                      color: Theme.of(context).primaryColor,
+                    ),
               ),
             ),
           );
@@ -163,14 +177,18 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                                 : SvgPicture.asset(
                                     'assets/images/profile/profile2.svg'),
                           ),
-                          BlocBuilder<ProfileBloc, ProfileState>(
+                          /*BlocBuilder<ProfileBloc, ProfileState>(
                             buildWhen: (previous, current) {
                               return current is ChangeOnlineStatusSucceed ||
                                   current is ChangeOnlineStatusFailed;
                             },
                             builder: (context, state) {
-                              profile.online = state is ChangeOnlineStatusSucceed ? state.status : profile.online;
-                              return profileId == null && (profile.online == true)
+                              profile.online =
+                                  state is ChangeOnlineStatusSucceed
+                                      ? state.status
+                                      : profile.online;
+                              return profileId == null &&
+                                      (profile.online == true)
                                   ? Padding(
                                       padding: const EdgeInsetsDirectional.only(
                                           start: 7, top: 7),
@@ -200,11 +218,12 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                                     )
                                   : Container();
                             },
-                          ),
+                          ),*/
                         ],
                       ),
                     ),
-                    if (profileId != null && profile.currentUserNotificationEnabled != null)
+                    if (profileId != null &&
+                        profile.currentUserNotificationEnabled != null)
                       Align(
                         alignment: AlignmentDirectional.bottomEnd,
                         child: Padding(
@@ -223,12 +242,6 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                                     current is TogglingNotificationState;
                               },
                               builder: (context, state) {
-                                if (state is ToggleNotificationSuccess) {
-                                  profile.currentUserNotificationEnabled =
-                                      profile.currentUserNotificationEnabled == 1
-                                          ? 0
-                                          : 1;
-                                }
                                 return Container(
                                   width: 35,
                                   height: 35,
@@ -236,7 +249,7 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color:
-                                    profile.currentUserNotificationEnabled ==
+                                        profile.currentUserNotificationEnabled ==
                                                 1
                                             ? Theme.of(context)
                                                 .colorScheme
@@ -299,21 +312,23 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                           color: Theme.of(context).hoverColor,
                         ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "(${profile.displayName})",
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.tertiary,
-                        ),
-                  ),
+                  if (profile.displayName != null &&
+                      profile.displayName!.isNotEmpty)
+                    SizedBox(height: 8),
+                  if (profile.displayName != null &&
+                      profile.displayName!.isNotEmpty)
+                    Text(
+                      "(${profile.displayName})",
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
+                    ),
                   SizedBox(height: 10),
                   // i want to show switch button here
-                  if (profileId == null)
-                    BlocProvider.of<SettingBloc>(context)
-                                .state
-                                .canChangeOnlineStatus ??
-                            false
-                        ? AdvancedSwitch(
+                 /* if (profileId == null && BlocProvider.of<SettingBloc>(context)
+                      .state
+                      .canChangeOnlineStatus)
+                    AdvancedSwitch(
                             initialValue: profile.online ?? false,
                             controller: advanceSwitchController,
                             thumb: Padding(
@@ -366,8 +381,7 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                               BlocProvider.of<ProfileBloc>(context)
                                   .add(ChangeStatusEvent(value));
                             },
-                          )
-                        : Container(),
+                          ),*/
                 ],
               ),
             ],
@@ -391,8 +405,10 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
             icon: RotationTransition(
               turns: _activitiesAnimation,
               child: _isActivitiesExpanded
-                  ? Icon(Icons.expand_less, color: Theme.of(context).colorScheme.shadow)
-                  : Icon(Icons.expand_more, color: Theme.of(context).colorScheme.shadow),
+                  ? Icon(Icons.expand_less,
+                      color: Theme.of(context).colorScheme.shadow)
+                  : Icon(Icons.expand_more,
+                      color: Theme.of(context).colorScheme.shadow),
             ),
             style: ButtonStyle(
               overlayColor: WidgetStateProperty.resolveWith<Color?>(
@@ -404,8 +420,9 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
             label: Text(
               AppLocalizations.of(context)!
                   .translateNested("profileScreen", "myInfo"),
-              style: iranYekanTheme.displaySmall!
-                  .copyWith(fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.shadow),
+              style: iranYekanTheme.displaySmall!.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.shadow),
               textDirection: TextDirection.rtl,
             ),
           ),
@@ -446,7 +463,6 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                           ],
                         ),
                       if (profile.username != '') SizedBox(height: 16),
-
                       if (profile.field != null && profile.field != '')
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -475,8 +491,10 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                             ),
                           ],
                         ),
-                      if (profile.field != null && profile.field != '') SizedBox(height: 16),
-                      if (profile.experience != null && profile.experience != '')
+                      if (profile.field != null && profile.field != '')
+                        SizedBox(height: 16),
+                      if (profile.experience != null &&
+                          profile.experience != '')
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -504,7 +522,9 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                             ),
                           ],
                         ),
-                      if (profile.experience != null && profile.experience != '') SizedBox(height: 16),
+                      if (profile.experience != null &&
+                          profile.experience != '')
+                        SizedBox(height: 16),
                       if (profile.biography != null && profile.biography != '')
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -533,7 +553,8 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                             ),
                           ],
                         ),
-                      if (profile.biography != null && profile.biography != '') SizedBox(height: 16),
+                      if (profile.biography != null && profile.biography != '')
+                        SizedBox(height: 16),
                       if (profile.address != null && profile.address != '')
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -563,8 +584,10 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                             ),
                           ],
                         ),
-                      if (profile.address != null && profile.address != '') SizedBox(height: 16),
-                      if (profile.offices != null && profile.offices!.isNotEmpty)
+                      if (profile.address != null && profile.address != '')
+                        SizedBox(height: 16),
+                      if (profile.offices != null &&
+                          profile.offices!.isNotEmpty)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -598,7 +621,6 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                               ),
                           ],
                         ),
-
                     ],
                   )
                 : SizedBox.shrink(),
@@ -622,8 +644,10 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
             icon: RotationTransition(
               turns: _infoAnimation,
               child: _isInfoExpanded
-                  ? Icon(Icons.expand_less, color: Theme.of(context).colorScheme.shadow)
-                  : Icon(Icons.expand_more, color: Theme.of(context).colorScheme.shadow),
+                  ? Icon(Icons.expand_less,
+                      color: Theme.of(context).colorScheme.shadow)
+                  : Icon(Icons.expand_more,
+                      color: Theme.of(context).colorScheme.shadow),
             ),
             style: ButtonStyle(
               overlayColor: WidgetStateProperty.resolveWith<Color?>(
@@ -635,8 +659,9 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
             label: Text(
               AppLocalizations.of(context)!
                   .translateNested("profileScreen", "activities"),
-              style: iranYekanTheme.displaySmall!
-                  .copyWith(fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.shadow),
+              style: iranYekanTheme.displaySmall!.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.shadow),
               textDirection: TextDirection.rtl,
             ),
           ),
@@ -644,125 +669,279 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             child: _isInfoExpanded
-                ? Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsetsDirectional.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!
-                                  .translateNested("profileScreen", "posts"),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    color: Theme.of(context).hoverColor,
-                                  ),
+                ? profileId != null
+                    ? Column(
+                        children: [
+                          Container(
+                            padding:
+                                EdgeInsetsDirectional.symmetric(vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.translateNested(
+                                      "profileScreen", "posts"),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        color: Theme.of(context).hoverColor,
+                                      ),
+                                ),
+                                Text(
+                                  profile.contentCreated.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        color: Theme.of(context).hoverColor,
+                                      ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              profile.contentCreated.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    color: Theme.of(context).hoverColor,
-                                  ),
+                          ),
+                          buildSeparator(context),
+                          Container(
+                            padding:
+                                EdgeInsetsDirectional.symmetric(vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.translateNested(
+                                      "profileScreen", "comments"),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        color: Theme.of(context).hoverColor,
+                                      ),
+                                ),
+                                Text(
+                                  profile.commentsCreated.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        color: Theme.of(context).hoverColor,
+                                      ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                      buildSeparator(context),
-                      Container(
-                        padding: EdgeInsetsDirectional.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!
-                                  .translateNested("profileScreen", "comments"),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    color: Theme.of(context).hoverColor,
-                                  ),
+                          ),
+                          buildSeparator(context),
+                          Container(
+                            padding:
+                                EdgeInsetsDirectional.symmetric(vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.translateNested(
+                                      "profileScreen", "agreeVotes"),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        color: Theme.of(context).hoverColor,
+                                      ),
+                                ),
+                                Text(
+                                  profile.upvotes.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        color: Theme.of(context).hoverColor,
+                                      ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              profile.commentsCreated.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    color: Theme.of(context).hoverColor,
-                                  ),
+                          ),
+                          buildSeparator(context),
+                          Container(
+                            padding:
+                                EdgeInsetsDirectional.symmetric(vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.translateNested(
+                                      "profileScreen", "disagreeVotes"),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        color: Theme.of(context).hoverColor,
+                                      ),
+                                ),
+                                Text(
+                                  profile.downvotes.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                        color: Theme.of(context).hoverColor,
+                                      ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                      buildSeparator(context),
-                      Container(
-                        padding: EdgeInsetsDirectional.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.translateNested(
-                                  "profileScreen", "agreeVotes"),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    color: Theme.of(context).hoverColor,
-                                  ),
-                            ),
-                            Text(
-                              profile.upvotes.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    color: Theme.of(context).hoverColor,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      buildSeparator(context),
-                      Container(
-                        padding: EdgeInsetsDirectional.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.translateNested(
-                                  "profileScreen", "disagreeVotes"),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    color: Theme.of(context).hoverColor,
-                                  ),
-                            ),
-                            Text(
-                              profile.downvotes.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    color: Theme.of(context).hoverColor,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
+                          ),
+                        ],
+                      )
+                    : BlocBuilder<ProfileBloc, ProfileState>(
+                        buildWhen: (previous, current) {
+                          return current is activitySuccessState ||
+                              current is activityFailureState;
+                        },
+                        builder: (context, state) {
+                          return Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsetsDirectional.symmetric(
+                                    vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .translateNested(
+                                              "profileScreen", "posts"),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!
+                                          .copyWith(
+                                            color: Theme.of(context).hoverColor,
+                                          ),
+                                    ),
+                                    if (state is activitySuccessState)
+                                      Text(
+                                        state.activity['contentCreated']
+                                            .toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                              color:
+                                                  Theme.of(context).hoverColor,
+                                            ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              buildSeparator(context),
+                              Container(
+                                padding: EdgeInsetsDirectional.symmetric(
+                                    vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .translateNested(
+                                              "profileScreen", "comments"),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!
+                                          .copyWith(
+                                            color: Theme.of(context).hoverColor,
+                                          ),
+                                    ),
+                                    if (state is activitySuccessState)
+                                      Text(
+                                        state.activity['commentsCreated']
+                                            .toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                              color:
+                                                  Theme.of(context).hoverColor,
+                                            ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              buildSeparator(context),
+                              Container(
+                                padding: EdgeInsetsDirectional.symmetric(
+                                    vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .translateNested(
+                                              "profileScreen", "agreeVotes"),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!
+                                          .copyWith(
+                                            color: Theme.of(context).hoverColor,
+                                          ),
+                                    ),
+                                    if (state is activitySuccessState)
+                                      Text(
+                                        state.activity['upvotes'].toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                              color:
+                                                  Theme.of(context).hoverColor,
+                                            ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              buildSeparator(context),
+                              Container(
+                                padding: EdgeInsetsDirectional.symmetric(
+                                    vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .translateNested(
+                                              "profileScreen", "disagreeVotes"),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!
+                                          .copyWith(
+                                            color: Theme.of(context).hoverColor,
+                                          ),
+                                    ),
+                                    if (state is activitySuccessState)
+                                      Text(
+                                        state.activity['downvotes'].toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                              color:
+                                                  Theme.of(context).hoverColor,
+                                            ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      )
                 : SizedBox.shrink(),
           ),
           SizedBox(height: 8),
@@ -789,7 +968,8 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                       ),
                     ),
                     onPressed: () {
-                      BlocProvider.of<ProfileBloc>(context).add(ChangeToPostEvent());
+                      BlocProvider.of<ProfileBloc>(context)
+                          .add(ChangeToPostEvent());
                       setState(() {
                         isContent = true;
                       });
@@ -797,10 +977,11 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                     child: Text(
                       AppLocalizations.of(context)!
                           .translateNested("bottomBar", "content"),
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Theme.of(context).colorScheme.tertiary,
-                      ),
+                      style:
+                          Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.tertiary,
+                              ),
                     ),
                   ),
                 ),
@@ -824,7 +1005,8 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                       ),
                     ),
                     onPressed: () {
-                      BlocProvider.of<ProfileBloc>(context).add(ChangeToCommentEvent());
+                      BlocProvider.of<ProfileBloc>(context)
+                          .add(ChangeToCommentEvent());
                       setState(() {
                         isContent = false;
                       });
@@ -832,14 +1014,14 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                     child: Text(
                       AppLocalizations.of(context)!
                           .translateNested("profileScreen", "comments"),
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Theme.of(context).colorScheme.tertiary,
-                      ),
+                      style:
+                          Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.tertiary,
+                              ),
                     ),
                   ),
                 ),
-
               ],
             ),
           ),

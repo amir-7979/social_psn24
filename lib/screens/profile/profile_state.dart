@@ -63,6 +63,23 @@ class ToggleNotificationFailure extends ProfileState {
 
 class ToggleNotificationSuccess extends ProfileState {}
 
+
+//activity section
+
+class ActivityLoadingState extends ProfileState {}
+
+class activityFailureState extends ProfileState {
+  final String message;
+
+  activityFailureState(this.message);
+}
+
+class activitySuccessState extends ProfileState {
+  final Map<String, dynamic> activity;
+
+  activitySuccessState(this.activity);
+}
+
 // change content section
 class ChangeToPostState extends ProfileState {}
 

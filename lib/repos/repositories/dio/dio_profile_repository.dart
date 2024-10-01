@@ -41,4 +41,14 @@ class ProfileRepository {
     });
     return await _dio.post('/profile/upload-photo', data: formData);
   }
+
+  Future<Response<dynamic>> editOnlineStatus({required bool status}) async {
+    Map<String, dynamic> variables = {
+      'show_activity': status ? 1:0,
+    };
+    return _dio.post(
+      '/profile/update',
+      data: variables,
+    );
+  }
 }

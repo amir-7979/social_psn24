@@ -26,6 +26,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     on<ChangeMediaOrderEvent>(_onChangeMediaOrder);
     on<CreateNewPostEvent>(_onCreatePost);
     on<ResetCategoryEvent>(_onResetCategory);
+    on<SubmitNewPostEvent>(_onSubmitPost);
     add(CreateNewPostEvent());
   }
 
@@ -95,16 +96,16 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     }
   }
 
-  Future<void> _onSubmitPost(CreateNewPostEvent event, Emitter<CreatePostState> emit) async {
+  Future<void> _onSubmitPost(SubmitNewPostEvent event, Emitter<CreatePostState> emit) async {
+    print('submitting post--------------------------------------------------------------------------');
     try {
       emit(SubmittingPostLoading());
-      final MutationOptions options = createNewPost();
+      final MutationOptions options = SubmitNewPost(id: NewPost!.id!, title: event.title, tag: event.category, text: event.longText);
       final QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
         emit(SubmittingCreateFailed('خطا در ایجاد پست'));
         return;
       }else {
-        NewPost = CreateNewPost.fromJson(result.data!['createPost']);
         emit(SubmittingCreateSucceed());
       }
     } catch (e) {

@@ -5,8 +5,8 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
-
-Future<MutationOptions<Object?>> uploadMediaFile(File file, String postId, {int? order}) async {
+Future<MutationOptions<Object?>> uploadMediaFile(File file, String postId,
+    {int? order}) async {
   Map<String, dynamic> variables = {
     'mediaFile': await multipartFileFrom(file),
     'postId': postId,
@@ -25,8 +25,7 @@ Future<MutationOptions<Object?>> uploadMediaFile(File file, String postId, {int?
       }
     '''),
     variables: variables,
-  fetchPolicy: FetchPolicy.noCache,
-
+    fetchPolicy: FetchPolicy.noCache,
   );
 }
 
@@ -86,3 +85,58 @@ MutationOptions createNewPost() {
   );
 }
 
+QueryOptions getTags({int? limit, int? offset, String? search}) {
+  Map<String, dynamic> variables = {};
+  if (limit != null) variables['limit'] = limit;
+  if (offset != null) variables['offset'] = offset;
+  if (search != null) variables['search'] = search;
+  return QueryOptions(
+    document: gql('''
+      query getTags(\$limit: Int, \$offset: Int, \$search: String) {
+        tags(limit: \$limit, offset: \$offset, search: \$search) {
+          id
+          title
+          type
+        }
+      }
+    '''),
+    variables: variables,
+    fetchPolicy: FetchPolicy.cacheAndNetwork,
+  );
+}
+
+MutationOptions SubmitNewPost({required String id, required String title,required String text,required String tag, int status=1, int postType=0, int isPublish=1}) {
+  Map<String, dynamic> variables = {
+    'id': id,
+    'title': title,
+    'text': text,
+    'tag': tag,
+    'status': status,
+    'postType': postType,
+    'isPublish': isPublish,
+  };
+
+  return MutationOptions(
+    document: gql('''
+      mutation editPost(\$id: String!, \$title: String!, \$text: String!, \$tag: String!, \$status: Int!, \$postType: Int!, \$isPublish: Int!) {
+        editPost(
+          id: \$id
+          name: \$title
+          description: \$text
+          post_type: \$postType
+          tag_id: \$tag
+          status: \$status
+          is_publish: \$isPublish
+        ) {
+          id
+          name
+          description
+          user_id
+          __typename
+        }
+      }
+    '''),
+    variables: variables,
+    fetchPolicy: FetchPolicy.noCache,
+  );
+}

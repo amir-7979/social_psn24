@@ -22,3 +22,15 @@ class ChangeMediaOrderEvent extends CreatePostEvent {
 class CreateNewPostEvent extends CreatePostEvent {}
 
 class ResetCategoryEvent extends CreatePostEvent {}
+
+class SubmitNewPostEvent extends CreatePostEvent {
+  final String title;
+  final String category;
+  final String longText;
+
+  SubmitNewPostEvent({
+    required this.title,
+    required this.category,
+    required this.longText,
+  });
+}

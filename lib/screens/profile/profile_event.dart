@@ -8,6 +8,16 @@ class FetchProfileEvent extends ProfileEvent {
   FetchProfileEvent({this.id});
 }
 
+class FetchMyProfileEvent extends ProfileEvent {
+
+  FetchMyProfileEvent();
+}
+
+class FetchMyActivityEvent extends ProfileEvent {
+  final int? id;
+  FetchMyActivityEvent({this.id});
+}
+
 class DeletePostEvent extends ProfileEvent {
   final String postId;
 

@@ -519,3 +519,19 @@ MutationOptions changeOnlineStatus() {
   );
 }
 
+QueryOptions getUserActivities(int id) {
+  return QueryOptions(
+    document: gql('''
+      query getUserActivities(\$id: Float) {
+        profile(id: \$id) {
+          commentsCreated
+          contentCreated
+          upvotes
+          downvotes
+        }
+      }
+    '''),
+    variables: {'id': id},
+    fetchPolicy: FetchPolicy.noCache,
+  );
+}

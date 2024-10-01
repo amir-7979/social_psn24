@@ -1,24 +1,15 @@
-import 'dart:io';
 
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:searchfield/searchfield.dart';
+import 'package:social_psn/configs/setting/setting_bloc.dart';
 import 'package:social_psn/repos/models/post.dart';
+import 'package:social_psn/repos/repositories/graphql/create_post_repository.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
-import '../../../configs/utilities.dart';
-import '../../../repos/models/media.dart';
 import '../../widgets/white_circular_progress_indicator.dart';
 import '../create_post_bloc.dart';
-import 'media_item/media_item.dart';
 
-import 'package:reorderables/reorderables.dart';
 
 import 'post_content.dart';
 import 'post_form.dart'; // Add this import
@@ -34,6 +25,9 @@ class MyForm extends StatefulWidget {
 
 class _MyFormState extends State<MyForm> {
   final ScrollController _scrollController = ScrollController();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
+  TextEditingController longTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +56,11 @@ class _MyFormState extends State<MyForm> {
           ),
         ),
         SizedBox(height: 16),
-        PostForm(),
+        PostForm(
+          titleController,
+          categoryController,
+          longTextController,
+        ),
         const SizedBox(height: 16),
         PostContent(),
         const SizedBox(height: 16),
@@ -99,7 +97,15 @@ class _MyFormState extends State<MyForm> {
                 height: 45,
                 child: ElevatedButton(
                   onPressed: () {
-                    //todo upload media
+                    BlocProvider.of<CreatePostBloc>(context).add(
+                      SubmitNewPostEvent(
+                          title: titleController.text,
+                          category: context.read<SettingBloc>().state.tags!.firstWhere(
+                            (element) => element.title == categoryController.text,
+                            orElse: () => context.read<SettingBloc>().state.tagsList.first,
+                          ).id??'',
+                          longText: longTextController.text),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,

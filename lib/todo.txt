@@ -1,6 +1,6 @@
 
 //section2
-todo 100 length of subject text filed
+todo complete category section
 todo admin setting
 todo complete upload media
 todo bug in showing user created media

@@ -2,42 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:social_psn/configs/setting/setting_bloc.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
+import '../../../repos/models/tag.dart';
 import '../create_post_bloc.dart';
 
 class PostForm extends StatefulWidget {
+   TextEditingController titleController;
+   TextEditingController categoryController;
+   TextEditingController longTextController;
+   PostForm(this.titleController, this.categoryController, this.longTextController);
+
   @override
   WidgetPostFormState createState() => WidgetPostFormState();
 }
 
 class WidgetPostFormState extends State<PostForm> {
-  final _titleController = TextEditingController();
-  final _categoryController = TextEditingController();
-  final _longTextController = TextEditingController();
   final _titleFocusNode = FocusNode();
   final _categoryFocusNode = FocusNode();
   final _longTextFocusNode = FocusNode();
   String? _selectedCategory;
-  List<String> _categories = [
-    'Category 1',
-    'Category 2',
-    'Category 3',
-    'sgdfg'
-  ];
+  List<Tag> _categories = [];
   final int _maxLength = 200;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    _longTextController.addListener(_updateCounter);
+    widget.longTextController.addListener(_updateCounter);
+  }
+
+  @override
+  void didChangeDependencies() {
+    _categories = BlocProvider.of<SettingBloc>(context).state.tagsList;
+    super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    _longTextController.removeListener(_updateCounter);
+
+    widget.longTextController.removeListener(_updateCounter);
     super.dispose();
   }
 
@@ -53,7 +59,7 @@ class WidgetPostFormState extends State<PostForm> {
         children: [
           // Title
           TextFormField(
-            controller: _titleController,
+            controller: widget.titleController,
             keyboardType: TextInputType.name,
             focusNode: _titleFocusNode,
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -103,15 +109,15 @@ class WidgetPostFormState extends State<PostForm> {
             listener: (context, state) {
               if (state is ResetCategoryState) {
                 setState(() {
-                  _categoryController.clear();
+                  widget.categoryController.clear();
                 });
               }
             },
             child: SearchField<String>(
               suggestions: _categories
-                  .map((category) => SearchFieldListItem<String>(category))
+                  .map((category) => SearchFieldListItem<String>(category.title??''))
                   .toList(),
-              controller: _categoryController,
+              controller: widget.categoryController,
               focusNode: _categoryFocusNode,
               suggestionState: Suggestion.expand,
               searchStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -137,11 +143,11 @@ class WidgetPostFormState extends State<PostForm> {
                 focusedErrorBorder: errorBorderStyle,
                 contentPadding:
                     const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                suffixIcon: (_categoryController.text.isNotEmpty)
+                suffixIcon: (widget.categoryController.text.isNotEmpty)
                     ? IconButton(
                         onPressed: () {
                           setState(() {
-                            _categoryController.clear();
+                            widget.categoryController.clear();
                           });
                         },
                         icon: FaIcon(
@@ -170,7 +176,10 @@ class WidgetPostFormState extends State<PostForm> {
               onSuggestionTap: (suggestion) {
                 setState(() {
                   _selectedCategory = suggestion.item;
+                  _categoryFocusNode.unfocus();
+                  _longTextFocusNode.requestFocus();
                 });
+
               },
               onSubmit: (value) {
                 setState(() {
@@ -186,7 +195,7 @@ class WidgetPostFormState extends State<PostForm> {
             height: 130.0,
             child: TextFormField(
               focusNode: _longTextFocusNode,
-              controller: _longTextController,
+              controller: widget.longTextController,
               maxLines: 50,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color: Theme.of(context).colorScheme.onBackground,
