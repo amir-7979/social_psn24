@@ -7,13 +7,12 @@ import '../../configs/setting/themes.dart';
 import '../../repos/models/profile.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
+import '../widgets/dialogs/my_alert_dialog.dart';
 import '../widgets/profile_pucture/profile_picture.dart';
 import '../widgets/white_circular_progress_indicator.dart';
 import 'edit_profile_bloc.dart';
 
-
 class EditProfileScreen extends StatefulWidget {
-
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
@@ -44,17 +43,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   didChangeDependencies() {
     super.didChangeDependencies();
     profile = ModalRoute.of(context)?.settings.arguments as Profile;
-    _nameController.text = profile.name??'';
-    _lastNameController.text = profile.family??'';
-    _idController.text = profile.username??'';
-    photoUrl = profile.photo??'';
+    _nameController.text = profile.name ?? '';
+    _lastNameController.text = profile.family ?? '';
+    _idController.text = profile.username ?? '';
+    photoUrl = profile.photo ?? '';
   }
 
   void _newPickedImage(String? value) {
@@ -69,25 +67,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
       child: BlocProvider(
         create: (context) => EditProfileBloc(),
-        child: Builder(
-            builder: (context) {
-              return BlocConsumer<EditProfileBloc, EditProfileState>(
-                listener: (context, state) {
-                  if (state is EditProfileError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        CustomSnackBar(content: state.message).build(context)
-                    );
-                  } else if (state is EditProfileSuccess) {
-                    BlocProvider.of<SettingBloc>(context).add(FetchUserProfileWithPermissionsEvent());
-                    Navigator.pushReplacementNamed(context, AppRoutes.myProfile);
-                  }
-                },
-                builder: (context, state) {
-                  return buildListView(context);
-                },
-              );
-            }
-        ),
+        child: Builder(builder: (context) {
+          return BlocConsumer<EditProfileBloc, EditProfileState>(
+            listener: (context, state) {
+              if (state is EditProfileError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    CustomSnackBar(content: state.message).build(context));
+              } else if (state is EditProfileSuccess) {
+                BlocProvider.of<SettingBloc>(context)
+                    .add(FetchUserProfileWithPermissionsEvent());
+                Navigator.pushReplacementNamed(context, AppRoutes.myProfile);
+              }
+            },
+            builder: (context, state) {
+              return buildListView(context);
+            },
+          );
+        }),
       ),
     );
   }
@@ -128,10 +124,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         AppLocalizations.of(context)!
                             .translateNested("profileScreen", 'editUserInfo'),
                         style:
-                        Theme.of(context).textTheme.displayMedium!.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.w700,
-                        ),
+                            Theme.of(context).textTheme.displayMedium!.copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.w700,
+                                ),
                       ),
                       const SizedBox(height: 8),
                       Container(
@@ -155,7 +151,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       children: [
                         Padding(
                           padding:
-                          const EdgeInsetsDirectional.only(bottom: 16.0),
+                              const EdgeInsetsDirectional.only(bottom: 16.0),
                           child: TextFormField(
                             controller: _nameController,
                             keyboardType: TextInputType.name,
@@ -163,10 +159,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 .textTheme
                                 .titleLarge!
                                 .copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: Theme.of(context)
-                                  .hoverColor,
-                            ),
+                                  fontWeight: FontWeight.w400,
+                                  color: Theme.of(context).hoverColor,
+                                ),
                             focusNode: _nameFocusNode,
                             decoration: InputDecoration(
                               label: Text(
@@ -176,21 +171,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     .textTheme
                                     .titleLarge!
                                     .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: _nameFocusNode.hasFocus
-                                      ? Theme.of(context).primaryColor
-                                      : Theme.of(context)
-                                      .colorScheme
-                                      .surface,
-                                ),
+                                      fontWeight: FontWeight.w400,
+                                      color: _nameFocusNode.hasFocus
+                                          ? Theme.of(context).primaryColor
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .surface,
+                                    ),
                               ),
                               enabledBorder: borderStyle,
                               errorBorder: errorBorderStyle,
                               border: borderStyle,
                               focusedErrorBorder: errorBorderStyle,
                               contentPadding:
-                              const EdgeInsetsDirectional.fromSTEB(
-                                  16, 0, 16, 0),
+                                  const EdgeInsetsDirectional.fromSTEB(
+                                      16, 0, 16, 0),
                             ),
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -214,7 +209,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         Padding(
                           padding:
-                          const EdgeInsetsDirectional.only(bottom: 16.0),
+                              const EdgeInsetsDirectional.only(bottom: 16.0),
                           child: TextFormField(
                             controller: _lastNameController,
                             focusNode: _lastNameFocusNode,
@@ -223,10 +218,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 .textTheme
                                 .titleLarge!
                                 .copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: Theme.of(context)
-                                  .hoverColor,
-                            ),
+                                  fontWeight: FontWeight.w400,
+                                  color: Theme.of(context).hoverColor,
+                                ),
                             decoration: InputDecoration(
                               label: Text(
                                 AppLocalizations.of(context)!
@@ -235,21 +229,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     .textTheme
                                     .titleLarge!
                                     .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: _lastNameFocusNode.hasFocus
-                                      ? Theme.of(context).primaryColor
-                                      : Theme.of(context)
-                                      .colorScheme
-                                      .surface,
-                                ),
+                                      fontWeight: FontWeight.w400,
+                                      color: _lastNameFocusNode.hasFocus
+                                          ? Theme.of(context).primaryColor
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .surface,
+                                    ),
                               ),
                               enabledBorder: borderStyle,
                               errorBorder: errorBorderStyle,
                               border: borderStyle,
                               focusedErrorBorder: errorBorderStyle,
                               contentPadding:
-                              const EdgeInsetsDirectional.fromSTEB(
-                                  16, 0, 16, 0),
+                                  const EdgeInsetsDirectional.fromSTEB(
+                                      16, 0, 16, 0),
                             ),
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -259,7 +253,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   .hasMatch(value)) {
                                 return AppLocalizations.of(context)!
                                     .translateNested(
-                                    'error', 'persian_lastname');
+                                        'error', 'persian_lastname');
                               } else if (value.length > 40) {
                                 return AppLocalizations.of(context)!
                                     .translateNested('error', 'length_exceed');
@@ -273,20 +267,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         Padding(
                           padding:
-                          const EdgeInsetsDirectional.only(bottom: 16.0),
+                              const EdgeInsetsDirectional.only(bottom: 16.0),
                           child: TextFormField(
                               controller: _idController,
                               focusNode: _idFocusNode,
                               textDirection: TextDirection.ltr,
-
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
                                   .copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: Theme.of(context)
-                                    .hoverColor,
-                              ),
+                                    fontWeight: FontWeight.w400,
+                                    color: Theme.of(context).hoverColor,
+                                  ),
                               keyboardType: TextInputType.name,
                               decoration: InputDecoration(
                                 suffix: Padding(
@@ -298,11 +290,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         .textTheme
                                         .titleLarge!
                                         .copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .shadow,
-                                    ),
+                                          fontWeight: FontWeight.w400,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .shadow,
+                                        ),
                                   ),
                                 ),
                                 label: Text(
@@ -312,21 +304,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       .textTheme
                                       .titleLarge!
                                       .copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: _idFocusNode.hasFocus
-                                        ? Theme.of(context).primaryColor
-                                        : Theme.of(context)
-                                        .colorScheme
-                                        .surface,
-                                  ),
+                                        fontWeight: FontWeight.w400,
+                                        color: _idFocusNode.hasFocus
+                                            ? Theme.of(context).primaryColor
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                      ),
                                 ),
                                 enabledBorder: borderStyle,
                                 errorBorder: errorBorderStyle,
                                 border: borderStyle,
                                 focusedErrorBorder: errorBorderStyle,
                                 contentPadding:
-                                const EdgeInsetsDirectional.fromSTEB(
-                                    16, 0, 16, 0),
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        16, 0, 16, 0),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -334,77 +326,103 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 } else if (value.length > 30) {
                                   return AppLocalizations.of(context)!
                                       .translateNested(
-                                      'error', 'length_exceed');
+                                          'error', 'length_exceed');
                                 } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$')
                                     .hasMatch(value)) {
                                   return AppLocalizations.of(context)!
                                       .translateNested(
-                                      'error', 'english_username');
-                                }else if (value.length < 5) {
+                                          'error', 'english_username');
+                                } else if (value.length < 5) {
                                   return AppLocalizations.of(context)!
                                       .translateNested(
-                                      'error', 'minimum_username_length');
+                                          'error', 'minimum_username_length');
                                 }
                                 return null;
                               },
-                              onFieldSubmitted: (value) {
-
-                              }),
+                              onFieldSubmitted: (value) {}),
                         ),
-
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
                   BlocBuilder<EditProfileBloc, EditProfileState>(
                       builder: (context, state) {
-                        if (state is EditProfileError) {
-                          return Padding(
-                            padding: const EdgeInsetsDirectional.only(bottom: 16),
-                            child: Text(
-                              state.message,
-                              style:
+                    if (state is EditProfileError) {
+                      return Padding(
+                        padding: const EdgeInsetsDirectional.only(bottom: 16),
+                        child: Text(
+                          state.message,
+                          style:
                               Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                color: Theme.of(context).colorScheme.error,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      }),
+                                    color: Theme.of(context).colorScheme.error,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Expanded(
                           child: SizedBox(
-                            height: 45,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-
+                        height: 45,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            BuildContext editProfileContext = context;
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return MyAlertDialog(
+                                  title: AppLocalizations.of(context)!
+                                      .translateNested(
+                                          'dialog', 'deleteMediaTitle'),
+                                  description: AppLocalizations.of(context)!
+                                      .translateNested(
+                                          'dialog', 'deleteMediaDescription'),
+                                  cancelText: AppLocalizations.of(context)!
+                                      .translateNested('dialog', 'no'),
+                                  confirmText: AppLocalizations.of(context)!
+                                      .translateNested('dialog', 'yes'),
+                                  returnText: AppLocalizations.of(context)!
+                                      .translateNested('profileScreen', 'return'),
+                                  onReturn: () {
+                                    Navigator.pop(context);
+                                  },
+                                  onCancel: () {
+                                    Navigator.pop(context);
+                                    Navigator.pop(editProfileContext);
+                                  },
+                                  onConfirm: () {
+                                    editUserFunction(context);
+                                    Navigator.pop(context);
+                                  },
+                                );
                               },
-                              style: ElevatedButton.styleFrom(
-                                shadowColor: Colors.transparent,
-                                backgroundColor: Color(0x3300A6ED),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Text(
-                                AppLocalizations.of(context)!
-                                    .translateNested('profileScreen', 'return'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shadowColor: Colors.transparent,
+                            backgroundColor: Color(0x3300A6ED),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!
+                                .translateNested('profileScreen', 'return'),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
                                   fontWeight: FontWeight.w400,
                                   color: Theme.of(context).colorScheme.tertiary,
                                 ),
-                              ),
-                            ),
-                          )),
+                          ),
+                        ),
+                      )),
                       const SizedBox(width: 16),
                       Expanded(
                         child: SizedBox(
@@ -415,27 +433,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.primary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: BlocBuilder<EditProfileBloc, EditProfileState>(
+                            child:
+                                BlocBuilder<EditProfileBloc, EditProfileState>(
                               builder: (context, state) {
                                 return state is EditProfileLoading
                                     ? WhiteCircularProgressIndicator()
                                     : Text(
-                                  AppLocalizations.of(context)!
-                                      .translateNested(
-                                      'profileScreen', 'save'),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: whiteColor,
-                                  ),
-                                );
+                                        AppLocalizations.of(context)!
+                                            .translateNested(
+                                                'profileScreen', 'save'),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                              fontWeight: FontWeight.w400,
+                                              color: whiteColor,
+                                            ),
+                                      );
                               },
                             ),
                           ),
@@ -456,11 +475,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void editUserFunction(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       context.read<EditProfileBloc>().add(SubmitEditProfileEvent(
-        name: _nameController.text,
-        family: _lastNameController.text,
-        username: _idController.text,
-        photoUrl: photoUrl,
-      ));
+            name: _nameController.text,
+            family: _lastNameController.text,
+            username: _idController.text,
+            photoUrl: photoUrl,
+          ));
     }
   }
 }

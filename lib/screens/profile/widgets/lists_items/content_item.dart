@@ -7,6 +7,7 @@ import '../../../../configs/localization/app_localizations.dart';
 import '../../../../configs/utilities.dart';
 import '../../../../repos/models/content.dart';
 import '../../../main/widgets/screen_builder.dart';
+import '../../../widgets/dialogs/my_confirm_dialog.dart';
 import '../../../widgets/selectImge.dart';
 import '../../profile_bloc.dart';
 
@@ -136,8 +137,29 @@ class ContentItem extends StatelessWidget {
                 ),
                 PopupMenuItem(
                   onTap: () async {
-                    BlocProvider.of<ProfileBloc>(context)
-                        .add(DeletePostEvent(content.id ?? ''));
+                    BuildContext profileContext = context;
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return MyConfirmDialog(
+                          title: AppLocalizations.of(context)!.translateNested(
+                              'dialog', 'deleteMediaTitle'), description: AppLocalizations.of(context)!.translateNested(
+                            'dialog', 'deleteMediaDescription'), cancelText: AppLocalizations.of(context)!.translateNested(
+                            'dialog', 'cancel'),confirmText: AppLocalizations.of(context)!.translateNested(
+                            'dialog', 'delete'),
+                          onCancel: () {
+                            Navigator.pop(context);
+                          },
+                          onConfirm: () {
+                            BlocProvider.of<ProfileBloc>(profileContext)
+                                .add(DeletePostEvent(content.id ?? ''));
+                            Navigator.pop(context);
+
+                          },
+                        );
+                      },
+                    );
+
                   },
                   value: 2,
                   padding: EdgeInsets.symmetric(horizontal: 10),

@@ -9,6 +9,7 @@ import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/themes.dart';
 import '../main/widgets/screen_builder.dart';
 import 'custom_snackbar.dart';
+import 'dialogs/my_confirm_dialog.dart';
 import 'profile_cached_network_image.dart';
 
 class UserDrawer extends StatelessWidget {
@@ -347,7 +348,22 @@ class UserDrawer extends StatelessWidget {
                           showDialog(
                             context: dialogContext,
                             builder: (BuildContext context) {
-                              return AlertDialog(
+                              return MyConfirmDialog(
+                                title: AppLocalizations.of(context)!.translateNested(
+                                  'dialog', 'exitFromAppTitle'), description: AppLocalizations.of(context)!.translateNested(
+                                  'dialog', 'exitFromAppDescription'), cancelText: AppLocalizations.of(context)!.translateNested(
+                                  'dialog', 'cancel'),confirmText: AppLocalizations.of(context)!.translateNested(
+                                  'dialog', 'exit'),
+                                onCancel: () {
+                                  Navigator.pop(context);
+                                },
+                                onConfirm: () {
+                                  dialogContext.read<SettingBloc>().add(ClearInfo());
+                                  Navigator.pop(context);
+                                  navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+                                },
+                              );
+                             /* return AlertDialog(
                                 backgroundColor: Theme.of(context).colorScheme.background,
                                 title: Text(
                                   AppLocalizations.of(context)!.translateNested(
@@ -416,7 +432,7 @@ class UserDrawer extends StatelessWidget {
                                     },
                                   ),
                                 ],
-                              );
+                              );*/
                             },
                           )..then((value) {
                             Navigator.pop(context);

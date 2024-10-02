@@ -96,6 +96,7 @@ class MyAlertDialog extends StatelessWidget {
                 ),
               ),
             ),
+            Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -165,6 +166,7 @@ class MyAlertDialog extends StatelessWidget {
 
               ],
             ),
+            SizedBox(height: 8),
           ],
         ),
       ),

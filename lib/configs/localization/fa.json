@@ -170,7 +170,15 @@
     "yes": "بله",
     "no": "خیر",
     "cancel": "انصراف",
-    "return": "بازگشت"
+    "return": "بازگشت",
+    "deleteMediaTitle": "حذف محتوا",
+    "exitFromAppTitle": "خروج از سامانه",
+    "deleteAccountTitle": "حذف حساب کاربری",
+    "exitFromSettingTitle": "خروج از تنظیمات\u200Cمن",
+    "deleteMediaDescription": "آیا از حذف این محتوا اطمینان دارید؟!",
+    "exitFromAppDescription": "آیا برای خروج از سامانه اطمینان دارید؟!",
+    "deleteAccountDescription": "آیا از حذف حساب کاربری اطمینان دارید؟!",
+    "exitFromSettingDescription": "آیا میخواهید تغییرات ذخیره شود؟"
   },
 
   "error": {

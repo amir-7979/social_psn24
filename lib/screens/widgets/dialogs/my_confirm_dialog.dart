@@ -93,6 +93,7 @@ class MyConfirmDialog extends StatelessWidget {
                 ),
               ),
             ),
+            Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -102,7 +103,7 @@ class MyConfirmDialog extends StatelessWidget {
                   width: 90,
                   child: ElevatedButton(
                     child: Text(
-                      confirmText??'',
+                        cancelText??'',
                       style:
                       Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontWeight: FontWeight.w400,
@@ -114,10 +115,10 @@ class MyConfirmDialog extends StatelessWidget {
                       //foregroundColor: Theme.of(context).colorScheme.tertiary,
                       backgroundColor: elevatedButtonBackColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    onPressed: onConfirm,
+                    onPressed: onCancel,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -126,7 +127,7 @@ class MyConfirmDialog extends StatelessWidget {
                   width: 90,
                   child: ElevatedButton(
                     child: Text(
-                      cancelText??'',
+                      confirmText??'',
                       style:
                       Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontWeight: FontWeight.w400,
@@ -138,14 +139,15 @@ class MyConfirmDialog extends StatelessWidget {
                       //foregroundColor: Theme.of(context).colorScheme.tertiary,
                       backgroundColor: Theme.of(context).colorScheme.error,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    onPressed: onCancel,
+                    onPressed: onConfirm,
                   ),
                 ),
               ],
             ),
+            SizedBox(height: 8),
           ],
         ),
       ),
