@@ -10,10 +10,11 @@ import '../../../repos/models/tag.dart';
 import '../create_post_bloc.dart';
 
 class PostForm extends StatefulWidget {
-   TextEditingController titleController;
-   TextEditingController categoryController;
-   TextEditingController longTextController;
-   PostForm(this.titleController, this.categoryController, this.longTextController);
+  TextEditingController titleController;
+  TextEditingController categoryController;
+  TextEditingController longTextController;
+  PostForm(
+      this.titleController, this.categoryController, this.longTextController);
 
   @override
   WidgetPostFormState createState() => WidgetPostFormState();
@@ -26,12 +27,23 @@ class WidgetPostFormState extends State<PostForm> {
   String? _selectedCategory;
   List<Tag> _categories = [];
   final int _maxLength = 200;
+  bool _categoryState = true;
+  bool _isSearchFieldOpen = false; // Track whether suggestions are open or closed
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     widget.longTextController.addListener(_updateCounter);
+    widget.categoryController.addListener(_validateCategoryInput);
+    _categoryFocusNode.addListener(() {
+      if (!_categoryFocusNode.hasFocus) {
+        setState(() {
+          _isSearchFieldOpen = false; // Close search field if focus is lost
+        });
+      }
+    });
+    _categories = BlocProvider.of<SettingBloc>(context).state.tagsList; // Initialize categories here
   }
 
   @override
@@ -42,8 +54,9 @@ class WidgetPostFormState extends State<PostForm> {
 
   @override
   void dispose() {
-
     widget.longTextController.removeListener(_updateCounter);
+    widget.categoryController.removeListener(_validateCategoryInput);
+    _categoryFocusNode.dispose();
     super.dispose();
   }
 
@@ -51,8 +64,38 @@ class WidgetPostFormState extends State<PostForm> {
     setState(() {});
   }
 
+  List<Tag> _filterCategories(String query) {
+    if (query.isEmpty) {
+      return _categories; // Return all categories if query is empty
+    }
+    return _categories
+        .where((category) => category.title!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+  }
+
+  void _validateCategoryInput() {
+    setState(() {
+      _categoryState = _categories
+          .any((category) => category.title == widget.categoryController.text);
+    });
+  }
+
+  void _toggleSearchField() {
+    setState(() {
+      _isSearchFieldOpen = !_isSearchFieldOpen;
+      if (!_isSearchFieldOpen) {
+        // Close the search field by unfocusing it
+        _categoryFocusNode.unfocus();
+      } else {
+        // Reopen the search field by focusing it
+        _categoryFocusNode.requestFocus();
+      }
+    });
+  }
+
   @override
   build(BuildContext context) {
+    List<Tag> filteredCategories = _filterCategories(widget.categoryController.text);
     return Form(
       key: _formKey,
       child: Column(
@@ -63,25 +106,25 @@ class WidgetPostFormState extends State<PostForm> {
             keyboardType: TextInputType.name,
             focusNode: _titleFocusNode,
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
             decoration: InputDecoration(
               label: Text(
                 AppLocalizations.of(context)!
                     .translateNested("createMedia", "subject"),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: _titleFocusNode.hasFocus
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).hintColor,
-                    ),
+                  fontWeight: FontWeight.w400,
+                  color: _titleFocusNode.hasFocus
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).hintColor,
+                ),
               ),
               enabledBorder: borderStyle,
               errorBorder: errorBorderStyle,
               border: borderStyle,
               focusedErrorBorder: errorBorderStyle,
               contentPadding:
-                  const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+              const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
             ),
             validator: (value) {
               if (value!.isEmpty) {
@@ -110,51 +153,106 @@ class WidgetPostFormState extends State<PostForm> {
               if (state is ResetCategoryState) {
                 setState(() {
                   widget.categoryController.clear();
+                  _categoryState = true;
+                  _isSearchFieldOpen = false;
                 });
               }
             },
             child: SearchField<String>(
-              suggestions: _categories
-                  .map((category) => SearchFieldListItem<String>(category.title??''))
+              suggestions: filteredCategories
+                  .map((category) => SearchFieldListItem<String>(
+                category.title ?? '',
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.only(start: 8),
+                    child: Text(
+                      category.title ?? '',
+                      textDirection: TextDirection.rtl, // Align text to the right
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onBackground,
+                      ),
+                    ),
+                  ),
+                ),
+              ))
                   .toList(),
               controller: widget.categoryController,
               focusNode: _categoryFocusNode,
               suggestionState: Suggestion.expand,
               searchStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
               suggestionStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
               searchInputDecoration: InputDecoration(
                 label: Text(
                   AppLocalizations.of(context)!
                       .translateNested("createMedia", "category"),
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: _categoryFocusNode.hasFocus
-                            ? Theme.of(context).primaryColor
-                            : Theme.of(context).hintColor,
-                      ),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: _categoryFocusNode.hasFocus
+                        ? Theme.of(context).primaryColor
+                        : Theme.of(context).hintColor,
+                  ),
                 ),
                 enabledBorder: borderStyle,
                 errorBorder: errorBorderStyle,
                 border: borderStyle,
                 focusedErrorBorder: errorBorderStyle,
                 contentPadding:
-                    const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                suffixIcon: (widget.categoryController.text.isNotEmpty)
-                    ? IconButton(
-                        onPressed: () {
-                          setState(() {
-                            widget.categoryController.clear();
-                          });
-                        },
-                        icon: FaIcon(
-                            size: 25,
+                const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (widget.categoryController.text.isNotEmpty)
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          alignment: AlignmentDirectional.centerEnd,
+                          onPressed: () {
+                            setState(() {
+                              widget.categoryController.clear();
+                            });
+                          },
+                          icon: FaIcon(
+                            size: 22,
                             FontAwesomeIcons.solidCircleXmark,
-                            color: Theme.of(context).colorScheme.surface))
-                    : null,
+                            color: _categoryState
+                                ? Theme.of(context).colorScheme.surface
+                                : Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ),
+                    SizedBox(width: 12),
+                    SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: _toggleSearchField,
+
+                        icon: FaIcon(
+                          size: 18,
+                          _isSearchFieldOpen ? FontAwesomeIcons.solidCaretUp : FontAwesomeIcons.solidCaretDown,
+                          color: _categoryState || widget.categoryController.text.isEmpty
+                              ? Theme.of(context).colorScheme.surface
+                              : Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                  ],
+                ),
               ),
               itemHeight: 50,
               maxSuggestionsInViewPort: 4,
@@ -164,30 +262,43 @@ class WidgetPostFormState extends State<PostForm> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
+                  _categoryState = false; // No category entered
                   return 'Category must not be empty';
-                } else if (!_categories.contains(value)) {
+                } else if (!_categories.any((category) => category.title == value)) {
+                  setState(() {
+                    print('Invalid category');
+                    _categoryState = false; // Invalid category
+                  });
                   return 'Invalid Category';
                 }
+                setState(() {
+                  _categoryState = true; // Valid category
+                });
                 return null;
               },
               onTap: () {
-                setState(() {});
+                setState(() {
+                  _isSearchFieldOpen = true; // Open suggestions
+                });
               },
               onSuggestionTap: (suggestion) {
                 setState(() {
                   _selectedCategory = suggestion.item;
+                  _categoryState = true;
+                  _isSearchFieldOpen = false; // Close suggestions
                   _categoryFocusNode.unfocus();
                   _longTextFocusNode.requestFocus();
                 });
-
               },
               onSubmit: (value) {
                 setState(() {
+                  _isSearchFieldOpen = false; // Close suggestions
                   _categoryFocusNode.unfocus();
                   _longTextFocusNode.requestFocus();
                 });
               },
             ),
+
           ),
           SizedBox(height: 16),
           // Text Body
@@ -198,18 +309,18 @@ class WidgetPostFormState extends State<PostForm> {
               controller: widget.longTextController,
               maxLines: 50,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
               maxLength: 200,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!
                     .translateNested("createMedia", "text"),
                 labelStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: _longTextFocusNode.hasFocus
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).hintColor,
-                    ),
+                  fontWeight: FontWeight.w400,
+                  color: _longTextFocusNode.hasFocus
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).hintColor,
+                ),
                 alignLabelWithHint: true,
                 constraints: BoxConstraints(
                   minHeight: 130.0,
@@ -221,16 +332,16 @@ class WidgetPostFormState extends State<PostForm> {
               ),
               buildCounter: (context,
                   {required currentLength,
-                  required maxLength,
-                  required bool isFocused}) {
+                    required maxLength,
+                    required bool isFocused}) {
                 return Text(
                   '200/$currentLength',
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: _longTextFocusNode.hasFocus
-                            ? Theme.of(context).primaryColor
-                            : Theme.of(context).hintColor,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: _longTextFocusNode.hasFocus
+                        ? Theme.of(context).primaryColor
+                        : Theme.of(context).hintColor,
+                  ),
                 );
               },
               onTap: () {
