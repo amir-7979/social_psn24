@@ -137,9 +137,13 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                         AppLocalizations.of(context)!.translateNested('bottomBar', 'content'),
                         FontAwesomeIcons.thinCloudArrowUp,
                             () {
-                          _handleFABPressed();
-                          navigatorKey.currentState!.pushNamed(AppRoutes.createMedia);
-                        },
+                              if(!BlocProvider.of<SettingBloc>(context).state.isUserLoggedIn){
+                                navigatorKey.currentState!.pushNamed(AppRoutes.login);
+                              }else{
+                          navigatorKey.currentState!.pushNamed(AppRoutes.createMedia);}
+                              _handleFABPressed();
+
+                            },
                       ),
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 55),

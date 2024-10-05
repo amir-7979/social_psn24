@@ -73,33 +73,39 @@ class _CommentListState extends State<CommentList> {
               ),
           firstPageErrorIndicatorBuilder: (context) =>
               Center(
-                child: Text(
-                  AppLocalizations.of(context)!
-                      .translateNested("profileScreen", "fetchError"),
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .titleLarge!
-                      .copyWith(
-                    color: Theme
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(top: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!
+                        .translateNested("profileScreen", "fetchError"),
+                    style: Theme
                         .of(context)
-                        .primaryColor,
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(
+                      color: Theme
+                          .of(context)
+                          .primaryColor,
+                    ),
                   ),
                 ),
               ),
           noItemsFoundIndicatorBuilder: (context) =>
               Center(
-                child: Text(
-                  AppLocalizations.of(context)!
-                      .translateNested("profileScreen", "noComment"),
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .titleLarge!
-                      .copyWith(
-                    color: Theme
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(top: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!
+                        .translateNested("profileScreen", "noComment"),
+                    style: Theme
                         .of(context)
-                        .primaryColor,
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(
+                      color: Theme
+                          .of(context)
+                          .primaryColor,
+                    ),
                   ),
                 ),
               ),

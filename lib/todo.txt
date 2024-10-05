@@ -1,7 +1,6 @@
 
 //section2
-todo complete category section
-todo bug in profile picture of edit screen
+todo bug in like section
 
 todo admin setting
 todo complete upload media

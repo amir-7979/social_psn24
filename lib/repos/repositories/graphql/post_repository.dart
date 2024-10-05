@@ -489,7 +489,7 @@ QueryOptions getUserFavorites(int offset, int limit, int? userId) {
 
   return QueryOptions(
     document: gql('''
-      query getUserFavorites(\$offset: Int, \$limit: Int, \$userId: Int) {
+      query getUserFavorites(\$offset: Int, \$limit: Int, \$userId: Float) {
         liked(offset: \$offset , limit: \$limit, user_id: \$userId) {
           id, name, medias {
             id, owner_id, post_id, loc, type, thumbnails {

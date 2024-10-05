@@ -22,6 +22,10 @@ class InterestBloc extends Bloc<InterestEvent, InterestState> {
     try {
       final QueryOptions options = getUserFavorites(offset, limit, userId);
       final QueryResult result = await GraphQLService.instance.client.query(options);
+      if (result.hasException) {
+        print(result.exception.toString());
+      }
+      print(result.data);
       final List<Liked> likedContents = (result.data?['liked'] as List<dynamic>?)
           ?.map((dynamic item) => Liked.fromJson(item as Map<String, dynamic>)).toList() ?? [];
       final isLastPage = likedContents.length < limit;

@@ -22,7 +22,9 @@ class SettingState {
   });
 
 
-  get isUserLoggedIn => token != '';
+  get isUserLoggedIn {
+    return token != '';
+  }
   get getProfile => profile;
   get getPermissions => profile?.permissions;
    get languageCode => language == AppLanguage.english ? 'en' : 'fa';

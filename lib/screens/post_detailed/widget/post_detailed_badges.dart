@@ -30,6 +30,11 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
   void initState() {
     super.initState();
     isUserLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn;
+    widget.post.voteDown = widget.post.currentUserDownVotes;
+    widget.post.voteUp = widget.post.currentUserUpVotes;
+    //print widget.post.voteDown, widget.post.voteUp
+    print("${widget.post.voteUp} and ${widget.post.voteDown}");
+
   }
 
   void submitComment(String postId, String message, [String? replyId]) {
@@ -145,6 +150,7 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
             IconButton(
               onPressed: () {
                 setState(() {
+                  print(widget.post.voteDown);
                   widget.post.voteDown = !widget.post.voteDown;
                   if (widget.post.voteDown == true)
                     widget.post.downVotes = widget.post.downVotes! + 1;
@@ -219,15 +225,15 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
             IconButton(
               onPressed: () {
                 setState(() {
-                  widget.post.voteUp =
-                      widget.post.voteUp == false ? true : false;
+                  widget.post.voteUp = !widget.post.voteUp;
                   if (widget.post.voteUp == true)
                     widget.post.upVotes = widget.post.upVotes! + 1;
                   else
                     widget.post.upVotes = widget.post.upVotes! - 1;
-                  if (widget.post.voteDown == true)
+                  if (widget.post.voteDown == true){
                     widget.post.downVotes = widget.post.downVotes! - 1;
-                  widget.post.voteDown = false;
+                    widget.post.voteDown = false;
+                  }
                 });
                 if (isUserLoggedIn == true) {
                   BlocProvider.of<PostDetailedBloc>(context)

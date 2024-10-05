@@ -57,10 +57,11 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     _processEventQueue();
     if (state.isUserLoggedIn) {
       add(FetchUserProfileWithPermissionsEvent());
+      add(FetchTagsEvent());
+
     } else {
-      add(FetchUserPermissionsEvent());
+      //add(FetchUserPermissionsEvent());
     }
-    add(FetchTagsEvent());
   }
 
   void _processEventQueue() {

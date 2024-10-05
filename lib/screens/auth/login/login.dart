@@ -136,6 +136,10 @@ class _LoginState extends State<Login> {
                             return AppLocalizations.of(context)!
                                 .translateNested('error', 'phone_start_0');
                           },
+                          onTap: () {
+                            _focusNode.requestFocus();
+                            setState(() {});
+                          },
                           onFieldSubmitted: (value) {
                             loginFunction(context);
                           },

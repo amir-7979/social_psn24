@@ -7,13 +7,11 @@ class EditUserEvent extends RegisterEvent {
   final String name;
   final String family;
   final String username;
-  final int showActivity;
-
-  EditUserEvent(this.name, this.family, this.username, this.showActivity);
+  final String? photoUrl;
+  EditUserEvent({required this.name, required this.family, required this.username, this.photoUrl});
 }
 
 class PhotoUploadEvent extends RegisterEvent {
   final String? file;
-
   PhotoUploadEvent(this.file);
 }

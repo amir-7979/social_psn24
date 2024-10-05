@@ -21,13 +21,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(RegisterLoading());
     try {
       Response response = await _profileRepository.editProfile(firstName: event.name, lastName: event.family, username: event.username, photo: photoUrl);
-      if (response == 200) {
-        settingBloc.add(FetchUserProfileWithPermissionsEvent());
-        photoUrl = null;
+      if (response.data == null) {
         emit(RegisterFinished('ورود با موفقیت انجام شد'));
-      } else {
-        emit(RegisterFailure('خطا در ثبت نام'));
       }
+      settingBloc.add(FetchUserProfileWithPermissionsEvent());
+      photoUrl = null;
+      emit(RegisterFinished('ورود با موفقیت انجام شد'));
     } catch (exception) {
       emit(RegisterFailure('خطا در ثبت نام'));
     }

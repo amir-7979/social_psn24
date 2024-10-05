@@ -92,7 +92,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
                     ? ProfileCacheImage(widget.photoUrl!)
                     : lastPickedImage != null
                     ? Image.file(lastPickedImage!)
-                    : Image.asset('assets/images/profile/profile2.svg',),
+                    : Image.asset('assets/images/profile/profile.png',),
               ),
             ),
             Align(
