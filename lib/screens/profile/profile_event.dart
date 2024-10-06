@@ -44,3 +44,5 @@ class ToggleNotificationEvent extends ProfileEvent {
 class ChangeToPostEvent extends ProfileEvent {}
 
 class ChangeToCommentEvent extends ProfileEvent {}
+
+

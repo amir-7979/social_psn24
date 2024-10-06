@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:social_psn/screens/create_post/create_post_bloc.dart';
 import 'package:video_player/video_player.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../configs/setting/setting_bloc.dart';
@@ -35,7 +36,7 @@ Future<File?> cropImage(String imagePath, BuildContext context) async {
 }
 
 Future<File?>? pickMedia(BuildContext context, bool mySwitch) async {
-  final settings = BlocProvider.of<SettingBloc>(context).state.adminSettings;
+  final settings = BlocProvider.of<CreatePostBloc>(context).adminSettings;
   if (settings == null) return null;
   final photoList = mySwitch ? settings.allowedFormatsForPic : settings.allowedFormatsForPrivatePic;
   final videoList = mySwitch ? settings.allowedFormatsForVideo : settings.allowedFormatsForPrivateVideo;

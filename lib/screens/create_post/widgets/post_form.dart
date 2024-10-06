@@ -100,7 +100,6 @@ class WidgetPostFormState extends State<PostForm> {
       key: _formKey,
       child: Column(
         children: [
-          // Title
           TextFormField(
             controller: widget.titleController,
             keyboardType: TextInputType.name,
@@ -147,7 +146,6 @@ class WidgetPostFormState extends State<PostForm> {
             },
           ),
           SizedBox(height: 16),
-          // Category
           BlocListener<CreatePostBloc, CreatePostState>(
             listener: (context, state) {
               if (state is ResetCategoryState) {
@@ -301,7 +299,6 @@ class WidgetPostFormState extends State<PostForm> {
 
           ),
           SizedBox(height: 16),
-          // Text Body
           Container(
             height: 130.0,
             child: TextFormField(

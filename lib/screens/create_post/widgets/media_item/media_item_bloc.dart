@@ -19,18 +19,19 @@ class MediaItemBloc extends Bloc<MediaItemEvent, MediaItemState> {
   MediaItemBloc({required this.createPostBloc}) : super(MediaItemInitial()) {
     on<UploadMediaItemEvent>(_onUploadMediaItem);
     on<CancelUploadMediaItemEvent>(_onCancelUploadMediaItem);
+    on<DeleteMediaEvent>(_onDeleteMedia);
   }
 
   Future<void> _onUploadMediaItem(UploadMediaItemEvent event, Emitter<MediaItemState> emit) async {
-    emit(MediaItemUploading(event.mediaFile));
+    emit(MediaItemUploading(event.mediaFile!));
+    print('Uploading media');
     try {
-      // Replace with actual upload logic
-      final MutationOptions options = await uploadMediaFile(event.mediaFile, createPostBloc.NewPost!.id!);
+      final MutationOptions options = await uploadMediaFile(event.mediaFile!, createPostBloc.NewPost!.id!);
       final QueryResult result = await graphQLService.mutate(options);
-
       if (result.hasException) {
         emit(MediaItemUploadFailed('Error uploading media'));
       } else {
+        print(result.data.toString());
         Media media = Media.fromJson(result.data!['PostMedia']);
         emit(MediaItemUploaded(media));
       }
@@ -43,4 +44,22 @@ class MediaItemBloc extends Bloc<MediaItemEvent, MediaItemState> {
     // Add cancellation logic
     emit(MediaItemInitial());
   }
+
+  Future<void> _onDeleteMedia(DeleteMediaEvent event, Emitter<MediaItemState> emit) async {
+    try {
+      emit(MediaDeleting(event.mediaId));
+      final MutationOptions options = deleteMedia(event.mediaId);
+      final QueryResult result = await graphQLService.mutate(options);
+      if (result.hasException) {
+        emit(MediaDeleteFailed('خطا در حذف محتوا'));
+      }else{
+        print(result.data.toString());
+        emit(MediaDeleted(event.mediaId));
+        createPostBloc.add(GetMediasEvent());
+      }
+    } catch (e) {
+      emit(MediaDeleteFailed('خطا در حذف محتوا'));
+    }
+  }
+
 }

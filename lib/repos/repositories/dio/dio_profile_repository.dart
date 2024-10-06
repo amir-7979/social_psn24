@@ -51,4 +51,10 @@ class ProfileRepository {
       data: variables,
     );
   }
+
+  Future<Response<dynamic>> getLimitation() async {
+    return _dio.get(
+      '/admin-settings',
+    );
+  }
 }

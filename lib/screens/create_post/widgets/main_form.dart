@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
+import 'package:social_psn/repos/models/admin_setting.dart';
 import 'package:social_psn/repos/models/post.dart';
 import 'package:social_psn/repos/repositories/graphql/create_post_repository.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
+import '../../../repos/models/tag.dart';
 import '../../widgets/white_circular_progress_indicator.dart';
 import '../create_post_bloc.dart';
 
@@ -14,20 +16,38 @@ import '../create_post_bloc.dart';
 import 'post_content.dart';
 import 'post_form.dart'; // Add this import
 
-class MyForm extends StatefulWidget {
+class MainForm extends StatefulWidget {
   final Post? newPost;
 
-  MyForm({this.newPost, Key? key}) : super(key: key);
+  MainForm({this.newPost, Key? key}) : super(key: key);
 
   @override
-  State<MyForm> createState() => _MyFormState();
+  State<MainForm> createState() => _MainFormState();
 }
 
-class _MyFormState extends State<MyForm> {
+class _MainFormState extends State<MainForm> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController titleController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
   TextEditingController longTextController = TextEditingController();
+  AdminSettings? adminSettings;
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (widget.newPost != null) {
+        titleController.text = widget.newPost!.name ?? '';
+        Tag? tag = BlocProvider.of<SettingBloc>(context).state.tagsList?.firstWhere(
+              (element) => element.id == widget.newPost?.tagId,
+          orElse: () => Tag(id: null, title: ''), // Default value instead of null
+        );
+        categoryController.text = tag?.title ?? '';
+        longTextController.text = widget.newPost!.description ?? '';
+      }
+    });
+    adminSettings = BlocProvider.of<CreatePostBloc>(context).adminSettings;
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +82,8 @@ class _MyFormState extends State<MyForm> {
           longTextController,
         ),
         const SizedBox(height: 16),
-        PostContent(),
-        const SizedBox(height: 16),
+        if(adminSettings != null)
+          PostContent(postId: widget.newPost!.id,postMedias: widget.newPost?.medias??[], adminSettings: adminSettings!),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[

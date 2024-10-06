@@ -4,11 +4,17 @@ part of 'media_item_bloc.dart';
 sealed class MediaItemEvent {}
 
 final class UploadMediaItemEvent extends MediaItemEvent {
-  final File mediaFile;
+  final File? mediaFile;
   UploadMediaItemEvent(this.mediaFile);
 }
 
 final class CancelUploadMediaItemEvent extends MediaItemEvent {
   final File mediaFile;
   CancelUploadMediaItemEvent(this.mediaFile);
+}
+
+
+class DeleteMediaEvent extends MediaItemEvent {
+  final String mediaId;
+  DeleteMediaEvent(this.mediaId);
 }

@@ -1,8 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_psn/screens/create_post/widgets/my_form.dart';
+import 'package:social_psn/screens/create_post/widgets/main_form.dart';
 
+import '../../configs/setting/setting_bloc.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/new_page_progress_indicator.dart';
 import 'create_post_bloc.dart';
@@ -42,14 +43,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       CustomSnackBar(content: state.message).build(context),
                     );
-                  } else if (state is MediaUploadFailed) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      CustomSnackBar(content: state.message).build(context),
-                    );
-                  } else if (state is MediaDeleteFailed) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      CustomSnackBar(content: state.message).build(context),
-                    );
+
                   }else if (state is MediaOrderChangeFailed) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       CustomSnackBar(content: state.message).build(context),
@@ -69,7 +63,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   return false;
                 },
                 builder: (context, state) {
-                  return state is PostCreationSucceed ? MyForm(newPost: state.post,) : state is CreatingNewPost ? NewPageProgressIndicator() : /*Center(
+                  return state is PostCreationSucceed ? MainForm(newPost: state.post) : state is CreatingNewPost ? NewPageProgressIndicator() : /*Center(
                     child: Text(
                       AppLocalizations.of(context)!
                           .translateNested("error", "loadingPageError"),
@@ -78,7 +72,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ),
                     ),
                   )*/
-                  MyForm();
+                  MainForm();
                 },
               ),
 
