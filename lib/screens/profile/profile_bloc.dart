@@ -40,7 +40,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final gql.QueryOptions options = getUserProfile(event.id);
       final gql.QueryResult result = await graphQLService.query(options);
       if (result.hasException) {
-        print(result.exception.toString());
         emit(ProfileError('خطا در دریافت اطلاعات'));
         return;
       }
@@ -48,7 +47,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final Profile profile = Profile.fromJson(data['profile']);
       emit(ProfileInfoLoaded(profile: profile));
     } catch (exception) {
-      print(exception.toString());
       emit(ProfileError('خطا در دریافت اطلاعات'));
     }
   }
@@ -74,15 +72,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final gql.QueryOptions options = getUserActivities(event.id!);
       final gql.QueryResult result = await graphQLService.query(options);
       if (result.hasException) {
-        print(result.hasException.toString());
         emit(activityFailureState('خطا در دریافت اطلاعات'));
       }
-      print(result.data.toString());
       final Map<String, dynamic> data = result.data!['profile'];
-      print(data.toString());
       emit(activitySuccessState(data));
     } catch (exception) {
-      print(exception.toString());
       emit(activityFailureState('خطا در دریافت اطلاعات'));
     }
   }
@@ -98,7 +92,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final gql.QueryResult result =
           await GraphQLService.instance.client.query(options);
       if (result.hasException) {
-        print(result.exception.toString());
       }
       final List<Content> contents =
           (result.data?['mycontents'] as List<dynamic>?)
@@ -138,7 +131,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final gql.QueryResult result =
           await GraphQLService.instance.client.query(options);
       if (result.hasException) {
-        print(result.exception.toString());
       }
       final List<Comment> comments =
           (result.data?['comments'] as List<dynamic>?)
@@ -155,7 +147,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     } catch (error) {
       try {
-        print(error.toString());
         pagingController.error = error;
       } catch (e) {
         print(e.toString());
@@ -229,7 +220,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final gql.MutationOptions options = enableUserNotification(event.id);
       final gql.QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
-        print(result.exception.toString());
         emit(ToggleNotificationFailure('خطا در عملیات'));
       } else {
         emit(ToggleNotificationSuccess());

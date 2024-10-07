@@ -193,7 +193,7 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                     height: 20,
                     width: 20,
                     child: Text(
-                      widget.post.upVotesString,
+                      widget.post.downVotesString,
                       overflow: TextOverflow.fade,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: whiteColor,

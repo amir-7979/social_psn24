@@ -115,7 +115,9 @@ class ContentItem extends StatelessWidget {
               // white icon
               itemBuilder: (context) => [
                 PopupMenuItem(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRoutes.createMedia, arguments: content.id);
+                  },
                   value: 1,
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Row(

@@ -91,7 +91,6 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
             current is ProfileError;
       },
       builder: (context, state) {
-        print(state);
         if (state is ProfileInfoLoading) {
           return ShimmerUserInfo(id: profileId);
         } else if (state is ProfileError) {

@@ -11,29 +11,18 @@ import '../../../../repos/models/media.dart';
 import '../../../widgets/custom_snackbar.dart';
 import '../../create_post_bloc.dart';
 
-class MediaItem extends StatefulWidget {
+class MediaItem extends StatelessWidget {
   final MediaItemBloc mediaItemBloc;
   final Media postMedia;
   final int index;
   final File? file;
 
-  MediaItem({required this.mediaItemBloc, required this.postMedia, required this.index, this.file});
-
-  @override
-  _MediaItemState createState() => _MediaItemState();
-}
-
-class _MediaItemState extends State<MediaItem> {
-  late MediaItemBloc mediaItemBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    print(widget.file == null);
-    if (widget.file != null) {
-      mediaItemBloc.add(UploadMediaItemEvent(widget.file!));
-    }
-  }
+  MediaItem({
+    required this.mediaItemBloc,
+    required this.postMedia,
+    required this.index,
+    this.file,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,87 +30,46 @@ class _MediaItemState extends State<MediaItem> {
       value: mediaItemBloc,
       child: BlocListener<MediaItemBloc, MediaItemState>(
         listener: (context, state) {
-          if (state is MediaUploadFailed) {
+          if (state is MediaUploadFailed ) {
             ScaffoldMessenger.of(context).showSnackBar(
               CustomSnackBar(content: state.message).build(context),
             );
-          } else if (state is MediaDeleteFailed) {
+          }else if (state is MediaDeleteFailed) {
             ScaffoldMessenger.of(context).showSnackBar(
               CustomSnackBar(content: state.message).build(context),
             );
           }
         },
-        child: Container(
-          width: 110,
-          height: 110,
-          child: Stack(
-            children: [
-              FittedBox(
-                fit: BoxFit.cover,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                    width: 110,
-                    height: 110,
-                    child: CacheImage(widget.postMedia.getMediaUrl()),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsetsDirectional.symmetric(horizontal: 4, vertical: 4),
-                child: SizedBox(
-                  width: 110,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        height: 20,
-                        width: 20,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        child: Center(
-                          child: Text(
-                            widget.index.toString(),
-                            style: Theme.of(context).textTheme.titleLarge!.copyWith(color: whiteColor),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                          height: 20,
-                          width: 20,
-                          child: BlocBuilder<MediaItemBloc, MediaItemState>(
-                            buildWhen: (previous, current) => current is MediaDeleting || current is MediaDeleteFailed,
-                            builder: (context, state) {
-                              return (state is MediaDeleting && state.mediaId == widget.postMedia.id)
-                                  ? Center(child: WhiteCircularProgressIndicator())
-                                  : Center(
-                                child: IconButton(
-                                  padding: EdgeInsets.zero,
-                                  color: Theme.of(context).colorScheme.error,
-                                  icon: FaIcon(size: 17, FontAwesomeIcons.thinClose, color: whiteColor),
-                                  onPressed: () {
-                                    mediaItemBloc.add(DeleteMediaEvent(widget.postMedia.id!));
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: _buildMediaItemContent(context),
+      ),
+    );
+  }
+
+  Widget _buildMediaItemContent(BuildContext context) {
+    return Stack(
+      children: [
+        _buildMediaThumbnail(),
+        _buildMediaControls(context),
+      ],
+    );
+  }
+
+  Widget _buildMediaThumbnail() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: CacheImage(postMedia.getMediaUrl()),
+    );
+  }
+
+  Widget _buildMediaControls(BuildContext context) {
+    return Positioned(
+      top: 8,
+      right: 8,
+      child: IconButton(
+        icon: Icon(Icons.close, color: Colors.red),
+        onPressed: () {
+          mediaItemBloc.add(DeleteMediaEvent(postMedia.id!));
+        },
       ),
     );
   }

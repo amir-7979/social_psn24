@@ -99,7 +99,7 @@ class Post {
     }
   }
 
-  String get viewCountString => _formatCount(commentsCount);
+  String get viewCountString => _formatCount(viewCount);
 
   /// Formatted string for comments count.
   String get commentsCountString => _formatCount(commentsCount);

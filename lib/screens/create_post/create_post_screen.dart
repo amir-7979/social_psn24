@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/screens/create_post/widgets/main_form.dart';
@@ -16,14 +15,18 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-
+  String? postId;
+  didChangeDependencies() {
+    super.didChangeDependencies();
+    postId = ModalRoute.of(context)!.settings.arguments as String?;
+  }
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-  create: (context) => CreatePostBloc(),
-  child: Builder(
-    builder: (context) {
-      return Padding(
+      //get arguments from route
+      create: (context) => CreatePostBloc(postId: postId),
+      child: Builder(builder: (context) {
+        return Padding(
           padding: const EdgeInsetsDirectional.all(14),
           child: InkWell(
             highlightColor: Colors.transparent,
@@ -37,33 +40,38 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 borderRadius: BorderRadius.circular(16),
                 color: Theme.of(context).colorScheme.background,
               ),
-              child:BlocConsumer<CreatePostBloc, CreatePostState>(
+              child: BlocConsumer<CreatePostBloc, CreatePostState>(
                 listener: (context, state) {
                   if (state is PostCreationFailed) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       CustomSnackBar(content: state.message).build(context),
                     );
-
-                  }else if (state is MediaOrderChangeFailed) {
+                  } else if (state is MediaOrderChangeFailed) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       CustomSnackBar(content: state.message).build(context),
                     );
-                  }else if (state is SubmittingCreateFailed) {
+                  } else if (state is SubmittingCreateFailed) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       CustomSnackBar(content: state.message).build(context),
                     );
-                  }else if (state is SubmittingCreateSucceed) {
+                  } else if (state is SubmittingCreateSucceed) {
                     Navigator.of(context).pop();
                   }
                 },
                 buildWhen: (previous, current) {
-                  if (current is CreatingNewPost || current is PostCreationSucceed || current is PostCreationFailed) {
+                  if (current is CreatingNewPost ||
+                      current is PostCreationSucceed ||
+                      current is PostCreationFailed) {
                     return true;
                   }
                   return false;
                 },
                 builder: (context, state) {
-                  return state is PostCreationSucceed ? MainForm(newPost: state.post) : state is CreatingNewPost ? NewPageProgressIndicator() : /*Center(
+                  return state is PostCreationSucceed
+                      ? MainForm(newPost: state.post)
+                      : state is CreatingNewPost
+                          ? NewPageProgressIndicator()
+                          : /*Center(
                     child: Text(
                       AppLocalizations.of(context)!
                           .translateNested("error", "loadingPageError"),
@@ -72,15 +80,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ),
                     ),
                   )*/
-                  MainForm();
+                          MainForm();
                 },
               ),
-
             ),
           ),
         );
-    }
-  ),
-);
+      }),
+    );
   }
 }

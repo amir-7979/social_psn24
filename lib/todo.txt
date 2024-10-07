@@ -1,8 +1,4 @@
-
-//section2
-todo bug in like section
-
-todo admin setting
+todo change navigation
 todo complete upload media
 todo bug in showing user created media
 
