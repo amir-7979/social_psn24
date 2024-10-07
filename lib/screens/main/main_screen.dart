@@ -88,7 +88,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
           children: [
             Navigator(
               key: navigatorKey,
-
               initialRoute: AppRoutes.home,
               observers: [_navigatorObserver],
               onGenerateRoute: (RouteSettings settings) {

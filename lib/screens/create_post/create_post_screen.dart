@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/screens/create_post/widgets/main_form.dart';
 
 import '../../configs/setting/setting_bloc.dart';
+import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/new_page_progress_indicator.dart';
 import 'create_post_bloc.dart';
@@ -55,7 +56,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       CustomSnackBar(content: state.message).build(context),
                     );
                   } else if (state is SubmittingCreateSucceed) {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pushReplacementNamed(AppRoutes.home);
                   }
                 },
                 buildWhen: (previous, current) {

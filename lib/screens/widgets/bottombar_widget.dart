@@ -64,7 +64,7 @@ class _MyStylishBottomBarState extends State<MyStylishBottomBar> {
     String currentRoute = widget.navigatorObserver.currentRoute;
 
     if (currentRoute != targetRoute) {
-      widget.navigatorKey.currentState!.pushReplacementNamed(targetRoute);
+      widget.navigatorKey.currentState!.pushNamed(targetRoute);
     }
   }
 

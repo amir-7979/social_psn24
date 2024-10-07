@@ -100,14 +100,12 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
 
   Future<void> _fetchPostDetails(String postId, Emitter<CreatePostState> emit) async {
     try {
-      print('fetching post details');
       final QueryOptions options = postsQuery(id: postId);
       final QueryResult result = await graphQLService.query(options);
       if (result.hasException) {
         print(result.hasException.toString());
         emit(PostCreationFailed('خطا در ایجاد پست'));
       } else {
-        print(result.data.toString());
         final Post post = Post.fromJson(result.data!['posts'][0]);
         emit(PostCreationSucceed(post: post, adminSettings: adminSettings!));
       }

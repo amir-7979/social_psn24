@@ -1,29 +1,41 @@
 import 'package:flutter/material.dart';
 
 import '../screens/main/widgets/screen_builder.dart';
+import 'utilities.dart';
 
 class CustomNavigatorObserver extends NavigatorObserver {
   final ValueNotifier<int> currentIndexNotifier;
   String currentRoute = AppRoutes.home;
+  bool _isNavigatingToHome = false; // Flag to track if we're navigating to home
 
   CustomNavigatorObserver(this.currentIndexNotifier);
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    _updateCurrentIndex(route.settings.name);
+    if (route.settings.name == AppRoutes.home && !_isNavigatingToHome) {
+      _isNavigatingToHome = true; // Set the flag to prevent looping
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          AppRoutes.home,
+              (Route<dynamic> route) => false,
+        );
+        _isNavigatingToHome = false; // Reset the flag after the navigation is complete
+      });
+    }
     super.didPush(route, previousRoute);
+    _updateCurrentIndex(route.settings.name);
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    _updateCurrentIndex(previousRoute?.settings.name);
     super.didPop(route, previousRoute);
+    _updateCurrentIndex(previousRoute?.settings.name);
   }
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    _updateCurrentIndex(newRoute?.settings.name);
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    _updateCurrentIndex(newRoute?.settings.name);
   }
 
   void _updateCurrentIndex(String? routeName) {
