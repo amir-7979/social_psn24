@@ -15,12 +15,9 @@ import '../utilities.dart';
 import 'media_item/media_item.dart';
 import 'media_item/media_item_bloc.dart';
 
-class PostContent extends StatefulWidget {
-  final String postId;
-  final List<Media> postMedias;
-  final AdminSettings adminSettings;
 
-  PostContent({required this.postId, required this.postMedias, required this.adminSettings});
+class PostContent extends StatefulWidget {
+  PostContent();
 
   @override
   State<PostContent> createState() => _PostContentState();
@@ -28,30 +25,24 @@ class PostContent extends StatefulWidget {
 
 class _PostContentState extends State<PostContent> {
   late CreatePostBloc createPostBloc;
+  late AdminSettings adminSettings;
   ValueNotifier<bool> advanceSwitchController = ValueNotifier<bool>(false);
   final picker = ImagePicker();
-  List<MediaItem> mediaItems = [];
   List<String> permissions = [];
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     createPostBloc = BlocProvider.of<CreatePostBloc>(context);
+    adminSettings = createPostBloc.adminSettings!;
     permissions = BlocProvider.of<SettingBloc>(context).state.profile!.permissions ?? [];
+
   }
 
   void _addMediaItem(File file) {
     MediaItemBloc mediaItemBloc = MediaItemBloc(createPostBloc: createPostBloc);
-    mediaItemBloc.add(UploadMediaItemEvent(file));
-
-    setState(() {
-      mediaItems.add(MediaItem(
-        mediaItemBloc: mediaItemBloc,
-        postMedia: Media(id: 'placeholder', loc: file.path, type: 'image', order: mediaItems.length + 1),
-        index: mediaItems.length + 1,
-        file: file,
-      ));
-    });
+    mediaItemBloc.add(UploadMediaItemEvent(mediaFile: file));
+    createPostBloc.add(RebuildMediaListEvent());
   }
 
   @override
@@ -68,8 +59,8 @@ class _PostContentState extends State<PostContent> {
           padding: const EdgeInsetsDirectional.only(bottom: 4),
           child: Text(
             advanceSwitchController.value == true
-                ? widget.adminSettings.getPrivateAllowedFormats()
-                : widget.adminSettings.getPublicAllowedFormats(),
+                ? adminSettings.getPrivateAllowedFormats()
+                : adminSettings.getPublicAllowedFormats(),
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: Theme.of(context).hintColor,
                 fontWeight: FontWeight.w400),
@@ -82,7 +73,7 @@ class _PostContentState extends State<PostContent> {
           padding: const EdgeInsetsDirectional.only(top: 8),
           child: Text(
             _buildMediaInfoText(context, advanceSwitchController.value,
-                widget.adminSettings),
+                adminSettings),
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: Theme.of(context).hintColor,
               fontWeight: FontWeight.w400,
@@ -144,7 +135,7 @@ class _PostContentState extends State<PostContent> {
           ),
           onChanged: (val) {
             createPostBloc.add(ResetCategoryEvent());
-            setState(() {});
+
           },
         ),
       ],
@@ -168,14 +159,19 @@ class _PostContentState extends State<PostContent> {
           padding: EdgeInsets.all(8),
           borderType: BorderType.RRect,
           radius: Radius.circular(16),
-          child: _buildContent(context),
+          child:  BlocBuilder<CreatePostBloc, CreatePostState>(
+            buildWhen: (previous, current) => current is RebuildMediaListState,
+            builder: (context, state) {
+    return _buildContent(context);
+  },
+),
         ),
       ),
     );
   }
 
   Widget _buildContent(BuildContext context) {
-    return widget.postMedias.isEmpty
+    return createPostBloc.newPost!.medias!.isEmpty
         ? Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -200,24 +196,24 @@ class _PostContentState extends State<PostContent> {
 
   Widget _buildMediaList() {
     return ReorderableWrap(
-      onReorder: (oldIndex, newIndex) {
-        if (widget.postId != null) {
-          setState(() {
-            final item = widget.postMedias.removeAt(oldIndex);
-            widget.postMedias.insert(newIndex, item);
-            createPostBloc.add(ChangeMediaOrderEvent(
-              widget.postMedias.map((e) => e.id!).toList(),
-              widget.postId!,
-            ));
-          });
-        }
-
-      },
-      children: mediaItems.map((mediaItem) => mediaItem).toList(),
+      needsLongPressDraggable: false,
+      spacing: 8,
+      runSpacing: 8,
+      onReorder: (oldIndex, newIndex) => createPostBloc.add(ChangeMediaOrderEvent(oldIndex: oldIndex, newIndex: newIndex)),
+      children: createPostBloc.newPost!.medias!.asMap().entries.map((entry) {
+        int index = entry.key;
+        var mediaItem = entry.value;
+        MediaItemBloc mediaItemBloc = MediaItemBloc(createPostBloc: createPostBloc);
+        return MediaItem(
+          mediaItemBloc: mediaItemBloc,
+          postMedia: mediaItem,
+          index: index + 1,
+        );
+      }).toList(),
     );
   }
-  String _buildMediaInfoText(
-      BuildContext context, bool isPrivate, AdminSettings adminSettings) {
+
+  String _buildMediaInfoText(BuildContext context, bool isPrivate, AdminSettings adminSettings) {
     final imageLimit = isPrivate
         ? adminSettings.maxSizeForPicPrivateMB
         : adminSettings.maxSizeForPicMB;

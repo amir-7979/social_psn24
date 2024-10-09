@@ -83,7 +83,7 @@ class _MainFormState extends State<MainForm> {
         ),
         const SizedBox(height: 16),
         if(adminSettings != null)
-          PostContent(postId: widget.newPost!.id, postMedias: widget.newPost?.medias??[], adminSettings: adminSettings!),
+          PostContent(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[

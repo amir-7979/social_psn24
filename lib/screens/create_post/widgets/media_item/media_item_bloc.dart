@@ -24,16 +24,16 @@ class MediaItemBloc extends Bloc<MediaItemEvent, MediaItemState> {
 
   Future<void> _onUploadMediaItem(UploadMediaItemEvent event, Emitter<MediaItemState> emit) async {
     emit(MediaItemUploading(event.mediaFile!));
-    print('Uploading media');
+
     try {
-      final MutationOptions options = await uploadMediaFile(event.mediaFile!, createPostBloc.NewPost!.id!);
+      final MutationOptions options = await uploadMediaFile(event.mediaFile!, createPostBloc.newPost!.id, createPostBloc.newPost!.medias!.length + 1);
       final QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
         emit(MediaItemUploadFailed('Error uploading media'));
       } else {
-        print(result.data.toString());
         Media media = Media.fromJson(result.data!['PostMedia']);
         emit(MediaItemUploaded(media));
+        createPostBloc.add(AddItemEvent(media));
       }
     } catch (e) {
       emit(MediaItemUploadFailed('Error uploading media'));
@@ -53,9 +53,15 @@ class MediaItemBloc extends Bloc<MediaItemEvent, MediaItemState> {
       if (result.hasException) {
         emit(MediaDeleteFailed('خطا در حذف محتوا'));
       }else{
-        print(result.data.toString());
-        emit(MediaDeleted(event.mediaId));
-        createPostBloc.add(GetMediasEvent());
+        print(result.data);
+        final bool deleteSuccess = result.data?['DeleteMedia'] ?? false;
+        if (deleteSuccess) {
+          print(deleteSuccess);
+          emit(MediaDeleted(event.mediaId));
+          createPostBloc.add(RemoveItemEvent(event.mediaId));
+        } else {
+          emit(MediaDeleteFailed('خطا در حذف محتوا'));
+        }
       }
     } catch (e) {
       emit(MediaDeleteFailed('خطا در حذف محتوا'));

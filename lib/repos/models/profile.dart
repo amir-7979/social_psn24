@@ -22,7 +22,7 @@ class Profile {
   final int? showActivity;
   final String? fullName;
   final bool? status;
-  final List<String>? role;
+  final List<Map<String, String>>? roles;
   final List<String>? permissions;
   final String url = 'https://media.psn24.ir/';
 
@@ -50,7 +50,7 @@ class Profile {
     this.showActivity,
     this.fullName,
     this.status,
-    this.role,
+    this.roles,
     this.permissions,
   });
 
@@ -66,13 +66,14 @@ class Profile {
     if (photoUrl != null && photoUrl.isNotEmpty && !photoUrl.startsWith('http')) {
       photoUrl = 'https://media.psn24.ir/$photoUrl';
     }
+    String? newDisplayName = json['display_name'] != null ? json['display_name'] as String? : json['roles'][0]['display_name'] as String?;
 
     return Profile(
       id: json['id'] as int?,
       globalId: json['global_id'] as int?,
       name: json['name'] as String?,
       family: json['family'] as String?,
-      displayName: json['display_name'] as String?,
+      displayName: newDisplayName,
       username: username,
       photo: photoUrl,
       phone: json['phone'] as String?,
@@ -93,7 +94,12 @@ class Profile {
       showActivity: json['show_activity'] as int?,
       fullName: json['full_name'] as String?,
       status: json['status'] as bool?,
-      role: (json['role'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      roles: (json['roles'] as List<dynamic>?)
+          ?.map((role) => {
+        'name': role['name']?.toString() ?? '',
+        'display_name': role['display_name']?.toString() ?? ''
+      })
+          .toList(),
       permissions: (json['permissions'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),

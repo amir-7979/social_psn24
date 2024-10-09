@@ -5,7 +5,7 @@ sealed class MediaItemEvent {}
 
 final class UploadMediaItemEvent extends MediaItemEvent {
   final File? mediaFile;
-  UploadMediaItemEvent(this.mediaFile);
+  UploadMediaItemEvent({required this.mediaFile});
 }
 
 final class CancelUploadMediaItemEvent extends MediaItemEvent {

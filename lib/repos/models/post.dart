@@ -21,7 +21,7 @@ class Post {
   int? upVotes;
   int? viewCount;
   final Creator? creator;
-  final List<Media>? medias;
+  List<Media>? medias;
   bool voteUp = false;
   bool voteDown = false;
   bool isLiked = false;

@@ -5,13 +5,12 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
-Future<MutationOptions<Object?>> uploadMediaFile(File file, String postId,
-    {int? order}) async {
+Future<MutationOptions<Object?>> uploadMediaFile(File file, String postId, int order) async {
   Map<String, dynamic> variables = {
     'mediaFile': await multipartFileFrom(file),
     'postId': postId,
+    'order': order,
   };
-  if (order != null) variables['order'] = order;
 
   return MutationOptions(
     document: gql('''

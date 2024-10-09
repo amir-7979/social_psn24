@@ -29,16 +29,17 @@ final class SubmittingPostLoading extends CreatePostState {}
 
 final class SubmittingCreateSucceed extends CreatePostState {}
 
-final class  SubmittingCreateFailed extends CreatePostState {
+final class  SubmittingFailed extends CreatePostState {
   final String message;
 
-  SubmittingCreateFailed(this.message);
+  SubmittingFailed(this.message);
 }
 
 final class ResetCategoryState extends CreatePostState {}
-
 
 final class CancelUploadMediaEvent extends CreatePostEvent {
   final File mediaFile;
   CancelUploadMediaEvent(this.mediaFile);
 }
+
+final class RebuildMediaListState extends CreatePostState {}

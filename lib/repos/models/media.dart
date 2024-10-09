@@ -5,7 +5,7 @@ class Media {
   final String? loc;
   final String? type;
   final String url = 'https://media.psn24.ir/';
-  final int? order;
+  int? order;
   final List<Thumbnail>? thumbnails;
 
   Media({this.id, this.loc, this.type, this.order, this.thumbnails});

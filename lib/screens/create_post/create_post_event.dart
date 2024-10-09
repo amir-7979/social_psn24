@@ -5,10 +5,10 @@ abstract class CreatePostEvent {}
 
 
 class ChangeMediaOrderEvent extends CreatePostEvent {
-  final List<String> newOrder;
-  final String postId;
+  final int oldIndex;
+  final int newIndex;
 
-  ChangeMediaOrderEvent(this.newOrder, this.postId);
+  ChangeMediaOrderEvent({required this.oldIndex, required this.newIndex});
 }
 
 class CreateNewPostEvent extends CreatePostEvent {}
@@ -29,6 +29,18 @@ class SubmitNewPostEvent extends CreatePostEvent {
 }
 
 class GetMediasEvent extends CreatePostEvent {}
+
+class AddItemEvent extends CreatePostEvent {
+  final Media media;
+  AddItemEvent(this.media);
+}
+
+class RemoveItemEvent extends CreatePostEvent {
+  final String mediaId;
+  RemoveItemEvent(this.mediaId);
+}
+
+class RebuildMediaListEvent extends CreatePostEvent {}
 
 
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/screens/create_post/widgets/main_form.dart';
 
+import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/setting_bloc.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
@@ -51,7 +52,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       CustomSnackBar(content: state.message).build(context),
                     );
-                  } else if (state is SubmittingCreateFailed) {
+                  } else if (state is SubmittingFailed) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       CustomSnackBar(content: state.message).build(context),
                     );
@@ -72,7 +73,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ? MainForm(newPost: state.post)
                       : state is CreatingNewPost
                           ? NewPageProgressIndicator()
-                          : /*Center(
+                          : Center(
                     child: Text(
                       AppLocalizations.of(context)!
                           .translateNested("error", "loadingPageError"),
@@ -80,8 +81,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
-                  )*/
-                          MainForm();
+                  );
                 },
               ),
             ),

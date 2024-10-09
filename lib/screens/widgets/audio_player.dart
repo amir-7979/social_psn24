@@ -23,7 +23,7 @@ class _MyAudioPlayerState extends State<MyAudioPlayer> {
     flickManager = FlickManager(
       videoPlayerController:
       VideoPlayerController.networkUrl(Uri.parse(widget.media.getAudioUrl() ?? '')),
-      autoPlay: false,
+      autoPlay: true,
       autoInitialize: true,
     );
   }
