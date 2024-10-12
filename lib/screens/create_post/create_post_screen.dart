@@ -4,6 +4,7 @@ import 'package:social_psn/screens/create_post/widgets/main_form.dart';
 
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/setting_bloc.dart';
+import '../../repos/models/post.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/new_page_progress_indicator.dart';
@@ -73,7 +74,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ? MainForm(newPost: state.post)
                       : state is CreatingNewPost
                           ? NewPageProgressIndicator()
-                          : Center(
+                          : MainForm();
+
+                  /*Center(
                     child: Text(
                       AppLocalizations.of(context)!
                           .translateNested("error", "loadingPageError"),
@@ -81,7 +84,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
-                  );
+                  );*/
                 },
               ),
             ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:meta/meta.dart';
 
@@ -15,7 +16,7 @@ part 'media_item_state.dart';
 class MediaItemBloc extends Bloc<MediaItemEvent, MediaItemState> {
   final CreatePostBloc createPostBloc;
   final GraphQLClient graphQLService = GraphQLService.instance.client;
-
+  Media media = Media();
   MediaItemBloc({required this.createPostBloc}) : super(MediaItemInitial()) {
     on<UploadMediaItemEvent>(_onUploadMediaItem);
     on<CancelUploadMediaItemEvent>(_onCancelUploadMediaItem);
@@ -24,16 +25,14 @@ class MediaItemBloc extends Bloc<MediaItemEvent, MediaItemState> {
 
   Future<void> _onUploadMediaItem(UploadMediaItemEvent event, Emitter<MediaItemState> emit) async {
     emit(MediaItemUploading(event.mediaFile!));
-
     try {
       final MutationOptions options = await uploadMediaFile(event.mediaFile!, createPostBloc.newPost!.id, createPostBloc.newPost!.medias!.length + 1);
       final QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
         emit(MediaItemUploadFailed('Error uploading media'));
       } else {
-        Media media = Media.fromJson(result.data!['PostMedia']);
+        media = Media.fromJson(result.data!['PostMedia']);
         emit(MediaItemUploaded(media));
-        createPostBloc.add(AddItemEvent(media));
       }
     } catch (e) {
       emit(MediaItemUploadFailed('Error uploading media'));

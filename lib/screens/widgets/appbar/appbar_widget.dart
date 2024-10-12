@@ -235,6 +235,9 @@ class _SocialAppBarState extends State<SocialAppBar> {
                     color: Theme.of(context).appBarTheme.iconTheme!.color,
                   ),
                   onPressed: () {
+/*
+                    if(ModalRoute.of(context)?.settings.name == AppRoutes.myProfile)
+*/
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {

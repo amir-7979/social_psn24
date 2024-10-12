@@ -80,6 +80,7 @@ dependencies:
   file_picker: ^8.0.7
   just_audio: ^0.9.40
   flutter_local_notifications: ^17.2.2
+  video_thumbnail: ^0.5.3
 
 dev_dependencies:
   flutter_test:

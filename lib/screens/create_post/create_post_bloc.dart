@@ -11,12 +11,16 @@ import 'package:social_psn/repos/repositories/graphql/post_repository.dart';
 import 'package:social_psn/screens/profile/profile_bloc.dart';
 
 import '../../repos/models/admin_setting.dart';
+import '../../repos/models/create_media.dart';
 import '../../repos/models/create_new_post.dart';
 import '../../repos/repositories/dio/dio_profile_repository.dart';
 import '../../repos/repositories/graphql/create_post_repository.dart';
 import '../../services/graphql_service.dart';
+import 'widgets/media_item/media_item.dart';
+import 'widgets/media_item/media_item_bloc.dart';
 
 part 'create_post_event.dart';
+
 part 'create_post_state.dart';
 
 class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
@@ -26,9 +30,9 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
   AdminSettings? adminSettings;
   String? newPostId;
   Post? newPost;
+  List<MediaItem> mediaItems = [];
 
   CreatePostBloc({this.postId}) : super(CreateMediaInitial()) {
-    on<ChangeMediaOrderEvent>(_onChangeMediaOrder);
     on<CreateNewPostEvent>(_onCreatePost);
     on<EditPostEvent>(_onEditPost);
     on<ResetCategoryEvent>(_onResetCategory);
@@ -45,7 +49,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       final MutationOptions options = createNewPost();
       final QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
-         return null;
+        return null;
       } else {
         return CreateNewPost.fromJson(result.data!['createPost']);
       }
@@ -66,7 +70,8 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     }
   }
 
-  Future<void> initializePost(CreateNewPost? createdPost, AdminSettings? fetchedSettings, Emitter<CreatePostState> emit) async {
+  Future<void> initializePost(CreateNewPost? createdPost,
+      AdminSettings? fetchedSettings, Emitter<CreatePostState> emit) async {
     if (createdPost != null && fetchedSettings != null) {
       newPostId = createdPost.id;
       adminSettings = fetchedSettings;
@@ -76,7 +81,8 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     }
   }
 
-  Future<void> _fetchPostDetails(String postId, Emitter<CreatePostState> emit) async {
+  Future<void> _fetchPostDetails(
+      String postId, Emitter<CreatePostState> emit) async {
     try {
       print(postId);
       final QueryOptions options = postsQuery(id: postId);
@@ -87,6 +93,12 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       } else {
         final Post post = Post.fromJson(result.data!['posts'][0]);
         newPost = post;
+        mediaItems = post.medias!
+            .map((e) => MediaItem(
+                mediaItemBloc: MediaItemBloc(createPostBloc: this),
+                createMedia: CreateMedia.network(media: e),
+                index: post.medias!.indexOf(e) + 1))
+            .toList();
         emit(PostCreationSucceed(post: post, adminSettings: adminSettings!));
       }
     } catch (e) {
@@ -97,10 +109,12 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
 
   //event handlers
 
-  Future<void> _onCreatePost(CreateNewPostEvent event, Emitter<CreatePostState> emit) async {
+  Future<void> _onCreatePost(
+      CreateNewPostEvent event, Emitter<CreatePostState> emit) async {
     try {
       emit(CreatingNewPost());
-      final results = await Future.wait([_createNewPost(), _fetchLimitations()]);
+      final results =
+          await Future.wait([_createNewPost(), _fetchLimitations()]);
       final CreateNewPost? createdPost = results[0] as CreateNewPost?;
       final AdminSettings? fetchedSettings = results[1] as AdminSettings?;
       await initializePost(createdPost, fetchedSettings, emit);
@@ -109,7 +123,8 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     }
   }
 
-  Future<void> _onEditPost(EditPostEvent event, Emitter<CreatePostState> emit) async {
+  Future<void> _onEditPost(
+      EditPostEvent event, Emitter<CreatePostState> emit) async {
     try {
       emit(CreatingNewPost());
       final AdminSettings? fetchedSettings = await _fetchLimitations();
@@ -120,15 +135,25 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     }
   }
 
-  Future<void> _onSubmitPost(SubmitNewPostEvent event, Emitter<CreatePostState> emit) async {
+  Future<void> _onSubmitPost(
+      SubmitNewPostEvent event, Emitter<CreatePostState> emit) async {
     try {
       emit(SubmittingPostLoading());
-      final MutationOptions options = SubmitNewPost(id: newPostId!, title: event.title, tag: event.category, text: event.longText);
+      bool order = await reOrderMedias();
+      if (!order) {
+        emit(SubmittingFailed('خطا در ایجاد پست'));
+        return;
+      }
+      final MutationOptions options = SubmitNewPost(
+          id: newPostId!,
+          title: event.title,
+          tag: event.category,
+          text: event.longText);
       final QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
         emit(SubmittingFailed('خطا در ایجاد پست'));
         return;
-      }else {
+      } else {
         emit(SubmittingCreateSucceed());
       }
     } catch (e) {
@@ -136,43 +161,36 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     }
   }
 
-  void _onResetCategory(ResetCategoryEvent event, Emitter<CreatePostState> emit) => emit(ResetCategoryState());
-
-  Future<void> _onChangeMediaOrder(ChangeMediaOrderEvent event, Emitter<CreatePostState> emit) async {
-    final copeMedias = newPost!.medias!;
-    try {
-      final item = newPost!.medias!.removeAt(event.oldIndex);
-      newPost!.medias!.insert(event.newIndex, item);
-      List<String> newOrder = newPost!.medias!.map((e) => e.id!).toList();
-      final MutationOptions options = updateMediaOrder(newOrder, newPost!.id);
-      final QueryResult result = await graphQLService.mutate(options);
-      if (result.hasException) {
-        emit(MediaOrderChangeFailed('خطا در تغییر ترتیب محتوا'));
-        newPost!.medias = copeMedias;
-        return;
-      }
-      emit(MediaOrderChanged());
-    } catch (e) {
-      emit(MediaOrderChangeFailed('خطا در تغییر ترتیب محتوا'));
-      newPost!.medias = copeMedias;
-      return;
-    }
+  Future<bool> reOrderMedias() async {
+    List<String> newOrder = newPost!.medias!.map((e) => e.id!).toList();
+    final MutationOptions options = updateMediaOrder(newOrder, newPost!.id);
+    final QueryResult result = await graphQLService.mutate(options);
+    if (result.hasException) return false;
+    return true;
   }
 
-  FutureOr<void> _onRemoveItemEvent(RemoveItemEvent event, Emitter<CreatePostState> emit) {
+  void _onResetCategory(
+          ResetCategoryEvent event, Emitter<CreatePostState> emit) =>
+      emit(ResetCategoryState());
+
+  FutureOr<void> _onRemoveItemEvent(
+      RemoveItemEvent event, Emitter<CreatePostState> emit) {
     if (newPost != null) {
-      print('remove item');
-      newPost!.medias!.removeWhere((element) => element.id == event.mediaId);
+      mediaItems.removeWhere(
+          (element) => element.createMedia.media!.id == event.mediaId);
       emit(RebuildMediaListState());
     }
   }
 
-  FutureOr<void> _onAddItemEvent(AddItemEvent event, Emitter<CreatePostState> emit) {
+  FutureOr<void> _onAddItemEvent(
+      AddItemEvent event, Emitter<CreatePostState> emit) {
     if (newPost != null) {
-      newPost!.medias!.add(event.media);
+      //newPost!.medias!.add(event.media);
       emit(RebuildMediaListState());
     }
   }
 
-  void _onRebuildMediaListEvent(RebuildMediaListEvent event, Emitter<CreatePostState> emit) => emit(RebuildMediaListState());
+  void _onRebuildMediaListEvent(
+          RebuildMediaListEvent event, Emitter<CreatePostState> emit) =>
+      emit(RebuildMediaListState());
 }

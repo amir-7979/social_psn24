@@ -80,7 +80,7 @@ class ContentItem extends StatelessWidget {
           ),
            if(content.disabled == true) Center(child: Container(
                child: SvgPicture.asset('assets/images/profile/disabled.svg'))),
-          Align(
+          if(ModalRoute.of(context)?.settings.name == AppRoutes.myProfile)Align(
             alignment: AlignmentDirectional.topEnd,
             child: PopupMenuButton<int>(
               padding: EdgeInsets.zero,

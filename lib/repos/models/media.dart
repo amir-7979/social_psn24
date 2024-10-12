@@ -1,7 +1,7 @@
 import 'thumbnail.dart';
 
 class Media {
-  final String? id;
+  String? id;
   final String? loc;
   final String? type;
   final String url = 'https://media.psn24.ir/';

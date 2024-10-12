@@ -82,7 +82,7 @@ class _MainFormState extends State<MainForm> {
           longTextController,
         ),
         const SizedBox(height: 16),
-        if(adminSettings != null)
+        if(adminSettings != null && widget.newPost!= null)
           PostContent(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

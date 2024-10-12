@@ -78,7 +78,7 @@ class _ContentExpertTabState extends State<ContentExpertTab> with SingleTickerPr
                         .translateNested('profileScreen', 'normalContent')),
                 Tab(
                     text: AppLocalizations.of(context)!
-                        .translateNested('profileScreen', 'normalContent')),
+                        .translateNested('profileScreen', 'expertContent')),
               ],
             ),
           ),

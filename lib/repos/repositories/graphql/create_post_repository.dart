@@ -16,10 +16,11 @@ Future<MutationOptions<Object?>> uploadMediaFile(File file, String postId, int o
     document: gql('''
       mutation uploadMediaFile(\$mediaFile: Upload!, \$postId: String!, \$order: Int) {
         PostMedia(mediaFile: \$mediaFile, post_id: \$postId, order: \$order) {
-          id
-          loc
-          type
-          order
+          id,
+          loc,
+          type,
+          order,
+         
         }
       }
     '''),

@@ -1,13 +1,17 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:social_psn/repos/models/create_media.dart';
 import 'package:social_psn/screens/create_post/create_post_bloc.dart';
 import 'package:video_player/video_player.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/admin_setting.dart';
+import '../widgets/custom_snackbar.dart';
 
 Future<File?> cropImage(String imagePath, BuildContext context) async {
   final croppedFile = await ImageCropper().cropImage(
@@ -35,7 +39,7 @@ Future<File?> cropImage(String imagePath, BuildContext context) async {
   return croppedFile != null ? File(croppedFile.path) : null;
 }
 
-Future<File?>? pickMedia(BuildContext context, bool mySwitch) async {
+Future<CreateMedia?> pickMedia(BuildContext context, bool mySwitch) async {
   final settings = BlocProvider.of<CreatePostBloc>(context).adminSettings;
   if (settings == null) return null;
   final photoList = mySwitch ? settings.allowedFormatsForPic : settings.allowedFormatsForPrivatePic;
@@ -47,22 +51,28 @@ Future<File?>? pickMedia(BuildContext context, bool mySwitch) async {
     final file = File(pickedFile.path!);
     final pickedFileType = pickedFile.extension?.toLowerCase();
     final fileSize = file.lengthSync();
+    String? fileType;
+    Uint8List? thumbnail;
     Map<String, dynamic> validationResult;
 
     if (photoList!.contains(pickedFileType)) {
       validationResult = await _validatePhoto(file, pickedFileType, fileSize, settings, mySwitch);
+      fileType = 'image';
     } else if (videoList!.contains(pickedFileType)) {
       validationResult = await _validateVideo(file, pickedFileType, fileSize, settings, mySwitch);
+      fileType = 'video';
+      thumbnail = await generateThumbnail(file.path);
     } else if (audioList!.contains(pickedFileType)) {
       validationResult = await _validateAudio(file, pickedFileType, fileSize, settings, mySwitch);
+      fileType = 'audio';
     } else {
-      validationResult = {'isValid': false, 'message': 'Unsupported file type.'};
+      validationResult = {'isValid': false, 'message': 'فرمت فایل انتخاب شده مجاز نیست'};
     }
 
     if (validationResult['isValid']) {
-    return file;
+    return CreateMedia.file(file: file, type: fileType??'', size: fileSize.toString(), thumbnail: thumbnail);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(validationResult['message'])));
+      ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(content: validationResult['message']).build(context));
     }
   }
   return null;
@@ -122,4 +132,16 @@ Future<Duration> _getAudioDuration(String audioPath) async {
   final duration = await player.setFilePath(audioPath);
   await player.dispose();
   return duration ?? Duration.zero;
+}
+
+Future<Uint8List?> generateThumbnail(String videoPath) async {
+  final uint8List = await VideoThumbnail.thumbnailData(
+    video: videoPath,
+    imageFormat: ImageFormat.PNG,
+    maxHeight: 110,
+    maxWidth: 110,
+    quality: 100,
+  );
+
+  return uint8List;
 }
