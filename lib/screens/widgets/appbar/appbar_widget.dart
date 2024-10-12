@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:badges/badges.dart' as badges;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../configs/setting/setting_bloc.dart';
