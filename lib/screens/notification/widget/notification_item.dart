@@ -24,7 +24,7 @@ class NotificationItem extends StatelessWidget {
           },
         );
         Navigator.of(context).pop();
-        BlocProvider.of<NotificationBloc>(context).add(NotificationsMarked());
+        BlocProvider.of<NotificationBloc>(context).add(NotificationMarked(notification.id.toString()));
       },
       child: Container(
         padding: const EdgeInsetsDirectional.fromSTEB(0, 7, 5, 7),

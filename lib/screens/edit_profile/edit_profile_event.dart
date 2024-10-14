@@ -7,13 +7,10 @@ class SubmitEditProfileEvent extends EditProfileEvent {
   final String name;
   final String family;
   final String? username;
-  final String? photoUrl;
 
   SubmitEditProfileEvent({
     required this.name,
     required this.family,
     required this.username,
-    required this.photoUrl,
-
   });
 }

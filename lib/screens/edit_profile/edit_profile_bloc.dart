@@ -18,7 +18,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
   Future<void> _onSubmitEditProfileEvent(SubmitEditProfileEvent event, Emitter<EditProfileState> emit) async {
     emit(EditProfileLoading());
     try {
-      Response result = await profileRepository.editProfile(firstName: event.name, lastName: event.family, username: event.username, photo: event.photoUrl);
+      Response result = await profileRepository.editProfile(firstName: event.name, lastName: event.family, username: event.username);
       if (result.data == null) {
         emit(EditProfileError('خطا در ثبت تغیرات'));
         return;

@@ -18,7 +18,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   NotificationBloc() : super(NotificationInitial()) {
     on<LoadNotifications>(_onLoadNotificationsEvent);
-    on<NotificationsMarked>(_onMarkAsReadEvent);
+    on<AllNotificationsMarked>(_onAllMarkAsReadEvent);
+    on<NotificationMarked>(_onNotificationMarkedEvent);
   }
 
   Future<void> _onLoadNotificationsEvent(
@@ -36,12 +37,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     }
   }
 
-  Future<FutureOr<void>> _onMarkAsReadEvent(NotificationsMarked event, Emitter<NotificationState> emit) async {
+  Future<void> _onAllMarkAsReadEvent(AllNotificationsMarked event, Emitter<NotificationState> emit) async {
     emit(NotificationLoading());
     try {
-      await _notificationRepository.markAsRead();
+      await _notificationRepository.markAllNotificationsAsRead();
       Response result = await _notificationRepository.fetchNotifications();
-      print(result.toString());
       notifications = (result.data!['data']['notifications'] as List)
           .map((notification) => MyNotification.fromJson(notification))
           .toList();
@@ -56,6 +56,25 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   //i  need a function to check if there is unreadNotifications or not.
   void checkUnreadNotifications() {
     unreadNotifications = notifications.where((element) => element.seen == 0).length;
+    if (unreadNotifications > 99) {
+      unreadNotifications = 99;
+    }
   }
 
+
+  Future<void> _onNotificationMarkedEvent(NotificationMarked event, Emitter<NotificationState> emit) async {
+    emit(NotificationLoading());
+    try {
+      await _notificationRepository.markNotificationAsRead(event.notificationId);
+      Response result = await _notificationRepository.fetchNotifications();
+      notifications = (result.data!['data']['notifications'] as List)
+          .map((notification) => MyNotification.fromJson(notification))
+          .toList();
+      checkUnreadNotifications();
+      emit(NotificationLoaded(notifications, unreadNotifications));
+    } catch (exception) {
+      print(exception.toString());
+      emit(NotificationError(exception.toString()));
+    }
+  }
 }

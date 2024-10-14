@@ -32,8 +32,9 @@ class EditPostEvent extends ProfileEvent {
 
 class ChangeStatusEvent extends ProfileEvent {
   final bool status;
+  final String name, family;
 
-  ChangeStatusEvent(this.status);
+  ChangeStatusEvent({required this.status, required this.name, required this.family});
 }
 
 class ToggleNotificationEvent extends ProfileEvent {

@@ -176,18 +176,14 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                                 : SvgPicture.asset(
                                     'assets/images/profile/profile2.svg'),
                           ),
-                          /*BlocBuilder<ProfileBloc, ProfileState>(
-                            buildWhen: (previous, current) {
-                              return current is ChangeOnlineStatusSucceed ||
-                                  current is ChangeOnlineStatusFailed;
-                            },
+                          BlocBuilder<ProfileBloc, ProfileState>(
                             builder: (context, state) {
-                              profile.online =
+                              profile.showActivity =
                                   state is ChangeOnlineStatusSucceed
                                       ? state.status
-                                      : profile.online;
+                                      : profile.showActivity;
                               return profileId == null &&
-                                      (profile.online == true)
+                                      (profile.showActivity == 1)
                                   ? Padding(
                                       padding: const EdgeInsetsDirectional.only(
                                           start: 7, top: 7),
@@ -217,7 +213,7 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                                     )
                                   : Container();
                             },
-                          ),*/
+                          ),
                         ],
                       ),
                     ),
@@ -324,11 +320,11 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                     ),
                   SizedBox(height: 10),
                   // i want to show switch button here
-                 /* if (profileId == null && BlocProvider.of<SettingBloc>(context)
+                  if (profileId == null && BlocProvider.of<SettingBloc>(context)
                       .state
                       .canChangeOnlineStatus)
                     AdvancedSwitch(
-                            initialValue: profile.online ?? false,
+                            initialValue: profile.showActivity == 1,
                             controller: advanceSwitchController,
                             thumb: Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(
@@ -377,10 +373,12 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                               ),
                             ),
                             onChanged: (value) {
+
                               BlocProvider.of<ProfileBloc>(context)
-                                  .add(ChangeStatusEvent(value));
+                                  .add(ChangeStatusEvent(status: value, name: profile.name??'', family: profile.family??''));
+
                             },
-                          ),*/
+                          ),
                 ],
               ),
             ],

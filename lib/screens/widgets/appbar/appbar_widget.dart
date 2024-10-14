@@ -6,17 +6,19 @@ import 'package:badges/badges.dart' as badges;
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../configs/setting/setting_bloc.dart';
 import '../../../../configs/setting/themes.dart';
+import '../../../configs/custom_navigator_observer.dart';
 import '../../../configs/utilities.dart';
 import '../../home/home_bloc.dart';
+import '../../main/widgets/screen_builder.dart';
 import '../../notification/notification_bloc.dart';
 import '../../notification/notification_screen.dart';
 import '../../post_search/post_search_screen.dart';
 import 'appbar_bloc.dart';
 
 class SocialAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const SocialAppBar({
-    super.key,
-  });
+  final CustomNavigatorObserver navigatorObserver;
+
+  SocialAppBar({required this.navigatorObserver});
 
   @override
   State<SocialAppBar> createState() => _SocialAppBarState();
@@ -162,29 +164,29 @@ class _SocialAppBarState extends State<SocialAppBar> {
                     padding: const EdgeInsetsDirectional.only(end: 8),
                     child: IconButton(
                       color: Theme.of(context).appBarTheme.iconTheme!.color,
-                      icon: state is NotificationLoaded && state.unreadNotifications > 0
+                      icon: state is NotificationLoaded &&
+                              state.unreadNotifications > 0
                           ? badges.Badge(
                               badgeStyle: badges.BadgeStyle(
                                 shape: badges.BadgeShape.circle,
-                                badgeColor:
-                                    Theme.of(context).primaryColor,
+                                badgeColor: Theme.of(context).primaryColor,
                                 padding: EdgeInsets.all(2),
                                 elevation: 0,
                               ),
-                              position: badges.BadgePosition.topEnd(
-                                  end: -8, top: -3),
+                              position:
+                                  badges.BadgePosition.topEnd(end: -5, top: -3),
                               badgeContent: Container(
-                                height: 15,
-                                width: 15,
+                                height: 14,
+                                width: 14,
                                 child: Text(
-                                    state.unreadNotifications.toString(),
+                                  state.unreadNotifications.toString(),
                                   style: Theme.of(context)
                                       .textTheme
-                                      .bodyLarge!
+                                      .bodyMedium!
                                       .copyWith(
-                                    color: whiteColor,
-                                    fontWeight: FontWeight.w400,
-                                  ),
+                                        color: whiteColor,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                   textAlign: TextAlign.center,
                                   maxLines: 1,
                                 ),
@@ -234,23 +236,21 @@ class _SocialAppBarState extends State<SocialAppBar> {
                     color: Theme.of(context).appBarTheme.iconTheme!.color,
                   ),
                   onPressed: () {
-/*
-                    if(ModalRoute.of(context)?.settings.name == AppRoutes.myProfile)
-*/
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        //todo show dialog based on screen
-                        return Dialog(
-                          insetPadding: EdgeInsets.zero,
-                          elevation: 0,
-                          surfaceTintColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          insetAnimationDuration: Duration.zero,
-                          child: PostSearchScreen(''),
-                        );
-                      },
-                    );
+                    if (widget.navigatorObserver.currentRoute == AppRoutes.home)
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          //todo show dialog based on screen
+                          return Dialog(
+                            insetPadding: EdgeInsets.zero,
+                            elevation: 0,
+                            surfaceTintColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            insetAnimationDuration: Duration.zero,
+                            child: PostSearchScreen(''),
+                          );
+                        },
+                      );
                   },
                 ),
               ),

@@ -19,12 +19,12 @@ class Profile {
   bool? online;
   final int? allowNotification;
   int? currentUserNotificationEnabled;
-  final int? showActivity;
+  int? showActivity;
   final String? fullName;
   final bool? status;
   final List<Map<String, String>>? roles;
   final List<String>? permissions;
-  final String url = 'https://media.psn24.ir/';
+
 
   Profile({
     this.id,
@@ -61,11 +61,6 @@ class Profile {
     } else if (username != null && username.startsWith('@')) {
       username = username.substring(1);
     }
-
-    String? photoUrl = json['photo'];
-    if (photoUrl != null && photoUrl.isNotEmpty && !photoUrl.startsWith('http')) {
-      photoUrl = 'https://media.psn24.ir/$photoUrl';
-    }
     String? newDisplayName = json['display_name'] != null ? json['display_name'] as String? : json['roles'][0]['display_name'] as String?;
 
     return Profile(
@@ -75,7 +70,7 @@ class Profile {
       family: json['family'] as String?,
       displayName: newDisplayName,
       username: username,
-      photo: photoUrl,
+      photo: json['photo'],
       phone: json['phone'] as String?,
       commentsCreated: json['commentsCreated'] as int?,
       contentCreated: json['contentCreated'] as int?,

@@ -1,8 +1,6 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/screens/auth/register/register_bloc.dart';
-import 'package:social_psn/screens/widgets/custom_snackbar.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
@@ -297,35 +295,40 @@ class _RegisterState extends State<Register> {
                                 const EdgeInsetsDirectional.fromSTEB(
                                     16, 0, 16, 0),
                               ),
+                              onTapOutside: (value) {
+                                _idFocusNode.unfocus();
+                              },
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return null;
+                                  return AppLocalizations.of(context)!
+                                      .translateNested('error', 'notEmpty');
                                 } else if (value.length > 30) {
                                   return AppLocalizations.of(context)!
-                                      .translateNested(
-                                      'error', 'length_exceed');
-                                } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$')
-                                    .hasMatch(value)) {
+                                      .translateNested('error', 'length_exceed');
+                                } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$').hasMatch(value)) {
                                   return AppLocalizations.of(context)!
-                                      .translateNested(
-                                      'error', 'english_username');
+                                      .translateNested('error', 'english_username');
                                 } else if (value.length < 5) {
                                   return AppLocalizations.of(context)!
-                                      .translateNested(
-                                      'error', 'minimum_username_length');
+                                      .translateNested('error', 'minimum_username_length');
                                 }
                                 return null;
                               },
+
                               onTap: () {
                                 setState(() {
+                                  print(_idController.text);
                                 });
                               },
-                              onFieldSubmitted: (value) {}),
+                              onFieldSubmitted: (value) {
+                                _idFocusNode.unfocus();
+
+                              }),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   BlocBuilder<RegisterBloc, RegisterState>(
                       builder: (context, state) {
                         if (state is RegisterFailure) {
@@ -406,7 +409,6 @@ class _RegisterState extends State<Register> {
         name: _nameController.text,
         family: _lastNameController.text,
         username: _idController.text,
-        photoUrl: photoUrl,
       ));
     }
   }

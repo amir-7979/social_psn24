@@ -200,12 +200,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       ChangeStatusEvent event, Emitter<ProfileState> emit) async {
     try {
       Response result =
-          await profileRepository.editOnlineStatus(status: event.status);
+          await profileRepository.editOnlineStatus(status: event.status, name: event.name, family: event.family);
       if (result.data == null) {
         emit(ChangeOnlineStatusFailed());
         return;
       }
-      emit(ChangeOnlineStatusSucceed(result.data['data']['show_activity'] == 1));
+      emit(ChangeOnlineStatusSucceed(result.data['data']['show_activity']));
     } catch (exception) {
       print(exception.toString());
 

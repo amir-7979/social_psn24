@@ -42,9 +42,11 @@ class ProfileRepository {
     return await _dio.post('/profile/upload-photo', data: formData);
   }
 
-  Future<Response<dynamic>> editOnlineStatus({required bool status}) async {
+  Future<Response<dynamic>> editOnlineStatus({required bool status, required String name,  required String family}) async {
     Map<String, dynamic> variables = {
       'show_activity': status ? 1:0,
+      'name': name,
+      'family': family,
     };
     return _dio.post(
       '/profile/update',

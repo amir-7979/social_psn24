@@ -23,11 +23,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _idController = TextEditingController();
-
   final _nameFocusNode = FocusNode();
   final _lastNameFocusNode = FocusNode();
   final _idFocusNode = FocusNode();
   String? photoUrl = null;
+
 
   @override
   void dispose() {
@@ -38,11 +38,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _lastNameFocusNode.dispose();
     _idFocusNode.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
@@ -68,7 +63,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: BlocProvider(
         create: (context) => EditProfileBloc(),
         child: Builder(builder: (context) {
-          return BlocConsumer<EditProfileBloc, EditProfileState>(
+          return BlocListener<EditProfileBloc, EditProfileState>(
             listener: (context, state) {
               if (state is EditProfileError) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -79,9 +74,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 Navigator.pushReplacementNamed(context, AppRoutes.myProfile);
               }
             },
-            builder: (context, state) {
-              return buildListView(context);
-            },
+            child: buildListView(context),
           );
         }),
       ),
@@ -322,7 +315,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return null;
+                                  return AppLocalizations.of(context)!
+                                      .translateNested('error', 'notEmpty');
                                 } else if (value.length > 30) {
                                   return AppLocalizations.of(context)!
                                       .translateNested(
@@ -475,11 +469,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void editUserFunction(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       context.read<EditProfileBloc>().add(SubmitEditProfileEvent(
-            name: _nameController.text,
-            family: _lastNameController.text,
-            username: _idController.text,
-            photoUrl: photoUrl,
-          ));
+        name: _nameController.text,
+        family: _lastNameController.text,
+        username: _idController.text,
+      ));
     }
   }
+
 }

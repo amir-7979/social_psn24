@@ -147,7 +147,14 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                               }
                             },
                             child: (state is CreatingComment)
-                                ? NewPageProgressIndicator()
+                                ? SizedBox(
+                              height: 23,
+                              width: 23,
+                                  child: CircularProgressIndicator(
+                                                                strokeWidth: 2,
+                                                                color: Theme.of(context).primaryColor,
+                                                              ),
+                                )
                                 : Text(
                               AppLocalizations.of(context)!
                                   .translateNested("postScreen", "send"),

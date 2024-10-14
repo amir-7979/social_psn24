@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:dio/src/response.dart';
 import 'package:meta/meta.dart';
 import '../../../configs/setting/setting_bloc.dart';
@@ -22,13 +23,17 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     try {
       Response response = await _profileRepository.editProfile(firstName: event.name, lastName: event.family, username: event.username, photo: photoUrl);
       if (response.data == null) {
-        emit(RegisterFinished('ورود با موفقیت انجام شد'));
+        emit(RegisterFinished('خطا در ثبت نام'));
       }
       settingBloc.add(FetchUserProfileWithPermissionsEvent());
       photoUrl = null;
       emit(RegisterFinished('ورود با موفقیت انجام شد'));
     } catch (exception) {
-      emit(RegisterFailure('خطا در ثبت نام'));
+      if (exception is DioException) {
+        emit(RegisterFailure(exception.response?.data['data'][0].toString() ?? 'خطا در ثبت نام'));
+      } else {
+        emit(RegisterFailure('خطا در ثبت نام'));
+      }
     }
   }
 

@@ -80,7 +80,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         resizeToAvoidBottomInset: true,
-        appBar: SocialAppBar(),
+        appBar: SocialAppBar(navigatorObserver: _navigatorObserver),
         drawer: context.read<SettingBloc>().state.isUserLoggedIn
             ? UserDrawer(context, navigatorKey)
             : GuestDrawer(context, navigatorKey),

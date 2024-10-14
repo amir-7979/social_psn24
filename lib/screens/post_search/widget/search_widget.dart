@@ -187,6 +187,8 @@ class _PostSearchWidgetState extends State<PostSearchWidget> {
                   iconSize: 40,
                   onPressed: () {
                     Navigator.of(context).pop();
+                    BlocProvider.of<AppbarBloc>(context)
+                        .add(AppbarSearch(_controller.text));
                     BlocProvider.of<HomeBloc>(context).add(SearchPostsEvent(
                         _controller.text,
                         null,

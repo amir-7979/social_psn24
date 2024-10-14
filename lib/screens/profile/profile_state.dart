@@ -45,7 +45,7 @@ class PostDeleteFailure extends ProfileState {
 class ChangeOnlineStatusFailed extends ProfileState {}
 
 class ChangeOnlineStatusSucceed extends ProfileState {
-  final bool status;
+  final int status;
 
   ChangeOnlineStatusSucceed(this.status);
 }
