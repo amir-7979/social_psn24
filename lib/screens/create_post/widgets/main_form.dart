@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
@@ -31,6 +33,8 @@ class _MainFormState extends State<MainForm> {
   TextEditingController categoryController = TextEditingController();
   TextEditingController longTextController = TextEditingController();
   AdminSettings? adminSettings;
+  Timer? _submitTimer;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -45,9 +49,37 @@ class _MainFormState extends State<MainForm> {
       }
     });
     adminSettings = BlocProvider.of<CreatePostBloc>(context).adminSettings;
+    _submitTimer = Timer.periodic(Duration(minutes: 1), (timer) {
+      _submitPost();
+    });
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _submitTimer?.cancel(); // Cancel the timer when the widget is disposed
+    titleController.dispose();
+    categoryController.dispose();
+    longTextController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _submitPost() {
+    BlocProvider.of<CreatePostBloc>(context).add(
+      SubmitNewPostEvent(
+        title: titleController.text,
+        category: context.read<SettingBloc>().state.tags!.firstWhere(
+              (element) => element.title == categoryController.text,
+          orElse: () => context.read<SettingBloc>().state.tagsList.first,
+        ).id ?? '',
+        longText: longTextController.text,
+        status: 0,
+        publish: 0,
+        postType: context.read<CreatePostBloc>().postType ? 1 : 0,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +156,13 @@ class _MainFormState extends State<MainForm> {
                             (element) => element.title == categoryController.text,
                             orElse: () => context.read<SettingBloc>().state.tagsList.first,
                           ).id??'',
-                          longText: longTextController.text),
+                          longText: longTextController.text,
+                          status: 1,
+                        publish: 1,
+                        postType: context.read<CreatePostBloc>().postType? 1:0,
+
+
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(

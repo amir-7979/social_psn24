@@ -23,11 +23,16 @@ class SubmitNewPostEvent extends CreatePostEvent {
   final String title;
   final String category;
   final String longText;
+  final int? status, publish, postType;
+
 
   SubmitNewPostEvent({
     required this.title,
     required this.category,
     required this.longText,
+    this.status,
+    this.publish,
+    this.postType,
   });
 }
 

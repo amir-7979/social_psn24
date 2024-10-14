@@ -73,7 +73,7 @@ class UserDrawer extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 5),
-                    /*Container(
+                    Container(
                       padding:
                       const EdgeInsetsDirectional.fromSTEB(16, 2, 16, 2),
                       decoration: BoxDecoration(
@@ -87,7 +87,7 @@ class UserDrawer extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),*/
+                    ),
                   ],
                 ),
               ),
@@ -97,7 +97,7 @@ class UserDrawer extends StatelessWidget {
                   color: Theme.of(context).drawerTheme.backgroundColor,
                   child: ListView(
                     children: <Widget>[
-                      ListTile(
+                     /* ListTile(
                         minLeadingWidth: 0,
                         minVerticalPadding: 0,
                         contentPadding: const EdgeInsetsDirectional.all(0),
@@ -110,7 +110,7 @@ class UserDrawer extends StatelessWidget {
                             fit: BoxFit.cover,
                             child: SvgPicture.asset(
                               'assets/images/drawer/wallet.svg',
-                              color:  Colors.grey /*: (Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor)*/,
+                              color:  Colors.grey *//*: (Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor)*//*,
                             ),
                           ),
                         ),
@@ -118,7 +118,7 @@ class UserDrawer extends StatelessWidget {
                           AppLocalizations.of(context)!.translateNested('drawer', 'drawerWallet'),
                           style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey /*: Theme.of(context).hoverColor*/,
+                            color: Colors.grey *//*: Theme.of(context).hoverColor*//*,
                           ),
                         ),
                       ),
@@ -147,7 +147,7 @@ class UserDrawer extends StatelessWidget {
                           ),
                         ),
                         onTap: () {Navigator.pop(context);},
-                      ),
+                      ),*/
                       ListTile(
                         minLeadingWidth: 0,
                         minVerticalPadding: 0,

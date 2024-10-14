@@ -31,6 +31,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
   String? newPostId;
   Post? newPost;
   List<MediaItem> mediaItems = [];
+  bool postType = false;
 
   CreatePostBloc({this.postId}) : super(CreateMediaInitial()) {
     on<CreateNewPostEvent>(_onCreatePost);
@@ -147,12 +148,17 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           id: newPostId!,
           title: event.title,
           tag: event.category,
-          text: event.longText);
+          text: event.longText,
+          status: event.status ?? 0,
+          isPublish: event.publish ?? 0,
+        postType: event.postType ?? 0
+      );
       final QueryResult result = await graphQLService.mutate(options);
       if (result.hasException) {
         emit(SubmittingFailed('خطا در ایجاد پست'));
         return;
       } else {
+        print(result.data);
         emit(SubmittingCreateSucceed());
       }
     } catch (e) {
@@ -169,8 +175,10 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
   }
 
   void _onResetCategory(
-          ResetCategoryEvent event, Emitter<CreatePostState> emit) =>
-      emit(ResetCategoryState(event.type));
+          ResetCategoryEvent event, Emitter<CreatePostState> emit) {
+    postType = event.type;
+    emit(ResetCategoryState(event.type));
+  }
 
   FutureOr<void> _onRemoveItemEvent(
       RemoveItemEvent event, Emitter<CreatePostState> emit) {
