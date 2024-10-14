@@ -12,49 +12,14 @@ import 'widgets/main_tab_bar.dart';
 import 'widgets/normal_user_post_list.dart';
 import 'widgets/search_list.dart';
 
-class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen>
-    with AutomaticKeepAliveClientMixin {
-  late bool seeExpertPost;
-  PagingController<int, Post>? _pagingPostController1 =
-      PagingController<int, Post>(firstPageKey: 0);
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _pagingPostController1!.addPageRequestListener((pageKey) {
-        HomeBloc.fetchPosts(
-            _pagingPostController1!, 10, 0, null, null, null, null);
-      });
-    });
-  }
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeBloc>().resetState();
-    });
-  }
-  void dispose() {
-    if (_pagingPostController1 != null) _pagingPostController1!.dispose();
-    super.dispose();
-  }
+class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
     return BlocBuilder<HomeBloc, HomeState>(
+      buildWhen: (previous, current) => previous != current && current is! HomeInitialState,
       builder: (context, state) {
+        print('HomeScreen ${state}');
     return Padding(
         padding: const EdgeInsetsDirectional.all(16),
         child: Container(
@@ -76,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
           ) : Container(
-              child: seeExpertPost
+              child: context.read<SettingBloc>().state.seeExpertPost
                   ? MainTabBar()
                   : NormalUserPostList()),
         ));

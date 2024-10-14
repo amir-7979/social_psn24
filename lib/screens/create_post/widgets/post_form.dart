@@ -26,9 +26,11 @@ class WidgetPostFormState extends State<PostForm> {
   final _longTextFocusNode = FocusNode();
   String? _selectedCategory;
   List<Tag> _categories = [];
-  final int _maxLength = 200;
+  int _maxLength = 200;
+  int _publicMaxLength = 1000;
+  int _privateMaxLength = 500;
   bool _categoryState = true;
-  bool _isSearchFieldOpen = false; // Track whether suggestions are open or closed
+  bool _isSearchFieldOpen = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -39,16 +41,19 @@ class WidgetPostFormState extends State<PostForm> {
     _categoryFocusNode.addListener(() {
       if (!_categoryFocusNode.hasFocus) {
         setState(() {
-          _isSearchFieldOpen = false; // Close search field if focus is lost
+          _isSearchFieldOpen = false;
         });
       }
     });
-    _categories = BlocProvider.of<SettingBloc>(context).state.tagsList; // Initialize categories here
+    _categories = BlocProvider.of<SettingBloc>(context).state.tagsList;
   }
 
   @override
   void didChangeDependencies() {
     _categories = BlocProvider.of<SettingBloc>(context).state.tagsList;
+    _publicMaxLength = BlocProvider.of<CreatePostBloc>(context).adminSettings?.maxCharactersForPicPost??900;
+    _maxLength = _publicMaxLength;
+    _privateMaxLength = BlocProvider.of<CreatePostBloc>(context).adminSettings?.maxCharactersForPicPrivatePost??400;
     super.didChangeDependencies();
   }
 
@@ -66,7 +71,7 @@ class WidgetPostFormState extends State<PostForm> {
 
   List<Tag> _filterCategories(String query) {
     if (query.isEmpty) {
-      return _categories; // Return all categories if query is empty
+      return _categories;
     }
     return _categories
         .where((category) => category.title!.toLowerCase().contains(query.toLowerCase()))
@@ -151,8 +156,11 @@ class WidgetPostFormState extends State<PostForm> {
               if (state is ResetCategoryState) {
                 setState(() {
                   widget.categoryController.clear();
+                  _maxLength = state.type ? _privateMaxLength : _publicMaxLength;
                   _categoryState = true;
                   _isSearchFieldOpen = false;
+                  print("type: ${state.type} , private: $_privateMaxLength , public: $_publicMaxLength , max: $_maxLength");
+
                 });
               }
             },
@@ -308,7 +316,7 @@ class WidgetPostFormState extends State<PostForm> {
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: Theme.of(context).colorScheme.onBackground,
               ),
-              maxLength: 200,
+              maxLength: _maxLength,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!
                     .translateNested("createMedia", "text"),
@@ -332,7 +340,7 @@ class WidgetPostFormState extends State<PostForm> {
                     required maxLength,
                     required bool isFocused}) {
                 return Text(
-                  '200/$currentLength',
+                  '$_publicMaxLength/$currentLength',
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     fontWeight: FontWeight.w400,
                     color: _longTextFocusNode.hasFocus

@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/screens/create_post/widgets/main_form.dart';
 
-import '../../configs/localization/app_localizations.dart';
-import '../../configs/setting/setting_bloc.dart';
-import '../../repos/models/post.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/new_page_progress_indicator.dart';

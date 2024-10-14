@@ -35,7 +35,8 @@ final class  SubmittingFailed extends CreatePostState {
   SubmittingFailed(this.message);
 }
 
-final class ResetCategoryState extends CreatePostState {}
+final class ResetCategoryState extends CreatePostState {final bool type; ResetCategoryState(this.type);}
+
 
 final class CancelUploadMediaEvent extends CreatePostEvent {
   final File mediaFile;

@@ -13,24 +13,26 @@ class NormalUserPostList extends StatefulWidget {
   State<NormalUserPostList> createState() => _NormalUserPostListState();
 }
 
-class _NormalUserPostListState extends State<NormalUserPostList> with SingleTickerProviderStateMixin{
-  TabController? _tabController;
+class _NormalUserPostListState extends State<NormalUserPostList>{
+
   late PagingController<int, Post> _pagingPostController1;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _pagingPostController1 = PagingController<int, Post>(firstPageKey: 0);
-    _pagingPostController1.addPageRequestListener((pageKey) {
-      HomeBloc.fetchPosts(_pagingPostController1, 10, 0 ,null, null, null, null);
-    });
 
   }
 
   @override
+  void didChangeDependencies() {
+    _pagingPostController1 = PagingController<int, Post>(firstPageKey: 0);
+    _pagingPostController1.addPageRequestListener((pageKey) {
+      HomeBloc.fetchPosts(_pagingPostController1, 10, 0 ,null, null, null, null);
+    });    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
-    if (_tabController != null) _tabController!.dispose();
     _pagingPostController1.dispose();
     super.dispose();
   }

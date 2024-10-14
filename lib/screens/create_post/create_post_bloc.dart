@@ -81,8 +81,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     }
   }
 
-  Future<void> _fetchPostDetails(
-      String postId, Emitter<CreatePostState> emit) async {
+  Future<void> _fetchPostDetails(String postId, Emitter<CreatePostState> emit) async {
     try {
       print(postId);
       final QueryOptions options = postsQuery(id: postId);
@@ -171,13 +170,13 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
 
   void _onResetCategory(
           ResetCategoryEvent event, Emitter<CreatePostState> emit) =>
-      emit(ResetCategoryState());
+      emit(ResetCategoryState(event.type));
 
   FutureOr<void> _onRemoveItemEvent(
       RemoveItemEvent event, Emitter<CreatePostState> emit) {
     if (newPost != null) {
       mediaItems.removeWhere(
-          (element) => element.createMedia.media!.id == event.mediaId);
+          (element) => element.createMedia.media?.id == event.mediaId);
       emit(RebuildMediaListState());
     }
   }

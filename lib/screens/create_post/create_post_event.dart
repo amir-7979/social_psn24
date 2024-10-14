@@ -14,7 +14,10 @@ class ChangeMediaOrderEvent extends CreatePostEvent {
 class CreateNewPostEvent extends CreatePostEvent {}
 class EditPostEvent extends CreatePostEvent {}
 
-class ResetCategoryEvent extends CreatePostEvent {}
+class ResetCategoryEvent extends CreatePostEvent {
+  final bool type;
+  ResetCategoryEvent(this.type);
+}
 
 class SubmitNewPostEvent extends CreatePostEvent {
   final String title;

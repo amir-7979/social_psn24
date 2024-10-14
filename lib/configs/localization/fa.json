@@ -18,7 +18,8 @@
     "type": "نوع محتوا",
     "general": "عمومی",
     "expert": "تخصصی",
-    "subject": "موضوع"
+    "subject": "موضوع",
+    "mediaLimitReached": "ظرفیت ارسال این فرمت به پایان رسیده است"
   },
 
   "drawer": {

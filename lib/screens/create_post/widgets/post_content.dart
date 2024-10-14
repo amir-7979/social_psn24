@@ -11,6 +11,7 @@ import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
 import '../../../repos/models/admin_setting.dart';
 import '../../../repos/models/media.dart';
+import '../../widgets/custom_snackbar.dart';
 import '../create_post_bloc.dart';
 import '../utilities.dart';
 import 'media_item/media_item.dart';
@@ -40,6 +41,38 @@ class _PostContentState extends State<PostContent> {
   }
 
   void _addMediaItem(CreateMedia createMedia) {
+    // Get the current count of each media type
+    int imageCount = createPostBloc.mediaItems
+        .where((item) => item.createMedia.type == 'image')
+        .length;
+    int videoCount = createPostBloc.mediaItems
+        .where((item) => item.createMedia.type == 'video')
+        .length;
+    int audioCount = createPostBloc.mediaItems
+        .where((item) => item.createMedia.type == 'audio')
+        .length;
+
+
+    int? maxImages = advanceSwitchController.value
+        ? adminSettings.maxCountForPicPrivateSlide
+        : adminSettings.maxCountForPicSlide;
+    int? maxVideos = advanceSwitchController.value
+        ? adminSettings.maxCountForVideoPrivateSlide
+        : adminSettings.maxCountForVideoSlide;
+    int? maxAudios = advanceSwitchController.value
+        ? adminSettings.maxCountForVoicePrivateSlide
+        : adminSettings.maxCountForVoiceSlide;
+
+    maxImages ??= 5;
+    maxVideos ??= 5;
+    maxAudios ??= 5;
+
+    if ((createMedia.type == 'image' && imageCount >= maxImages) ||
+        (createMedia.type == 'video' && videoCount >= maxVideos) ||
+        (createMedia.type == 'audio' && audioCount >= maxAudios)) {
+      ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(content: AppLocalizations.of(context)!.translateNested("createMedia", "mediaLimitReached")).build(context),);
+      return;
+    }
     MediaItemBloc mediaItemBloc = MediaItemBloc(createPostBloc: createPostBloc);
     createPostBloc.mediaItems.add(MediaItem(
         mediaItemBloc: mediaItemBloc,
@@ -77,15 +110,22 @@ class _PostContentState extends State<PostContent> {
                   _buildUploadButton(),
                   Padding(
                     padding: const EdgeInsetsDirectional.only(top: 8),
-                    child: Text(
-                      _buildMediaInfoText(context,
-                          advanceSwitchController.value, adminSettings),
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: Theme.of(context).hintColor,
-                            fontWeight: FontWeight.w400,
-                          ),
-                      textAlign: TextAlign.end,
-                      maxLines: 5,
+                    child: BlocBuilder<CreatePostBloc, CreatePostState>(
+                      buildWhen: (previous, current) =>
+                          current is RebuildMediaListState,
+                      builder: (context, state) {
+                        return Text(
+                          _buildMediaInfoText(context,
+                              advanceSwitchController.value, adminSettings),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: Theme.of(context).hintColor,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                          textAlign: TextAlign.end,
+                          maxLines: 5,
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -141,10 +181,8 @@ class _PostContentState extends State<PostContent> {
                 ),
           ),
           onChanged: (val) {
-            createPostBloc.add(ResetCategoryEvent());
-            setState(() {
-
-            });
+            createPostBloc.add(ResetCategoryEvent(val));
+            setState(() {});
           },
         ),
       ],
@@ -237,16 +275,29 @@ class _PostContentState extends State<PostContent> {
         ? adminSettings.maxSizeForVoicePrivateMB
         : adminSettings.maxSizeForVoiceMB;
 
-    final imageCount = 5;
-    final videoCount = 5;
-    final voiceCount = 5;
+    final imageCount = isPrivate
+        ? adminSettings.maxCountForPicPrivateSlide
+        : adminSettings.maxCountForPicSlide;
+    final videoCount = isPrivate
+        ? adminSettings.maxCountForVideoPrivateSlide
+        : adminSettings.maxCountForVideoSlide;
+    final voiceCount = isPrivate
+        ? adminSettings.maxCountForVoicePrivateSlide
+        : adminSettings.maxCountForVoiceSlide;
 
-    final imageSelected = 0;
-    final videoSelected = 0;
-    final voiceSelected = 0;
+    final imageSelected = createPostBloc.mediaItems
+        .where((element) => element.createMedia.type == "image")
+        .length;
+    final videoSelected = createPostBloc.mediaItems
+        .where((element) => element.createMedia.type == "video")
+        .length;
+    final voiceSelected = createPostBloc.mediaItems
+        .where((element) => element.createMedia.type == "audio")
+        .length;
 
-    return 'image: $imageCount / $imageSelected (${imageLimit}MB), '
-        'video: $videoCount / $videoSelected (${videoLimit}MB), '
-        'voice: $voiceCount / $voiceSelected (${voiceLimit}MB)';
+    return 'Image: $imageSelected / $imageCount (${imageLimit}MB), '
+        'Video: $videoSelected / $videoCount (${videoLimit}MB), '
+        'Audio: $voiceSelected / $voiceCount (${voiceLimit}MB)';
   }
+
 }
