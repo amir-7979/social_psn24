@@ -35,6 +35,22 @@ class SubmitNewPostEvent extends CreatePostEvent {
     this.postType,
   });
 }
+class DraftPostEvent extends CreatePostEvent {
+  final String title;
+  final String category;
+  final String longText;
+  final int? status, publish, postType;
+
+
+  DraftPostEvent({
+    required this.title,
+    required this.category,
+    required this.longText,
+    this.status,
+    this.publish,
+    this.postType,
+  });
+}
 
 class GetMediasEvent extends CreatePostEvent {}
 

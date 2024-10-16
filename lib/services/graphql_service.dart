@@ -1,28 +1,21 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
+import 'package:gql_dio_link/gql_dio_link.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../services/storage_service.dart';
-import 'package:rxdart/rxdart.dart';
-
-class LoggingLink extends Link {
-  @override
-  Stream<Response> request(Request request, [forward]) {
-    return forward!(request).doOnData((response) {
-      //print('Response: ${response.data}');
-    }).handleError((error) {
-      //print('Error: $error');
-    });
-  }
-}
 
 class GraphQLService {
   final StorageService _storageService = StorageService();
   final HttpLink _httpLink = HttpLink('https://api.psn24.ir/graphql');
   late AuthLink _authLink;
   late Link _link;
+  late Dio _dio;
+  late DioLink _dioLink;
   late GraphQLClient _client;
 
   GraphQLService._() {
+    _initializeDio();
     _initializeClient();
   }
 
@@ -32,48 +25,65 @@ class GraphQLService {
 
   GraphQLClient get client => _client;
 
-  // Initialize the GraphQL client with or without an auth link
+  Dio get dio => _dio; // Expose the Dio instance
+
+  void _initializeDio() async {
+    _dio = Dio(BaseOptions(
+      baseUrl: 'https://api.psn24.ir/graphql',
+      headers: {'Content-Type': 'application/json'},
+    ));
+    await _setDioAuthHeader(); // Set the initial token if available
+  }
+
   void _initializeClient() {
-    // Create the AuthLink and LoggingLink
     _authLink = AuthLink(
       getToken: () async {
         final token = await _storageService.readData('token');
         return token != null && token.isNotEmpty ? 'Bearer $token' : null;
       },
     );
-    final LoggingLink loggingLink = LoggingLink();
 
-    // Configure the link to include AuthLink if a token is present
+    _dioLink = DioLink('https://api.psn24.ir/graphql', client: _dio);
+
     _link = Link.from([
       _authLink,
-      //loggingLink,
       _httpLink,
+      _dioLink,
     ]);
 
-    // Create the GraphQL client
     _client = GraphQLClient(
       cache: GraphQLCache(),
       link: _link,
     );
   }
 
-  // Add token to AuthLink and reinitialize the client
+  Future<void> _setDioAuthHeader() async {
+    final token = await _storageService.readData('token');
+    if (token != null && token.isNotEmpty) {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+    }
+  }
+
+  Future<void> updateDioToken() async {
+    await _setDioAuthHeader(); // Update Dio's authorization header with the new token
+  }
+
   Future<void> addTokenToAuthLink() async {
     final token = await _storageService.readData('token');
     if (token != null && token.isNotEmpty) {
-      log('Token: $token');
       _authLink = AuthLink(
         getToken: () async => 'Bearer $token',
       );
       _initializeClient();
+      await updateDioToken(); // Also update Dio's token when AuthLink is updated
     }
   }
 
-  // Remove token from AuthLink and reinitialize the client
   Future<void> removeTokenFromAuthLink() async {
     _authLink = AuthLink(
-      getToken: () async => null, // Ensure no token is used
+      getToken: () async => null,
     );
     _initializeClient();
+    _dio.options.headers.remove('Authorization'); // Remove the token from Dio's headers
   }
 }

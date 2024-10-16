@@ -193,7 +193,7 @@ class TimerWidget extends StatefulWidget {
 }
 
 class _TimerWidgetState extends State<TimerWidget> {
-  int _secondsRemaining = 120; // Start with 120 seconds
+  int _secondsRemaining = 60; // Start with 120 seconds
   Timer? _timer;
 
   @override

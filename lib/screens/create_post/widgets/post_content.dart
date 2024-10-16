@@ -80,6 +80,7 @@ class _PostContentState extends State<PostContent> {
         index: createPostBloc.mediaItems.length + 1));
     mediaItemBloc.add(UploadMediaItemEvent(mediaFile: createMedia.file));
     createPostBloc.add(RebuildMediaListEvent());
+
   }
 
   @override
@@ -207,10 +208,15 @@ class _PostContentState extends State<PostContent> {
           padding: EdgeInsets.all(8),
           borderType: BorderType.RRect,
           radius: Radius.circular(16),
-          child: BlocBuilder<CreatePostBloc, CreatePostState>(
+          child: BlocConsumer<CreatePostBloc, CreatePostState>(
+            listener: (context, state) {
+              if (state is RebuildMediaListState) {
+                setState(() {});
+              }
+            },
             buildWhen: (previous, current) => current is RebuildMediaListState,
             builder: (context, state) {
-              return _buildContent(context);
+              return _buildContent(context, createPostBloc.mediaItems.length);
             },
           ),
         ),
@@ -218,8 +224,8 @@ class _PostContentState extends State<PostContent> {
     );
   }
 
-  Widget _buildContent(BuildContext context) {
-    return createPostBloc.newPost!.medias!.isEmpty
+  Widget _buildContent(BuildContext context, int count) {
+    return count == 0
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

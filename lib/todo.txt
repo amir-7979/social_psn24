@@ -1,6 +1,4 @@
-todo change navigation
-todo complete upload media
-todo bug in showing user created media
+todo search problem
 
 
 

@@ -20,6 +20,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     super.didChangeDependencies();
     postId = ModalRoute.of(context)!.settings.arguments as String?;
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

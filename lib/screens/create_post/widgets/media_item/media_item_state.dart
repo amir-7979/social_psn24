@@ -21,10 +21,6 @@ final class MediaItemUploadFailed extends MediaItemState {
   MediaItemUploadFailed(this.message);
 }
 
-final class MediaUploadFailed extends MediaItemState {
-  final String message;
-  MediaUploadFailed(this.message);
-}
 
 final class MediaDeleting extends MediaItemState {
   final String mediaId;
@@ -37,23 +33,16 @@ final class MediaDeleted extends MediaItemState {
 }
 
 
-final class MediaUploading extends MediaItemState {
-  final File mediaFile;
-  MediaUploading(this.mediaFile);
-}
-
-final class MediaUploadingPlaceholder extends MediaItemState {
-  final File mediaFile;
-  MediaUploadingPlaceholder(this.mediaFile);
-}
-
-final class MediaUploaded extends MediaItemState {
-  final Media postMedia;
-
-  MediaUploaded(this.postMedia);
-}
 
 final class MediaDeleteFailed extends MediaItemState {
   final String message;
   MediaDeleteFailed(this.message);
+}
+
+final class MediaItemUploadCancelled extends MediaItemState {}
+
+final class MediaUploadProgress extends MediaItemState {
+  final double progress;
+  final String message;
+  MediaUploadProgress({required this.progress, required this.message});
 }

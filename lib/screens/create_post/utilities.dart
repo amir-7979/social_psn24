@@ -49,6 +49,7 @@ Future<CreateMedia?> pickMedia(BuildContext context, bool mySwitch) async {
   if (pickedFiles == null) return null;
   for (var pickedFile in pickedFiles.files) {
     final file = File(pickedFile.path!);
+    final fileName = pickedFile.name;
     final pickedFileType = pickedFile.extension?.toLowerCase();
     final fileSize = file.lengthSync();
     String? fileType;
@@ -70,7 +71,7 @@ Future<CreateMedia?> pickMedia(BuildContext context, bool mySwitch) async {
     }
 
     if (validationResult['isValid']) {
-    return CreateMedia.file(file: file, type: fileType??'', size: fileSize.toString(), thumbnail: thumbnail);
+    return CreateMedia.file(file: file, type: fileType??'', size: fileSize.toString(), thumbnail: thumbnail, name: fileName);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(content: validationResult['message']).build(context));
     }
@@ -137,11 +138,12 @@ Future<Duration> _getAudioDuration(String audioPath) async {
 Future<Uint8List?> generateThumbnail(String videoPath) async {
   final uint8List = await VideoThumbnail.thumbnailData(
     video: videoPath,
-    imageFormat: ImageFormat.PNG,
-    maxHeight: 110,
-    maxWidth: 110,
+    imageFormat: ImageFormat.JPEG,
+    maxHeight: 550,
+    maxWidth: 550,
     quality: 100,
   );
 
   return uint8List;
 }
+

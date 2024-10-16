@@ -32,8 +32,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _navigatorObserver = CustomNavigatorObserver(_currentIndexNotifier);
-
-    // Initialize animation controller and animation
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,

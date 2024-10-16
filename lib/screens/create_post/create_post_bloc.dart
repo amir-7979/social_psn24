@@ -38,6 +38,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     on<EditPostEvent>(_onEditPost);
     on<ResetCategoryEvent>(_onResetCategory);
     on<SubmitNewPostEvent>(_onSubmitPost);
+    on<DraftPostEvent>(_onDraftPost);
     on<AddItemEvent>(_onAddItemEvent);
     on<RemoveItemEvent>(_onRemoveItemEvent);
     on<RebuildMediaListEvent>(_onRebuildMediaListEvent);
@@ -92,11 +93,12 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         emit(PostCreationFailed('خطا در ایجاد پست'));
       } else {
         final Post post = Post.fromJson(result.data!['posts'][0]);
+        print(result.data!['posts'][0]);
         newPost = post;
         mediaItems = post.medias!
             .map((e) => MediaItem(
                 mediaItemBloc: MediaItemBloc(createPostBloc: this),
-                createMedia: CreateMedia.network(media: e),
+                createMedia: CreateMedia.network(media: e, type: e.type, name: e.loc),
                 index: post.medias!.indexOf(e) + 1))
             .toList();
         emit(PostCreationSucceed(post: post, adminSettings: adminSettings!));
@@ -158,7 +160,6 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         emit(SubmittingFailed('خطا در ایجاد پست'));
         return;
       } else {
-        print(result.data);
         emit(SubmittingCreateSucceed());
       }
     } catch (e) {
@@ -200,4 +201,21 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
   void _onRebuildMediaListEvent(
           RebuildMediaListEvent event, Emitter<CreatePostState> emit) =>
       emit(RebuildMediaListState());
+
+  Future<FutureOr<void>> _onDraftPost(DraftPostEvent event, Emitter<CreatePostState> emit) async {
+    try {
+      await reOrderMedias();
+      final MutationOptions options = SubmitNewPost(
+          id: newPostId!,
+          title: event.title,
+          tag: event.category,
+          text: event.longText,
+          status: event.status ?? 0,
+          isPublish: event.publish ?? 0,
+          postType: event.postType ?? 0
+      );
+       await graphQLService.mutate(options);
+    } catch (e) {
+    }
+  }
 }

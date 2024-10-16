@@ -236,6 +236,7 @@ class _SocialAppBarState extends State<SocialAppBar> {
                     color: Theme.of(context).appBarTheme.iconTheme!.color,
                   ),
                   onPressed: () {
+                    print(widget.navigatorObserver.currentRoute);
                     if (widget.navigatorObserver.currentRoute == AppRoutes.home)
                       showDialog(
                         context: context,

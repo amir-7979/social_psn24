@@ -29,6 +29,20 @@ Future<MutationOptions<Object?>> uploadMediaFile(File file, String postId, int o
   );
 }
 
+Future<MultipartFile> multipartFileFrom(File file) async {
+  List<int> fileBytes = await file.readAsBytes();
+  String filename = file.path.split('/').last;
+  String? mimeType = lookupMimeType(file.path);
+  final multipartFile = http.MultipartFile.fromBytes(
+    '1', // field name
+    fileBytes, // file bytes
+    filename: filename, // file name
+    contentType: MediaType.parse(mimeType!), // content type
+  );
+  return multipartFile;
+}
+
+
 MutationOptions updateMediaOrder(List<String>? mediaIds, String postId) {
   Map<String, dynamic> variables = {
     'media_ids': mediaIds,
@@ -59,18 +73,6 @@ MutationOptions deleteMedia(String mediaId) {
   );
 }
 
-Future<MultipartFile> multipartFileFrom(File file) async {
-  List<int> fileBytes = await file.readAsBytes();
-  String filename = file.path.split('/').last;
-  String? mimeType = lookupMimeType(file.path);
-  final multipartFile = http.MultipartFile.fromBytes(
-    '1', // field name
-    fileBytes, // file bytes
-    filename: filename, // file name
-    contentType: MediaType.parse(mimeType!), // content type
-  );
-  return multipartFile;
-}
 
 MutationOptions createNewPost() {
   return MutationOptions(

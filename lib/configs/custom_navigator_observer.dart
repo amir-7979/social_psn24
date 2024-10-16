@@ -12,8 +12,11 @@ class CustomNavigatorObserver extends NavigatorObserver {
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('didPush');
+    print(route.settings.name);
+
     if (route.settings.name == AppRoutes.home && !_isNavigatingToHome) {
-      _isNavigatingToHome = true; // Set the flag to prevent looping
+      _isNavigatingToHome = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         navigatorKey.currentState?.pushNamedAndRemoveUntil(
           AppRoutes.home,

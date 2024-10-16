@@ -55,9 +55,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 }
 
 
-  Future<FutureOr<void>> _onSearchPostsEvent(SearchPostsEvent event, Emitter<HomeState> emit) async {
+  Future<void> _onSearchPostsEvent(SearchPostsEvent event, Emitter<HomeState> emit) async {
     emit(SearchLoadingState(event.query,));
-    await Future.delayed(Duration(milliseconds: 80));
+    await Future.delayed(Duration(milliseconds: 10));
     emit(SearchParams(event.query, event.tag, event.type));
   }
 
