@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:social_psn/screens/auth/login/login_bloc.dart';
 import 'package:social_psn/screens/auth/verify/verify_bloc.dart';
 import 'package:social_psn/screens/widgets/custom_snackbar.dart';
 
@@ -75,7 +74,7 @@ class _VerifyState extends State<Verify> {
                         return Text(
                           AppLocalizations.of(context)!
                               .translateNestedWithVariable('auth', 'insertCode',
-                                  {'mobileNumber': widget.phone ?? ''}),
+                                  {'mobileNumber': widget.phone}),
                           textAlign: TextAlign.center,
                           style:
                               Theme.of(context).textTheme.headlineSmall!.copyWith(
@@ -144,6 +143,8 @@ class _VerifyState extends State<Verify> {
                           enableActiveFill: true,
                           onCompleted: (v) {
                             if (state is! VerifyLoading) {
+                              print('hereeeee-------------------------');
+                              print('loginId: ${widget.LoginId}, code: $v');
                               BlocProvider.of<VerifyBloc>(context).add(VerifyTokenEvent(loginId: widget.LoginId, code: v));
                             }
                           },
@@ -182,9 +183,8 @@ class _VerifyState extends State<Verify> {
 );
   }
 }
-
 class TimerWidget extends StatefulWidget {
-  String phone;
+  final String phone;
 
   TimerWidget(this.phone);
 
@@ -193,7 +193,7 @@ class TimerWidget extends StatefulWidget {
 }
 
 class _TimerWidgetState extends State<TimerWidget> {
-  int _secondsRemaining = 60; // Start with 120 seconds
+  int _secondsRemaining = 60; // Start with 60 seconds
   Timer? _timer;
 
   @override
@@ -209,14 +209,14 @@ class _TimerWidgetState extends State<TimerWidget> {
   }
 
   void _startTimer() {
-    _secondsRemaining = 120;
+    _secondsRemaining = 60; // Reset the timer
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_secondsRemaining > 0) {
           _secondsRemaining--;
         } else {
           _timer?.cancel();
-          // Add any additional logic you need when the timer reaches 0
+          _timer = null; // Reset the timer to null when finished
         }
       });
     });
@@ -236,10 +236,10 @@ class _TimerWidgetState extends State<TimerWidget> {
       ),
       onPressed: _secondsRemaining == 0 && verifyState is! VerifyLoading
           ? () {
-        BlocProvider.of<VerifyBloc>(context).add(ResendCode(phone: widget.phone));
-        _startTimer();
-        setState(() {
-        });
+        if (_timer == null) {
+          BlocProvider.of<VerifyBloc>(context).add(ResendCode(phone: widget.phone));
+          _startTimer(); // Start a new timer
+        }
       }
           : (){},
       child: verifyState is VerifyLoading

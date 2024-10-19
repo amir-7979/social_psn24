@@ -19,7 +19,7 @@ class VerifyFinished extends VerifyState {
 }
 
 class ResendSuccess extends VerifyState {
-  String loginId;
+  final String loginId;
   ResendSuccess(this.loginId);
 }
 

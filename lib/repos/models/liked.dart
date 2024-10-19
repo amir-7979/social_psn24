@@ -1,4 +1,3 @@
-import 'creator.dart';
 import 'media.dart';
 
 class Liked {

@@ -75,6 +75,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await writeInStorage(_storageService, event.data);
     emit(state.copyWith(token: event.data?['access_token']));
     event.completer?.complete();
+    add(FetchTagsEvent());
+
   }
 
   Future<void> _handleSettingLanguageEvent(event, emit) async {

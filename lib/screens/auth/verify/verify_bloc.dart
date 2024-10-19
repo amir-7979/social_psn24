@@ -20,15 +20,32 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
 
   VerifyBloc(this.settingBloc) : super(VerifyInitial()) {
     on<VerifyTokenEvent>(_handleVerifyTokenEvent);
-    //on<ResendCode>(_handleResendCode);
+    on<ResendCode>(_handleResendCode);
   }
+  Future<void> _handleResendCode(ResendCode event, Emitter<VerifyState> emit) async {
+    emit(VerifyLoading());
+    try {
+      Response<dynamic> response = await _authRepository.logIn(event.phone);
+      if (response.statusCode == 200) {
+        print(response.data);
+        loginId = response.data['data']['id'].toString();
+        emit(ResendSuccess(loginId));
+      } else {
+        emit(VerifyFailure('خطا در ارسال دوباره کد'));
+      }
+    } catch (e) {
+      emit(VerifyFailure('خطا در ارسال دوباره کد'));
+    }
+  }
+
 
   Future<void> _handleVerifyTokenEvent(
       VerifyTokenEvent event, Emitter<VerifyState> emit) async {
     emit(VerifyLoading());
     try {
+      print('loginId: ${event.loginId}');
       var response = await _authRepository.verifyToken(int.parse(event.loginId), event.code);
-      //print(response.data);
+      print(response.data);
       if (response.statusCode == 200) {
         Completer<void> completer = Completer<void>();
         settingBloc.add(UpdateLoginStatus(response.data['data'], completer: completer));

@@ -447,7 +447,7 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                                   ),
                             ),
                             Text(
-                              '@${profile.username}' ?? '',
+                              '@${profile.username}',
                               textDirection: TextDirection.ltr,
                               style: Theme.of(context)
                                   .textTheme

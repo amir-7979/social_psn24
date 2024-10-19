@@ -210,7 +210,7 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
                               AppLocalizations.of(context)!
                                   .translateNested(
                                   "postScreen",
-                                  widget.post.isLiked ?? false
+                                  widget.post.isLiked
                                       ? "delete_interest"
                                       : "interest"),
                               style: Theme.of(context)
@@ -261,8 +261,7 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
                               AppLocalizations.of(context)!
                                   .translateNested(
                                   "postScreen",
-                                  widget.post.isNotificationEnabled ??
-                                      false
+                                  widget.post.isNotificationEnabled
                                       ? "delete_notification"
                                       : "notification"),
                               style: Theme.of(context)

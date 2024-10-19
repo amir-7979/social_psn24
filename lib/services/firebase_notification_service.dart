@@ -25,7 +25,7 @@ class FirebaseNotificationService {
 
   Future<void> _initializeLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@drawable/logo');
 
      DarwinInitializationSettings initializationSettingsDarwin =
     DarwinInitializationSettings(onDidReceiveLocalNotification: _onDidReceiveLocalNotification);
@@ -40,8 +40,8 @@ class FirebaseNotificationService {
 
     // Create a notification channel for Android
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'your_channel_id', // ID
-      'Your Channel Name', // Name
+      'general_notifications', // ID
+      'General Notifications', // Name
       description: 'This channel is used for important notifications.', // Description
       importance: Importance.max,
     );
@@ -75,8 +75,8 @@ class FirebaseNotificationService {
 
   Future<void> _showNotification(String title, String body) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
+      'general_notifications',
+      'General Notifications',
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
@@ -96,8 +96,6 @@ class FirebaseNotificationService {
 
   void _onMessageOpenedAppHandler(RemoteMessage message) {
     print('_______________________\nMessage clicked!');
-
-    print('Message clicked!');
   }
 
   Future<void> _onDidReceiveNotificationResponse(

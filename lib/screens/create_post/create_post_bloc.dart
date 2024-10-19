@@ -8,7 +8,6 @@ import 'package:meta/meta.dart';
 import 'package:social_psn/repos/models/media.dart';
 import 'package:social_psn/repos/models/post.dart';
 import 'package:social_psn/repos/repositories/graphql/post_repository.dart';
-import 'package:social_psn/screens/profile/profile_bloc.dart';
 
 import '../../repos/models/admin_setting.dart';
 import '../../repos/models/create_media.dart';

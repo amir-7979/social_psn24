@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
-import 'package:social_psn/screens/profile/widgets/expert_user/content_expert_tab.dart';
 
 import 'profile_bloc.dart';
 import 'widgets/content_info.dart';
-import 'widgets/shimmer/shimmer_user_info.dart';
 import 'widgets/user_info.dart';
 
 class ProfileScreen extends StatefulWidget {

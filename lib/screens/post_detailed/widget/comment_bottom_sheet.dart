@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../configs/localization/app_localizations.dart';
 import '../../widgets/custom_snackbar.dart';
-import '../../widgets/new_page_progress_indicator.dart';
 import '../post_detailed_bloc.dart';
 
 class CommentBottomSheet extends StatefulWidget {

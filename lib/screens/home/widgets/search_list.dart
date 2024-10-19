@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../repos/models/post.dart';
-import '../../post_search/post_search_screen.dart';
 import '../home_bloc.dart';
 import 'post_list.dart';
 

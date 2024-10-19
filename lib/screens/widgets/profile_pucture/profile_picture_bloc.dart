@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import '../../../repos/repositories/dio/dio_profile_repository.dart';
 
@@ -36,7 +34,7 @@ class ProfilePictureBloc extends Bloc<ProfilePictureEvent, ProfilePictureState> 
 Future<http.MultipartFile> multipartFileFrom(File file) async {
   List<int> fileBytes = await file.readAsBytes();
   String filename = file.path.split('/').last;
-  String? mimeType = lookupMimeType(file.path);
+  lookupMimeType(file.path);
   final multipartFile = http.MultipartFile.fromBytes(
     'profilePicture', // field name
     fileBytes, // file bytes

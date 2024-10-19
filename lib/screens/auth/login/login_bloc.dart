@@ -28,7 +28,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       }
     } on DioException catch (e) {
       if (e.response!.data['status'] == 422) {
-        emit(LoginSuccess(event.phoneNumber, loginId));
+        emit(LoginAgain(event.phoneNumber, e.response!.data['message'].toString()));
       } else {
         emit(LoginFailure(e.response!.data['message'].toString()));
       }

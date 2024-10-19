@@ -7,6 +7,7 @@ import 'package:social_psn/screens/auth/login/login_bloc.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
 import '../../main/widgets/screen_builder.dart';
+import '../../widgets/custom_snackbar.dart';
 import '../../widgets/white_circular_progress_indicator.dart';
 
 class Login extends StatefulWidget {
@@ -88,6 +89,8 @@ class _LoginState extends State<Login> {
                           focusNode: _focusNode,
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
+                          textDirection: TextDirection.ltr,
+                          textAlign: TextAlign.end,
                           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                 color: Theme.of(context).colorScheme.onBackground,
                               ),
@@ -154,12 +157,20 @@ class _LoginState extends State<Login> {
                       listener: (context, state) {
                         print('state : ${state}');
                         if (state is LoginSuccess) {
-                          print('state : ${state.loginId}');
                           Navigator.of(context).pushNamed(AppRoutes.verify, arguments: {
                             'phone': state.phone,
                             'loginId': state.loginId,
                           });
+                        }else if (state is LoginAgain) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            CustomSnackBar(content: state.message, backgroundColor: Theme.of(context).primaryColor).build(context),
+                          );
+                          Navigator.of(context).pushNamed(AppRoutes.verify, arguments: {
+                            'phone': state.phone,
+                            'loginId': BlocProvider.of<LoginBloc>(context).loginId,
+                          });
                         }
+
                       },
                       builder: (context, state) {
                         return SizedBox(
@@ -203,7 +214,6 @@ class _LoginState extends State<Login> {
   }
 
   void loginFunction(BuildContext context) {
-    print('loginFunction');
     if (_formKey.currentState!.validate()) {
       final phoneNumber = _phoneController.text;
       BlocProvider.of<LoginBloc>(context).add(LogInEvent(phoneNumber));

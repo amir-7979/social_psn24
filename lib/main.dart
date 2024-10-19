@@ -22,7 +22,7 @@ void main() async {
   await notificationService.initialize();
 
   final NotificationBloc notificationBloc = NotificationBloc();
-  notificationBloc.add(LoadNotifications()); // Dispatch the event here
+  notificationBloc.add(LoadNotifications());
 
   runApp(MyApp(notificationBloc: notificationBloc));
 }

@@ -1,9 +1,4 @@
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:mime/mime.dart';
-import 'package:http_parser/http_parser.dart';
 
 QueryOptions postsQuery({String? id, int? isPublish, String? tagId, String? search, int? limit, int? offset, int? postType}) {
   Map<String, dynamic> variables = {};

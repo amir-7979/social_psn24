@@ -3,19 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:social_psn/screens/widgets/cached_network_image.dart';
 import 'package:social_psn/screens/widgets/media_loader.dart';
-
 import '../../../configs/consts.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/post.dart';
 import '../../configs/utilities.dart';
-import '../../repos/models/media.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/profile_cached_network_image.dart';
-import '../widgets/video_player.dart';
 import 'post_bloc.dart';
 
 class PostItem extends StatefulWidget {
@@ -30,7 +26,6 @@ class PostItem extends StatefulWidget {
 class _PostItemState extends State<PostItem> {
   bool? isUserLoggedIn;
   late PostBloc _postBloc = PostBloc();
-  bool _showVideo = false;
 
   @override
   void initState() {
@@ -251,7 +246,7 @@ class _PostItemState extends State<PostItem> {
                                       AppLocalizations.of(context)!
                                           .translateNested(
                                               "postScreen",
-                                              widget.post.isLiked ?? false
+                                              widget.post.isLiked
                                                   ? "delete_interest"
                                                   : "interest"),
                                       style: Theme.of(context)
@@ -302,8 +297,7 @@ class _PostItemState extends State<PostItem> {
                                       AppLocalizations.of(context)!
                                           .translateNested(
                                               "postScreen",
-                                              widget.post.isNotificationEnabled ??
-                                                      false
+                                              widget.post.isNotificationEnabled
                                                   ? "delete_notification"
                                                   : "notification"),
                                       style: Theme.of(context)

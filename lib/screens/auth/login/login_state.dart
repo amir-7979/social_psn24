@@ -13,6 +13,12 @@ final class LoginSuccess extends LoginState {
   LoginSuccess(this.phone, this.loginId);
 }
 
+final class LoginAgain extends LoginState {
+  final String phone, message;
+
+  LoginAgain(this.phone, this.message);
+}
+
 final class LoginFailure extends LoginState {
   final String error;
   LoginFailure(this.error);

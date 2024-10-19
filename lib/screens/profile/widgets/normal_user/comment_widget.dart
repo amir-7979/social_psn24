@@ -3,10 +3,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../repos/models/comment.dart';
-import '../../../../repos/models/content.dart';
 import '../../profile_bloc.dart';
 import '../lists_items/comments.dart';
-import '../lists_items/contents.dart';
 
 class CommentWidget extends StatefulWidget {
   final int? profileId;

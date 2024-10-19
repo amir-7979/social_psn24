@@ -9,7 +9,6 @@ import 'package:social_psn/screens/create_post/create_post_bloc.dart';
 import 'package:video_player/video_player.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
-import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/admin_setting.dart';
 import '../widgets/custom_snackbar.dart';
 

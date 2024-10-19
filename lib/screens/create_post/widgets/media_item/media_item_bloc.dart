@@ -13,7 +13,6 @@ import '../../../../repos/models/media.dart';
 import '../../../../repos/repositories/graphql/create_post_repository.dart';
 import '../../../../services/graphql_service.dart';
 import '../../create_post_bloc.dart';
-import 'package:http/http.dart' as http;
 part 'media_item_event.dart';
 part 'media_item_state.dart';
 

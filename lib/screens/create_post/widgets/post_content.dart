@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
@@ -10,7 +9,6 @@ import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
 import '../../../repos/models/admin_setting.dart';
-import '../../../repos/models/media.dart';
 import '../../widgets/custom_snackbar.dart';
 import '../create_post_bloc.dart';
 import '../utilities.dart';

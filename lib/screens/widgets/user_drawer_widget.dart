@@ -217,7 +217,7 @@ class UserDrawer extends StatelessWidget {
                           child: FittedBox(
                             fit: BoxFit.cover,
                             child: SvgPicture.asset(
-                                'assets/images/drawer/settings.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
+                                'assets/images/drawer/settings.svg',  color: Colors.grey,)
                           ),
                         ),
                         title: Text(
