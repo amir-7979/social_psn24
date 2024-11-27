@@ -74,7 +74,7 @@ dependencies:
   dio: ^5.5.0+1
   firebase_core: ^3.3.0
   firebase_messaging: ^15.0.4
-  searchfield: ^1.0.9
+  searchfield: ^1.1.0
   flutter_typeahead: ^5.2.0
   permission_handler: ^11.3.1
   file_picker: ^8.0.7
@@ -89,7 +89,7 @@ dev_dependencies:
 
 dependency_overrides:
   font_awesome_flutter:
-    path: 'C:\Users\amir\Desktop\flutter\font_awesome_flutter'
+    path: 'assets\font_awesome\font_awesome_flutter'
 
 flutter_launcher_icons:
   android: "launcher_icon"

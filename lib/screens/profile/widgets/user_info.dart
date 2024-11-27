@@ -7,6 +7,7 @@ import 'package:social_psn/configs/setting/themes.dart';
 import 'package:social_psn/screens/main/widgets/screen_builder.dart';
 import 'package:social_psn/screens/profile/profile_bloc.dart';
 
+import '../../../configs/consts.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/profile.dart';
@@ -137,6 +138,7 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
   }
 
   Widget buildBody(BuildContext context, Profile profile, profileId) {
+    print('profile.showActivity: ${profile.photo}');
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -171,7 +173,7 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                                     fit: BoxFit.cover,
                                     child: Container(
                                         child:
-                                            ProfileCacheImage(profile.photo)),
+                                            ProfileCacheImage(profileId != null ? MediaLink + profile.photo! : profile.photo)),
                                   )
                                 : SvgPicture.asset(
                                     'assets/images/profile/profile2.svg'),

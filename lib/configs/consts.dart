@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 
 double screenHeight = 0.0;
 
-const String inviteLink = 'https://social.psn24.ir/';
+const String inviteLink = 'https://psn24.ir/';
+const String MediaLink = 'https://media.psn24.ir/';
 
 Map<String, dynamic>? errorMessage =  {
   "3": "نوع داده ورودی باید عددی باشد",

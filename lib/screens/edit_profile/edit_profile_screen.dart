@@ -372,10 +372,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 return MyAlertDialog(
                                   title: AppLocalizations.of(context)!
                                       .translateNested(
-                                          'dialog', 'deleteMediaTitle'),
+                                          'dialog', 'exitFromSettingTitle'),
                                   description: AppLocalizations.of(context)!
                                       .translateNested(
-                                          'dialog', 'deleteMediaDescription'),
+                                          'dialog', 'exitFromSettingDescription'),
                                   cancelText: AppLocalizations.of(context)!
                                       .translateNested('dialog', 'no'),
                                   confirmText: AppLocalizations.of(context)!

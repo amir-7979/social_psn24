@@ -90,7 +90,7 @@ class _PostContentState extends State<PostContent> {
         (advanceSwitchController.value == false &&
                     permissions.contains("create general post with media")) ||
                 (advanceSwitchController.value == true &&
-                    permissions.contains("create expert post with media"))
+                    permissions.contains("create expert post"))
             ? Column(
                 children: [
                   Padding(

@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
 import 'package:social_psn/repos/models/admin_setting.dart';
@@ -32,10 +33,12 @@ class _MainFormState extends State<MainForm> {
   final _titleFocusNode = FocusNode();
   final _categoryFocusNode = FocusNode();
   final _longTextFocusNode = FocusNode();
+  String? _selectedCategory;
   List<Tag> _categories = [];
   int _maxLength = 200;
   int _publicMaxLength = 1000;
   int _privateMaxLength = 500;
+  bool _categoryState = true;
   bool _isSearchFieldOpen = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AdminSettings? adminSettings;
@@ -55,7 +58,7 @@ class _MainFormState extends State<MainForm> {
       }
     });
     adminSettings = BlocProvider.of<CreatePostBloc>(context).adminSettings;
-    _submitTimer = Timer.periodic(Duration(minutes: 1), (timer) {
+    _submitTimer = Timer.periodic(Duration(seconds: 30), (timer) {
       _submitPost();
     });
     longTextController.addListener(_updateCounter);
@@ -103,6 +106,8 @@ class _MainFormState extends State<MainForm> {
 
   void _validateCategoryInput() {
     setState(() {
+      _categoryState = _categories
+          .any((category) => category.title == categoryController.text);
     });
   }
 
@@ -116,6 +121,7 @@ class _MainFormState extends State<MainForm> {
       }
     });
   }
+
   void validatePost(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       BlocProvider.of<CreatePostBloc>(context).add(
@@ -249,7 +255,6 @@ class _MainFormState extends State<MainForm> {
     );
   }
 
-
   Widget PostForm(BuildContext context){
       List<Tag> filteredCategories = _filterCategories(categoryController.text);
       return Form(
@@ -308,6 +313,7 @@ class _MainFormState extends State<MainForm> {
                   setState(() {
                     categoryController.clear();
                     _maxLength = state.type ? _privateMaxLength : _publicMaxLength;
+                    _categoryState = true;
                     _isSearchFieldOpen = false;
 
                   });
@@ -340,16 +346,10 @@ class _MainFormState extends State<MainForm> {
                 controller: categoryController,
                 focusNode: _categoryFocusNode,
                 suggestionState: Suggestion.expand,
-
-
-
-                /*searchStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),*/
                 suggestionStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   color: Theme.of(context).colorScheme.onBackground,
                 ),
-                /*searchInputDecoration: InputDecoration(
+                searchInputDecoration: SearchInputDecoration(
                   label: Text(
                     AppLocalizations.of(context)!
                         .translateNested("createMedia", "category"),
@@ -360,6 +360,9 @@ class _MainFormState extends State<MainForm> {
                           : Theme.of(context).hintColor,
                     ),
                   ),
+                  searchStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
                   enabledBorder: borderStyle,
                   errorBorder: errorBorderStyle,
                   border: borderStyle,
@@ -411,26 +414,29 @@ class _MainFormState extends State<MainForm> {
                       SizedBox(width: 8),
                     ],
                   ),
-                ),*/
+                ),
                 itemHeight: 50,
                 maxSuggestionsInViewPort: 4,
                 suggestionsDecoration: SuggestionDecoration(
                   color: Theme.of(context).colorScheme.background,
                   borderRadius: BorderRadius.circular(8),
+                  selectionColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-// No category entered
+                    _categoryState = false; // No category entered
                     return AppLocalizations.of(context)!
                         .translateNested('error', 'notEmpty');
                   } else if (!_categories.any((category) => category.title == value)) {
                     setState(() {
-// Invalid category
+                      _categoryState = false; // Invalid category
                     });
-                    return 'Invalid Category';
+                    return '';
                   }
                   setState(() {
-// Valid category
+                    _categoryState = true; // Valid category
                   });
                   return null;
                 },
@@ -441,6 +447,8 @@ class _MainFormState extends State<MainForm> {
                 },
                 onSuggestionTap: (suggestion) {
                   setState(() {
+                    _selectedCategory = suggestion.item;
+                    _categoryState = true;
                     _isSearchFieldOpen = false; // Close suggestions
                     _categoryFocusNode.unfocus();
                     _longTextFocusNode.requestFocus();
@@ -523,5 +531,6 @@ class _MainFormState extends State<MainForm> {
         ),
       );
     }
+
   }
 
