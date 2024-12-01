@@ -1,6 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+
+import 'consts.dart';
 
 TextDirection detectDirection(String? text) {
   if (text == null || text.isEmpty) {
@@ -38,3 +41,11 @@ bool isAppLanguageFarsi(BuildContext context) {
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+//todo: shareMethod text
+void shareMethod() {
+  Share.share(
+    inviteLink,
+    subject: 'نرم افزار شبکه اجتماعی',
+  );
+}

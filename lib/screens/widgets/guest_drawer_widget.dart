@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../configs/consts.dart';
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/themes.dart';
+import '../../configs/utilities.dart';
 import '../main/widgets/screen_builder.dart';
 import 'custom_snackbar.dart';
 
@@ -158,14 +159,16 @@ class GuestDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () async {
-                      FlutterClipboard.copy(inviteLink).then((value) {
+                      shareMethod();
+
+                      /* FlutterClipboard.copy(inviteLink).then((value) {
                         ScaffoldMessenger.of(snackBarContext).showSnackBar(
                           CustomSnackBar(
                               function: () => ScaffoldMessenger.of(snackBarContext).hideCurrentSnackBar(),
                               content: AppLocalizations.of(context)!.translateNested('drawer', 'invite'),
                               backgroundColor: Theme.of(context).primaryColor
                           ).build(snackBarContext),
-                        );                          });
+                        );                          });*/
                       Navigator.pop(context);
 
                     },

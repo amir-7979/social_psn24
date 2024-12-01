@@ -138,7 +138,6 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
   }
 
   Widget buildBody(BuildContext context, Profile profile, profileId) {
-    print('profile.showActivity: ${profile.photo}');
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -232,7 +231,14 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                               shape: BoxShape.circle,
                               color: Theme.of(context).colorScheme.background,
                             ),
-                            child: BlocBuilder<ProfileBloc, ProfileState>(
+                            child: BlocConsumer<ProfileBloc, ProfileState>(
+                              listenWhen: (previous, current) {
+                                print(current);
+                                return current is ToggleNotificationSuccess;
+                              },
+                              listener: (context, state) {
+                                profile.currentUserNotificationEnabled = profile.currentUserNotificationEnabled == 1 ? 0 : 1;
+                              },
                               buildWhen: (previous, current) {
                                 return current is ToggleNotificationSuccess ||
                                     current is ToggleNotificationFailure ||

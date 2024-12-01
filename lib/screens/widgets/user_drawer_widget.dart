@@ -2,11 +2,13 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
 
 import '../../configs/consts.dart';
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/themes.dart';
+import '../../configs/utilities.dart';
 import '../main/widgets/screen_builder.dart';
 import 'custom_snackbar.dart';
 import 'dialogs/my_confirm_dialog.dart';
@@ -122,7 +124,6 @@ class UserDrawer extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       ListTile(
                         minLeadingWidth: 0,
                         minVerticalPadding: 0,
@@ -152,7 +153,6 @@ class UserDrawer extends StatelessWidget {
                           navigatorKey.currentState!.pushNamed(AppRoutes.interest);
                           Navigator.pop(context);},
                       ),
-
                       /*ListTile(
                         minLeadingWidth: 0,
                         minVerticalPadding: 0,
@@ -264,14 +264,15 @@ class UserDrawer extends StatelessWidget {
                           ),
                         ),
                         onTap: () async {
-                          FlutterClipboard.copy(inviteLink).then((value) {
+                          shareMethod();
+                         /* FlutterClipboard.copy(inviteLink).then((value) {
                             ScaffoldMessenger.of(snackBarContext).showSnackBar(
                               CustomSnackBar(
                                   function: () => ScaffoldMessenger.of(snackBarContext).hideCurrentSnackBar(),
                                   content: AppLocalizations.of(context)!.translateNested('drawer', 'invite'),
                                   backgroundColor: Theme.of(context).primaryColor
                               ).build(snackBarContext),
-                            );                          });
+                            );                          });*/
                           Navigator.pop(context);
 
                           },
@@ -457,4 +458,6 @@ class UserDrawer extends StatelessWidget {
       }
     );
   }
+
+
 }

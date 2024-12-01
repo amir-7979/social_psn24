@@ -32,9 +32,6 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
     isUserLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn;
     widget.post.voteDown = widget.post.currentUserDownVotes;
     widget.post.voteUp = widget.post.currentUserUpVotes;
-    //print widget.post.voteDown, widget.post.voteUp
-    print("${widget.post.voteUp} and ${widget.post.voteDown}");
-
   }
 
   void submitComment(String postId, String message, [String? replyId]) {

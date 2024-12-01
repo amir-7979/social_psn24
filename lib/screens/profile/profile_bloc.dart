@@ -225,7 +225,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(ToggleNotificationSuccess());
       }
     } catch (e) {
-      print(e.toString());
 
       emit(ToggleNotificationFailure('خطا در عملیات'));
     }

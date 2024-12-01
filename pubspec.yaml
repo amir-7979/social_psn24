@@ -82,6 +82,7 @@ dependencies:
   flutter_local_notifications: ^17.2.2
   video_thumbnail: ^0.5.3
   gql_dio_link: ^1.0.1+1
+  share_plus: ^10.1.2
 
 dev_dependencies:
   flutter_test:

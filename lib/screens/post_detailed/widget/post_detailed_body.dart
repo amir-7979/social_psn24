@@ -27,6 +27,7 @@ class PostDetailedBody extends StatefulWidget{
 }
 
 class _PostDetailedBodyState extends State<PostDetailedBody> {
+
   @override
   build(BuildContext context) {
     return Column(

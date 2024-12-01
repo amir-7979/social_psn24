@@ -46,46 +46,51 @@ class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin 
           widget.pagingController.refresh();
         }
       },
-      child: PagedListView<int, Post>(
-        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
-        scrollController: _customScrollController,
-        physics: const CustomScrollPhysics(), // Custom scroll physics for better control
-        pagingController: widget.pagingController,
-        builderDelegate: PagedChildBuilderDelegate<Post>(
-          itemBuilder: (context, item, index) => RepaintBoundary(
-            child: PostItem(item),
-          ),
-          firstPageProgressIndicatorBuilder: (context) => SizedBox(
-            height: 400,
-            child: ListView.builder(
-              itemCount: 20,
-              itemBuilder: (context, index) => RepaintBoundary(
-                child: ShimmerPostItem(),
+      child: RefreshIndicator(
+        color: Theme.of(context).primaryColor, // Foreground color of the progress bar
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Background color
+        onRefresh: _onRefresh,
+        child: PagedListView<int, Post>(
+          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
+          scrollController: _customScrollController,
+          physics: const CustomScrollPhysics(), // Custom scroll physics for better control
+          pagingController: widget.pagingController,
+          builderDelegate: PagedChildBuilderDelegate<Post>(
+            itemBuilder: (context, item, index) => RepaintBoundary(
+              child: PostItem(item),
+            ),
+            firstPageProgressIndicatorBuilder: (context) => SizedBox(
+              height: 400,
+              child: ListView.builder(
+                itemCount: 20,
+                itemBuilder: (context, index) => RepaintBoundary(
+                  child: ShimmerPostItem(),
+                ),
               ),
             ),
-          ),
-          newPageProgressIndicatorBuilder: (context) => NewPageProgressIndicator(),
-          newPageErrorIndicatorBuilder: (context) => Center(
-            child: Text(
-              AppLocalizations.of(context)!.translateNested("profileScreen", "fetchError"),
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).primaryColor,
+            newPageProgressIndicatorBuilder: (context) => NewPageProgressIndicator(),
+            newPageErrorIndicatorBuilder: (context) => Center(
+              child: Text(
+                AppLocalizations.of(context)!.translateNested("profileScreen", "fetchError"),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
-          ),
-          firstPageErrorIndicatorBuilder: (context) => Center(
-            child: Text(
-              AppLocalizations.of(context)!.translateNested("profileScreen", "fetchError"),
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).primaryColor,
+            firstPageErrorIndicatorBuilder: (context) => Center(
+              child: Text(
+                AppLocalizations.of(context)!.translateNested("profileScreen", "fetchError"),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
-          ),
-          noItemsFoundIndicatorBuilder: (context) => Center(
-            child: Text(
-              AppLocalizations.of(context)!.translateNested("profileScreen", "noPost"),
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).primaryColor,
+            noItemsFoundIndicatorBuilder: (context) => Center(
+              child: Text(
+                AppLocalizations.of(context)!.translateNested("profileScreen", "noPost"),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
           ),
@@ -94,12 +99,16 @@ class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin 
     );
   }
 
+  Future<void> _onRefresh() async {
+    // Call the refresh method of the PagingController
+    widget.pagingController.refresh();
+  }
+
   void scrollToTop() {
     _customScrollController.animateTo(
       0.0,
       duration: const Duration(seconds: 1), // Adjust duration to control speed
       curve: Curves.easeInOut, // Smooth animation curve
-
     );
   }
 }
