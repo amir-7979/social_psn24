@@ -97,7 +97,7 @@ class UserDrawer extends StatelessWidget {
                   color: Theme.of(context).drawerTheme.backgroundColor,
                   child: ListView(
                     children: <Widget>[
-                     /* ListTile(
+                      ListTile(
                         minLeadingWidth: 0,
                         minVerticalPadding: 0,
                         contentPadding: const EdgeInsetsDirectional.all(0),
@@ -110,7 +110,7 @@ class UserDrawer extends StatelessWidget {
                             fit: BoxFit.cover,
                             child: SvgPicture.asset(
                               'assets/images/drawer/wallet.svg',
-                              color:  Colors.grey *//*: (Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor)*//*,
+                              color:  (Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
                             ),
                           ),
                         ),
@@ -118,11 +118,42 @@ class UserDrawer extends StatelessWidget {
                           AppLocalizations.of(context)!.translateNested('drawer', 'drawerWallet'),
                           style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey *//*: Theme.of(context).hoverColor*//*,
+                            color: Theme.of(context).hoverColor,
                           ),
                         ),
                       ),
+
                       ListTile(
+                        minLeadingWidth: 0,
+                        minVerticalPadding: 0,
+                        contentPadding: const EdgeInsetsDirectional.all(0),
+                        horizontalTitleGap: 10,
+                        dense: true,
+                        leading: SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: FittedBox(
+                            fit: BoxFit.cover,
+                            child:
+                            SvgPicture.asset('assets/images/drawer/heart.svg',
+                                color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
+                          ),
+                        ),
+                        title: Text(
+                          AppLocalizations.of(context)!.translateNested(
+                              'drawer', 'drawerLike'),
+                          style:
+                          Theme.of(context).textTheme.headlineMedium!.copyWith(
+                            fontWeight: FontWeight.w400,
+                            color: Theme.of(context).hoverColor,
+                          ),
+                        ),
+                        onTap: () {
+                          navigatorKey.currentState!.pushNamed(AppRoutes.interest);
+                          Navigator.pop(context);},
+                      ),
+
+                      /*ListTile(
                         minLeadingWidth: 0,
                         minVerticalPadding: 0,
                         contentPadding: const EdgeInsetsDirectional.all(0),
@@ -160,35 +191,8 @@ class UserDrawer extends StatelessWidget {
                           child: FittedBox(
                             fit: BoxFit.cover,
                             child:
-                            SvgPicture.asset('assets/images/drawer/heart.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
-                          ),
-                        ),
-                        title: Text(
-                          AppLocalizations.of(context)!.translateNested(
-                              'drawer', 'drawerLike'),
-                          style:
-                          Theme.of(context).textTheme.headlineMedium!.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).hoverColor,
-                          ),
-                        ),
-                        onTap: () {
-                          navigatorKey.currentState!.pushNamed(AppRoutes.interest);
-                        Navigator.pop(context);},
-                      ),
-                      ListTile(
-                        minLeadingWidth: 0,
-                        minVerticalPadding: 0,
-                        contentPadding: const EdgeInsetsDirectional.all(0),
-                        horizontalTitleGap: 10,
-                        dense: true,
-                        leading: SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: FittedBox(
-                            fit: BoxFit.cover,
-                            child:
-                            SvgPicture.asset('assets/images/drawer/hands.svg', color: Colors.grey/*Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor*/),
+                            SvgPicture.asset('assets/images/drawer/hands.svg',
+                                color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
                           ),
                         ),
                         title: Text(
@@ -197,12 +201,12 @@ class UserDrawer extends StatelessWidget {
                           style:
                           Theme.of(context).textTheme.headlineMedium!.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey/*Theme.of(context).hoverColor*/,
+                            color: Theme.of(context).hoverColor,
                           ),
                         ),
                         onTap: () {
                          // navigatorKey.currentState!.pushNamed(AppRoutes.cooperate);
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
                         },
                       ),
                       ListTile(
@@ -217,7 +221,8 @@ class UserDrawer extends StatelessWidget {
                           child: FittedBox(
                             fit: BoxFit.cover,
                             child: SvgPicture.asset(
-                                'assets/images/drawer/settings.svg',  color: Colors.grey,)
+                                'assets/images/drawer/settings.svg',
+                                color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
                           ),
                         ),
                         title: Text(
@@ -229,7 +234,9 @@ class UserDrawer extends StatelessWidget {
                             color: Theme.of(context).hoverColor,
                           ),
                         ),
-                        onTap: () {Navigator.pop(context);},
+                        onTap: () {
+                          //Navigator.pop(context);
+                          },
                       ),
                       ListTile(
                         minLeadingWidth: 0,
@@ -243,7 +250,8 @@ class UserDrawer extends StatelessWidget {
                           child: FittedBox(
                             fit: BoxFit.cover,
                             child:
-                            SvgPicture.asset('assets/images/drawer/invite.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
+                            SvgPicture.asset('assets/images/drawer/invite.svg',
+                                color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
                           ),
                         ),
                         title: Text(

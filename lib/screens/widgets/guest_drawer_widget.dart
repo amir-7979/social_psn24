@@ -117,6 +117,37 @@ class GuestDrawer extends StatelessWidget {
                       child: FittedBox(
                         fit: BoxFit.cover,
                         child:
+                        SvgPicture.asset('assets/images/drawer/hands.svg',
+                            color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),
+                      ),
+                    ),
+                    title: Text(
+                      AppLocalizations.of(context)!.translateNested(
+                          'drawer', 'drawerHand'),
+                      style:
+                      Theme.of(context).textTheme.headlineMedium!.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: Theme.of(context).hoverColor,
+                      ),
+                    ),
+                    onTap: () {
+                      // navigatorKey.currentState!.pushNamed(AppRoutes.cooperate);
+                      // Navigator.pop(context);
+                    },
+                  ),
+
+                  ListTile(
+                    minLeadingWidth: 0,
+                    minVerticalPadding: 0,
+                    contentPadding: const EdgeInsetsDirectional.all(0),
+                    horizontalTitleGap: 10,
+                    dense: true,
+                    leading: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child:
                         SvgPicture.asset('assets/images/drawer/invite.svg', color: Theme.of(context).brightness == Brightness.light ? null : Theme.of(context).hoverColor),),),
                     title: Text(
                       AppLocalizations.of(context)!.translateNested(

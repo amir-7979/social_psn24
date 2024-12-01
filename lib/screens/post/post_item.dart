@@ -59,9 +59,7 @@ class _PostItemState extends State<PostItem> {
             Navigator.of(context).pushNamed(
               AppRoutes.postDetailed,
               arguments: <String, dynamic>{
-/*
                 'post': widget.post,
-*/
                 'postId': widget.post.id,
               },
             );

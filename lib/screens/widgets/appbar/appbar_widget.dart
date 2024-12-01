@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../configs/localization/app_localizations.dart';
 import '../../../../configs/setting/setting_bloc.dart';
@@ -28,6 +29,13 @@ class SocialAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _SocialAppBarState extends State<SocialAppBar> {
+  bool UserLoggedIn = false;
+  @override
+  void initState() {
+    UserLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn;
+    print('isUserLoggedIn: $UserLoggedIn');
+    super.initState();
+  }
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -140,101 +148,99 @@ class _SocialAppBarState extends State<SocialAppBar> {
               );
             }),
             actions: [
-              Padding(
-                padding: const EdgeInsetsDirectional.only(end: 8),
-                child: IconButton(
-                  color: Theme.of(context).appBarTheme.iconTheme!.color,
-                  icon: SvgPicture.asset(
-                      Theme.of(context).brightness == Brightness.light
-                          ? 'assets/images/appbar/dark.svg'
-                          : 'assets/images/appbar/light.svg'),
-                  onPressed: () {
-                    BlocProvider.of<SettingBloc>(context).add(
-                      SettingThemeEvent(
-                          Theme.of(context).brightness == Brightness.light
-                              ? AppTheme.dark
-                              : AppTheme.light),
-                    );
-                  },
-                ),
+              IconButton(
+                color: Theme.of(context).appBarTheme.iconTheme!.color,
+                icon :  FaIcon(
+                  size: 24,
+                  Theme.of(context).brightness == Brightness.light ? FontAwesomeIcons.thinMoon : FontAwesomeIcons.thinSunBright,
+                  color: Theme.of(context).hoverColor,),
+                onPressed: () {
+                  BlocProvider.of<SettingBloc>(context).add(
+                    SettingThemeEvent(
+                        Theme.of(context).brightness == Brightness.light
+                            ? AppTheme.dark
+                            : AppTheme.light),
+                  );
+                },
               ),
-              BlocBuilder<NotificationBloc, NotificationState>(
+              if(context.read<SettingBloc>().state.isUserLoggedIn) IconButton(
+                color: Theme.of(context).appBarTheme.iconTheme!.color,
+                icon: FaIcon(
+                      size: 24,
+                      FontAwesomeIcons.thinWallet,
+                      color: Theme.of(context).hoverColor,),
+                onPressed: () {
+                  print(widget.navigatorObserver.currentRoute);
+                },
+              ),
+              if(context.read<SettingBloc>().state.isUserLoggedIn) BlocBuilder<NotificationBloc, NotificationState>(
                 builder: (context, state) {
-                  return Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 8),
-                    child: IconButton(
-                      color: Theme.of(context).appBarTheme.iconTheme!.color,
-                      icon: state is NotificationLoaded &&
-                              state.unreadNotifications > 0
-                          ? badges.Badge(
-                              badgeStyle: badges.BadgeStyle(
-                                shape: badges.BadgeShape.circle,
-                                badgeColor: Theme.of(context).primaryColor,
-                                padding: EdgeInsets.all(2),
-                                elevation: 0,
-                              ),
-                              position:
-                                  badges.BadgePosition.topEnd(end: -5, top: -3),
-                              badgeContent: Container(
-                                height: 14,
-                                width: 14,
-                                child: Text(
-                                  state.unreadNotifications.toString(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                        color: whiteColor,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsetsDirectional.symmetric(
-                                    vertical: 2),
-                                child: SvgPicture.asset(
-                                  'assets/images/appbar/bell.svg',
-                                  color: Theme.of(context)
-                                      .appBarTheme
-                                      .iconTheme!
-                                      .color,
-                                ),
-                              ),
-                            )
-                          : SvgPicture.asset(
-                              'assets/images/appbar/bell.svg',
-                              color: Theme.of(context)
-                                  .appBarTheme
-                                  .iconTheme!
-                                  .color,
+                  return IconButton(
+                    color: Theme.of(context).appBarTheme.iconTheme!.color,
+                    icon: state is NotificationLoaded &&
+                            state.unreadNotifications > 0
+                        ? badges.Badge(
+                            badgeStyle: badges.BadgeStyle(
+                              shape: badges.BadgeShape.circle,
+                              badgeColor: Theme.of(context).primaryColor,
+                              padding: EdgeInsets.all(2),
+                              elevation: 0,
                             ),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            useSafeArea: true,
-                            barrierDismissible: true,
-                            useRootNavigator: true,
-                            builder: (BuildContext context) {
-                              return Dialog(
-                                elevation: 1,
-                                child: NotificationScreen(),
-                              );
-                            });
-                      },
-                    ),
+                            position:
+                                badges.BadgePosition.topEnd(end: -5, top: -3),
+                            badgeContent: Container(
+                              height: 14,
+                              width: 14,
+                              child: Text(
+                                state.unreadNotifications.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      color: whiteColor,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.symmetric(
+                                  vertical: 2),
+                              child: FaIcon(
+                                size: 24,
+                                FontAwesomeIcons.thinBell,
+                                color: Theme.of(context).hoverColor,),
+                            ),
+                          )
+                        :FaIcon(
+                      size: 24,
+                      FontAwesomeIcons.thinBell,
+                      color: Theme.of(context).hoverColor,),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          useSafeArea: true,
+                          barrierDismissible: true,
+                          useRootNavigator: true,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              elevation: 1,
+                              child: NotificationScreen(),
+                            );
+                          });
+                    },
                   );
                 },
               ),
               Padding(
-                padding: const EdgeInsetsDirectional.only(end: 15.0),
+                padding: const EdgeInsetsDirectional.only(end: 8.0),
                 child: IconButton(
                   color: Theme.of(context).appBarTheme.iconTheme!.color,
-                  icon: SvgPicture.asset(
-                    'assets/images/appbar/search.svg',
-                    color: Theme.of(context).appBarTheme.iconTheme!.color,
-                  ),
+                  icon: FaIcon(
+                    size: 24,
+                    FontAwesomeIcons.thinSearch,
+                    color: Theme.of(context).hoverColor,),
                   onPressed: () {
                     print(widget.navigatorObserver.currentRoute);
                     if (widget.navigatorObserver.currentRoute == AppRoutes.home)
