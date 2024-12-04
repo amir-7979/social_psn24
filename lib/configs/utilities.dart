@@ -43,9 +43,9 @@ bool isAppLanguageFarsi(BuildContext context) {
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 //todo: shareMethod text
-void shareMethod() {
+void shareMethod(String link, {String? subject}) {
   Share.share(
-    inviteLink,
-    subject: 'نرم افزار شبکه اجتماعی',
+    link,
+    subject: subject,
   );
 }

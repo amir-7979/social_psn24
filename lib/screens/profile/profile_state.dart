@@ -85,5 +85,6 @@ class ChangeToPostState extends ProfileState {}
 
 class ChangeToCommentState extends ProfileState {}
 
-
+class ProfileInfoRefreshState extends ProfileState {}
+class ProfileContentRefreshState extends ProfileState {}
 

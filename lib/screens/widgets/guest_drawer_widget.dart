@@ -159,7 +159,7 @@ class GuestDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () async {
-                      shareMethod();
+                      shareMethod(inviteLink);
 
                       /* FlutterClipboard.copy(inviteLink).then((value) {
                         ScaffoldMessenger.of(snackBarContext).showSnackBar(

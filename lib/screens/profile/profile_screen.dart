@@ -12,6 +12,20 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  bool _isRefreshingContent = false;
+
+  Future<void> _refreshContent() async {
+    setState(() {
+      _isRefreshingContent = true; // Show the placeholder
+    });
+
+    // Simulate a delay to refresh content or wait for actual data fetch
+    await Future.delayed(Duration.zero);
+
+    setState(() {
+      _isRefreshingContent = false; // Show the ContentInfo again
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +33,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
       create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context)),
       child: Padding(
         padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
-        child: ListView(
-          physics: ClampingScrollPhysics(),
-          children: [
-            SizedBox(height: 16),
-            UserInfo(),
-            SizedBox(height: 16),
-            ContentInfo(),
-          ],
+        child: Builder(
+          builder: (context) {
+            return RefreshIndicator(
+              color: Theme.of(context).primaryColor, // Foreground color of the progress bar
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Background color
+              onRefresh: () async {
+                int? profileId = ModalRoute.of(context)?.settings.arguments as int?;
+                if (profileId != null) {
+                  context.read<ProfileBloc>().add(FetchProfileEvent(id: profileId));
+                } else {
+                  context.read<ProfileBloc>().add(FetchMyProfileEvent());
+                }
+
+                // Trigger content refresh
+                await _refreshContent();
+              },
+              child: ListView(
+                physics: ClampingScrollPhysics(),
+                children: [
+                  SizedBox(height: 16),
+                  UserInfo(),
+                  SizedBox(height: 16),
+                  // Conditionally show placeholder or ContentInfo
+                  _isRefreshingContent
+                      ? Container(
+                    height: 1000, // Adjust height based on your ContentInfo
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(), // Or any placeholder widget
+                  )
+                      : ContentInfo(),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

@@ -31,6 +31,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ChangeStatusEvent>(handleChangeStatusEvent);
     on<ToggleNotificationEvent>(handleToggleNotificationEvent);
     on<FetchMyActivityEvent>(_onFetchMyActivityEvent);
+    on<ProfileRefreshRequested>(_onProfileRefreshRequested);
   }
 
   FutureOr<void> _onFetchProfileEvent(
@@ -228,5 +229,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       emit(ToggleNotificationFailure('خطا در عملیات'));
     }
+  }
+
+  FutureOr<void> _onProfileRefreshRequested(ProfileRefreshRequested event, Emitter<ProfileState> emit) {
+    emit(ProfileInfoRefreshState());
+    emit(ProfileContentRefreshState());
   }
 }

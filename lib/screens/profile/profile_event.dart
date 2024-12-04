@@ -46,4 +46,6 @@ class ChangeToPostEvent extends ProfileEvent {}
 
 class ChangeToCommentEvent extends ProfileEvent {}
 
+class ProfileRefreshRequested extends ProfileEvent {}
+
 

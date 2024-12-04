@@ -312,22 +312,7 @@ class _PostItemState extends State<PostItem> {
                               ),
                               PopupMenuItem(
                                 onTap: () {
-                                  FlutterClipboard.copy(inviteLink)
-                                      .then((value) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      CustomSnackBar(
-                                              function: () =>
-                                                  ScaffoldMessenger.of(context)
-                                                      .hideCurrentSnackBar(),
-                                              content:
-                                                  AppLocalizations.of(context)!
-                                                      .translateNested(
-                                                          'drawer', 'invite'),
-                                              backgroundColor: Theme.of(context)
-                                                  .primaryColor)
-                                          .build(context),
-                                    );
-                                  });
+                                  shareMethod("${inviteLink}posts/${widget.post.id}");
                                 },
                                 value: 3,
                                 padding: EdgeInsets.symmetric(horizontal: 10),
