@@ -25,9 +25,10 @@ class PostDetailedMainBody extends StatefulWidget {
 class _PostDetailedMainBodyState extends State<PostDetailedMainBody> {
   bool? isUserLoggedIn;
   ScrollController _scrollController = ScrollController();
-  PagingController<int, Comment> pagingController = PagingController<int, Comment>(firstPageKey: 0);
+  PagingController<int, Comment> pagingController =
+  PagingController<int, Comment>(firstPageKey: 0);
   late PostDetailedBloc postDetailedBloc;
-  Widget lastWidget = Container(); // Initialize with a default widget
+  Widget lastWidget = Container();
 
   @override
   void initState() {
@@ -47,6 +48,12 @@ class _PostDetailedMainBodyState extends State<PostDetailedMainBody> {
     PostDetailedBloc.fetchComments(pagingController, widget.postId, 10);
   }
 
+  Future<void> _refresh() async {
+    postDetailedBloc.add(FetchPostEvent(widget.postId));
+    pagingController.refresh();
+    await Future.delayed(Duration.zero);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<PostDetailedBloc, PostDetailedState>(
@@ -59,28 +66,32 @@ class _PostDetailedMainBodyState extends State<PostDetailedMainBody> {
           ).build(context);
         }
       },
-      child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          BlocBuilder<PostDetailedBloc, PostDetailedState>(
-            builder: (context, state) {
-              if (state is PostFetchSuccess) {
-                lastWidget = PostDetailedBody(state.post, isUserLoggedIn!);
-              } else if (state is PostLoading) {
-                lastWidget = ShimmerPostItem();
-              } else if (state is PostFetchFailure) {
-                lastWidget = Container();
-              }
-              return lastWidget; // Return the last relevant widget
-            },
-          ),
-          CommentList(
-            pagingController: pagingController,
-            scrollController: _scrollController,
-            postId: widget.postId,
-          ),
-          SizedBox(height: 8),
-        ],
+      // Wrap the ListView with RefreshIndicator
+      child: RefreshIndicator(
+        onRefresh: _refresh,
+        child: ListView(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          children: [
+            BlocBuilder<PostDetailedBloc, PostDetailedState>(
+              builder: (context, state) {
+                if (state is PostFetchSuccess) {
+                  lastWidget = PostDetailedBody(state.post, isUserLoggedIn!);
+                } else if (state is PostLoading) {
+                  lastWidget = ShimmerPostItem();
+                } else if (state is PostFetchFailure) {
+                  lastWidget = Container();
+                }
+                return lastWidget; // Return the last relevant widget
+              },
+            ),
+            CommentList(
+              pagingController: pagingController,
+              scrollController: _scrollController,
+              postId: widget.postId,
+            ),
+            SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }

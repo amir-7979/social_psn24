@@ -85,7 +85,7 @@ class _PostContentState extends State<PostContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildHeader(context),
+        if(permissions.contains("create expert post"))_buildHeader(context),
         SizedBox(height: 16),
         (advanceSwitchController.value == false &&
                     permissions.contains("create general post with media")) ||

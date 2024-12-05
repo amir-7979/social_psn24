@@ -102,7 +102,8 @@ class SettingState {
   }
 
   void reset() {
-    this.theme = AppTheme.light;
+    this.theme = WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+        Brightness.dark ? AppTheme.dark : AppTheme.light;
     this.language = AppLanguage.persian;
     this.profile = Profile();
     this.adminSettings = AdminSettings();

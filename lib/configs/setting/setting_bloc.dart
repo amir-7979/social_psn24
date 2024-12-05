@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:social_psn/services/storage_service.dart';
 import '../../repos/models/admin_setting.dart';
@@ -30,7 +31,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   static SettingState _handleInitialSetting() {
-    return SettingState(theme: AppTheme.light, language: AppLanguage.persian, token: '');
+    return SettingState(theme: WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+        Brightness.dark ? AppTheme.dark : AppTheme.light, language: AppLanguage.persian, token: '');
   }
 
   Future<void> _fetchUserProfileWithPermissions(event, emit) async {
@@ -49,8 +51,15 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
 
   Future<void> _loadSettingsFromStorage() async {
-    AppTheme theme = (await _storageService.readData('theme')) == 'AppTheme.dark' ? AppTheme.dark : AppTheme.light;
-    AppLanguage language = (await _storageService.readData('language')) == 'english' ? AppLanguage.english : AppLanguage.persian;
+    String? savedTheme = await _storageService.readData('theme');
+    AppTheme theme;
+
+    if (savedTheme == null) {
+      theme = WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+          Brightness.dark ? AppTheme.dark : AppTheme.light;
+    } else {
+      theme = savedTheme == 'AppTheme.dark' ? AppTheme.dark : AppTheme.light;
+    }    AppLanguage language = (await _storageService.readData('language')) == 'english' ? AppLanguage.english : AppLanguage.persian;
     String? token = await _storageService.readData('token');
     emit(state.copyWith(theme: theme, language: language, token: token ?? ''));
     _settingsLoadedCompleter.complete();

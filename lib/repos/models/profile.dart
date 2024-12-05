@@ -55,6 +55,7 @@ class Profile {
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
+    print(json['permissions'].toString());
     String? username = json['username'] as String?;
     if (username != null && username == '@') {
       username = null;
