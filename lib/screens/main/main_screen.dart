@@ -11,6 +11,7 @@ import '../../configs/utilities.dart';
 import '../home/home_screen.dart';
 import '../widgets/appbar/appbar_widget.dart';
 import '../widgets/bottombar_widget.dart';
+import '../widgets/dialogs/my_confirm_dialog.dart';
 import '../widgets/guest_drawer_widget.dart';
 import '../widgets/user_drawer_widget.dart';
 import 'widgets/screen_builder.dart';
@@ -22,6 +23,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
   bool isAddButtonClicked = false;
+  DateTime? _lastBackPressTime;
 
   final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(1);
   late CustomNavigatorObserver _navigatorObserver;
@@ -63,18 +65,41 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     }
   }
 
-  Future<bool> _onWillPop() async {
-    // Check if the inner navigator can pop
-    if (await navigatorKey.currentState?.maybePop() ?? false) {
-      return false; // Prevent the app from exiting if it can pop
+  Future<bool> _onWillPop(BuildContext buildContext) async {
+    final now = DateTime.now();
+    if (_lastBackPressTime == null || now.difference(_lastBackPressTime!) > const Duration(seconds: 1)) {
+      _lastBackPressTime = now;
+      if (await navigatorKey.currentState?.maybePop() ?? false) {
+        return false;
+      }
     }
-    return true; // Allow the app to exit if no more screens can be popped
-  }
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return MyConfirmDialog(
+          title: AppLocalizations.of(dialogContext)!.translateNested(
+              'dialog', 'exitFromAppTitle'),
+          description: AppLocalizations.of(dialogContext)!.translateNested(
+              'dialog', 'exitFromSocialAppDescription'),
+          cancelText: AppLocalizations.of(dialogContext)!.translateNested(
+              'dialog', 'cancel'),
+          confirmText: AppLocalizations.of(dialogContext)!.translateNested(
+              'dialog', 'exit'),
+          onCancel: () {
+            Navigator.of(dialogContext).pop(false); // Return false on cancel
+          },
+          onConfirm: () {
+            Navigator.of(dialogContext).pop(true); // Return true on confirm
+          },
+        );
+      },
+    );
+    return shouldExit ?? false;}
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onWillPop,
+      onWillPop: ()=> _onWillPop(context),
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         resizeToAvoidBottomInset: true,

@@ -6,7 +6,6 @@ import 'utilities.dart';
 class CustomNavigatorObserver extends NavigatorObserver {
   final ValueNotifier<int> currentIndexNotifier;
   String currentRoute = AppRoutes.home;
-  bool _isNavigatingToHome = false; // Flag to track if we're navigating to home
 
   CustomNavigatorObserver(this.currentIndexNotifier);
 
@@ -15,28 +14,23 @@ class CustomNavigatorObserver extends NavigatorObserver {
     print('didPush');
     print(route.settings.name);
 
-    if (route.settings.name == AppRoutes.home && !_isNavigatingToHome) {
-      _isNavigatingToHome = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        navigatorKey.currentState?.pushNamedAndRemoveUntil(
-          AppRoutes.home,
-              (Route<dynamic> route) => false,
-        );
-        _isNavigatingToHome = false; // Reset the flag after the navigation is complete
-      });
+    if (route.settings.name != previousRoute?.settings.name) {
+      _updateCurrentIndex(route.settings.name);
     }
+
     super.didPush(route, previousRoute);
-    _updateCurrentIndex(route.settings.name);
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('didPop');
     super.didPop(route, previousRoute);
     _updateCurrentIndex(previousRoute?.settings.name);
   }
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    print('didReplace');
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
     _updateCurrentIndex(newRoute?.settings.name);
   }

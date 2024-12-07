@@ -360,7 +360,7 @@ class UserDrawer extends StatelessWidget {
                               return MyConfirmDialog(
                                 title: AppLocalizations.of(context)!.translateNested(
                                   'dialog', 'exitFromAppTitle'), description: AppLocalizations.of(context)!.translateNested(
-                                  'dialog', 'exitFromAppDescription'), cancelText: AppLocalizations.of(context)!.translateNested(
+                                  'dialog', 'exitFromAppAccountDescription'), cancelText: AppLocalizations.of(context)!.translateNested(
                                   'dialog', 'cancel'),confirmText: AppLocalizations.of(context)!.translateNested(
                                   'dialog', 'exit'),
                                 onCancel: () {
@@ -372,76 +372,6 @@ class UserDrawer extends StatelessWidget {
                                   navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
                                 },
                               );
-                             /* return AlertDialog(
-                                backgroundColor: Theme.of(context).colorScheme.background,
-                                title: Text(
-                                  AppLocalizations.of(context)!.translateNested(
-                                      'drawer', 'drawerExit'),
-                                  style:
-                                  Theme.of(context).textTheme.displaySmall!.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: Theme.of(context).colorScheme.shadow,
-                                  ),
-                                ),
-                                content: Text(
-                                  AppLocalizations.of(context)!.translateNested(
-                                      'drawer', 'sure'),
-                                  style:
-                                  Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: Theme.of(context).colorScheme.shadow,
-                                  ),
-                                ),
-                                actionsAlignment: MainAxisAlignment.spaceEvenly,
-                                actions: <Widget>[
-                                  ElevatedButton(
-                                    child: Text(
-                                      AppLocalizations.of(context)!.translateNested(
-                                          'drawer', 'no'),
-                                      style:
-                                      Theme.of(context).textTheme.titleLarge!.copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        color: Theme.of(context).colorScheme.tertiary,
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      shadowColor: Colors.transparent,
-                                      //foregroundColor: Theme.of(context).colorScheme.tertiary,
-                                      backgroundColor: Color(0x3300A6ED),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  ElevatedButton(
-                                    child: Text(
-                                      AppLocalizations.of(context)!.translateNested(
-                                          'drawer', 'yes'),
-                                      style:
-                                      Theme.of(context).textTheme.titleLarge!.copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        color: whiteColor,
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                      Theme.of(context).colorScheme.primary,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      dialogContext.read<SettingBloc>().add(ClearInfo());
-                                      Navigator.pop(context);
-                                      navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
-
-                                    },
-                                  ),
-                                ],
-                              );*/
                             },
                           )..then((value) {
                             Navigator.pop(context);

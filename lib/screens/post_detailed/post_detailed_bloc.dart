@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
+import 'package:social_psn/screens/post/post_bloc.dart';
 
 import '../../repos/models/comment.dart';
 import '../../repos/models/post.dart';
@@ -13,7 +14,6 @@ part 'post_detailed_state.dart';
 
 class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
   GraphQLClient graphQLService = GraphQLService.instance.client;
-
   PostDetailedBloc() : super(PostDetailedInitial()) {
     on<AddToInterestEvent>(_onAddToInterestEvent);
     on<EnableNotificationEvent>(_onEnableNotificationEvent);

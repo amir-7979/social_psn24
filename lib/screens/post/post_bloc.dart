@@ -6,6 +6,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
 
 import '../../repos/models/comment.dart';
+import '../../repos/models/post.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
 
@@ -22,6 +23,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<UserVoteDownEvent>(_onUserVoteDownEvent);
   }
 
+  void updatePost(Post post) {
+    print(post.toString());
+    emit(PostUpdate(post));
+  }
+
   FutureOr<void> _onAddToInterestEvent(AddToInterestEvent event, Emitter<PostState> emit) async {
     try {
       final MutationOptions options = likePost(event.itemId);
@@ -36,6 +42,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       emit(InterestFailureState());
     }
   }
+
+
 
   FutureOr<void> _onEnableNotificationEvent(EnableNotificationEvent event, Emitter<PostState> emit) async {
     try {
@@ -107,5 +115,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       }
     }
   }
+
+
 
 }

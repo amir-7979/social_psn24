@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../configs/consts.dart';
 import '../../../configs/localization/app_localizations.dart';
+import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/utilities.dart';
 import '../../../repos/models/post.dart';
 import '../../main/widgets/screen_builder.dart';
@@ -36,8 +37,12 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
         SizedBox(height: 16),
         InkWell(
           onTap: () {
-            Navigator.of(context).pushNamed(AppRoutes.profile,
-                arguments: widget.post.creator?.globalId);
+            if(BlocProvider.of<SettingBloc>(context).state.profile?.globalId == widget.post.creator?.globalId){
+              Navigator.of(context).pushNamed(AppRoutes.myProfile);
+            }else{
+              Navigator.of(context).pushNamed(AppRoutes.profile,
+                  arguments: widget.post.creator?.globalId);
+            }
           },
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

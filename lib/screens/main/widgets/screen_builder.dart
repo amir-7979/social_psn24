@@ -54,6 +54,7 @@ final Map<String, WidgetBuilder> routes = {
     return PostDetailedScreen(
       post: args['post'],
       postId: args['postId'],
+      postBloc: args['postBloc'],
     );
   },
   AppRoutes.interest: (BuildContext context) => InterestScreen(),

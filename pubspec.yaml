@@ -83,6 +83,7 @@ dependencies:
   video_thumbnail: ^0.5.3
   gql_dio_link: ^1.0.1+1
   share_plus: ^10.1.2
+  double_back_to_close_app: ^2.1.0
 
 dev_dependencies:
   flutter_test:

@@ -29,3 +29,11 @@ class UserVoteDownEvent extends PostEvent {
 
   UserVoteDownEvent(this.postId, this.voteType);
 }
+
+class UpdatePostEvent extends PostEvent {
+  final String postId;
+  final String title;
+  final String description;
+
+  UpdatePostEvent(this.postId, this.title, this.description);
+}

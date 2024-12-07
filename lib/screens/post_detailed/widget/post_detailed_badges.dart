@@ -147,7 +147,6 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
             IconButton(
               onPressed: () {
                 setState(() {
-                  print(widget.post.voteDown);
                   widget.post.voteDown = !widget.post.voteDown;
                   if (widget.post.voteDown == true)
                     widget.post.downVotes = widget.post.downVotes! + 1;
@@ -170,7 +169,6 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                   if (state is UserVoteDownSuccessState) {
                     widget.post.currentUserDownVotes =
                         !widget.post.currentUserDownVotes;
-
                     widget.post.currentUserUpVotes = false;
                   }
                   widget.post.voteDown = widget.post.currentUserDownVotes;

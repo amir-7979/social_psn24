@@ -51,7 +51,9 @@ class GraphQLService {
     ]);
 
     _client = GraphQLClient(
-      cache: GraphQLCache(),
+      cache: GraphQLCache(
+        store: HiveStore(), // Use HiveStore for persistent caching
+      ),
       link: _link,
     );
   }

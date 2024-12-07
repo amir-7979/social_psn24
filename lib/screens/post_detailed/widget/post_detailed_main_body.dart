@@ -12,7 +12,7 @@ import '../shimmer/shimmer_post_item.dart';
 import 'comment_list.dart';
 
 class PostDetailedMainBody extends StatefulWidget {
-  final Post? post;
+  Post? post;
   final String postId;
   final int? index;
 
@@ -33,11 +33,16 @@ class _PostDetailedMainBodyState extends State<PostDetailedMainBody> {
   @override
   void initState() {
     super.initState();
+
+
     isUserLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn;
     postDetailedBloc = BlocProvider.of<PostDetailedBloc>(context);
     postDetailedBloc.add(IncreasePostViewEvent(postId: widget.postId));
     if (widget.post == null) {
       postDetailedBloc.add(FetchPostEvent(widget.postId));
+    }else{
+      widget.post!.viewCount = widget.post!.viewCount! + 1;
+      lastWidget = widget.post != null ? PostDetailedBody(widget.post!, isUserLoggedIn!) : Container();
     }
     pagingController.addPageRequestListener((pageKey) {
       _fetchComments(pageKey);
@@ -70,12 +75,13 @@ class _PostDetailedMainBodyState extends State<PostDetailedMainBody> {
       child: RefreshIndicator(
         onRefresh: _refresh,
         child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsetsDirectional.symmetric(horizontal: 10),
           children: [
             BlocBuilder<PostDetailedBloc, PostDetailedState>(
               builder: (context, state) {
                 if (state is PostFetchSuccess) {
                   lastWidget = PostDetailedBody(state.post, isUserLoggedIn!);
+                  widget.post = state.post;
                 } else if (state is PostLoading) {
                   lastWidget = ShimmerPostItem();
                 } else if (state is PostFetchFailure) {

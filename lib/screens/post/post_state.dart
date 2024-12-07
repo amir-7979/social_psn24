@@ -25,3 +25,7 @@ class UserVoteDownSuccessState extends PostState {}
 
 class UserVoteDownFailureState extends PostState {}
 
+class PostUpdate extends PostState {
+  final Post post;
+  PostUpdate(this.post);
+}

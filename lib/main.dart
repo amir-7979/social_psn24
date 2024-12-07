@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:social_psn/screens/home/home_bloc.dart';
 import 'package:social_psn/screens/widgets/appbar/appbar_bloc.dart';
 import 'configs/localization/app_localizations_delegate.dart';
@@ -14,6 +15,8 @@ import 'screens/notification/notification_bloc.dart';
 import 'services/firebase_notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initHiveForFlutter();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

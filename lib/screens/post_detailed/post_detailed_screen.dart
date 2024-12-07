@@ -1,29 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_psn/screens/post/post_bloc.dart';
 
 import '../../repos/models/post.dart';
 import 'post_detailed_bloc.dart';
 import 'widget/post_detailed_main_body.dart';
 
-class PostDetailedScreen extends StatelessWidget {
+class PostDetailedScreen extends StatefulWidget {
   final Post? post;
   final String postId;
+  final PostBloc? postBloc;
 
-  PostDetailedScreen({this.post, required this.postId});
+  PostDetailedScreen({this.post, required this.postId,  this.postBloc});
+
+  @override
+  State<PostDetailedScreen> createState() => _PostDetailedScreenState();
+}
+
+class _PostDetailedScreenState extends State<PostDetailedScreen> {
+
+  @override
+  void dispose() {
+    widget.postBloc?.updatePost(widget.post!);
+    super.dispose();
+  }
 
   @override
   build(BuildContext context) {
     return Padding(
       padding: const EdgeInsetsDirectional.all(16),
       child: Container(
+
         height: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: Theme.of(context).colorScheme.background,
         ),
         child: BlocProvider(
-          create: (context) => PostDetailedBloc()..add(FetchPostEvent(postId)),
-          child: PostDetailedMainBody(post: post, postId: postId),
+          create: (context) => PostDetailedBloc(),
+          child: PostDetailedMainBody(post: widget.post, postId: widget.postId),
         ),
       ),
     );

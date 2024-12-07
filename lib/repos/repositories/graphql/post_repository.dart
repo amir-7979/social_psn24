@@ -26,7 +26,7 @@ QueryOptions postsQuery({String? id, int? isPublish, String? tagId, String? sear
         }
       '''),
     variables: variables,
-    fetchPolicy: FetchPolicy.noCache,
+    fetchPolicy: FetchPolicy.cacheAndNetwork,
   );
 }
 
@@ -85,7 +85,7 @@ QueryOptions getComments({String? postId, String? type, int? userId, int? limit,
         }
       '''),
     variables: variables,
-    fetchPolicy: FetchPolicy.noCache,
+    fetchPolicy: FetchPolicy.cacheAndNetwork,
   );
 }
 
@@ -117,7 +117,7 @@ QueryOptions getCommentsWithPostData({String? postId, String? type, int? userId,
         }
       '''),
     variables: variables,
-    fetchPolicy: FetchPolicy.noCache,
+    fetchPolicy: FetchPolicy.cacheAndNetwork,
   );
 }
 

@@ -23,11 +23,11 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
     return BlocBuilder<HomeBloc, HomeState>(
 
       builder: (context, state) {
+
         return Padding(
             padding: const EdgeInsetsDirectional.all(16),
             child: Container(

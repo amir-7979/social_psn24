@@ -15,7 +15,7 @@ import '../widgets/profile_cached_network_image.dart';
 import 'post_bloc.dart';
 
 class PostItem extends StatefulWidget {
-  final Post post;
+  Post post;
 
   PostItem(this.post);
 
@@ -54,13 +54,23 @@ class _PostItemState extends State<PostItem> {
     return BlocProvider(
       create: (context) => _postBloc,
       child: Builder(builder: (context) {
-        return InkWell(
+        return BlocConsumer<PostBloc, PostState>(
+          listener: (context, state) {
+            if (state is PostUpdate) {
+              setState(() {
+                widget.post = state.post;
+              });
+            }
+          },
+          builder: (context, state) {
+            return InkWell(
           onTap: () {
             Navigator.of(context).pushNamed(
               AppRoutes.postDetailed,
               arguments: <String, dynamic>{
                 'post': widget.post,
                 'postId': widget.post.id,
+                'postBloc': _postBloc,
               },
             );
           },
@@ -70,9 +80,12 @@ class _PostItemState extends State<PostItem> {
               children: [
                 InkWell(
                   onTap: () {
+                    if(BlocProvider.of<SettingBloc>(context).state.profile?.globalId == widget.post.creator?.globalId){
+                      Navigator.of(context).pushNamed(AppRoutes.myProfile);
+                    }else{
                     Navigator.of(context).pushNamed(AppRoutes.profile,
                         arguments: widget.post.creator?.globalId);
-                    print(widget.post.creator?.globalId);
+                   }
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -642,6 +655,8 @@ class _PostItemState extends State<PostItem> {
             ),
           ),
         );
+  },
+);
       }),
     );
   }
