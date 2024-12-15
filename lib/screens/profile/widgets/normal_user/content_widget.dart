@@ -8,7 +8,7 @@ import '../lists_items/contents.dart';
 
 class ContentWidget extends StatefulWidget {
   final int? profileId;
-   ContentWidget({this.profileId, Key? key}) : super(key: key);
+  ContentWidget({this.profileId, Key? key}) : super(key: key);
 
   @override
   State<ContentWidget> createState() => _ContentWidgetState();

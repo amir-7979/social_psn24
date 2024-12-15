@@ -27,19 +27,15 @@ class _PostDetailedScreenState extends State<PostDetailedScreen> {
 
   @override
   build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.all(16),
-      child: Container(
-
-        height: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Theme.of(context).colorScheme.background,
-        ),
-        child: BlocProvider(
-          create: (context) => PostDetailedBloc(),
-          child: PostDetailedMainBody(post: widget.post, postId: widget.postId),
-        ),
+    return Container(
+      height: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).colorScheme.background,
+      ),
+      child: BlocProvider(
+        create: (context) => PostDetailedBloc(),
+        child: PostDetailedMainBody(post: widget.post, postId: widget.postId),
       ),
     );
   }

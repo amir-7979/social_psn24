@@ -59,26 +59,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
-      child: BlocProvider(
-        create: (context) => EditProfileBloc(),
-        child: Builder(builder: (context) {
-          return BlocListener<EditProfileBloc, EditProfileState>(
-            listener: (context, state) {
-              if (state is EditProfileError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    CustomSnackBar(content: state.message).build(context));
-              } else if (state is EditProfileSuccess) {
-                BlocProvider.of<SettingBloc>(context)
-                    .add(FetchUserProfileWithPermissionsEvent());
-                Navigator.pushReplacementNamed(context, AppRoutes.myProfile);
-              }
-            },
-            child: buildListView(context),
-          );
-        }),
-      ),
+    return BlocProvider(
+      create: (context) => EditProfileBloc(),
+      child: Builder(builder: (context) {
+        return BlocListener<EditProfileBloc, EditProfileState>(
+          listener: (context, state) {
+            if (state is EditProfileError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  CustomSnackBar(content: state.message).build(context));
+            } else if (state is EditProfileSuccess) {
+              BlocProvider.of<SettingBloc>(context)
+                  .add(FetchUserProfileWithPermissionsEvent());
+              Navigator.pushReplacementNamed(context, AppRoutes.myProfile);
+            }
+          },
+          child: buildListView(context),
+        );
+      }),
     );
   }
 
@@ -87,430 +84,425 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Theme.of(context).colorScheme.background,
+      child: Expanded(
+        child: Container(
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Theme.of(context).colorScheme.background,
+          ),
+          child: ListView(
+            children: [
+              const SizedBox(height: 16),
+              Center(
+                child: Container(
+                  height: 155,
+                  width: 155,
+                  child: Center(
+                    child: ProfilePicture(photoUrl, _newPickedImage),
+                  ),
+                ),
               ),
-              child: ListView(
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
-                  Center(
-                    child: Container(
-                      height: 155,
-                      width: 155,
-                      child: Center(
-                        child: ProfilePicture(photoUrl, _newPickedImage),
+                  const SizedBox(height: 32),
+                  Text(
+                    AppLocalizations.of(context)!
+                        .translateNested("profileScreen", 'editUserInfo'),
+                    style:
+                        Theme.of(context).textTheme.displayMedium!.copyWith(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 1,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).primaryColor.withOpacity(0),
+                          Theme.of(context).primaryColor.withOpacity(1),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
                     ),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 32),
-                      Text(
-                        AppLocalizations.of(context)!
-                            .translateNested("profileScreen", 'editUserInfo'),
-                        style:
-                            Theme.of(context).textTheme.displayMedium!.copyWith(
-                                  color: Theme.of(context).primaryColor,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        height: 1,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Theme.of(context).primaryColor.withOpacity(0),
-                              Theme.of(context).primaryColor.withOpacity(1),
-                            ],
-                            stops: const [0.0, 1.0],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding:
-                              const EdgeInsetsDirectional.only(bottom: 16.0),
-                          child: TextFormField(
-                            controller: _nameController,
-                            keyboardType: TextInputType.name,
+                ],
+              ),
+              const SizedBox(height: 32),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsetsDirectional.only(bottom: 16.0),
+                      child: TextFormField(
+                        controller: _nameController,
+                        keyboardType: TextInputType.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).hoverColor,
+                            ),
+                        focusNode: _nameFocusNode,
+                        decoration: InputDecoration(
+                          label: Text(
+                            AppLocalizations.of(context)!
+                                .translateNested('params', 'name'),
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
                                 .copyWith(
                                   fontWeight: FontWeight.w400,
-                                  color: Theme.of(context).hoverColor,
+                                  color: _nameFocusNode.hasFocus
+                                      ? Theme.of(context).primaryColor
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .surface,
                                 ),
-                            focusNode: _nameFocusNode,
-                            decoration: InputDecoration(
-                              label: Text(
-                                AppLocalizations.of(context)!
-                                    .translateNested('params', 'name'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      color: _nameFocusNode.hasFocus
-                                          ? Theme.of(context).primaryColor
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .surface,
-                                    ),
-                              ),
-                              enabledBorder: borderStyle,
-                              errorBorder: errorBorderStyle,
-                              border: borderStyle,
-                              focusedErrorBorder: errorBorderStyle,
-                              contentPadding:
-                                  const EdgeInsetsDirectional.fromSTEB(
-                                      16, 0, 16, 0),
-                            ),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return AppLocalizations.of(context)!
-                                    .translateNested('error', 'notEmpty');
-                              } else if (!RegExp(r'^[\u0600-\u06FF\s]+$')
-                                  .hasMatch(value)) {
-                                return AppLocalizations.of(context)!
-                                    .translateNested('error', 'persian_name');
-                              } else if (value.length > 30) {
-                                return AppLocalizations.of(context)!
-                                    .translateNested('error', 'length_exceed');
-                              }
-                              return null;
-                            },
-                            onFieldSubmitted: (value) {
-                              FocusScope.of(context)
-                                  .requestFocus(_lastNameFocusNode);
-                            },
                           ),
+                          enabledBorder: borderStyle,
+                          errorBorder: errorBorderStyle,
+                          border: borderStyle,
+                          focusedErrorBorder: errorBorderStyle,
+                          contentPadding:
+                              const EdgeInsetsDirectional.fromSTEB(
+                                  16, 0, 16, 0),
                         ),
-                        Padding(
-                          padding:
-                              const EdgeInsetsDirectional.only(bottom: 16.0),
-                          child: TextFormField(
-                            controller: _lastNameController,
-                            focusNode: _lastNameFocusNode,
-                            keyboardType: TextInputType.name,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return AppLocalizations.of(context)!
+                                .translateNested('error', 'notEmpty');
+                          } else if (!RegExp(r'^[\u0600-\u06FF\s]+$')
+                              .hasMatch(value)) {
+                            return AppLocalizations.of(context)!
+                                .translateNested('error', 'persian_name');
+                          } else if (value.length > 30) {
+                            return AppLocalizations.of(context)!
+                                .translateNested('error', 'length_exceed');
+                          }
+                          return null;
+                        },
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context)
+                              .requestFocus(_lastNameFocusNode);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsetsDirectional.only(bottom: 16.0),
+                      child: TextFormField(
+                        controller: _lastNameController,
+                        focusNode: _lastNameFocusNode,
+                        keyboardType: TextInputType.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).hoverColor,
+                            ),
+                        decoration: InputDecoration(
+                          label: Text(
+                            AppLocalizations.of(context)!
+                                .translateNested('params', 'family'),
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
                                 .copyWith(
                                   fontWeight: FontWeight.w400,
-                                  color: Theme.of(context).hoverColor,
+                                  color: _lastNameFocusNode.hasFocus
+                                      ? Theme.of(context).primaryColor
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .surface,
                                 ),
-                            decoration: InputDecoration(
-                              label: Text(
-                                AppLocalizations.of(context)!
-                                    .translateNested('params', 'family'),
+                          ),
+                          enabledBorder: borderStyle,
+                          errorBorder: errorBorderStyle,
+                          border: borderStyle,
+                          focusedErrorBorder: errorBorderStyle,
+                          contentPadding:
+                              const EdgeInsetsDirectional.fromSTEB(
+                                  16, 0, 16, 0),
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return AppLocalizations.of(context)!
+                                .translateNested('error', 'notEmpty');
+                          } else if (!RegExp(r'^[\u0600-\u06FF\s]+$')
+                              .hasMatch(value)) {
+                            return AppLocalizations.of(context)!
+                                .translateNested(
+                                    'error', 'persian_lastname');
+                          } else if (value.length > 40) {
+                            return AppLocalizations.of(context)!
+                                .translateNested('error', 'length_exceed');
+                          }
+                          return null;
+                        },
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context).requestFocus(_idFocusNode);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsetsDirectional.only(bottom: 16.0),
+                      child: TextFormField(
+                          controller: _idController,
+                          focusNode: _idFocusNode,
+                          textDirection: TextDirection.ltr,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).hoverColor,
+                              ),
+                          keyboardType: TextInputType.name,
+                          decoration: InputDecoration(
+                            suffix: Padding(
+                              padding: const EdgeInsetsDirectional.only(
+                                  start: 4),
+                              child: Text(
+                                '@',
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge!
                                     .copyWith(
                                       fontWeight: FontWeight.w400,
-                                      color: _lastNameFocusNode.hasFocus
-                                          ? Theme.of(context).primaryColor
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .surface,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .shadow,
                                     ),
                               ),
-                              enabledBorder: borderStyle,
-                              errorBorder: errorBorderStyle,
-                              border: borderStyle,
-                              focusedErrorBorder: errorBorderStyle,
-                              contentPadding:
-                                  const EdgeInsetsDirectional.fromSTEB(
-                                      16, 0, 16, 0),
                             ),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return AppLocalizations.of(context)!
-                                    .translateNested('error', 'notEmpty');
-                              } else if (!RegExp(r'^[\u0600-\u06FF\s]+$')
-                                  .hasMatch(value)) {
-                                return AppLocalizations.of(context)!
-                                    .translateNested(
-                                        'error', 'persian_lastname');
-                              } else if (value.length > 40) {
-                                return AppLocalizations.of(context)!
-                                    .translateNested('error', 'length_exceed');
-                              }
-                              return null;
-                            },
-                            onFieldSubmitted: (value) {
-                              FocusScope.of(context).requestFocus(_idFocusNode);
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsetsDirectional.only(bottom: 16.0),
-                          child: TextFormField(
-                              controller: _idController,
-                              focusNode: _idFocusNode,
-                              textDirection: TextDirection.ltr,
+                            label: Text(
+                              AppLocalizations.of(context)!
+                                  .translateNested('params', 'username'),
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
                                   .copyWith(
                                     fontWeight: FontWeight.w400,
-                                    color: Theme.of(context).hoverColor,
+                                    color: _idFocusNode.hasFocus
+                                        ? Theme.of(context).primaryColor
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .surface,
                                   ),
-                              keyboardType: TextInputType.name,
-                              decoration: InputDecoration(
-                                suffix: Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                      start: 4),
-                                  child: Text(
-                                    '@',
+                            ),
+                            enabledBorder: borderStyle,
+                            errorBorder: errorBorderStyle,
+                            border: borderStyle,
+                            focusedErrorBorder: errorBorderStyle,
+                            contentPadding:
+                                const EdgeInsetsDirectional.fromSTEB(
+                                    16, 0, 16, 0),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppLocalizations.of(context)!
+                                  .translateNested('error', 'notEmpty');
+                            } else if (value.length > 30) {
+                              return AppLocalizations.of(context)!
+                                  .translateNested(
+                                      'error', 'length_exceed');
+                            } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$')
+                                .hasMatch(value)) {
+                              return AppLocalizations.of(context)!
+                                  .translateNested(
+                                      'error', 'english_username');
+                            } else if (value.length < 5) {
+                              return AppLocalizations.of(context)!
+                                  .translateNested(
+                                      'error', 'minimum_username_length');
+                            }
+                            return null;
+                          },
+                          onFieldSubmitted: (value) {}),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              BlocBuilder<EditProfileBloc, EditProfileState>(
+                  builder: (context, state) {
+                if (state is EditProfileError) {
+                  return Padding(
+                    padding: const EdgeInsetsDirectional.only(bottom: 16),
+                    child: Text(
+                      state.message,
+                      style:
+                          Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                color: Theme.of(context).colorScheme.error,
+                                fontWeight: FontWeight.w400,
+                              ),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+              }),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Expanded(
+                      child: SizedBox(
+                    height: 45,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        BuildContext editProfileContext = context;
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return MyAlertDialog(
+                              title: AppLocalizations.of(context)!
+                                  .translateNested(
+                                      'dialog', 'exitFromSettingTitle'),
+                              description: AppLocalizations.of(context)!
+                                  .translateNested(
+                                      'dialog', 'exitFromSettingDescription'),
+                              cancelText: AppLocalizations.of(context)!
+                                  .translateNested('dialog', 'no'),
+                              confirmText: AppLocalizations.of(context)!
+                                  .translateNested('dialog', 'yes'),
+                              returnText: AppLocalizations.of(context)!
+                                  .translateNested('profileScreen', 'return'),
+                              onReturn: () {
+                                Navigator.pop(context);
+                              },
+                              onCancel: () {
+                                Navigator.pop(context);
+                                Navigator.pop(editProfileContext);
+                              },
+                              onConfirm: () {
+                                editUserFunction(context);
+                                Navigator.pop(context);
+                              },
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.transparent,
+                        backgroundColor: Color(0x3300A6ED),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .translateNested('profileScreen', 'return'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).colorScheme.tertiary,
+                            ),
+                      ),
+                    ),
+                  )),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: SizedBox(
+                      height: 45,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          editUserFunction(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child:
+                            BlocBuilder<EditProfileBloc, EditProfileState>(
+                          builder: (context, state) {
+                            return state is EditProfileLoading
+                                ? WhiteCircularProgressIndicator()
+                                : Text(
+                                    AppLocalizations.of(context)!
+                                        .translateNested(
+                                            'profileScreen', 'save'),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
                                         .copyWith(
                                           fontWeight: FontWeight.w400,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .shadow,
+                                          color: whiteColor,
                                         ),
-                                  ),
-                                ),
-                                label: Text(
-                                  AppLocalizations.of(context)!
-                                      .translateNested('params', 'username'),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        color: _idFocusNode.hasFocus
-                                            ? Theme.of(context).primaryColor
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .surface,
-                                      ),
-                                ),
-                                enabledBorder: borderStyle,
-                                errorBorder: errorBorderStyle,
-                                border: borderStyle,
-                                focusedErrorBorder: errorBorderStyle,
-                                contentPadding:
-                                    const EdgeInsetsDirectional.fromSTEB(
-                                        16, 0, 16, 0),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .translateNested('error', 'notEmpty');
-                                } else if (value.length > 30) {
-                                  return AppLocalizations.of(context)!
-                                      .translateNested(
-                                          'error', 'length_exceed');
-                                } else if (!RegExp(r'^[a-zA-Z0-9-_.]+$')
-                                    .hasMatch(value)) {
-                                  return AppLocalizations.of(context)!
-                                      .translateNested(
-                                          'error', 'english_username');
-                                } else if (value.length < 5) {
-                                  return AppLocalizations.of(context)!
-                                      .translateNested(
-                                          'error', 'minimum_username_length');
-                                }
-                                return null;
-                              },
-                              onFieldSubmitted: (value) {}),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  BlocBuilder<EditProfileBloc, EditProfileState>(
-                      builder: (context, state) {
-                    if (state is EditProfileError) {
-                      return Padding(
-                        padding: const EdgeInsetsDirectional.only(bottom: 16),
-                        child: Text(
-                          state.message,
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                    color: Theme.of(context).colorScheme.error,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Expanded(
-                          child: SizedBox(
-                        height: 45,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            BuildContext editProfileContext = context;
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return MyAlertDialog(
-                                  title: AppLocalizations.of(context)!
-                                      .translateNested(
-                                          'dialog', 'exitFromSettingTitle'),
-                                  description: AppLocalizations.of(context)!
-                                      .translateNested(
-                                          'dialog', 'exitFromSettingDescription'),
-                                  cancelText: AppLocalizations.of(context)!
-                                      .translateNested('dialog', 'no'),
-                                  confirmText: AppLocalizations.of(context)!
-                                      .translateNested('dialog', 'yes'),
-                                  returnText: AppLocalizations.of(context)!
-                                      .translateNested('profileScreen', 'return'),
-                                  onReturn: () {
-                                    Navigator.pop(context);
-                                  },
-                                  onCancel: () {
-                                    Navigator.pop(context);
-                                    Navigator.pop(editProfileContext);
-                                  },
-                                  onConfirm: () {
-                                    editUserFunction(context);
-                                    Navigator.pop(context);
-                                  },
-                                );
-                              },
-                            );
+                                  );
                           },
-                          style: ElevatedButton.styleFrom(
-                            shadowColor: Colors.transparent,
-                            backgroundColor: Color(0x3300A6ED),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .translateNested('profileScreen', 'return'),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                ),
-                          ),
-                        ),
-                      )),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: SizedBox(
-                          height: 45,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              editUserFunction(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child:
-                                BlocBuilder<EditProfileBloc, EditProfileState>(
-                              builder: (context, state) {
-                                return state is EditProfileLoading
-                                    ? WhiteCircularProgressIndicator()
-                                    : Text(
-                                        AppLocalizations.of(context)!
-                                            .translateNested(
-                                                'profileScreen', 'save'),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge!
-                                            .copyWith(
-                                              fontWeight: FontWeight.w400,
-                                              color: whiteColor,
-                                            ),
-                                      );
-                              },
-                            ),
-                          ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Expanded(
-                      child: SizedBox(
-                        height: 45,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            BuildContext editProfileContext = context;
-                            showDialog(
-                              context: editProfileContext,
-                              builder: (BuildContext context) {
-                                return MyConfirmDialog(
-                                  title: AppLocalizations.of(context)!.translateNested(
-                                      'dialog', 'deleteAccountTitle'), description: AppLocalizations.of(context)!.translateNested(
-                                    'dialog', 'deleteAccountDescription'), cancelText: AppLocalizations.of(context)!.translateNested(
-                                    'dialog', 'cancel'),confirmText: AppLocalizations.of(context)!.translateNested(
-                                    'dialog', 'delete'),
-                                  onCancel: () {
-                                    Navigator.pop(context);
-                                  },
-                                  onConfirm: () {
-                                    //todo delete account
-                                  },
-                                );
+                ],
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                  child: SizedBox(
+                    height: 45,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        BuildContext editProfileContext = context;
+                        showDialog(
+                          context: editProfileContext,
+                          builder: (BuildContext context) {
+                            return MyConfirmDialog(
+                              title: AppLocalizations.of(context)!.translateNested(
+                                  'dialog', 'deleteAccountTitle'), description: AppLocalizations.of(context)!.translateNested(
+                                'dialog', 'deleteAccountDescription'), cancelText: AppLocalizations.of(context)!.translateNested(
+                                'dialog', 'cancel'),confirmText: AppLocalizations.of(context)!.translateNested(
+                                'dialog', 'delete'),
+                              onCancel: () {
+                                Navigator.pop(context);
+                              },
+                              onConfirm: () {
+                                //todo delete account
                               },
                             );
                           },
-                          style: ElevatedButton.styleFrom(
-                            shadowColor: Colors.transparent,
-                            //foregroundColor: Theme.of(context).colorScheme.tertiary,
-                            backgroundColor: Theme.of(context).colorScheme.error.withOpacity(0.2),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .translateNested('profileScreen', 'return'),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.transparent,
+                        //foregroundColor: Theme.of(context).colorScheme.tertiary,
+                        backgroundColor: Theme.of(context).colorScheme.error.withOpacity(0.2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      )),
-                  const SizedBox(height: 16),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .translateNested('profileScreen', 'return'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                  )),
+              const SizedBox(height: 16),
 
-                ],
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

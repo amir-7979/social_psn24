@@ -36,7 +36,7 @@ class _ContentsState extends State<Contents> {
         physics: ClampingScrollPhysics(),
         cacheExtent: 300,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+          crossAxisCount: 3,
           childAspectRatio: 1.0,
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
@@ -47,7 +47,7 @@ class _ContentsState extends State<Contents> {
             height: 400,
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: 3,
                 childAspectRatio: 1.0,
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10,
@@ -62,8 +62,8 @@ class _ContentsState extends State<Contents> {
               AppLocalizations.of(context)!
                   .translateNested("profileScreen", "fetchError"),
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).primaryColor,
-                  ),
+                color: Theme.of(context).primaryColor,
+              ),
             ),
           ),
           firstPageErrorIndicatorBuilder: (context) => Align(
@@ -74,8 +74,8 @@ class _ContentsState extends State<Contents> {
                 AppLocalizations.of(context)!
                     .translateNested("profileScreen", "fetchError"),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(context).primaryColor,
-                    ),
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
           ),
@@ -87,8 +87,8 @@ class _ContentsState extends State<Contents> {
                 AppLocalizations.of(context)!
                     .translateNested("profileScreen", "noPost"),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(context).primaryColor,
-                    ),
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
           ),

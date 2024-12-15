@@ -26,9 +26,6 @@ class _InterestScreenState extends State<InterestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
-      child: Interests(pagingController: _pagingController),
-    );
+    return Interests(pagingController: _pagingController);
   }
 }

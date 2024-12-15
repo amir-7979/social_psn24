@@ -46,6 +46,7 @@ class _SocialAppBarState extends State<SocialAppBar> {
           _controller.text = state.title;
           return AppBar(
             automaticallyImplyLeading: false,
+            elevation: 2,
             title: Container(
               height: 50,
               decoration: BoxDecoration(
@@ -130,6 +131,7 @@ class _SocialAppBarState extends State<SocialAppBar> {
           );
         } else
           return AppBar(
+            elevation: 2,
             title: Text(
               AppLocalizations.of(context)!.translate('appTitle'),
               style: iranYekanTheme.headlineMedium!.copyWith(

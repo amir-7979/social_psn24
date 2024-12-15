@@ -42,24 +42,24 @@ class _ContentInfoState extends State<ContentInfo>
     return Container(
       height: MediaQuery.of(context).size.height - 170,
       child: BlocBuilder<ProfileBloc, ProfileState>(
-        buildWhen: (previous, current) {
-          if (current is ChangeToPostState || current is ChangeToCommentState) {
-            return true;
-          }
-          return false;
-        },
-        builder: (context, state) {
-          if (state is ChangeToPostState && seeExpertPost == true) {
-            return ContentExpertTab(profileId: profileId);
-          } else if (state is ChangeToPostState && seeExpertPost == false) {
+          buildWhen: (previous, current) {
+            if (current is ChangeToPostState || current is ChangeToCommentState) {
+              return true;
+            }
+            return false;
+          },
+          builder: (context, state) {
+            if (state is ChangeToPostState && seeExpertPost == true) {
+              return ContentExpertTab(profileId: profileId);
+            } else if (state is ChangeToPostState && seeExpertPost == false) {
+              return ContentWidget(profileId: profileId);
+            } else if (state is ChangeToCommentState && seeExpertPost == true) {
+              return CommentExpertTab(profileId);
+            } else if (state is ChangeToCommentState && seeExpertPost == false) {
+              return CommentWidget(profileId: profileId);
+            }
             return ContentWidget(profileId: profileId);
-          } else if (state is ChangeToCommentState && seeExpertPost == true) {
-            return CommentExpertTab(profileId);
-          } else if (state is ChangeToCommentState && seeExpertPost == false) {
-            return CommentWidget(profileId: profileId);
           }
-          return ContentWidget(profileId: profileId);
-        }
       ),
     );
   }

@@ -389,10 +389,12 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                           ),
                 ],
               ),
+              SizedBox(width: 8),
+
             ],
           ),
           Padding(
-            padding: EdgeInsetsDirectional.all(16),
+            padding: EdgeInsetsDirectional.all(8),
             child: buildSeparator(context),
           ),
           TextButton.icon(
@@ -438,7 +440,6 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 8),
                       if (profile.username != '')
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -631,7 +632,7 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                 : SizedBox.shrink(),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.all(16),
+            padding: EdgeInsetsDirectional.all(8),
             child: buildSeparator(context),
           ),
           TextButton.icon(
@@ -677,35 +678,32 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                 ? profileId != null
                     ? Column(
                         children: [
-                          Container(
-                            padding:
-                                EdgeInsetsDirectional.symmetric(vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)!.translateNested(
-                                      "profileScreen", "posts"),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                        color: Theme.of(context).hoverColor,
-                                      ),
-                                ),
-                                Text(
-                                  profile.contentCreated.toString(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                        color: Theme.of(context).hoverColor,
-                                      ),
-                                ),
-                              ],
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.translateNested(
+                                    "profileScreen", "posts"),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                      color: Theme.of(context).hoverColor,
+                                    ),
+                              ),
+                              Text(
+                                profile.contentCreated.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                      color: Theme.of(context).hoverColor,
+                                    ),
+                              ),
+                            ],
                           ),
+                          SizedBox(height: 8),
                           buildSeparator(context),
                           Container(
                             padding:
@@ -806,40 +804,38 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                         builder: (context, state) {
                           return Column(
                             children: [
-                              Container(
-                                padding: EdgeInsetsDirectional.symmetric(
-                                    vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .translateNested(
+                                            "profileScreen", "posts"),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                          color: Theme.of(context).hoverColor,
+                                        ),
+                                  ),
+                                  if (state is activitySuccessState)
                                     Text(
-                                      AppLocalizations.of(context)!
-                                          .translateNested(
-                                              "profileScreen", "posts"),
+                                      state.activity['contentCreated']
+                                          .toString(),
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge!
                                           .copyWith(
-                                            color: Theme.of(context).hoverColor,
+                                            color:
+                                                Theme.of(context).hoverColor,
                                           ),
                                     ),
-                                    if (state is activitySuccessState)
-                                      Text(
-                                        state.activity['contentCreated']
-                                            .toString(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge!
-                                            .copyWith(
-                                              color:
-                                                  Theme.of(context).hoverColor,
-                                            ),
-                                      ),
-                                  ],
-                                ),
+                                ],
                               ),
+                              SizedBox(height: 8),
+
                               buildSeparator(context),
                               Container(
                                 padding: EdgeInsetsDirectional.symmetric(

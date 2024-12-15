@@ -59,5 +59,4 @@ final Map<String, WidgetBuilder> routes = {
   },
   AppRoutes.interest: (BuildContext context) => InterestScreen(),
   AppRoutes.cooperate: (BuildContext context) => CooperationScreen(),
-
 };

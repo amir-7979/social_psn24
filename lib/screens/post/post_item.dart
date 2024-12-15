@@ -184,7 +184,7 @@ class _PostItemState extends State<PostItem> {
                           if (state is InterestSuccessState) {
                             widget.post.currentUserLiked =
                                 !widget.post.currentUserLiked;
-                            print(widget.post.currentUserLiked);
+
                             widget.post.isLiked = widget.post.currentUserLiked;
                           } else if (state is InterestFailureState) {
                             widget.post.isLiked = !widget.post.isLiked;
@@ -223,6 +223,7 @@ class _PostItemState extends State<PostItem> {
                               ),
                             ),
                             itemBuilder: (context) => [
+
                               PopupMenuItem(
                                 onTap: () {
                                   widget.post.isLiked = !widget.post.isLiked;
@@ -272,7 +273,7 @@ class _PostItemState extends State<PostItem> {
                                   ],
                                 ),
                               ),
-                              PopupMenuItem(
+                              if(BlocProvider.of<SettingBloc>(context).state.profile?.globalId != widget.post.creator?.globalId)PopupMenuItem(
                                 onTap: () {
                                   widget.post.isNotificationEnabled =
                                       !widget.post.isNotificationEnabled;

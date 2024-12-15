@@ -28,38 +28,29 @@ class _HomeScreenState extends State<HomeScreen>
 
       builder: (context, state) {
 
-        return Padding(
-            padding: const EdgeInsetsDirectional.all(16),
-            child: Container(
-              height: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Theme.of(context).colorScheme.background,
-              ),
-              child: state is SearchParams
-                  ? SearchList(
-                      query: state.query, tag: state.tag, type: state.type)
-                  : state is SearchLoadingState
-                      ? SizedBox(
-                          height: 800,
-                          child: ListView.builder(
-                            itemCount: 20,
-                            itemBuilder: (context, index) =>
-                                RepaintBoundary(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsetsDirectional.fromSTEB(
-                                        10, 0, 10, 10),
-                                child: ShimmerPostItem(),
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(
-                          child: seeExpertPost
-                              ? MainTabBar()
-                              : NormalUserPostList()),
-            ));
+        return state is SearchParams
+            ? SearchList(
+                query: state.query, tag: state.tag, type: state.type)
+            : state is SearchLoadingState
+                ? SizedBox(
+                    height: 800,
+                    child: ListView.builder(
+                      itemCount: 20,
+                      itemBuilder: (context, index) =>
+                          RepaintBoundary(
+                        child: Padding(
+                          padding:
+                              const EdgeInsetsDirectional.fromSTEB(
+                                  10, 0, 10, 10),
+                          child: ShimmerPostItem(),
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    child: seeExpertPost
+                        ? MainTabBar()
+                        : NormalUserPostList());
       },
     );
   }
