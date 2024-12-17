@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
   bool isAddButtonClicked = false;
-  DateTime? _lastBackPressTime;
+  DateTime? _lastPressedTime =  DateTime.now();
 
   final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(1);
   late CustomNavigatorObserver _navigatorObserver;
@@ -65,51 +66,81 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     }
   }
 
-  Future<bool> _onWillPop(BuildContext buildContext) async {
-    final now = DateTime.now();
-    if (_lastBackPressTime == null || now.difference(_lastBackPressTime!) > const Duration(seconds: 1)) {
-      _lastBackPressTime = now;
-      if (await navigatorKey.currentState?.maybePop() ?? false) {
+  Future<bool> _onWillPop(BuildContext context) async {
+
+    DateTime currentTime = DateTime.now();
+    if (currentTime.difference(_lastPressedTime!) < Duration(seconds: 1)) {
+      _lastPressedTime = currentTime;
+      /*ScaffoldMessenger.of(context).showSnackBar(
+          CustomSnackBar(
+            content: AppLocalizations.of(context)!.translateNested('dialog', 'pressToExit'),
+            backgroundColor: Colors.black,
+          ).build(context));*/
+      await showDialog<bool>(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return MyConfirmDialog(
+            title: AppLocalizations.of(dialogContext)!.translateNested(
+                'dialog', 'exitFromAppTitle'),
+            description: AppLocalizations.of(dialogContext)!.translateNested(
+                'dialog', 'exitFromSocialAppDescription'),
+            cancelText: AppLocalizations.of(dialogContext)!.translateNested(
+                'dialog', 'cancel'),
+            confirmText: AppLocalizations.of(dialogContext)!.translateNested(
+                'dialog', 'exit'),
+            onCancel: () => Navigator.of(dialogContext).pop(false),
+            onConfirm: () => exit(0),
+          );
+        },
+      );
+      return false;
+    }else {
+      _lastPressedTime = currentTime;
+      final isAtHome = navigatorKey.currentState?.canPop() == false;
+      if (isAtHome) {
+        await showDialog<bool>(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return MyConfirmDialog(
+              title: AppLocalizations.of(dialogContext)!.translateNested(
+                  'dialog', 'exitFromAppTitle'),
+              description: AppLocalizations.of(dialogContext)!.translateNested(
+                  'dialog', 'exitFromSocialAppDescription'),
+              cancelText: AppLocalizations.of(dialogContext)!.translateNested(
+                  'dialog', 'cancel'),
+              confirmText: AppLocalizations.of(dialogContext)!.translateNested(
+                  'dialog', 'exit'),
+              onCancel: () => Navigator.of(dialogContext).pop(false),
+              onConfirm: () => exit(0),
+            );
+          },
+        );
+        return false;
+      } else {
+        navigatorKey.currentState?.pop();
         return false;
       }
     }
-    final shouldExit = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return MyConfirmDialog(
-          title: AppLocalizations.of(dialogContext)!.translateNested(
-              'dialog', 'exitFromAppTitle'),
-          description: AppLocalizations.of(dialogContext)!.translateNested(
-              'dialog', 'exitFromSocialAppDescription'),
-          cancelText: AppLocalizations.of(dialogContext)!.translateNested(
-              'dialog', 'cancel'),
-          confirmText: AppLocalizations.of(dialogContext)!.translateNested(
-              'dialog', 'exit'),
-          onCancel: () {
-            Navigator.of(dialogContext).pop(false); // Return false on cancel
-          },
-          onConfirm: () {
-            Navigator.of(dialogContext).pop(true); // Return true on confirm
-          },
-        );
-      },
-    );
-    return shouldExit ?? false;}
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: ()=> _onWillPop(context),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        resizeToAvoidBottomInset: true,
-        appBar: SocialAppBar(navigatorObserver: _navigatorObserver),
-        drawer: context.read<SettingBloc>().state.isUserLoggedIn
-            ? UserDrawer(context, navigatorKey)
-            : GuestDrawer(context, navigatorKey),
-        body: Stack(
-          children: [
-            Navigator(
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      resizeToAvoidBottomInset: true,
+      appBar: SocialAppBar(navigatorObserver: _navigatorObserver),
+      drawer: context.read<SettingBloc>().state.isUserLoggedIn
+          ? UserDrawer(context, navigatorKey)
+          : GuestDrawer(context, navigatorKey),
+      body: Stack(
+        children: [
+          WillPopScope(
+            onWillPop: ()=>_onWillPop(context),
+
+            child: Navigator(
               key: navigatorKey,
               initialRoute: AppRoutes.home,
               observers: [_navigatorObserver],
@@ -120,16 +151,22 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                 );
               },
             ),
-            if (isAddButtonClicked) _buildBlurScreen(),
-          ],
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-        floatingActionButton: MyFloatingActionButton(
-          isAddButtonClicked,
-          (){_handleFABPressed();},
-        ),
-        bottomNavigationBar: MyStylishBottomBar(navigatorKey, _currentIndexNotifier, _navigatorObserver),
+          ),
+          if (isAddButtonClicked) _buildBlurScreen(),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      floatingActionButton: MyFloatingActionButton(
+        isAddButtonClicked,
+            () {
+          _handleFABPressed();
+        },
+      ),
+      bottomNavigationBar: MyStylishBottomBar(
+        navigatorKey,
+        _currentIndexNotifier,
+        _navigatorObserver,
       ),
     );
   }

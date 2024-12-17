@@ -37,8 +37,8 @@ class _MainTabBarState extends State<MainTabBar>
   @override
   void dispose() {
     if (_tabController != null) _tabController!.dispose();
-    _pagingPostController1.dispose();
-    _pagingPostController2.dispose();
+    if (_tabController != null)_pagingPostController1.dispose();
+    if (_tabController != null)_pagingPostController2.dispose();
     super.dispose();
   }
 

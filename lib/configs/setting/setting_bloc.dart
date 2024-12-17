@@ -20,7 +20,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final Completer<void> _settingsLoadedCompleter = Completer<void>();
   final List<SettingEvent> _eventQueue = [];
 
-  SettingBloc() : super(_handleInitialSetting()) {
+  SettingBloc(AppTheme appTheme) : super(_handleInitialSetting(appTheme)) {
     on<SettingThemeEvent>(_handleSettingThemeEvent);
     on<SettingLanguageEvent>(_handleSettingLanguageEvent);
     on<UpdateLoginStatus>(_handleUpdateLoginStatus);
@@ -30,9 +30,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     _loadSettingsFromStorage();
   }
 
-  static SettingState _handleInitialSetting() {
-    return SettingState(theme: WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-        Brightness.dark ? AppTheme.dark : AppTheme.light, language: AppLanguage.persian, token: '');
+  static SettingState _handleInitialSetting(AppTheme appTheme) {
+    return SettingState(theme: appTheme, language: AppLanguage.persian, token: '');
   }
 
   Future<void> _fetchUserProfileWithPermissions(event, emit) async {

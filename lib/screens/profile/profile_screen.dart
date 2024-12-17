@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Builder(
         builder: (context) {
           return RefreshIndicator(
-            color: Theme.of(context).primaryColor, // Foreground color of the progress bar
+            color: Theme.of(context).primaryColor,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Background color
             onRefresh: () async {
               int? profileId = ModalRoute.of(context)?.settings.arguments as int?;
@@ -43,8 +43,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               } else {
                 context.read<ProfileBloc>().add(FetchMyProfileEvent());
               }
-
-              // Trigger content refresh
               await _refreshContent();
             },
             child: ListView(
@@ -53,12 +51,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 16),
                 UserInfo(),
                 SizedBox(height: 16),
-                // Conditionally show placeholder or ContentInfo
+
                 _isRefreshingContent
                     ? Container(
-                  height: 1000, // Adjust height based on your ContentInfo
+                  height: 1000,
                   alignment: Alignment.center,
-                  child: CircularProgressIndicator(), // Or any placeholder widget
+                  child: CircularProgressIndicator(),
                 )
                     : ContentInfo(),
               ],

@@ -7,23 +7,12 @@ import 'widgets/main_tab_bar.dart';
 import 'widgets/normal_user_post_list.dart';
 import 'widgets/search_list.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen>
-    with AutomaticKeepAliveClientMixin {
-  late bool seeExpertPost;
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget build(BuildContext context) {
-    seeExpertPost = context.read<SettingBloc>().state.seeExpertPost;
+
     return BlocBuilder<HomeBloc, HomeState>(
 
       builder: (context, state) {
@@ -47,10 +36,9 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     ),
                   )
-                : Container(
-                    child: seeExpertPost
-                        ? MainTabBar()
-                        : NormalUserPostList());
+                : context.read<SettingBloc>().state.seeExpertPost?
+                     MainTabBar()
+                    : NormalUserPostList();
       },
     );
   }

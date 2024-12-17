@@ -23,16 +23,14 @@ class CustomNavigatorObserver extends NavigatorObserver {
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    print('didPop');
-    super.didPop(route, previousRoute);
     _updateCurrentIndex(previousRoute?.settings.name);
+    super.didPop(route, previousRoute);
   }
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    print('didReplace');
-    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
     _updateCurrentIndex(newRoute?.settings.name);
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 
   void _updateCurrentIndex(String? routeName) {

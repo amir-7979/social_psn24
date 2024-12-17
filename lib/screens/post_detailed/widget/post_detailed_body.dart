@@ -231,7 +231,7 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
                           ],
                         ),
                       ),
-                      PopupMenuItem(
+                      if(BlocProvider.of<SettingBloc>(context).state.profile?.globalId != widget.post.creator?.globalId) PopupMenuItem(
                         onTap: () {
                           widget.post.isNotificationEnabled =
                           !widget.post.isNotificationEnabled;

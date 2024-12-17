@@ -4,7 +4,7 @@ enum AppTheme { light, dark }
 enum AppLanguage { english, persian }
 
 class SettingState {
-   AppTheme theme;
+   AppTheme? theme;
    AppLanguage language;
    AdminSettings? adminSettings;
    Profile? profile;
@@ -13,7 +13,7 @@ class SettingState {
 
 
   SettingState({
-    required this.theme,
+    this.theme,
     required this.language,
     this.adminSettings,
     this.profile,
@@ -102,9 +102,6 @@ class SettingState {
   }
 
   void reset() {
-    this.theme = WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-        Brightness.dark ? AppTheme.dark : AppTheme.light;
-    this.language = AppLanguage.persian;
     this.profile = Profile();
     this.adminSettings = AdminSettings();
     this.token = '';

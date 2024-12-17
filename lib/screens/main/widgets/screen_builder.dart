@@ -21,7 +21,7 @@ class AppRoutes {
   static const String main = '/main';
   static const String profile = '/profile';
   static const String myProfile = '/my_profile';
-  static const String home = '/home';
+  static const String home = '/';
   static const String consultation = '/consultation';
   static const String charity = '/charity';
   static const String editProfile = '/edit_profile';
@@ -32,6 +32,7 @@ class AppRoutes {
 }
 
 final Map<String, WidgetBuilder> routes = {
+
   AppRoutes.login: (BuildContext context) => Login(),
   AppRoutes.verify: (BuildContext context){
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
