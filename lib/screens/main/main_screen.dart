@@ -77,14 +77,11 @@ class _MainScreenState extends State<MainScreen>
         currentTime.difference(_lastPressedTime!) < Duration(seconds: 2)) {
       exit(0);
     }
-
     final isAtHome = !(navigatorKey.currentState?.canPop() ?? true);
     if (isAtHome) {
       _lastPressedTime = currentTime;
-
-      // Check if the SnackBar is already visible
       if (!_isSnackBarVisible) {
-        _isSnackBarVisible = true; // Set the flag to true
+        _isSnackBarVisible = true;
 
         ScaffoldMessenger.of(context).showSnackBar(
           CustomSnackBar(
@@ -93,10 +90,9 @@ class _MainScreenState extends State<MainScreen>
             backgroundColor: Colors.black,
           ).build(context),
         ).closed.then((_) {
-          _isSnackBarVisible = false; // Reset the flag when dismissed
+          _isSnackBarVisible = false;
         });
       }
-
       return false;
     } else {
       navigatorKey.currentState?.pop();
