@@ -30,6 +30,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
         if (state is CommentCreated) {
           Navigator.of(context).pop();
         } else if (state is CommentFailure) {
+          print(state.error);
           ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(
               content: AppLocalizations.of(context)!.translateNested(
                 "error",

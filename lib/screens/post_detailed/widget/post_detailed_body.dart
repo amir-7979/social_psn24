@@ -137,6 +137,17 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
                   ],
                 ),
               ),
+              IconButton(
+                padding: EdgeInsetsDirectional.zero,
+                alignment: AlignmentDirectional.centerEnd,
+                onPressed: (){
+                  navigatorKey.currentState?.pop();
+                },
+                icon: FaIcon(
+                    size: 20,
+                    FontAwesomeIcons.solidArrowLeft,
+                    color: Theme.of(context).colorScheme.surface),
+              ),
               BlocConsumer<PostDetailedBloc, PostDetailedState>(
                 listener: (context, state) {
                   if (state is InterestSuccessState) {

@@ -165,7 +165,7 @@ class _SocialAppBarState extends State<SocialAppBar> {
                   );
                 },
               ),
-              if(context.read<SettingBloc>().state.isUserLoggedIn) IconButton(
+              if(context.read<SettingBloc>().state.isUserLoggedIn &&  context.read<SettingBloc>().state.profile!= null && context.read<SettingBloc>().state.profile!.displayName!= "ممیز محتوا") IconButton(
                 color: Theme.of(context).appBarTheme.iconTheme!.color,
                 icon: FaIcon(
                       size: 24,

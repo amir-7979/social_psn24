@@ -12,6 +12,7 @@ import '../../configs/utilities.dart';
 import '../home/home_screen.dart';
 import '../widgets/appbar/appbar_widget.dart';
 import '../widgets/bottombar_widget.dart';
+import '../widgets/custom_snackbar.dart';
 import '../widgets/dialogs/my_confirm_dialog.dart';
 import '../widgets/guest_drawer_widget.dart';
 import '../widgets/user_drawer_widget.dart';
@@ -22,9 +23,11 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
+class _MainScreenState extends State<MainScreen>
+    with SingleTickerProviderStateMixin {
   bool isAddButtonClicked = false;
-  DateTime? _lastPressedTime =  DateTime.now();
+  DateTime? _lastPressedTime;
+  bool _isSnackBarVisible = false; // Add this flag
 
   final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(1);
   late CustomNavigatorObserver _navigatorObserver;
@@ -67,67 +70,41 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   }
 
   Future<bool> _onWillPop(BuildContext context) async {
-
     DateTime currentTime = DateTime.now();
-    if (currentTime.difference(_lastPressedTime!) < Duration(seconds: 1)) {
-      _lastPressedTime = currentTime;
-      /*ScaffoldMessenger.of(context).showSnackBar(
-          CustomSnackBar(
-            content: AppLocalizations.of(context)!.translateNested('dialog', 'pressToExit'),
-            backgroundColor: Colors.black,
-          ).build(context));*/
-      await showDialog<bool>(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return MyConfirmDialog(
-            title: AppLocalizations.of(dialogContext)!.translateNested(
-                'dialog', 'exitFromAppTitle'),
-            description: AppLocalizations.of(dialogContext)!.translateNested(
-                'dialog', 'exitFromSocialAppDescription'),
-            cancelText: AppLocalizations.of(dialogContext)!.translateNested(
-                'dialog', 'cancel'),
-            confirmText: AppLocalizations.of(dialogContext)!.translateNested(
-                'dialog', 'exit'),
-            onCancel: () => Navigator.of(dialogContext).pop(false),
-            onConfirm: () => exit(0),
-          );
-        },
-      );
-      return false;
-    }else {
-      _lastPressedTime = currentTime;
-      final isAtHome = navigatorKey.currentState?.canPop() == false;
-      if (isAtHome) {
-        await showDialog<bool>(
-          context: context,
-          builder: (BuildContext dialogContext) {
-            return MyConfirmDialog(
-              title: AppLocalizations.of(dialogContext)!.translateNested(
-                  'dialog', 'exitFromAppTitle'),
-              description: AppLocalizations.of(dialogContext)!.translateNested(
-                  'dialog', 'exitFromSocialAppDescription'),
-              cancelText: AppLocalizations.of(dialogContext)!.translateNested(
-                  'dialog', 'cancel'),
-              confirmText: AppLocalizations.of(dialogContext)!.translateNested(
-                  'dialog', 'exit'),
-              onCancel: () => Navigator.of(dialogContext).pop(false),
-              onConfirm: () => exit(0),
-            );
-          },
-        );
-        return false;
-      } else {
-        navigatorKey.currentState?.pop();
-        return false;
-      }
+
+    // Double back press to exit
+    if (_lastPressedTime != null &&
+        currentTime.difference(_lastPressedTime!) < Duration(seconds: 2)) {
+      exit(0);
     }
 
+    final isAtHome = !(navigatorKey.currentState?.canPop() ?? true);
+    if (isAtHome) {
+      _lastPressedTime = currentTime;
+
+      // Check if the SnackBar is already visible
+      if (!_isSnackBarVisible) {
+        _isSnackBarVisible = true; // Set the flag to true
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          CustomSnackBar(
+            content: AppLocalizations.of(context)!
+                .translateNested('dialog', 'pressToExit'),
+            backgroundColor: Colors.black,
+          ).build(context),
+        ).closed.then((_) {
+          _isSnackBarVisible = false; // Reset the flag when dismissed
+        });
+      }
+
+      return false;
+    } else {
+      navigatorKey.currentState?.pop();
+      return false;
+    }
   }
-
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       resizeToAvoidBottomInset: true,
@@ -138,8 +115,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       body: Stack(
         children: [
           WillPopScope(
-            onWillPop: ()=>_onWillPop(context),
-
+            onWillPop: () => _onWillPop(context),
             child: Navigator(
               key: navigatorKey,
               initialRoute: AppRoutes.home,
@@ -159,7 +135,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: MyFloatingActionButton(
         isAddButtonClicked,
-            () {
+        () {
           _handleFABPressed();
         },
       ),
@@ -191,31 +167,55 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildAnimatedColumn(
-                        -1,
-                        AppLocalizations.of(context)!.translateNested('bottomBar', 'content'),
-                        FontAwesomeIcons.thinCloudArrowUp,
-                            () {
-                              if(!BlocProvider.of<SettingBloc>(context).state.isUserLoggedIn){
-                                navigatorKey.currentState!.pushNamed(AppRoutes.login);
-                              }else{
-                          navigatorKey.currentState!.pushNamed(AppRoutes.createMedia);}
+                      if (BlocProvider.of<SettingBloc>(context).state.profile !=
+                          null)
+                        _buildAnimatedColumn(
+                          -1,
+                          AppLocalizations.of(context)!
+                              .translateNested('bottomBar', 'content'),
+                          FontAwesomeIcons.thinCloudArrowUp,
+                          () {
+                            if (!BlocProvider.of<SettingBloc>(context)
+                                .state
+                                .isUserLoggedIn) {
+                              navigatorKey.currentState!
+                                  .pushNamed(AppRoutes.login);
+                            } else {
+                              if (BlocProvider.of<SettingBloc>(context)
+                                  .state
+                                  .profile!
+                                  .permissions!
+                                  .any((permission) {
+                                return RegExp(r'create .* post')
+                                    .hasMatch(permission);
+                              })) {
+                                navigatorKey.currentState!
+                                    .pushNamed(AppRoutes.createMedia);
+                              }
                               _handleFABPressed();
-
-                            },
-                      ),
+                            }
+                          },
+                        )
+                      else
+                        Container(
+                          height: 55,
+                          width: 55,
+                        ),
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 55),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 55),
                         child: _buildAnimatedColumn(
                           0,
-                          AppLocalizations.of(context)!.translateNested('bottomBar', 'consultation'),
+                          AppLocalizations.of(context)!
+                              .translateNested('bottomBar', 'consultation'),
                           FontAwesomeIcons.thinComment,
                           _handleFABPressed,
                         ),
                       ),
                       _buildAnimatedColumn(
                         1,
-                        AppLocalizations.of(context)!.translateNested('bottomBar', 'charity'),
+                        AppLocalizations.of(context)!
+                            .translateNested('bottomBar', 'charity'),
                         FontAwesomeIcons.thinHandsHolding,
                         _handleFABPressed,
                       ),
@@ -230,7 +230,8 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildAnimatedColumn(double angle, String text, IconData icon, VoidCallback onPressed) {
+  Widget _buildAnimatedColumn(
+      double angle, String text, IconData icon, VoidCallback onPressed) {
     final double distance = 20.0;
     final double x = distance * angle * (1 - _animation.value);
     final double y = distance * (1 - _animation.value);
@@ -245,9 +246,9 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
             Text(
               text,
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).colorScheme.shadow,
-                fontWeight: FontWeight.w500,
-              ),
+                    color: Theme.of(context).colorScheme.shadow,
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
             SizedBox(height: 10),
             SizedBox(
@@ -285,19 +286,19 @@ class MyFloatingActionButton extends StatelessWidget {
         return isKeyboardOpen
             ? Container()
             : FloatingActionButton(
-          onPressed: () => changeAddButtonState(),
-          child: FaIcon(
-            size: 22,
-            isAddButtonClicked
-                ? FontAwesomeIcons.thinXmark
-                : FontAwesomeIcons.thinPlus,
-            color: whiteColor,
-          ),
-          backgroundColor: isAddButtonClicked
-              ? Theme.of(context).colorScheme.error
-              : Theme.of(context).primaryColor,
-          shape: CircleBorder(),
-        );
+                onPressed: () => changeAddButtonState(),
+                child: FaIcon(
+                  size: 22,
+                  isAddButtonClicked
+                      ? FontAwesomeIcons.thinXmark
+                      : FontAwesomeIcons.thinPlus,
+                  color: whiteColor,
+                ),
+                backgroundColor: isAddButtonClicked
+                    ? Theme.of(context).colorScheme.error
+                    : Theme.of(context).primaryColor,
+                shape: CircleBorder(),
+              );
       },
     );
   }
