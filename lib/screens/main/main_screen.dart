@@ -55,6 +55,10 @@ class _MainScreenState extends State<MainScreen>
   }
 
   void _handleFABPressed() {
+    if (!BlocProvider.of<SettingBloc>(context)
+        .state
+        .isUserLoggedIn)
+      return;
     if (isAddButtonClicked) {
       _animationController.reverse().then((_) {
         setState(() {
@@ -144,6 +148,7 @@ class _MainScreenState extends State<MainScreen>
   }
 
   Widget _buildBlurScreen() {
+
     return InkWell(
       onTap: _handleFABPressed,
       child: Container(
@@ -163,13 +168,13 @@ class _MainScreenState extends State<MainScreen>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (BlocProvider.of<SettingBloc>(context).state.profile !=
-                          null)
                         _buildAnimatedColumn(
                           -1,
                           AppLocalizations.of(context)!
                               .translateNested('bottomBar', 'content'),
+
                           FontAwesomeIcons.thinCloudArrowUp,
+
                           () {
                             if (!BlocProvider.of<SettingBloc>(context)
                                 .state
@@ -178,6 +183,8 @@ class _MainScreenState extends State<MainScreen>
                                   .pushNamed(AppRoutes.login);
                             } else {
                               if (BlocProvider.of<SettingBloc>(context)
+                                  .state
+                                  .profile != null && BlocProvider.of<SettingBloc>(context)
                                   .state
                                   .profile!
                                   .permissions!
@@ -191,11 +198,16 @@ class _MainScreenState extends State<MainScreen>
                               _handleFABPressed();
                             }
                           },
-                        )
-                      else
-                        Container(
-                          height: 55,
-                          width: 55,
+                            iconColor: BlocProvider.of<SettingBloc>(context)
+                                .state
+                                .profile != null && BlocProvider.of<SettingBloc>(context)
+                                .state
+                                .profile!
+                                .permissions!
+                                .any((permission) {
+                              return RegExp(r'create .* post')
+                                  .hasMatch(permission);
+                            }) ? Theme.of(context).colorScheme.tertiary : darkBaseColor
                         ),
                       Padding(
                         padding:
@@ -227,7 +239,7 @@ class _MainScreenState extends State<MainScreen>
   }
 
   Widget _buildAnimatedColumn(
-      double angle, String text, IconData icon, VoidCallback onPressed) {
+      double angle, String text, IconData icon, VoidCallback onPressed, {Color? iconColor}) {
     final double distance = 20.0;
     final double x = distance * angle * (1 - _animation.value);
     final double y = distance * (1 - _animation.value);
@@ -255,7 +267,7 @@ class _MainScreenState extends State<MainScreen>
                 child: FaIcon(size: 22, icon, color: whiteColor),
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
-                  backgroundColor: Theme.of(context).colorScheme.tertiary,
+                  backgroundColor: iconColor?? Theme.of(context).colorScheme.tertiary,
                   shape: CircleBorder(),
                   padding: EdgeInsets.zero,
                 ),

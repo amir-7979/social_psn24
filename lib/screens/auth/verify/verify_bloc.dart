@@ -8,6 +8,7 @@ import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/repositories/dio/dio_auth_repository.dart';
 import '../../../services/firebase_notification_service.dart';
 import '../../../services/graphql_service.dart';
+import '../../../services/request_queue.dart';
 
 part 'verify_event.dart';
 part 'verify_state.dart';
@@ -43,7 +44,6 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
       VerifyTokenEvent event, Emitter<VerifyState> emit) async {
     emit(VerifyLoading());
     try {
-      print('loginId: ${event.loginId}');
       var response = await _authRepository.verifyToken(int.parse(event.loginId), event.code);
       print(response.data);
       if (response.statusCode == 200) {
@@ -52,6 +52,7 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
         await completer.future;
         await GraphQLService.instance.addTokenToAuthLink();
         settingBloc.add(FetchUserProfileWithPermissionsEvent());
+        await RequestQueue().processQueue();
         await setFCM();
         if (response.data?['data']['status'] == '1'){
           settingBloc.add(FetchUserProfileWithPermissionsEvent());

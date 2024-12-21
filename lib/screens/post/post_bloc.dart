@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -9,18 +10,32 @@ import '../../repos/models/comment.dart';
 import '../../repos/models/post.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
+import '../../services/request_queue.dart';
 
 part 'post_event.dart';
 part 'post_state.dart';
 
 class PostBloc extends Bloc<PostEvent, PostState> {
   GraphQLClient graphQLService = GraphQLService.instance.client;
-
   PostBloc() : super(PostInitial()) {
     on<AddToInterestEvent>(_onAddToInterestEvent);
     on<EnableNotificationEvent>(_onEnableNotificationEvent);
     on<UserVoteUpEvent>(_onUserVoteUpEvent);
     on<UserVoteDownEvent>(_onUserVoteDownEvent);
+  }
+
+  void saveLikeRequest(String postId, String voteType) {
+    final MutationOptions options = votePost(postId: postId, type: voteType);
+    RequestQueue().addRequest(() async {
+      await graphQLService.mutate(options);
+    });
+  }
+
+  void saveDisLikeRequest(String postId, String voteType) {
+    final MutationOptions options = votePost(postId: postId, type: voteType);
+    RequestQueue().addRequest(() async {
+      await graphQLService.mutate(options);
+    });
   }
 
   void updatePost(Post post) {

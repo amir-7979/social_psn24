@@ -2,6 +2,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
 
@@ -28,13 +29,13 @@ class UserDrawer extends StatelessWidget {
         final BuildContext dialogContext = context; // Store the BuildContext in a variable
 
         return Drawer(
-          width: 240,
+          width: 260,
           backgroundColor: Theme.of(context).drawerTheme.backgroundColor,
           child: Column(
             children: [
               Container(
                 width: double.infinity,
-                height: 260,
+                height: 140,
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: const BorderRadius.only(
@@ -44,52 +45,101 @@ class UserDrawer extends StatelessWidget {
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      color: Colors.transparent,
-                      child:  Padding(
-                        padding:
-                        EdgeInsetsDirectional.fromSTEB(16, 16, 16, 8),
-                        child: ClipOval(
-                          child: SizedBox.fromSize(
-                            size: Size.fromRadius(70), // Image radius
-                            child: photo != null ? ProfileCacheImage(photo) :  SvgPicture.asset('assets/images/drawer/profile2.svg'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          color: Colors.transparent,
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 8),
+                            child: ClipOval(
+                              child: Container(
+                                color: Colors.white, // White padding color
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2), // Adjust the padding thickness
+                                  child: ClipOval(
+                                    child: SizedBox.fromSize(
+                                      size: Size.fromRadius(30), // Image radius
+                                      child: photo != null
+                                          ? ProfileCacheImage(photo)
+                                          : SvgPicture.asset('assets/images/drawer/profile2.svg'),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Text(
-                      BlocProvider.of<SettingBloc>(context).state.profile?.fullName?? '',
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        color: whiteColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      BlocProvider.of<SettingBloc>(context).state.profile?.phone?? '',
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: whiteColor,
-                        fontWeight: FontWeight.w400,
+                        IconButton(
+                          color: Theme.of(context).appBarTheme.iconTheme!.color,
+                          padding: EdgeInsetsDirectional.zero,
+                          icon :  FaIcon(
+                            FontAwesomeIcons.solidMoonStars,
+                            size: 24,
+/*
+                            Theme.of(context).brightness == Brightness.light ? FontAwesomeIcons.thinMoon : FontAwesomeIcons.thinSunBright,
+*/
 
-                      ),
+                            color: Theme.of(context).drawerTheme.backgroundColor),
+                          onPressed: () {
+                            BlocProvider.of<SettingBloc>(context).add(
+                              SettingThemeEvent(
+                                  Theme.of(context).brightness == Brightness.light
+                                      ? AppTheme.dark
+                                      : AppTheme.light),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                BlocProvider.of<SettingBloc>(context).state.profile?.fullName?? '',
+                                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                BlocProvider.of<SettingBloc>(context).state.profile?.phone?? '',
+                                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.w400,
+
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding:
+                            const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
+                            decoration: BoxDecoration(
+                              color: whiteColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              BlocProvider.of<SettingBloc>(context).state.profile?.displayName?? '',
+                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                color: blackColor,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+
+                        ],),
                     ),
                     SizedBox(height: 5),
-                    Container(
-                      padding:
-                      const EdgeInsetsDirectional.fromSTEB(16, 2, 16, 2),
-                      decoration: BoxDecoration(
-                        color: whiteColor,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        BlocProvider.of<SettingBloc>(context).state.profile?.displayName?? '',
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: blackColor,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

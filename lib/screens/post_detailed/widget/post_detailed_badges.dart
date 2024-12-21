@@ -161,6 +161,8 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                   BlocProvider.of<PostDetailedBloc>(context)
                       .add(UserVoteDownEvent(widget.post.id, 'down'));
                 } else {
+                  BlocProvider.of<PostDetailedBloc>(context).saveDisLikeRequest(widget.post.id, 'down');
+
                   Navigator.of(context).pushNamed(AppRoutes.login);
                 }
               },
@@ -234,6 +236,8 @@ class _PostDetailedBadgesState extends State<PostDetailedBadges> {
                   BlocProvider.of<PostDetailedBloc>(context)
                       .add(UserVoteUpEvent(widget.post.id, 'up'));
                 } else {
+                  BlocProvider.of<PostDetailedBloc>(context).saveLikeRequest(widget.post.id, 'up');
+
                   Navigator.of(context).pushNamed(AppRoutes.login);
                 }
               },

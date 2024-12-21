@@ -150,31 +150,6 @@ class _SocialAppBarState extends State<SocialAppBar> {
               );
             }),
             actions: [
-              IconButton(
-                color: Theme.of(context).appBarTheme.iconTheme!.color,
-                icon :  FaIcon(
-                  size: 24,
-                  Theme.of(context).brightness == Brightness.light ? FontAwesomeIcons.thinMoon : FontAwesomeIcons.thinSunBright,
-                  color: Theme.of(context).hoverColor,),
-                onPressed: () {
-                  BlocProvider.of<SettingBloc>(context).add(
-                    SettingThemeEvent(
-                        Theme.of(context).brightness == Brightness.light
-                            ? AppTheme.dark
-                            : AppTheme.light),
-                  );
-                },
-              ),
-              if(context.read<SettingBloc>().state.isUserLoggedIn &&  context.read<SettingBloc>().state.profile!= null && context.read<SettingBloc>().state.profile!.displayName!= "ممیز محتوا") IconButton(
-                color: Theme.of(context).appBarTheme.iconTheme!.color,
-                icon: FaIcon(
-                      size: 24,
-                      FontAwesomeIcons.thinWallet,
-                      color: Theme.of(context).hoverColor,),
-                onPressed: () {
-                  print(widget.navigatorObserver.currentRoute);
-                },
-              ),
               if(context.read<SettingBloc>().state.isUserLoggedIn) BlocBuilder<NotificationBloc, NotificationState>(
                 builder: (context, state) {
                   return IconButton(

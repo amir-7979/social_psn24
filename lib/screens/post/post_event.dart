@@ -37,3 +37,5 @@ class UpdatePostEvent extends PostEvent {
 
   UpdatePostEvent(this.postId, this.title, this.description);
 }
+
+class ProcessPendingRequestsEvent extends PostEvent {}

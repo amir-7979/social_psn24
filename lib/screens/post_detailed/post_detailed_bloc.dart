@@ -8,6 +8,7 @@ import '../../repos/models/comment.dart';
 import '../../repos/models/post.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
+import '../../services/request_queue.dart';
 
 part 'post_detailed_event.dart';
 part 'post_detailed_state.dart';
@@ -23,6 +24,19 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     on<IncreasePostViewEvent>(_onIncreasePostView);
     on<FetchPostEvent>(_onFetchPostEvent);
 
+  }
+  void saveLikeRequest(String postId, String voteType) {
+    final MutationOptions options = votePost(postId: postId, type: voteType);
+    RequestQueue().addRequest(() async {
+      await graphQLService.mutate(options);
+    });
+  }
+
+  void saveDisLikeRequest(String postId, String voteType) {
+    final MutationOptions options = votePost(postId: postId, type: voteType);
+    RequestQueue().addRequest(() async {
+      await graphQLService.mutate(options);
+    });
   }
 
   Future<void> _onFetchPostEvent(FetchPostEvent event, Emitter<PostDetailedState> emit) async {

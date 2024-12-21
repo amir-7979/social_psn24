@@ -11,6 +11,7 @@ import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
 import '../../main/widgets/screen_builder.dart';
+import '../../post/post_bloc.dart';
 import '../../widgets/white_circular_progress_indicator.dart';
 
 class Verify extends StatefulWidget {
@@ -97,8 +98,18 @@ class _VerifyState extends State<Verify> {
                     ).build(context),
                   );
                 } else if (state is VerifySuccess) {
+                  try {
+                    context.read<PostBloc>().add(ProcessPendingRequestsEvent());
+                  } catch (e) {
+                    print(e);
+                  }
                   Navigator.of(context).pushReplacementNamed(AppRoutes.register);
                 } else if (state is VerifyFinished) {
+                  try {
+                    context.read<PostBloc>().add(ProcessPendingRequestsEvent());
+                  } catch (e) {
+                    print(e);
+                  }
                   Navigator.of(context).pushReplacementNamed(AppRoutes.home);
                 }else if(state is ResendSuccess){
                   widget.LoginId = state.loginId;
