@@ -320,6 +320,15 @@ class GuestDrawer extends StatelessWidget {
               ),
             ),
           ),
+      Padding(
+        padding: const EdgeInsetsDirectional.only(bottom: 16),
+        child: Text(
+          'ver 0.0.1',
+          style:
+          Theme.of(context).textTheme.headlineMedium!.copyWith(
+            fontWeight: FontWeight.w400,
+            color: Colors.grey,
+          ),),),
         ],
       ),
     );
