@@ -32,7 +32,6 @@ class _NormalUserPostListState extends State<NormalUserPostList>{
 
   @override
   void dispose() {
-    _pagingPostController1.dispose();
     super.dispose();
   }
 

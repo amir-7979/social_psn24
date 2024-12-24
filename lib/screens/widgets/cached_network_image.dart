@@ -8,8 +8,8 @@ class CacheImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
-      imageUrl: url ?? '',
+    return url == null ? Container(): CachedNetworkImage(
+      imageUrl: url!,
       fit: BoxFit.cover,
       errorWidget: (context, url, error) =>
           SvgPicture.asset('assets/images/profile/placeholder.svg', fit: BoxFit.cover,),

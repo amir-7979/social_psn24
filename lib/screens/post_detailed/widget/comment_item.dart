@@ -34,18 +34,12 @@ class CommentItem extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InkWell(
-              onTap: (){
-                Navigator.of(context).pushNamed(AppRoutes.profile,
-                    arguments: comment.sender?.globalId);
-              },
-              child: ClipOval(
-                child: SizedBox.fromSize(
-                  size: Size.fromRadius(20), // Image radius
-                  child: comment.sender?.photo != null
-                      ? ProfileCacheImage(comment.sender?.photo)
-                      : SvgPicture.asset('assets/images/drawer/profile2.svg'),
-                ),
+            ClipOval(
+              child: SizedBox.fromSize(
+                size: Size.fromRadius(20), // Image radius
+                child: comment.sender?.photo != null
+                    ? ProfileCacheImage(comment.sender?.photo)
+                    : SvgPicture.asset('assets/images/drawer/profile2.svg'),
               ),
             ),
             SizedBox(width: 8),

@@ -88,12 +88,20 @@ class _PostItemState extends State<PostItem> {
               children: [
                 InkWell(
                   onTap: () {
-                    if(BlocProvider.of<SettingBloc>(context).state.profile?.globalId == widget.post.creator?.globalId){
-                      Navigator.of(context).pushNamed(AppRoutes.myProfile);
-                    }else{
-                    Navigator.of(context).pushNamed(AppRoutes.profile,
-                        arguments: widget.post.creator?.globalId);
-                   }
+                    if (isUserLoggedIn != true) {
+                      Navigator.of(context).pushNamed(AppRoutes.login);
+                    }else {
+                      if (BlocProvider
+                          .of<SettingBloc>(context)
+                          .state
+                          .profile
+                          ?.globalId == widget.post.creator?.globalId) {
+                        Navigator.of(context).pushNamed(AppRoutes.myProfile);
+                      } else {
+                        Navigator.of(context).pushNamed(AppRoutes.profile,
+                            arguments: widget.post.creator?.globalId);
+                      }
+                    }
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

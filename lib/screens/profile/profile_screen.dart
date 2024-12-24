@@ -11,33 +11,43 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> with AutomaticKeepAliveClientMixin {
+
+  @override
+  bool get wantKeepAlive => true; // Keeps the widget alive
   bool _isRefreshingContent = false;
 
   Future<void> _refreshContent() async {
     setState(() {
-      _isRefreshingContent = true; // Show the placeholder
+      _isRefreshingContent = true;
     });
 
-    // Simulate a delay to refresh content or wait for actual data fetch
-    await Future.delayed(Duration.zero);
+    // Simulate data fetching or replace with your own logic
+    await Future.delayed(Duration(seconds: 1));
 
     setState(() {
-      _isRefreshingContent = false; // Show the ContentInfo again
+      _isRefreshingContent = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+
     return BlocProvider(
       create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context)),
       child: Builder(
         builder: (context) {
           return RefreshIndicator(
             color: Theme.of(context).primaryColor,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Background color
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            notificationPredicate: (notification) => notification.depth == 2,
+            triggerMode: RefreshIndicatorTriggerMode.anywhere,
+            displacement: 10.0,
+            edgeOffset: 10.0,
             onRefresh: () async {
-              int? profileId = ModalRoute.of(context)?.settings.arguments as int?;
+              int? profileId =
+              ModalRoute.of(context)?.settings.arguments as int?;
               if (profileId != null) {
                 context.read<ProfileBloc>().add(FetchProfileEvent(id: profileId));
               } else {
@@ -45,25 +55,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
               }
               await _refreshContent();
             },
-            child: ListView(
-              physics: ClampingScrollPhysics(),
-              children: [
-                SizedBox(height: 16),
-                UserInfo(),
-                SizedBox(height: 16),
-
-                _isRefreshingContent
-                    ? Container(
-                  height: 1000,
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(),
-                )
-                    : ContentInfo(),
-              ],
+            child: NestedScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                return [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 16),
+                        UserInfo(),
+                        SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
+                ];
+              },
+              body: _isRefreshingContent
+                  ? Center(child: CircularProgressIndicator())
+                  : ContentInfo(),
             ),
           );
         },
       ),
     );
   }
+
 }
