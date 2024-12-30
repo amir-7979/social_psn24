@@ -29,6 +29,7 @@ class GraphQLService {
   void _initializeDio() async {
     _dio = Dio(BaseOptions(
       connectTimeout: Duration(seconds: 10),
+      receiveTimeout:  Duration(seconds: 10),
 
       baseUrl: 'https://api.psn24.ir/graphql',
       headers: {'Content-Type': 'application/json'},

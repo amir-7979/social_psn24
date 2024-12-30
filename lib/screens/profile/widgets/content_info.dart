@@ -9,7 +9,8 @@ import 'expert_user/comment_expert_tab.dart';
 import 'expert_user/content_expert_tab.dart';
 
 class ContentInfo extends StatefulWidget {
-  const ContentInfo({super.key});
+  ScrollController nestedController;
+   ContentInfo(this.nestedController, {super.key});
 
   @override
   State<ContentInfo> createState() => _ContentInfoState();
@@ -50,7 +51,7 @@ class _ContentInfoState extends State<ContentInfo>
           },
           builder: (context, state) {
             if (state is ChangeToPostState && seeExpertPost == true) {
-              return ContentExpertTab(profileId: profileId);
+              return ContentExpertTab(profileId: profileId, widget.nestedController);
             } else if (state is ChangeToPostState && seeExpertPost == false) {
               return ContentWidget(profileId: profileId);
             } else if (state is ChangeToCommentState && seeExpertPost == true) {

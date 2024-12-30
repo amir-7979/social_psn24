@@ -59,14 +59,15 @@ MutationOptions updateMediaOrder(List<String>? mediaIds, String postId) {
   );
 }
 
-MutationOptions deleteMedia(String mediaId) {
+MutationOptions deleteMedia(String postId,String mediaId) {
   Map<String, dynamic> variables = {
     'mediaId': mediaId,
+    'postId': postId
   };
   return MutationOptions(
     document: gql('''
-      mutation deleteMedia(\$mediaId: String!) {
-        DeleteMedia(id: \$mediaId)
+      mutation deleteMedia(\$mediaId: String!, \$postId: String!) {
+        DeleteMedia(id: \$mediaId, post_id: \$postId)
       }
     '''),
     variables: variables,

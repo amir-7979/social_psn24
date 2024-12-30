@@ -66,7 +66,7 @@ class _ContentWidgetState extends State<ContentWidget> {
               ),
             ),
             SizedBox(height: 20),
-            Expanded(child: Contents(pagingController: _pagingController0),),
+            //Expanded(child: Contents(pagingController: _pagingController0),),
           ],
         ),
       ),

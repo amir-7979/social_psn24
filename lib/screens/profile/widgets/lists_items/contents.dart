@@ -11,8 +11,9 @@ import '../shimmer/shimmer_content_item.dart';
 
 class Contents extends StatefulWidget {
   final PagingController<int, Content> pagingController;
+  ScrollController nestedController;
 
-  const Contents({super.key, required this.pagingController});
+   Contents(this.nestedController, {super.key, required this.pagingController});
 
   @override
   State<Contents> createState() => _ContentsState();
@@ -32,8 +33,9 @@ class _ContentsState extends State<Contents> {
       child: PagedGridView<int, Content>(
         showNewPageProgressIndicatorAsGridChild: false,
         padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+        scrollController: widget.nestedController,
         pagingController: widget.pagingController,
-        physics: ClampingScrollPhysics(),
+        physics: AlwaysScrollableScrollPhysics(),
         cacheExtent: 300,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,

@@ -109,8 +109,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   FutureOr<void> _handelClearUserInformation(event, emit) async {
     await _settingsLoadedCompleter.future;
-   /* await _storageService.deleteData('bearer');
-    await _storageService.deleteData('expiry');*/
     await _storageService.deleteData('token');
     await _storageService.deleteData('refreshToken');
     GraphQLService.instance.removeTokenFromAuthLink();
@@ -119,7 +117,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> writeInStorage(StorageService storageService, Map<String, dynamic>? data) async {
-    //await storageService.saveData('expiry', data?['expires_in']);
     await storageService.saveData('token', data?['access_token']);
     await storageService.saveData('refreshToken', data?['refresh_token']);
   }

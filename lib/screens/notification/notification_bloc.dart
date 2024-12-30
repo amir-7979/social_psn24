@@ -53,12 +53,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     }
   }
 
-  //i  need a function to check if there is unreadNotifications or not.
   void checkUnreadNotifications() {
+    // Count unread notifications
     unreadNotifications = notifications.where((element) => element.seen == 0).length;
+
+    // Cap unread notifications at 99
     if (unreadNotifications > 99) {
       unreadNotifications = 99;
     }
+
+    // Sort notifications: unseen (seen == 0) first, then seen (seen != 0)
+    notifications.sort((a, b) => a.seen!.compareTo(b.seen!));
   }
 
 

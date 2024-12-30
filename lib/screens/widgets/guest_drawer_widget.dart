@@ -57,16 +57,10 @@ class GuestDrawer extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      color: Theme.of(context).appBarTheme.iconTheme!.color,
-                      padding: EdgeInsetsDirectional.zero,
+                      color: whiteColor,
                       icon :  FaIcon(
-                          FontAwesomeIcons.solidMoonStars,
                           size: 24,
-/*
-                            Theme.of(context).brightness == Brightness.light ? FontAwesomeIcons.thinMoon : FontAwesomeIcons.thinSunBright,
-*/
-
-                          color: Theme.of(context).drawerTheme.backgroundColor),
+                          Theme.of(context).brightness == Brightness.light ? FontAwesomeIcons.solidMoon : FontAwesomeIcons.solidSunBright, color: whiteColor),
                       onPressed: () {
                         BlocProvider.of<SettingBloc>(context).add(
                           SettingThemeEvent(
@@ -76,6 +70,7 @@ class GuestDrawer extends StatelessWidget {
                         );
                       },
                     ),
+
                   ],
                 ),
                 SizedBox(height: 8),

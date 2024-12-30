@@ -186,8 +186,10 @@ class _NotificationListState extends State<NotificationList>
             border: Border.all(
                 color: Theme.of(context).colorScheme.tertiary, width: 1),
           ),
+          padding: 8,
           children: {
             0: secondaryTabItem(
+
                 AppLocalizations.of(context)!
                     .translateNested('notifications', 'all'),
                 0),

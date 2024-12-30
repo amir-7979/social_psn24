@@ -70,7 +70,7 @@ class _MainFormState extends State<MainForm> {
         });
       }
     });
-    _categories = BlocProvider.of<SettingBloc>(context).state.tagsList;
+    _categories = BlocProvider.of<SettingBloc>(context).state.tagsList??[];
     super.initState();
   }
 

@@ -21,6 +21,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository profileRepository = ProfileRepository();
   final gql.GraphQLClient graphQLService = GraphQLService.instance.client;
   final SettingBloc settingBloc;
+  ScrollController scrollController = ScrollController();
 
   ProfileBloc(this.settingBloc) : super(ProfileInitial()) {
     on<FetchProfileEvent>(_onFetchProfileEvent);
@@ -234,6 +235,5 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   FutureOr<void> _onProfileRefreshRequested(ProfileRefreshRequested event, Emitter<ProfileState> emit) {
     emit(ProfileInfoRefreshState());
-    emit(ProfileContentRefreshState());
   }
 }

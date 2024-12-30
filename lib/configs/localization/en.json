@@ -1,3 +1,185 @@
 {
-  "title": "social app"
+  "appTitle": "Social Network",
+  "comingSoon": "This section will be added soon\n",
+  "bottomBar": {
+    "profile": "Profile",
+    "home": "Home",
+    "charity": "Charity",
+    "consultation": "Consultation",
+    "content": "Content"
+  },
+
+  "createMedia": {
+    "createMedia": "Create Conversation",
+    "title": "Title",
+    "category": "Category",
+    "text": "Text",
+    "upload": "Upload your files here",
+    "type": "Content Type",
+    "general": "General",
+    "expert": "Expert",
+    "subject": "Subject",
+    "mediaLimitReached": "The upload limit for this format has been reached"
+  },
+
+  "drawer": {
+    "guest": "Guest",
+    "loginForAllOptions": "Log in to access all features",
+    "drawerLogin": "Login",
+    "drawerInvite": "Invite Friends",
+    "drawerHand": "Requests",
+    "drawerPhone": "System on Mobile",
+    "drawerRules": "Rules and Regulations",
+    "drawerAsks": "FAQs",
+    "drawerWallet": "My Wallet",
+    "drawerMoney": "Financial Services",
+    "drawerLike": "My Favorites",
+    "drawerSetting": "Settings",
+    "drawerExit": "Exit",
+    "search": "Search ...",
+    "sure": "Are you sure?",
+    "yes": "Yes",
+    "no": "No",
+    "invite": "The system address has been saved to the clipboard; now you can invite your friends!"
+  },
+
+  "search": {
+    "search": "Search...",
+    "searchUser": "Search User",
+    "searchContent": "Search Content",
+    "searchCharity": "Search Charity",
+    "searchConsultation": "Search Consultation",
+    "searchResult": "Search Results",
+    "noResult": "No results found",
+    "all": "All",
+    "public": "Public",
+    "expert": "Expert",
+    "category": "Category",
+    "users": "Users"
+  },
+
+  "notifications": {
+    "myNotification": "My Notifications",
+    "systemNotification": "System Notifications",
+    "all": "All",
+    "comment": "Comment"
+  },
+
+  "params": {
+    "name": "Name",
+    "family": "Last Name",
+    "username": "Username",
+    "message": "Message",
+    "status": "Status",
+    "address": "Address",
+    "biography": "Biography",
+    "email": "Email",
+    "experience": "Experience",
+    "field": "Collaboration Fields",
+    "offices": "Service Centers",
+    "phone": "Phone Number",
+    "photo": "Profile Photo",
+    "type": "Type",
+    "description": "Description",
+    "code": "Code"
+  },
+
+  "auth": {
+    "login": "Login to Account",
+    "insertMobile": "Please enter your mobile number",
+    "phoneNumber": "Mobile Number",
+    "submit": "Submit",
+    "verify": "Verify",
+    "sendAgain": "Resend Code",
+    "sendAgain2": "Resend code in {second} seconds",
+    "insertCode": "Please enter the code sent to {mobileNumber}",
+    "changePhoneNumber": "Change Mobile Number",
+    "register": "Create Account",
+    "insertInformation": "Please enter your user information",
+    "terms1": "I have read and agree to the ",
+    "terms2": "system terms and conditions.",
+    "loginError": "Incorrect username or password",
+    "registerError": "Registration error",
+    "close": "Close"
+  },
+
+  "cooperate": {
+    "terms1": "I have read and agree to the ",
+    "terms2": "terms and conditions."
+  },
+
+  "profileScreen": {
+    "posts": "Posts",
+    "comments": "Comments",
+    "agreeVotes": "Agree Votes",
+    "disagreeVotes": "Disagree Votes",
+    "normalUser": "Regular User",
+    "expertUser": "Expert User",
+    "programmerUser": "System Programmer",
+    "editUserInfo": "My Settings",
+    "normalContent": "General Content",
+    "expertContent": "Expert Content",
+    "userComments": "User Comments",
+    "othersComments": "Others' Comments About Me",
+    "othersUserComments": "Others' Comments About Me",
+    "field": "Expertise Field",
+    "experience": "Experience",
+    "address": "Work Address",
+    "officeName": "Office Name",
+    "add": "Add",
+    "save": "Save",
+    "return": "Return",
+    "interests": "Interests",
+    "sendRequest": "Send Request",
+    "showMore": "Show User Information",
+    "UserInfo": "User Information",
+    "cooperateField": "Collaboration Fields",
+    "noCooperate": "No collaborations have been recorded yet",
+    "noComment": "No comments recorded",
+    "noPost": "No content produced",
+    "noInterest": "No posts added to favorites",
+    "reply": "Your Reply",
+    "interest": "Interests",
+    "fetchError": "Error fetching data",
+    "edit": "Edit",
+    "delete": "Delete",
+    "online": "Online",
+    "offline": "Offline",
+    "myInfo": "About Me",
+    "activities": "Activities",
+    "myComments": "My Comments"
+  },
+
+  "postScreen": {
+    "interest": "Add to Favorites",
+    "delete_interest": "Remove from Favorites",
+    "notification": "Receive Notifications",
+    "delete_notification": "Stop Receiving Notifications",
+    "share": "Share",
+    "show_more": "Show More",
+    "reply": "Reply",
+    "send": "Send",
+    "comment_text": "Comment text...",
+    "commentError": "Error posting comment",
+    "setUsername": "Please set your username first"
+  },
+
+  "dialog": {
+    "delete": "Delete",
+    "exit": "Exit",
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "return": "Return",
+    "deleteMediaTitle": "Delete Content",
+    "exitFromAppTitle": "Exit System",
+    "deleteAccountTitle": "Delete Account",
+    "exitFromSettingTitle": "Exit My Settings",
+    "deleteMediaDescription": "Are you sure you want to delete this content?",
+    "exitFromAppAccountDescription": "Are you sure you want to log out?",
+    "exitFromSocialAppDescription": "Do you want to exit the social network application?",
+    "deleteAccountDescription": "Are you sure you want to delete your account?",
+    "exitFromSettingDescription": "Do you want to save changes?",
+    "pressToExit": "Press back again to exit"
+  }
 }

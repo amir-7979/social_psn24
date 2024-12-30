@@ -17,6 +17,7 @@ import '../../widgets/white_circular_progress_indicator.dart';
 import 'shimmer/shimmer_user_info.dart';
 
 class UserInfo extends StatefulWidget {
+
   @override
   State<UserInfo> createState() => _UserInfoState();
 }

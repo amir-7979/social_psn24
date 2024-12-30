@@ -11,20 +11,46 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> with AutomaticKeepAliveClientMixin {
+class _ProfileScreenState extends State<ProfileScreen>{
+  bool _isRefreshingContent = false;
+  late ScrollController _parentController;
+  late ScrollController _nestedController;
 
   @override
-  bool get wantKeepAlive => true; // Keeps the widget alive
-  bool _isRefreshingContent = false;
+  void initState() {
+    super.initState();
+    _parentController = ScrollController();
+    _nestedController = ScrollController();
 
-  Future<void> _refreshContent() async {
+    // Sync scroll offsets
+    _parentController.addListener(() {
+      if (_nestedController.hasClients &&
+          _parentController.offset != _nestedController.offset) {
+        _nestedController.jumpTo(_parentController.offset);
+      }
+    });
+
+    _nestedController.addListener(() {
+      if (_parentController.hasClients &&
+          _nestedController.offset != _parentController.offset) {
+        _parentController.jumpTo(_nestedController.offset);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _parentController.dispose();
+    _nestedController.dispose();
+    super.dispose();
+  }
+
+
+  Future<void> refreshContent() async {
     setState(() {
       _isRefreshingContent = true;
     });
-
-    // Simulate data fetching or replace with your own logic
-    await Future.delayed(Duration(seconds: 1));
-
+    await Future.delayed(Duration.zero);
     setState(() {
       _isRefreshingContent = false;
     });
@@ -32,8 +58,6 @@ class _ProfileScreenState extends State<ProfileScreen> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
-
     return BlocProvider(
       create: (context) => ProfileBloc(BlocProvider.of<SettingBloc>(context)),
       child: Builder(
@@ -41,40 +65,20 @@ class _ProfileScreenState extends State<ProfileScreen> with AutomaticKeepAliveCl
           return RefreshIndicator(
             color: Theme.of(context).primaryColor,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            notificationPredicate: (notification) => notification.depth == 2,
-            triggerMode: RefreshIndicatorTriggerMode.anywhere,
-            displacement: 10.0,
-            edgeOffset: 10.0,
-            onRefresh: () async {
-              int? profileId =
-              ModalRoute.of(context)?.settings.arguments as int?;
-              if (profileId != null) {
-                context.read<ProfileBloc>().add(FetchProfileEvent(id: profileId));
-              } else {
-                context.read<ProfileBloc>().add(FetchMyProfileEvent());
-              }
-              await _refreshContent();
-            },
-            child: NestedScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                return [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 16),
-                        UserInfo(),
-                        SizedBox(height: 16),
-                      ],
-                    ),
-                  ),
-                ];
-              },
-              body: _isRefreshingContent
-                  ? Center(child: CircularProgressIndicator())
-                  : ContentInfo(),
+            onRefresh: refreshContent,
+            child: ListView(
+              controller: _parentController,
+              children: [
+                SizedBox(height: 16),
+                UserInfo(),
+                SizedBox(height: 16),
+                _isRefreshingContent
+                    ? Center(child: CircularProgressIndicator())
+                    : ContentInfo(_nestedController),
+              ],
             ),
           );
+
         },
       ),
     );

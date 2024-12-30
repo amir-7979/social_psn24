@@ -128,12 +128,15 @@ class MediaItemBloc extends Bloc<MediaItemEvent, MediaItemState> {
   Future<void> _onDeleteMedia(DeleteMediaEvent event, Emitter<MediaItemState> emit) async {
     emit(MediaDeleting(event.mediaId));
     try {
-      final graphql.MutationOptions options = deleteMedia(event.mediaId);
+      final graphql.MutationOptions options = deleteMedia(createPostBloc.newPost!.id ,event.mediaId);
       final graphql.QueryResult result = await graphQLService.mutate(options);
 
       if (result.hasException) {
+        print(result.exception.toString());
         emit(MediaDeleteFailed('خطا در حذف محتوا'));
       } else {
+        print(result.data.toString());
+
         final bool deleteSuccess = result.data?['DeleteMedia'] ?? false;
         if (deleteSuccess) {
           emit(MediaDeleted(event.mediaId));
@@ -143,6 +146,8 @@ class MediaItemBloc extends Bloc<MediaItemEvent, MediaItemState> {
         }
       }
     } catch (e) {
+      print(e.toString());
+
       emit(MediaDeleteFailed('خطا در حذف محتوا'));
     }
   }

@@ -9,7 +9,9 @@ import '../lists_items/contents.dart';
 
 class ContentExpertTab extends StatefulWidget {
   int? profileId;
-  ContentExpertTab({this.profileId});
+  ScrollController nestedController;
+
+  ContentExpertTab(this.nestedController , {this.profileId, });
 
   @override
   State<ContentExpertTab> createState() => _ContentExpertTabState();
@@ -96,8 +98,8 @@ class _ContentExpertTabState extends State<ContentExpertTab> with SingleTickerPr
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  Contents(pagingController: _pagingController0),
-                  Contents(pagingController: _pagingController1),
+                  Contents(widget.nestedController, pagingController: _pagingController0),
+                  Contents(widget.nestedController,pagingController: _pagingController1),
                 ],
               ),
             ),

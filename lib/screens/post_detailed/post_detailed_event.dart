@@ -52,3 +52,5 @@ class FetchPostEvent extends PostDetailedEvent {
 
   FetchPostEvent(this.postId);
 }
+
+
