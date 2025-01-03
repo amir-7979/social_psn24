@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:social_psn/services/storage_service.dart';
@@ -112,6 +113,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await _storageService.deleteData('token');
     await _storageService.deleteData('refreshToken');
     GraphQLService.instance.removeTokenFromAuthLink();
+    await FirebaseMessaging.instance.deleteToken();
+
     state.reset();
     emit(state.copyWith());
   }

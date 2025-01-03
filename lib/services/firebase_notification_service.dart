@@ -114,7 +114,6 @@ class FirebaseNotificationService {
 
   Future<String?> getToken() async {
     String? token = await _messaging.getToken();
-    //print('FCM Token: $token');
     return token;
   }
 

@@ -36,6 +36,7 @@ class _PostContentState extends State<PostContent> {
     adminSettings = createPostBloc.adminSettings!;
     permissions =
         BlocProvider.of<SettingBloc>(context).state.profile!.permissions ?? [];
+    print(permissions);
   }
 
   void _addMediaItem(CreateMedia createMedia) {

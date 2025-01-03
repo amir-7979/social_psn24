@@ -49,6 +49,8 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     try {
       final MutationOptions options = createNewPost();
       final QueryResult result = await graphQLService.mutate(options);
+      print('----------');
+      print(result.exception.toString());
       if (result.hasException) {
         return null;
       } else {
@@ -88,6 +90,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       print(postId);
       final QueryOptions options = postsQuery(id: postId);
       final QueryResult result = await graphQLService.query(options);
+      print(result.data);
       if (result.hasException) {
         print(result.hasException.toString());
         emit(PostCreationFailed('خطا در ایجاد پست'));
