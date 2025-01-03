@@ -12,6 +12,7 @@ import '../../../repos/models/post.dart';
 import '../../configs/setting/themes.dart';
 import '../../configs/utilities.dart';
 import '../../services/request_queue.dart';
+import '../home/home_bloc.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/profile_cached_network_image.dart';
@@ -76,11 +77,13 @@ class _PostItemState extends State<PostItem> {
             Navigator.of(context).pushNamed(
               AppRoutes.postDetailed,
               arguments: <String, dynamic>{
-                'post': widget.post,
+                //'post': widget.post,
                 'postId': widget.post.id,
-                'postBloc': _postBloc,
+                //'postBloc': _postBloc,
               },
-            );
+            ).then((value) {
+              BlocProvider.of<HomeBloc>(context).add(RefreshPostsEvent());
+            });
           },
           child: Padding(
             padding: const EdgeInsetsDirectional.only(top: 16),

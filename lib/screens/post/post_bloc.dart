@@ -39,7 +39,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   void updatePost(Post post) {
-    print(post.toString());
     emit(PostUpdate(post));
   }
 

@@ -87,6 +87,8 @@ dependencies:
   double_tap_to_exit: ^1.0.1
   back_button_interceptor: ^8.0.0
   emoji_picker_flutter: ^3.1.0
+  extended_nested_scroll_view: ^6.2.1
+  pull_to_refresh_notification: ^3.1.0
 
 dev_dependencies:
   flutter_test:

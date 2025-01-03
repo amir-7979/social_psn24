@@ -71,9 +71,10 @@ class MyApp extends StatelessWidget {
               title: 'social psn',
               debugShowCheckedModeBanner: false,
               theme: state.theme == AppTheme.light ? lightTheme : darkTheme,
-              locale: state.language == AppLanguage.english
+              /*locale: state.language == AppLanguage.english
                   ? Locale('en', 'US')
-                  : Locale('fa', 'IR'),
+                  : Locale('fa', 'IR'),*/
+              locale: Locale('en', 'US'),
               localizationsDelegates: const [
                 AppLocalizationsDelegate(),
                 GlobalMaterialLocalizations.delegate,

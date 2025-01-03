@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_psn/configs/setting/settings_screen.dart';
 import 'package:social_psn/screens/create_post/create_post_screen.dart';
 import 'package:social_psn/screens/interest/interest_screen.dart';
 import 'package:social_psn/screens/post_detailed/post_detailed_screen.dart';
@@ -29,6 +30,8 @@ class AppRoutes {
   static const String postDetailed = '/post_detailed';
   static const String interest = '/interest';
   static const String cooperate = '/cooperate';
+  static const String settings = '/settings';
+
 }
 
 final Map<String, WidgetBuilder> routes = {
@@ -60,4 +63,6 @@ final Map<String, WidgetBuilder> routes = {
   },
   AppRoutes.interest: (BuildContext context) => InterestScreen(),
   AppRoutes.cooperate: (BuildContext context) => CooperationScreen(),
+  AppRoutes.settings: (BuildContext context) => SettingScreen(),
+
 };

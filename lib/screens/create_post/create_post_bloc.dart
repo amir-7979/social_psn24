@@ -62,6 +62,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
   Future<AdminSettings?> _fetchLimitations() async {
     try {
       dio.Response result = await profileRepository.getLimitation();
+      print(result.data);
       if (result.data == null) {
         return null;
       }

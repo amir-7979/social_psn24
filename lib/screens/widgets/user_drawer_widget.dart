@@ -93,46 +93,50 @@ class UserDrawer extends StatelessWidget {
                     SizedBox(height: 8),
                     Padding(
                       padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
+                          Text(
+                            BlocProvider.of<SettingBloc>(context).state.profile?.fullName?? '',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                              color: whiteColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                BlocProvider.of<SettingBloc>(context).state.profile?.fullName?? '',
-                                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                  color: whiteColor,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              SizedBox(height: 5),
                               Text(
                                 BlocProvider.of<SettingBloc>(context).state.profile?.phone?? '',
                                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                   color: whiteColor,
-                                  fontWeight: FontWeight.w400,
-
+                                  fontWeight: FontWeight.w400,),
+                              ),
+                              Container(
+                                padding:
+                                const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
+                                decoration: BoxDecoration(
+                                  color: whiteColor,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  BlocProvider.of<SettingBloc>(context).state.profile?.displayName?? '',
+                                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    color: blackColor,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
+
                             ],
                           ),
-                          Container(
-                            padding:
-                            const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
-                            decoration: BoxDecoration(
-                              color: whiteColor,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              BlocProvider.of<SettingBloc>(context).state.profile?.displayName?? '',
-                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                color: blackColor,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-
-                        ],),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 5),
                   ],
@@ -280,7 +284,8 @@ class UserDrawer extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          //Navigator.pop(context);
+                          //navigatorKey.currentState!.pushNamed(AppRoutes.settings);
+                          Navigator.pop(context);
                           },
                       ),
                       ListTile(

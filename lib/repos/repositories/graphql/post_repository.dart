@@ -27,7 +27,6 @@ QueryOptions postsQuery({String? id, int? isPublish, String? tagId, String? sear
       '''),
     variables: variables,
     fetchPolicy: FetchPolicy.noCache,
-
   );
 }
 

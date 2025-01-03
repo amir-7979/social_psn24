@@ -21,7 +21,6 @@ class _PostDetailedScreenState extends State<PostDetailedScreen> {
 
   @override
   void dispose() {
-    widget.postBloc?.updatePost(widget.post!);
     super.dispose();
   }
 
@@ -34,7 +33,7 @@ class _PostDetailedScreenState extends State<PostDetailedScreen> {
         color: Theme.of(context).colorScheme.background,
       ),
       child: BlocProvider(
-        create: (context) => PostDetailedBloc(),
+        create: (context) => PostDetailedBloc(postBloc: widget.postBloc),
         child: PostDetailedMainBody(post: widget.post, postId: widget.postId),
       ),
     );

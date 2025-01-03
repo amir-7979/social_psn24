@@ -4,9 +4,7 @@ class StorageService {
   static final StorageService _singleton = StorageService._internal();
   static final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
-  factory StorageService() {
-    return _singleton;
-  }
+  factory StorageService() => _singleton;
 
   StorageService._internal();
 

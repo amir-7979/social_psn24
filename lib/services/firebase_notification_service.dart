@@ -69,7 +69,6 @@ class FirebaseNotificationService {
         message.notification!.body ?? '',
       );
     }
-    print('_______________________\nMessage received!');
     BlocProvider.of<NotificationBloc>(navigatorKey.currentContext!).add(LoadNotifications());
   }
 

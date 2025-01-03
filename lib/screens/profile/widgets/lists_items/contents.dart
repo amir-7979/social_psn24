@@ -11,9 +11,7 @@ import '../shimmer/shimmer_content_item.dart';
 
 class Contents extends StatefulWidget {
   final PagingController<int, Content> pagingController;
-  ScrollController nestedController;
-
-   Contents(this.nestedController, {super.key, required this.pagingController});
+   Contents({super.key, required this.pagingController});
 
   @override
   State<Contents> createState() => _ContentsState();
@@ -30,48 +28,40 @@ class _ContentsState extends State<Contents> {
           });
         }
       },
-      child: PagedGridView<int, Content>(
-        showNewPageProgressIndicatorAsGridChild: false,
-        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-        scrollController: widget.nestedController,
-        pagingController: widget.pagingController,
-        physics: AlwaysScrollableScrollPhysics(),
-        cacheExtent: 300,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 1.0,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-        ),
-        builderDelegate: PagedChildBuilderDelegate<Content>(
-          itemBuilder: (context, item, index) => ContentItem(item),
-          firstPageProgressIndicatorBuilder: (context) => SizedBox(
-            height: 400,
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 1.0,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-              ),
-              itemCount: 20,
-              itemBuilder: (context, index) => ShimmerContentItem(),
-            ),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height,
+
+        child: PagedGridView<int, Content>(
+          showNewPageProgressIndicatorAsGridChild: false,
+          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+          pagingController: widget.pagingController,
+
+                   cacheExtent: 300,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 1.0,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
           ),
-          newPageProgressIndicatorBuilder: (context) => NewPageProgressIndicator(),
-          newPageErrorIndicatorBuilder: (context) => Center(
-            child: Text(
-              AppLocalizations.of(context)!
-                  .translateNested("profileScreen", "fetchError"),
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).primaryColor,
+          builderDelegate: PagedChildBuilderDelegate<Content>(
+            itemBuilder: (context, item, index) {
+              return ContentItem(item);
+            },
+            firstPageProgressIndicatorBuilder: (context) => SizedBox(
+              height: 400,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 1.0,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                ),
+                itemCount: 20,
+                itemBuilder: (context, index) => ShimmerContentItem(),
               ),
             ),
-          ),
-          firstPageErrorIndicatorBuilder: (context) => Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+            newPageProgressIndicatorBuilder: (context) => NewPageProgressIndicator(),
+            newPageErrorIndicatorBuilder: (context) => Center(
               child: Text(
                 AppLocalizations.of(context)!
                     .translateNested("profileScreen", "fetchError"),
@@ -80,16 +70,29 @@ class _ContentsState extends State<Contents> {
                 ),
               ),
             ),
-          ),
-          noItemsFoundIndicatorBuilder: (context) => Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
-              child: Text(
-                AppLocalizations.of(context)!
-                    .translateNested("profileScreen", "noPost"),
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).primaryColor,
+            firstPageErrorIndicatorBuilder: (context) => Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+                child: Text(
+                  AppLocalizations.of(context)!
+                      .translateNested("profileScreen", "fetchError"),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+            ),
+            noItemsFoundIndicatorBuilder: (context) => Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+                child: Text(
+                  AppLocalizations.of(context)!
+                      .translateNested("profileScreen", "noPost"),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).primaryColor,
+                  ),
                 ),
               ),
             ),

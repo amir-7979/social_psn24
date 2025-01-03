@@ -95,15 +95,26 @@ class _NotificationListState extends State<NotificationList>
                           color: whiteColor,
                           fontWeight: FontWeight.w700,
                         ),
+                        onTap: (index) {
+                          setState(() {
+                            _tabController!.index = 0;
+                          });
+                        },
                         tabs: [
                           Tab(
                               text: AppLocalizations.of(context)!
                                   .translateNested(
                                       'notifications', 'myNotification')),
                           Tab(
-                              text: AppLocalizations.of(context)!
-                                  .translateNested(
-                                      'notifications', 'systemNotification')),
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .translateNested('notifications', 'systemNotification'),
+                              style: iranYekanTheme.headlineMedium!.copyWith(
+                                color: Colors.grey, // Make Tab 2 gray
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                       SizedBox(height: 12),
@@ -173,6 +184,7 @@ class _NotificationListState extends State<NotificationList>
           innerPadding: const EdgeInsets.all(5),
           height: 40,
           controller: customSegmentedController,
+
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.background,
             borderRadius: BorderRadius.circular(8),
@@ -189,7 +201,6 @@ class _NotificationListState extends State<NotificationList>
           padding: 8,
           children: {
             0: secondaryTabItem(
-
                 AppLocalizations.of(context)!
                     .translateNested('notifications', 'all'),
                 0),
@@ -197,19 +208,28 @@ class _NotificationListState extends State<NotificationList>
                 AppLocalizations.of(context)!
                     .translateNested('bottomBar', 'content'),
                 1),
-            2: secondaryTabItem(
+            2: secondaryTabItem2(
                 AppLocalizations.of(context)!
                     .translateNested('bottomBar', 'consultation'),
                 2),
-            3: secondaryTabItem(
+            3: secondaryTabItem2(
                 AppLocalizations.of(context)!
                     .translateNested('bottomBar', 'charity'),
                 3),
           },
+          onTapSegment: (index) {
+            if (index == 2 || index == 3) {
+             return false;
+            }
+            return true;
+          },
           onValueChanged: (value) {
-            setState(() {
-              customSegmentedController.value = value;
-            });
+            if (value == 0 || value == 1) {
+              setState(() {
+                customSegmentedController.value = value;
+              });
+
+            }
           },
         ),
         const SizedBox(
@@ -237,13 +257,28 @@ class _NotificationListState extends State<NotificationList>
     );
   }
 
+  Widget secondaryTabItem2(String text, int index) {
+    return SizedBox(
+      width: 50,
+      child: Center(
+        child: Text(
+          text,
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            color: Colors.grey,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildBody(int index) {
     switch (index) {
       case 0:
         return listItems(
             BlocProvider.of<NotificationBloc>(context).notifications);
       case 1:
-        return Container();
+        return listItems(
+            BlocProvider.of<NotificationBloc>(context).notifications);
       default:
         return listItems([]);
     }

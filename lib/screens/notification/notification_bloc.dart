@@ -62,9 +62,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       unreadNotifications = 99;
     }
 
-    // Sort notifications: unseen (seen == 0) first, then seen (seen != 0)
-    notifications.sort((a, b) => a.seen!.compareTo(b.seen!));
+    // Separate unread and read notifications
+    List<MyNotification> unread = notifications.where((element) => element.seen == 0).toList();
+    List<MyNotification> read = notifications.where((element) => element.seen != 0).toList();
+
+    // Combine unread first, then read
+    notifications = [...unread, ...read];
   }
+
 
 
   Future<void> _onNotificationMarkedEvent(NotificationMarked event, Emitter<NotificationState> emit) async {

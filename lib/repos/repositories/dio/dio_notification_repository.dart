@@ -19,5 +19,4 @@ class NotificationRepository {
   Future<Response<dynamic>> setFirebaseToken(String token) async {
     return _dio.post('/notification/set-token', data: {'token': token});
   }
-
 }

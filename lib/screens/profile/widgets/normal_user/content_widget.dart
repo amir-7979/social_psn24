@@ -39,35 +39,37 @@ class _ContentWidgetState extends State<ContentWidget> {
           borderRadius: BorderRadius.circular(16),
           color: Theme.of(context).colorScheme.background,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(height: 8),
-            Text(AppLocalizations.of(context)!.translateNested("bottomBar", 'content'),
-              style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 8),
-            Container(
-              height: 1,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).primaryColor
-                        .withOpacity(0),
-                    Theme.of(context).primaryColor
-                        .withOpacity(1),
-                  ],
-                  stops: const [0.0, 1.0],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 8),
+              Text(AppLocalizations.of(context)!.translateNested("bottomBar", 'content'),
+                style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ),
-            SizedBox(height: 20),
-            //Expanded(child: Contents(pagingController: _pagingController0),),
-          ],
+              SizedBox(height: 8),
+              Container(
+                height: 1,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).primaryColor
+                          .withOpacity(0),
+                      Theme.of(context).primaryColor
+                          .withOpacity(1),
+                    ],
+                    stops: const [0.0, 1.0],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Contents(pagingController: _pagingController0),
+            ],
+          ),
         ),
       ),
     );

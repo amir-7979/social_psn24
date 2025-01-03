@@ -6,12 +6,10 @@ import '../../../../repos/models/content.dart';
 import '../../profile_bloc.dart';
 import '../lists_items/contents.dart';
 
-
 class ContentExpertTab extends StatefulWidget {
   int? profileId;
-  ScrollController nestedController;
 
-  ContentExpertTab(this.nestedController , {this.profileId, });
+  ContentExpertTab({this.profileId});
 
   @override
   State<ContentExpertTab> createState() => _ContentExpertTabState();
@@ -42,72 +40,62 @@ class _ContentExpertTabState extends State<ContentExpertTab> with SingleTickerPr
     _pagingController1.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height - 170,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Theme.of(context).colorScheme.primary,
-      ),
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            height: 60,
-            child: TabBar(
-              tabAlignment: TabAlignment.center,
-              indicator: const UnderlineTabIndicator(
-                borderSide: BorderSide(width: 2.0, color: whiteColor),
-              ),
-              labelColor: whiteColor,
-              dividerColor: Colors.transparent,
-              labelStyle: iranYekanTheme.headlineMedium!.copyWith(
-                color: whiteColor,
-              ),
-              controller: _tabController,
-              labelPadding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
-              unselectedLabelStyle: iranYekanTheme.headlineMedium!.copyWith(
-                color: whiteColor,
-              ),
-              indicatorPadding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 10),
-              tabs: [
-                Tab(
-                    text: AppLocalizations.of(context)!
-                        .translateNested('profileScreen', 'normalContent')),
-                Tab(
-                    text: AppLocalizations.of(context)!
-                        .translateNested('profileScreen', 'expertContent')),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 16, 10, 0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.transparent),
-                color: Theme.of(context).colorScheme.background,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(16),
+    return DefaultTabController(
+      length: 2,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 60,
+              child: TabBar(
+                tabAlignment: TabAlignment.center,
+                indicator: const UnderlineTabIndicator(
+                  borderSide: BorderSide(width: 2.0, color: whiteColor),
                 ),
-              ),
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  Contents(widget.nestedController, pagingController: _pagingController0),
-                  Contents(widget.nestedController,pagingController: _pagingController1),
+                labelColor: whiteColor,
+                dividerColor: Colors.transparent,
+                labelStyle: iranYekanTheme.headlineMedium!.copyWith(color: whiteColor),
+                unselectedLabelStyle: iranYekanTheme.headlineMedium!.copyWith(color: whiteColor),
+                indicatorPadding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 10),
+                tabs: [
+                  Tab(
+                    text: AppLocalizations.of(context)!
+                        .translateNested('profileScreen', 'normalContent'),
+                  ),
+                  Tab(
+                    text: AppLocalizations.of(context)!
+                        .translateNested('profileScreen', 'expertContent'),
+                  ),
                 ],
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 10),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsetsDirectional.fromSTEB(10, 16, 10, 0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.transparent),
+                  color: Theme.of(context).colorScheme.background,
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                ),
+                child: TabBarView(
+                  children: [
+                    Contents(pagingController: _pagingController0),
+                    Contents(pagingController: _pagingController1),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-
-
 }

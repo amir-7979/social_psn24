@@ -36,14 +36,8 @@ class DioAuthService {
           }
           return handler.next(options);
         },
-        onResponse: (response, handler) {
-          //print(response.data);
-          return handler.next(response);
-        },
-        onError: (DioError e, handler) {
-          print(e.response?.data);
-          return handler.next(e);
-        },
+        onResponse: (response, handler) => handler.next(response),
+        onError: (DioError e, handler) => handler.next(e),
       ),
     );
   }

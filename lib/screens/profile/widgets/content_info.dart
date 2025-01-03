@@ -9,8 +9,7 @@ import 'expert_user/comment_expert_tab.dart';
 import 'expert_user/content_expert_tab.dart';
 
 class ContentInfo extends StatefulWidget {
-  ScrollController nestedController;
-   ContentInfo(this.nestedController, {super.key});
+   const ContentInfo({super.key});
 
   @override
   State<ContentInfo> createState() => _ContentInfoState();
@@ -33,15 +32,14 @@ class _ContentInfoState extends State<ContentInfo>
   void didChangeDependencies() {
     profileId = ModalRoute.of(context)?.settings.arguments as int?;
     context.read<ProfileBloc>().add(ChangeToPostEvent());
-
     super.didChangeDependencies();
   }
 
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height - 170,
+    return SizedBox(
+
       child: BlocBuilder<ProfileBloc, ProfileState>(
           buildWhen: (previous, current) {
             if (current is ChangeToPostState || current is ChangeToCommentState) {
@@ -51,7 +49,7 @@ class _ContentInfoState extends State<ContentInfo>
           },
           builder: (context, state) {
             if (state is ChangeToPostState && seeExpertPost == true) {
-              return ContentExpertTab(profileId: profileId, widget.nestedController);
+              return ContentExpertTab(profileId: profileId);
             } else if (state is ChangeToPostState && seeExpertPost == false) {
               return ContentWidget(profileId: profileId);
             } else if (state is ChangeToCommentState && seeExpertPost == true) {
@@ -64,6 +62,4 @@ class _ContentInfoState extends State<ContentInfo>
       ),
     );
   }
-
-
 }

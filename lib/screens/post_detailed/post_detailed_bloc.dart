@@ -15,7 +15,8 @@ part 'post_detailed_state.dart';
 
 class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
   GraphQLClient graphQLService = GraphQLService.instance.client;
-  PostDetailedBloc() : super(PostDetailedInitial()) {
+  PostBloc? postBloc;
+  PostDetailedBloc({this.postBloc}) : super(PostDetailedInitial()) {
     on<AddToInterestEvent>(_onAddToInterestEvent);
     on<EnableNotificationEvent>(_onEnableNotificationEvent);
     on<UserVoteUpEvent>(_onUserVoteUpEvent);
@@ -25,6 +26,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     on<FetchPostEvent>(_onFetchPostEvent);
 
   }
+
   void saveLikeRequest(String postId, String voteType) {
     final MutationOptions options = votePost(postId: postId, type: voteType);
     RequestQueue().addRequest(() async {
@@ -48,6 +50,7 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
         emit(PostFetchFailure('خطا در دریافت اطلاعات'));
       } else {
         final Post post = Post.fromJson(result.data?['posts'][0]);
+        postBloc?.updatePost(post);
         emit(PostFetchSuccess(post));
       }
     } catch (e) {
@@ -63,6 +66,8 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
         emit(InterestFailureState());
       } else {
         emit(InterestSuccessState());
+
+
       }
     } catch (e) {
       emit(InterestFailureState());

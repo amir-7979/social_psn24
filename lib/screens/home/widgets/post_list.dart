@@ -100,7 +100,6 @@ class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin 
   }
 
   Future<void> _onRefresh() async {
-    // Call the refresh method of the PagingController
     widget.pagingController.refresh();
   }
 

@@ -134,7 +134,7 @@ class _SocialAppBarState extends State<SocialAppBar> {
             elevation: 2,
             title: Text(
               AppLocalizations.of(context)!.translate('appTitle'),
-              style: iranYekanTheme.headlineMedium!.copyWith(
+              style: iranYekanTheme.displaySmall!.copyWith(
                 color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.w700,
               ),
