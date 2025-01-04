@@ -147,6 +147,7 @@ class AdminSettings {
     List<String>? voiceFormats,
   }) {
     final List<String> concatenatedFormats = [];
+    if (picFormats != null) picFormats.add('jpg');
     if (picFormats != null) concatenatedFormats.addAll(picFormats);
     if (videoFormats != null) concatenatedFormats.addAll(videoFormats);
     if (voiceFormats != null) concatenatedFormats.addAll(voiceFormats);

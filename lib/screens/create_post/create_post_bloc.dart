@@ -49,7 +49,6 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     try {
       final MutationOptions options = createNewPost();
       final QueryResult result = await graphQLService.mutate(options);
-      print('----------');
       print(result.exception.toString());
       if (result.hasException) {
         return null;

@@ -47,7 +47,6 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
       var response = await _authRepository.verifyToken(int.parse(event.loginId), event.code);
       print(response.data);
       if (response.statusCode == 200) {
-
         Completer<void> completer = Completer<void>();
         settingBloc.add(UpdateLoginStatus(response.data['data'], completer: completer));
         await completer.future;
@@ -78,7 +77,9 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
   Future<void> setFCM() async {
     String? fcmToken = await FirebaseNotificationService().getToken();
     if (fcmToken != null) {
-       await _notifRepository.setFirebaseToken(fcmToken);
+      print('FCM Token: $fcmToken');
+      var response = await _notifRepository.setFirebaseToken(fcmToken);
+      print(response.data);
     }
   }
 

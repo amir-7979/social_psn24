@@ -29,13 +29,13 @@ class UserDrawer extends StatelessWidget {
         final BuildContext dialogContext = context; // Store the BuildContext in a variable
 
         return Drawer(
-          width: 260,
+          width: 270,
           backgroundColor: Theme.of(context).drawerTheme.backgroundColor,
           child: Column(
             children: [
               Container(
                 width: double.infinity,
-                height: 140,
+                height: 150,
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: const BorderRadius.only(
