@@ -26,7 +26,7 @@ class UserDrawer extends StatelessWidget {
     return Builder(
       builder: (context) {
         String? photo = BlocProvider.of<SettingBloc>(context).state.profile?.photo;
-        final BuildContext dialogContext = context; // Store the BuildContext in a variable
+        final BuildContext dialogContext = context;
 
         return Drawer(
           width: 270,
@@ -57,7 +57,7 @@ class UserDrawer extends StatelessWidget {
                             padding: EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 8),
                             child: ClipOval(
                               child: Container(
-                                color: Colors.white, // White padding color
+                                color: Colors.white,
                                 child: Padding(
                                   padding: const EdgeInsets.all(2), // Adjust the padding thickness
                                   child: ClipOval(
@@ -284,7 +284,7 @@ class UserDrawer extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          //navigatorKey.currentState!.pushNamed(AppRoutes.settings);
+                          navigatorKey.currentState!.pushNamed(AppRoutes.settings);
                           Navigator.pop(context);
                           },
                       ),

@@ -51,7 +51,7 @@ class _MainFormState extends State<MainForm> {
         titleController.text = widget.newPost!.name ?? '';
         Tag? tag = BlocProvider.of<SettingBloc>(context).state.tagsList?.firstWhere(
               (element) => element.id == widget.newPost?.tagId,
-          orElse: () => Tag(id: null, title: ''), // Default value instead of null
+          orElse: () => Tag(id: null, title: ''),
         );
         categoryController.text = tag?.title ?? '';
         longTextController.text = widget.newPost!.description ?? '';

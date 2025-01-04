@@ -5,10 +5,12 @@ class AuthRepository {
   final Dio _dio = DioAuthService.instance.client;
 
   Future<Response<dynamic>> logIn(String phoneNumber) async {
-    return _dio.post('/login/email', data: {'email': phoneNumber});
+    return _dio.post('/login', data: {'phone': phoneNumber});
   }
 
   Future<Response<dynamic>> verifyToken(int loginId, String code) async {
-    return _dio.post('/login//email/verify', data: {'id': loginId, 'code': code,});
+    return _dio.post('/login/verify', data: {'id': loginId, 'code': code,});
   }
+
+
 }

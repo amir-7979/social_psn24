@@ -26,6 +26,7 @@ class _LoginState extends State<Login> {
     return BlocProvider<LoginBloc>(
       create: (context) => LoginBloc(),
       child: Container(
+        height: double.infinity,
         padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
@@ -67,7 +68,7 @@ class _LoginState extends State<Login> {
                       const EdgeInsetsDirectional.symmetric(vertical: 16.0),
                   child: Text(
                     AppLocalizations.of(context)!
-                        .translateNested("auth", "insertEmail"),
+                        .translateNested("auth", "insertMobile"),
                     style:
                         Theme.of(context).textTheme.headlineMedium!.copyWith(
                               color: Theme.of(context).hoverColor,
@@ -85,16 +86,16 @@ class _LoginState extends State<Login> {
                       return TextFormField(
                         focusNode: _focusNode,
                         controller: _phoneController,
-                        keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.phone,
                         textDirection: TextDirection.ltr,
                         textAlign: TextAlign.end,
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               color: Theme.of(context).colorScheme.onBackground,
                             ),
                         textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(
                           labelText: AppLocalizations.of(context)!
-                              .translateNested("auth", "email"),
+                              .translateNested("auth", "phoneNumber"),
                           labelStyle: TextStyle(
                             color: _focusNode.hasFocus
                                 ? Theme.of(context).primaryColor
@@ -128,11 +129,13 @@ class _LoginState extends State<Login> {
                         ),
                         validator: (value) {
                           if (value!.isNotEmpty &&
-                              value.isEmail()) {
+                              value.length == 11 &&
+                              value.startsWith('09') &&
+                              value.isPhone()) {
                             return null;
                           }
                           return AppLocalizations.of(context)!
-                              .translateNested('error', 'emailError');
+                              .translateNested('error', 'phone_start_0');
                         },
                         onTap: () {
                           _focusNode.requestFocus();
@@ -157,21 +160,15 @@ class _LoginState extends State<Login> {
                           'loginId': state.loginId,
                         });
                       }else if (state is LoginAgain) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          CustomSnackBar(content: state.message, backgroundColor: Theme.of(context).primaryColor).build(context),
+                        );
                         Navigator.of(context).pushNamed(AppRoutes.verify, arguments: {
                           'phone': state.phone,
                           'loginId': BlocProvider.of<LoginBloc>(context).loginId,
                         });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          CustomSnackBar(content: state.message, backgroundColor: Theme.of(context).primaryColor).build(context),
-                        );
-                      }else if(state is LoginFailure){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          CustomSnackBar(content: state.error, backgroundColor: Theme.of(context).primaryColor).build(context),
-                        );
                       }
-                      setState(() {
 
-                      });
                     },
                     builder: (context, state) {
                       return SizedBox(

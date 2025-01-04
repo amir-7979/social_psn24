@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:social_psn/screens/auth/verify/verify_bloc.dart';
 import 'package:social_psn/screens/widgets/custom_snackbar.dart';
+
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/setting_bloc.dart';
 import '../../../configs/setting/themes.dart';
@@ -70,8 +72,8 @@ class _VerifyState extends State<Verify> {
               builder: (context, state) {
                 return Text(
                   AppLocalizations.of(context)!
-                      .translateNestedWithVariable('auth', 'insertCodeEmail',
-                          {'email': widget.phone}),
+                      .translateNestedWithVariable('auth', 'insertCode',
+                          {'mobileNumber': widget.phone}),
                   textAlign: TextAlign.center,
                   style:
                       Theme.of(context).textTheme.headlineSmall!.copyWith(
@@ -150,6 +152,7 @@ class _VerifyState extends State<Verify> {
                   enableActiveFill: true,
                   onCompleted: (v) {
                     if (state is! VerifyLoading) {
+                      print('hereeeee-------------------------');
                       print('loginId: ${widget.LoginId}, code: $v');
                       BlocProvider.of<VerifyBloc>(context).add(VerifyTokenEvent(loginId: widget.LoginId, code: v));
                     }
@@ -174,7 +177,7 @@ class _VerifyState extends State<Verify> {
             },
             child: Text(
               AppLocalizations.of(context)!
-                  .translateNested("auth", "changeEmail"),
+                  .translateNested("auth", "changePhoneNumber"),
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     fontWeight: FontWeight.w400,
                     color: Theme.of(context).colorScheme.primary,
