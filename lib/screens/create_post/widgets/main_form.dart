@@ -76,7 +76,7 @@ class _MainFormState extends State<MainForm> {
 
   @override
   void didChangeDependencies() {
-    _categories = BlocProvider.of<SettingBloc>(context).state.tagsList;
+    _categories = BlocProvider.of<SettingBloc>(context).state.tagsList ?? [];
     _publicMaxLength = BlocProvider.of<CreatePostBloc>(context).adminSettings?.maxCharactersForPicPost??900;
     _maxLength = _publicMaxLength;
     _privateMaxLength = BlocProvider.of<CreatePostBloc>(context).adminSettings?.maxCharactersForPicPrivatePost??400;
@@ -129,7 +129,7 @@ class _MainFormState extends State<MainForm> {
           title: titleController.text,
           category: context.read<SettingBloc>().state.tags!.firstWhere(
                 (element) => element.title == categoryController.text,
-            orElse: () => context.read<SettingBloc>().state.tagsList.first,
+            orElse: () => context.read<SettingBloc>().state.tagsList!.first,
           ).id??'',
           longText: longTextController.text,
           status: 1,
@@ -146,7 +146,7 @@ class _MainFormState extends State<MainForm> {
         title: titleController.text,
         category: context.read<SettingBloc>().state.tags!.firstWhere(
               (element) => element.title == categoryController.text,
-          orElse: () => context.read<SettingBloc>().state.tagsList.first,
+          orElse: () => context.read<SettingBloc>().state.tagsList!.first,
         ).id ?? '',
         longText: longTextController.text,
         status: 0,

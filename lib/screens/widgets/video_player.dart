@@ -1,5 +1,7 @@
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_psn/configs/setting/setting_bloc.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:video_player/video_player.dart';
 
@@ -25,7 +27,7 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
         Uri.parse(widget.media.getVideoUrl() ?? ''),
         videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: false),
       ),
-      autoPlay: true,
+      autoPlay: BlocProvider.of<SettingBloc>(context).state.userSettings.autoPlayVideos,
       autoInitialize: true,
     );
   }

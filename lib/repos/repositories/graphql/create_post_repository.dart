@@ -67,7 +67,7 @@ MutationOptions deleteMedia(String postId,String mediaId) {
   return MutationOptions(
     document: gql('''
       mutation deleteMedia(\$mediaId: String!, \$postId: String!) {
-        DeleteMedia(id: \$mediaId, postId)
+        DeleteMedia(id: \$mediaId, post_id: \$postId)
       }
     '''),
     variables: variables,

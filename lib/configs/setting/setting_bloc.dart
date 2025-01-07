@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import '../../repos/models/tag.dart';
 import '../../repos/repositories/dio/dio_profile_repository.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
+import 'user_settings.dart';
 
 part 'setting_event.dart';
 part 'setting_state.dart';
@@ -21,18 +23,21 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final Completer<void> _settingsLoadedCompleter = Completer<void>();
   final List<SettingEvent> _eventQueue = [];
 
-  SettingBloc(AppTheme appTheme) : super(_handleInitialSetting(appTheme)) {
+  SettingBloc(UserSettings userSettings, String token)
+      : super(_handleInitialSetting(userSettings, token)) {
     on<SettingThemeEvent>(_handleSettingThemeEvent);
     on<SettingLanguageEvent>(_handleSettingLanguageEvent);
     on<UpdateLoginStatus>(_handleUpdateLoginStatus);
     on<ClearInfo>(_handelClearUserInformation);
     on<FetchUserProfileWithPermissionsEvent>(_fetchUserProfileWithPermissions);
     on<FetchTagsEvent>(_fetchTags);
+    on<UpdateUserSettingEvent>(_handleUpdateUserSettingEvent);
+
     _loadSettingsFromStorage();
   }
 
-  static SettingState _handleInitialSetting(AppTheme appTheme) {
-    return SettingState(theme: appTheme, language: AppLanguage.persian, token: '');
+  static SettingState _handleInitialSetting(UserSettings userSettings, String token) {
+    return SettingState(userSettings: userSettings, token: token);
   }
 
   Future<void> _fetchUserProfileWithPermissions(event, emit) async {
@@ -40,36 +45,28 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     try {
       var response = await _profileRepository.getProfile();
       final Profile profile = Profile.fromJson(response.data!['data']);
-      /*final Map<String, dynamic> userPermissionsData = data['userPermissions'];
-        final Map<String, dynamic> adminSettings = data['adminSettings'][0];
-        final AdminSettings userAdminSettings = AdminSettings.fromJson(adminSettings);*/
-        emit(state.copyWith(profile: profile));
+      emit(state.copyWith(profile: profile));
     } catch (error) {
       print(error.toString());
     }
   }
 
-
   Future<void> _loadSettingsFromStorage() async {
-    String? savedTheme = await _storageService.readData('theme');
-    AppTheme theme;
-
-    if (savedTheme == null) {
-      theme = WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-          Brightness.dark ? AppTheme.dark : AppTheme.light;
+    final userSettingsJsonString = await _storageService.readData('userSettings');
+    UserSettings? userSettings;
+    if (userSettingsJsonString != null) {
+      final userSettingsMap = jsonDecode(userSettingsJsonString) as Map<String, dynamic>;
+      userSettings = UserSettings.fromJson(userSettingsMap);
     } else {
-      theme = savedTheme == 'AppTheme.dark' ? AppTheme.dark : AppTheme.light;
-    }    AppLanguage language = (await _storageService.readData('language')) == 'english' ? AppLanguage.english : AppLanguage.persian;
+      userSettings = UserSettings(theme: AppTheme.light, language: AppLanguage.english);
+    }
     String? token = await _storageService.readData('token');
-    emit(state.copyWith(theme: theme, language: language, token: token ?? ''));
+    emit(state.copyWith(userSettings: userSettings, token: token ?? ''));
     _settingsLoadedCompleter.complete();
     _processEventQueue();
     if (state.isUserLoggedIn) {
       add(FetchUserProfileWithPermissionsEvent());
       add(FetchTagsEvent());
-
-    } else {
-      //add(FetchUserPermissionsEvent());
     }
   }
 
@@ -85,27 +82,22 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     emit(state.copyWith(token: event.data?['access_token']));
     event.completer?.complete();
     add(FetchTagsEvent());
-
   }
 
   Future<void> _handleSettingLanguageEvent(event, emit) async {
     await _settingsLoadedCompleter.future;
-    await _storageService.saveData('language', event.language.toString());
-    if (event.language == AppLanguage.english) {
-      emit(state.copyWith(language: AppLanguage.english));
-    } else {
-      emit(state.copyWith(language: AppLanguage.persian));
-    }
+    final updatedSettings = state.userSettings.copyWith(language: event.language);
+    final jsonString = jsonEncode(updatedSettings.toJson());
+    await _storageService.saveData('userSettings', jsonString);
+    emit(state.copyWith(userSettings: updatedSettings));
   }
 
   Future<void> _handleSettingThemeEvent(event, emit) async {
     await _settingsLoadedCompleter.future;
-    if (event.theme == AppTheme.light) {
-      emit(state.copyWith(theme: AppTheme.light));
-    } else {
-      emit(state.copyWith(theme: AppTheme.dark));
-    }
-    await _storageService.saveData('theme', event.theme.toString()); // Save the theme to storage
+    final updatedSettings = state.userSettings.copyWith(theme: event.theme);
+    final jsonString = jsonEncode(updatedSettings.toJson());
+    await _storageService.saveData('userSettings', jsonString);
+    emit(state.copyWith(userSettings: updatedSettings));
   }
 
   FutureOr<void> _handelClearUserInformation(event, emit) async {
@@ -114,9 +106,13 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     await _storageService.deleteData('refreshToken');
     GraphQLService.instance.removeTokenFromAuthLink();
     await FirebaseMessaging.instance.deleteToken();
-
-    state.reset();
-    emit(state.copyWith());
+    emit(state.copyWith(
+      token: '',
+      profile: null,
+      adminSettings: null,
+      userSettings: null,
+      tags: [],
+    ));
   }
 
   Future<void> writeInStorage(StorageService storageService, Map<String, dynamic>? data) async {
@@ -133,14 +129,30 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     }
   }
 
-  Future<FutureOr<void>> _fetchTags(FetchTagsEvent event, Emitter<SettingState> emit) async {
+  Future<void> _fetchTags(FetchTagsEvent event, Emitter<SettingState> emit) async {
     final QueryOptions options = getTags();
     final QueryResult result = await graphQLService.query(options);
     if (result.hasException) {
       print(result.exception.toString());
     } else {
-      final List<Tag> tags = (result.data!['tags'] as List).map((tag) => Tag.fromJson(tag)).toList();
+      final List<Tag> tags =
+      (result.data!['tags'] as List).map((tag) => Tag.fromJson(tag)).toList();
       emit(state.copyWith(tags: tags));
     }
   }
+
+  Future<void> _handleUpdateUserSettingEvent(UpdateUserSettingEvent event, Emitter<SettingState> emit) async {
+    try {
+      final updatedSettings = state.userSettings.toJson();
+      print('bloc from ${updatedSettings[event.key]} ,to ${ event.value}');
+      updatedSettings[event.key] = event.value;
+      final newSettings = UserSettings.fromJson(updatedSettings);
+      final jsonString = jsonEncode(newSettings.toJson());
+      await _storageService.saveData("userSettings", jsonString);
+      emit(state.copyWith(userSettings: newSettings));
+    } catch (e) {
+      print('Error updating setting: $e');
+    }
+  }
+
 }

@@ -46,3 +46,10 @@ class FetchUserProfileWithPermissionsEvent extends SettingEvent {}
 class FetchUserPermissionsEvent extends SettingEvent {}
 
 class FetchTagsEvent extends SettingEvent {}
+
+class UpdateUserSettingEvent extends SettingEvent {
+  final String key;
+  final dynamic value;
+
+  UpdateUserSettingEvent(this.key, this.value);
+}

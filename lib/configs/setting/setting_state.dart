@@ -1,110 +1,76 @@
 part of 'setting_bloc.dart';
 
-enum AppTheme { light, dark }
-enum AppLanguage { english, persian }
+enum AppTheme {light, dark}
+enum AppLanguage {english, persian}
 
 class SettingState {
-   AppTheme? theme;
-   AppLanguage language;
-   AdminSettings? adminSettings;
+   UserSettings userSettings;
+   String token;
    Profile? profile;
-  String token = '';
-  List<Tag>? tags;
-
+   AdminSettings? adminSettings;
+   List<Tag>? tags;
 
   SettingState({
-    this.theme,
-    required this.language,
-    this.adminSettings,
-    this.profile,
+    required this.userSettings,
     required this.token,
+    this.profile,
+    this.adminSettings,
     this.tags,
   });
 
-
-  get isUserLoggedIn {
-    return token != '';
+  factory SettingState.initial() {
+    return SettingState(
+      userSettings: UserSettings(theme: AppTheme.light, language: AppLanguage.english),
+      token: '',
+      profile: null,
+      adminSettings: null,
+      tags: [],
+    );
   }
-  get getProfile => profile;
-  get getPermissions => profile?.permissions;
-   get languageCode => language == AppLanguage.english ? 'en' : 'fa';
-
-   get hasUsername => profile?.username != null && profile!.username!.isNotEmpty;
-
-   get seeExpertPost {
-     if (profile?.permissions != null) {
-       for (var permission in profile!.permissions!) {
-         if (permission == "view expert posts") {
-           return true;
-         }
-       }
-     }
-     return false;
-   }
-   get seeExpertComment {
-     if (profile?.permissions != null) {
-       for (var permission in profile!.permissions!) {
-         if (permission == "view expert comments") {
-           return true;
-         }
-       }
-     }
-     return false;
-   }
-
-   get canChangeOnlineStatus {
-     if (profile?.permissions != null) {
-       for (var permission in profile!.permissions!) {
-         if (permission == "change online status") {
-           return true;
-         }
-       }
-     }
-     return false;
-   }
-
-   get canCreateExpertPost {
-     if (profile?.permissions != null) {
-       for (var permission in profile!.permissions!) {
-         if (permission == "create expert post") {
-           return true;
-         }
-       }
-     }
-     return false;
-   }
-   get tagsList => tags;
-   get adminSettingsData => adminSettings;
-/*
-  set newTheme(AppTheme value) {
-     theme = value;
-     _storageService.saveData('theme', value.toString());
-   }
-*/
 
   SettingState copyWith({
-    AppTheme? theme,
-    AppLanguage? language,
-    AdminSettings? adminSettings,
-    Profile? profile,
+    UserSettings? userSettings,
     String? token,
-    List<Tag>? tags,
-
-  }) {
+    Profile? profile,
+    AdminSettings? adminSettings,
+    List<Tag>? tags}) {
     return SettingState(
-      theme: theme ?? this.theme,
-      language: language ?? this.language,
-      adminSettings: adminSettings ?? this.adminSettings,
-      profile: profile ?? this.profile,
+      userSettings: userSettings ?? this.userSettings,
       token: token ?? this.token,
+      profile: profile ?? this.profile,
+      adminSettings: adminSettings ?? this.adminSettings,
       tags: tags ?? this.tags,
     );
   }
 
   void reset() {
-    this.profile = Profile();
-    this.adminSettings = AdminSettings();
-    this.token = '';
-    this.tags = null;
+    profile = null;
+    adminSettings = null;
+    token = '';
+    tags = [];
+
   }
+
+  bool get isUserLoggedIn => token.isNotEmpty;
+  Profile? get getProfile => profile;
+  List<String>? get getPermissions => profile?.permissions;
+  bool get hasUsername => profile?.username != null && profile!.username!.isNotEmpty;
+  bool get seeExpertPost => profile?.permissions?.contains("view expert posts") ?? false;
+  bool get seeExpertComment => profile?.permissions?.contains("view expert comments") ?? false;
+  bool get canChangeOnlineStatus => profile?.permissions?.contains("change online status") ?? false;
+  bool get canCreateExpertPost => profile?.permissions?.contains("create expert post") ?? false;
+  List<Tag>? get tagsList => tags;
+  AdminSettings? get adminSettingsData => adminSettings;
+   UserSettings get getUserSettings => userSettings;
+
+   AppTheme get theme => userSettings.theme;
+  AppLanguage get language => userSettings.language;
+  bool get autoPlayVideos => userSettings.autoPlayVideos;
+  bool get showLikeCountHomeScreen => userSettings.showLikeCountHomeScreen;
+  bool get showLikeCountPostScreen => userSettings.showLikeCountPostScreen;
+  bool get enableNotifications => userSettings.enableNotifications;
+  bool get enableContentNotifications => userSettings.enableContentNotifications;
+  bool get showCharityNotifications => userSettings.showCharityNotifications;
+  bool get showConsultNotifications => userSettings.showConsultNotifications;
+  bool get hideDownloadedMediaSize => userSettings.hideDownloadedMediaSize;
 }

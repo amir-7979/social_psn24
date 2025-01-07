@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,55 +12,62 @@ import 'package:social_psn/services/storage_service.dart';
 import 'configs/localization/app_localizations_delegate.dart';
 import 'configs/setting/setting_bloc.dart';
 import 'configs/setting/themes.dart';
+import 'configs/setting/user_settings.dart';
 import 'firebase_options.dart';
 import 'screens/main/main_screen.dart';
 import 'screens/notification/notification_bloc.dart';
 import 'services/firebase_notification_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  AppTheme appTheme = await loadTheme();
   await initHiveForFlutter();
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseNotificationService notificationService = FirebaseNotificationService();
   await notificationService.initialize();
-
   final NotificationBloc notificationBloc = NotificationBloc();
   notificationBloc.add(LoadNotifications());
+  final settings = await loadUserSettings();
+  final userSettings = settings['userSettings'] as UserSettings;
+  final String token = settings['token'] ?? '';
 
-  runApp(MyApp(notificationBloc: notificationBloc, appTheme: appTheme));
+  runApp(MyApp(notificationBloc: notificationBloc, userSettings: userSettings, token: token));
 }
 
-Future<AppTheme>loadTheme() async{
+Future<Map<String, dynamic>> loadUserSettings() async {
   final StorageService _storageService = StorageService();
-  String? savedTheme = await _storageService.readData('theme');
-  AppTheme theme;
-
-  if (savedTheme == null) {
-    theme = WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-        Brightness.dark ? AppTheme.dark : AppTheme.light;
-  }else{
-    theme = AppTheme.values.firstWhere((element) => element.toString() == savedTheme);
+  final userSettingsJson = await _storageService.readData('userSettings');
+  UserSettings userSettings;
+  if (userSettingsJson != null) {
+    userSettings = UserSettings.fromJson(
+        jsonDecode(userSettingsJson) as Map<String, dynamic>);
+  } else {
+    userSettings = UserSettings(theme: AppTheme.light, language: AppLanguage.english);
   }
-  return theme;
+  final token = await _storageService.readData('token');
+  return {'userSettings': userSettings, 'token': token};
 }
 
 class MyApp extends StatelessWidget {
   final NotificationBloc notificationBloc;
-  AppTheme appTheme;
+  final UserSettings userSettings;
+  final String token;
 
-  MyApp({Key? key, required this.notificationBloc, required this.appTheme}) : super(key: key);
+  MyApp({
+    Key? key,
+    required this.notificationBloc,
+    required this.userSettings,
+    required this.token,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MultiBlocProvider(
       providers: [
-        BlocProvider<SettingBloc>(create: (context) => SettingBloc(appTheme)),
+        BlocProvider<SettingBloc>(
+          create: (context) => SettingBloc(userSettings, token),
+        ),
         BlocProvider<AppbarBloc>(create: (context) => AppbarBloc()),
         BlocProvider<HomeBloc>(create: (context) => HomeBloc()),
         BlocProvider<NotificationBloc>(create: (context) => notificationBloc),
@@ -70,11 +79,10 @@ class MyApp extends StatelessWidget {
               color: Theme.of(context).scaffoldBackgroundColor,
               title: 'social psn',
               debugShowCheckedModeBanner: false,
-              theme: state.theme == AppTheme.light ? lightTheme : darkTheme,
-              locale: state.language == AppLanguage.english
+              theme: state.userSettings.theme == AppTheme.light ? lightTheme : darkTheme,
+              locale: state.userSettings.language == AppLanguage.english
                   ? Locale('en', 'US')
                   : Locale('fa', 'IR'),
-              //locale: Locale('en', 'US'),
               localizationsDelegates: const [
                 AppLocalizationsDelegate(),
                 GlobalMaterialLocalizations.delegate,
@@ -93,4 +101,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
