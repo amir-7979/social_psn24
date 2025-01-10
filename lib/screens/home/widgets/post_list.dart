@@ -47,8 +47,8 @@ class _PostListState extends State<PostList> with AutomaticKeepAliveClientMixin 
         }
       },
       child: RefreshIndicator(
-        color: Theme.of(context).primaryColor, // Foreground color of the progress bar
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Background color
+        color: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         onRefresh: _onRefresh,
         child: PagedListView<int, Post>(
           padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),

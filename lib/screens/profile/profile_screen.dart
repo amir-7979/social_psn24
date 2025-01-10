@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
-import 'package:social_psn/repos/models/media.dart';
-
 import 'profile_bloc.dart';
 import 'widgets/content_info.dart';
 import 'widgets/user_info.dart';
@@ -22,7 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isRefreshing = true;
     });
     try {
-      await Future.delayed(Duration(milliseconds: 1000)); // Simulate a network call
+      await Future.delayed(Duration(milliseconds: 200)); // Simulate a network call
       return true;
     } catch (e) {
       return false;
@@ -50,13 +48,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return Container(
                       height: dragOffset,
                       alignment: Alignment.center,
-                      child: info!= null && info.mode == PullToRefreshIndicatorMode.refresh || _isRefreshing
-                          ? CircularProgressIndicator() // Show progress during refresh
-                          : RefreshIndicator(color: Theme.of(context).primaryColor, // Foreground color of the progress bar
-                        backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Background color
-                        onRefresh: () async {
-                            await Duration.zero;
-                        },child: Container(),)
+                      child: info!= null && info.mode == PullToRefreshIndicatorMode.armed
+                          ? Container(
+
+                        height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).colorScheme.surface,),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.all(5),
+                            child: CircularProgressIndicator(color: Theme.of(context).primaryColor, strokeWidth: 2),
+                          ))
+                          : null
                     );
                   }),
                   Expanded(
