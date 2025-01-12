@@ -39,7 +39,7 @@ class GraphQLService {
       });
     _dioLink = DioLink('https://api.psn24.ir/graphql', client: _dio);
     _link = Link.from([_authLink, _httpLink, _dioLink,]);
-    _client = GraphQLClient(cache: GraphQLCache(store: HiveStore()), link: _link,queryRequestTimeout: Duration(seconds: 10));
+    _client = GraphQLClient(cache: GraphQLCache(store: HiveStore()), link: _link, queryRequestTimeout: Duration(seconds: 20));
   }
 
   Future<void> _setDioAuthHeader() async {

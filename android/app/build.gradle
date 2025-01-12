@@ -25,9 +25,9 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.social_psn"
-    compileSdk flutter.compileSdkVersion
-    ndkVersion "26.1.10909125"
 
+    compileSdkVersion 35
+    ndkVersion "26.1.10909125"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

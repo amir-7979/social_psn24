@@ -14,11 +14,13 @@ class CommentList extends StatefulWidget {
   final String postId;
   final ScrollController scrollController;
   final PagingController<int, Comment> pagingController;
+  final String? commentId;
 
   CommentList({
     required this.postId,
     required this.scrollController,
     required this.pagingController,
+    this.commentId,
   });
 
   @override

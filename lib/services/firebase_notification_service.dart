@@ -26,9 +26,8 @@ class FirebaseNotificationService {
   Future<void> _initializeLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@drawable/logo');
-
      DarwinInitializationSettings initializationSettingsDarwin =
-    DarwinInitializationSettings(onDidReceiveLocalNotification: _onDidReceiveLocalNotification);
+    DarwinInitializationSettings();
 
      InitializationSettings initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsDarwin);
@@ -124,11 +123,5 @@ class FirebaseNotificationService {
 
   Future<void> unsubscribeFromTopic(String topic) async {
     await _messaging.unsubscribeFromTopic(topic);
-    //print('Unsubscribed from topic: $topic');
-  }
-
-  // Optional: Handle notifications received on iOS when the app is in the foreground
-  Future<void> _onDidReceiveLocalNotification(int id, String? title, String? body, String? payload) async {
-    // Handle the foreground notification (iOS)
   }
 }

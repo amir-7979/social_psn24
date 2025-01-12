@@ -10,8 +10,9 @@ class PostDetailedScreen extends StatefulWidget {
   final Post? post;
   final String postId;
   final PostBloc? postBloc;
+  final String? commentId;
 
-  PostDetailedScreen({this.post, required this.postId,  this.postBloc});
+  PostDetailedScreen({this.post, required this.postId,  this.postBloc, this.commentId});
 
   @override
   State<PostDetailedScreen> createState() => _PostDetailedScreenState();
@@ -34,7 +35,7 @@ class _PostDetailedScreenState extends State<PostDetailedScreen> {
       ),
       child: BlocProvider(
         create: (context) => PostDetailedBloc(postBloc: widget.postBloc),
-        child: PostDetailedMainBody(post: widget.post, postId: widget.postId),
+        child: PostDetailedMainBody(post: widget.post, postId: widget.postId, commentId: widget.commentId),
       ),
     );
   }

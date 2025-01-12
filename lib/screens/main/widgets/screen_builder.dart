@@ -59,6 +59,7 @@ final Map<String, WidgetBuilder> routes = {
       post: args['post'],
       postId: args['postId'],
       postBloc: args['postBloc'],
+      commentId: args['commentId'],
     );
   },
   AppRoutes.interest: (BuildContext context) => InterestScreen(),

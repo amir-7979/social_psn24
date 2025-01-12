@@ -21,6 +21,7 @@ class NotificationItem extends StatelessWidget {
           AppRoutes.postDetailed,
           arguments: <String, dynamic>{
             'postId': notification.data?.postId,
+            'commentId': notification.data?.commentId
           },
         );
         Navigator.of(context).pop();

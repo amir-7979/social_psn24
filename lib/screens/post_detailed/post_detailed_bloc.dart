@@ -146,7 +146,6 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
           offset: pagingController.nextPageKey,
           );
       final QueryResult result = await GraphQLService.instance.client.query(options);
-      print(result.data);
       if (result.hasException) {
         pagingController.error = result.exception;
         print(result.exception);
@@ -181,8 +180,6 @@ class PostDetailedBloc extends Bloc<PostDetailedEvent, PostDetailedState> {
     var response = await graphQLService.mutate(options);
     if (response.hasException) {
     } else {
-      print(response.data);
     }
-    //todo ask ashkan
   }
 }
