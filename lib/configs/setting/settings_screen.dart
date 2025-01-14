@@ -186,8 +186,7 @@ class _SettingScreenState extends State<SettingScreen> {
           icon: _isDropdownOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
         ),
         listTextStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-          color: Theme.of(context).colorScheme.onBackground,
-          backgroundColor: Theme.of(context).colorScheme.background,
+
         ),
         dropDownItemCount: 2,
         dropdownRadius: 8,

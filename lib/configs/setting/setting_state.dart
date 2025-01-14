@@ -20,7 +20,7 @@ class SettingState {
 
   factory SettingState.initial() {
     return SettingState(
-      userSettings: UserSettings(theme: AppTheme.light, language: AppLanguage.english),
+      userSettings: UserSettings(theme: AppTheme.light, language: AppLanguage.persian),
       token: '',
       profile: null,
       adminSettings: null,

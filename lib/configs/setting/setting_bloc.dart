@@ -52,16 +52,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> _loadSettingsFromStorage() async {
-    final userSettingsJsonString = await _storageService.readData('userSettings');
-    UserSettings? userSettings;
-    if (userSettingsJsonString != null) {
-      final userSettingsMap = jsonDecode(userSettingsJsonString) as Map<String, dynamic>;
-      userSettings = UserSettings.fromJson(userSettingsMap);
-    } else {
-      userSettings = UserSettings(theme: AppTheme.light, language: AppLanguage.english);
-    }
-    String? token = await _storageService.readData('token');
-    emit(state.copyWith(userSettings: userSettings, token: token ?? ''));
     _settingsLoadedCompleter.complete();
     _processEventQueue();
     if (state.isUserLoggedIn) {
@@ -93,6 +83,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> _handleSettingThemeEvent(event, emit) async {
+    print(event.theme);
     await _settingsLoadedCompleter.future;
     final updatedSettings = state.userSettings.copyWith(theme: event.theme);
     final jsonString = jsonEncode(updatedSettings.toJson());
@@ -144,7 +135,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   Future<void> _handleUpdateUserSettingEvent(UpdateUserSettingEvent event, Emitter<SettingState> emit) async {
     try {
       final updatedSettings = state.userSettings.toJson();
-      print('bloc from ${updatedSettings[event.key]} ,to ${ event.value}');
       updatedSettings[event.key] = event.value;
       final newSettings = UserSettings.fromJson(updatedSettings);
       final jsonString = jsonEncode(newSettings.toJson());

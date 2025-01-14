@@ -29,10 +29,7 @@ void main() async {
   final NotificationBloc notificationBloc = NotificationBloc();
   notificationBloc.add(LoadNotifications());
   final settings = await loadUserSettings();
-  final userSettings = settings['userSettings'] as UserSettings;
-  final String token = settings['token'] ?? '';
-
-  runApp(MyApp(notificationBloc: notificationBloc, userSettings: userSettings, token: token));
+  runApp(MyApp(notificationBloc: notificationBloc, userSettings: settings['userSettings'], token: settings['token']??''));
 }
 
 Future<Map<String, dynamic>> loadUserSettings() async {
@@ -40,10 +37,12 @@ Future<Map<String, dynamic>> loadUserSettings() async {
   final userSettingsJson = await _storageService.readData('userSettings');
   UserSettings userSettings;
   if (userSettingsJson != null) {
-    userSettings = UserSettings.fromJson(
-        jsonDecode(userSettingsJson) as Map<String, dynamic>);
+    userSettings = UserSettings.fromJson(jsonDecode(userSettingsJson) as Map<String, dynamic>);
   } else {
-    userSettings = UserSettings(theme: AppTheme.light, language: AppLanguage.english);
+    final Locale systemLocale = WidgetsBinding.instance.window.locale;
+    final AppTheme osTheme = WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark ? AppTheme.dark : AppTheme.light;
+    final AppLanguage osLanguage = systemLocale.languageCode == 'en' ? AppLanguage.persian : AppLanguage.persian;
+    userSettings = UserSettings(theme: osTheme, language: osLanguage);
   }
   final token = await _storageService.readData('token');
   return {'userSettings': userSettings, 'token': token};
@@ -66,9 +65,7 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MultiBlocProvider(
       providers: [
-        BlocProvider<SettingBloc>(
-          create: (context) => SettingBloc(userSettings, token),
-        ),
+        BlocProvider<SettingBloc>(create: (context) => SettingBloc(userSettings, token)),
         BlocProvider<AppbarBloc>(create: (context) => AppbarBloc()),
         BlocProvider<HomeBloc>(create: (context) => HomeBloc()),
         BlocProvider<NotificationBloc>(create: (context) => notificationBloc),
