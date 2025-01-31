@@ -198,7 +198,7 @@ class _MainScreenState extends State<MainScreen>
                               _handleFABPressed();
                             }
                           },
-                            iconColor: BlocProvider.of<SettingBloc>(context)
+                            color: BlocProvider.of<SettingBloc>(context)
                                 .state
                                 .profile != null && BlocProvider.of<SettingBloc>(context)
                                 .state
@@ -218,6 +218,7 @@ class _MainScreenState extends State<MainScreen>
                               .translateNested('bottomBar', 'consultation'),
                           FontAwesomeIcons.thinComment,
                           _handleFABPressed,
+                          color: darkBaseColor
                         ),
                       ),
                       _buildAnimatedColumn(
@@ -226,6 +227,7 @@ class _MainScreenState extends State<MainScreen>
                             .translateNested('bottomBar', 'charity'),
                         FontAwesomeIcons.thinHandsHolding,
                         _handleFABPressed,
+                        color: darkBaseColor
                       ),
                     ],
                   );
@@ -239,7 +241,7 @@ class _MainScreenState extends State<MainScreen>
   }
 
   Widget _buildAnimatedColumn(
-      double angle, String text, IconData icon, VoidCallback onPressed, {Color? iconColor}) {
+      double angle, String text, IconData icon, VoidCallback onPressed, {Color? color}) {
     final double distance = 20.0;
     final double x = distance * angle * (1 - _animation.value);
     final double y = distance * (1 - _animation.value);
@@ -267,7 +269,7 @@ class _MainScreenState extends State<MainScreen>
                 child: FaIcon(size: 22, icon, color: whiteColor),
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
-                  backgroundColor: iconColor?? Theme.of(context).colorScheme.tertiary,
+                  backgroundColor: color?? Theme.of(context).colorScheme.tertiary,
                   shape: CircleBorder(),
                   padding: EdgeInsets.zero,
                 ),

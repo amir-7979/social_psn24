@@ -426,7 +426,7 @@ class _MainFormState extends State<MainForm> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    _categoryState = false; // No category entered
+                    _categoryState = false;
                     return AppLocalizations.of(context)!
                         .translateNested('error', 'notEmpty');
                   } else if (!_categories.any((category) => category.title == value)) {
@@ -442,14 +442,16 @@ class _MainFormState extends State<MainForm> {
                 },
                 onTap: () {
                   setState(() {
-                    _isSearchFieldOpen = true; // Open suggestions
+                    _isSearchFieldOpen = true;
                   });
                 },
                 onSuggestionTap: (suggestion) {
+                  print(suggestion.searchKey);
                   setState(() {
-                    _selectedCategory = suggestion.item;
+                    _selectedCategory = suggestion.searchKey;
+                    categoryController.text =suggestion.searchKey;
                     _categoryState = true;
-                    _isSearchFieldOpen = false; // Close suggestions
+                    _isSearchFieldOpen = false;
                     _categoryFocusNode.unfocus();
                     _longTextFocusNode.requestFocus();
                   });
