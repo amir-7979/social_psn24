@@ -1,16 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:social_psn/repos/models/reply.dart';
 
+import '../../../configs/setting/setting_bloc.dart';
 import '../../main/widgets/screen_builder.dart';
 import '../../widgets/TrianglePainter.dart';
 import '../../widgets/profile_cached_network_image.dart';
 
-class ReplyItem extends StatelessWidget {
+class ReplyItem extends StatefulWidget {
   final Reply reply;
 
   ReplyItem(this.reply);
 
+  @override
+  State<ReplyItem> createState() => _ReplyItemState();
+}
+
+class _ReplyItemState extends State<ReplyItem> {
+  bool? isUserLoggedIn;
+
+  @override
+  void initState() {
+    isUserLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,14 +34,26 @@ class ReplyItem extends StatelessWidget {
         children: [
           InkWell(
             onTap: (){
-              Navigator.of(context).pushNamed(AppRoutes.profile,
-                  arguments: reply.sender?.globalId);
+                if (isUserLoggedIn != true) {
+                  Navigator.of(context).pushNamed(AppRoutes.login);
+                }else {
+                  if (BlocProvider
+                      .of<SettingBloc>(context)
+                      .state
+                      .profile
+                      ?.globalId == widget.reply.sender?.globalId) {
+                    Navigator.of(context).pushNamed(AppRoutes.myProfile);
+                  } else {
+                    Navigator.of(context).pushNamed(AppRoutes.profile,
+                        arguments: widget.reply.sender?.globalId);
+                  }
+                }
             },
             child: ClipOval(
               child: SizedBox.fromSize(
                 size: Size.fromRadius(18), // Image radius
-                child: reply.sender?.photo != null
-                    ? ProfileCacheImage(reply.sender?.photo)
+                child: widget.reply.sender?.photo != null
+                    ? ProfileCacheImage(widget.reply.sender?.photo)
                     : SvgPicture.asset('assets/images/drawer/profile2.svg'),
               ),
             ),
@@ -77,7 +103,7 @@ class ReplyItem extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    '${reply.sender?.name} ${reply.sender?.family}',
+                                    '${widget.reply.sender?.name} ${widget.reply.sender?.family}',
                                     overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
                                         .textTheme
@@ -91,9 +117,9 @@ class ReplyItem extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(width: 3),
-                                if(reply.sender?.username != null)
+                                if(widget.reply.sender?.username != null)
                                   Text(
-                                    '(${reply.sender?.username})',
+                                    '(${widget.reply.sender?.username})',
                                     textDirection: TextDirection.ltr,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
@@ -117,7 +143,7 @@ class ReplyItem extends StatelessWidget {
                           ),
                           SizedBox(width: 6),
                           Text(
-                            '${reply.persianDate ?? ''}',
+                            '${widget.reply.persianDate ?? ''}',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
@@ -132,7 +158,7 @@ class ReplyItem extends StatelessWidget {
 
                       SizedBox(height: 8),
                       Text(
-                        reply.message?.trim() ?? '',
+                        widget.reply.message?.trim() ?? '',
                         style:
                         Theme.of(context).textTheme.bodyLarge!.copyWith(
                           color: Theme.of(context).colorScheme.shadow,

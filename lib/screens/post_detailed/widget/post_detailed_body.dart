@@ -376,7 +376,8 @@ class _PostDetailedBodyState extends State<PostDetailedBody> {
               Expanded(
                 child: Text(
                   widget.post.description ?? '',
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: null,
+
                   textDirection: detectDirection(widget.post.description),
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: Theme.of(context).colorScheme.shadow,

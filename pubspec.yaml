@@ -90,6 +90,7 @@ dependencies:
   dropdown_textfield: ^1.2.0
   emoji_picker_flutter: ^4.2.0
   searchfield: ^1.2.2
+  auto_scroll_text: ^0.0.7
 
 dev_dependencies:
   flutter_test:

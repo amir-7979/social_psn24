@@ -154,7 +154,7 @@ class GuestDrawer extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
-                  ListTile(
+                  /*ListTile(
                     minLeadingWidth: 0,
                     minVerticalPadding: 0,
                     contentPadding: const EdgeInsetsDirectional.all(0),
@@ -218,17 +218,17 @@ class GuestDrawer extends StatelessWidget {
                     onTap: () async {
                       shareMethod(inviteLink);
 
-                      /* FlutterClipboard.copy(inviteLink).then((value) {
+                      *//* FlutterClipboard.copy(inviteLink).then((value) {
                         ScaffoldMessenger.of(snackBarContext).showSnackBar(
                           CustomSnackBar(
                               function: () => ScaffoldMessenger.of(snackBarContext).hideCurrentSnackBar(),
                               content: AppLocalizations.of(context)!.translateNested('drawer', 'invite'),
                               backgroundColor: Theme.of(context).primaryColor
                           ).build(snackBarContext),
-                        );                          });*/
+                        );                          });*//*
                       Navigator.pop(context);
                     },
-                  ),
+                  ),*/
 /*
                   ListTile(
                     minLeadingWidth: 0,

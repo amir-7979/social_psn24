@@ -6,17 +6,31 @@ import 'package:social_psn/screens/post_detailed/widget/comment_bottom_sheet.dar
 import 'package:social_psn/screens/post_detailed/widget/reply_item.dart';
 
 import '../../../configs/localization/app_localizations.dart';
+import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/comment.dart';
 import '../../main/widgets/screen_builder.dart';
 import '../../widgets/TrianglePainter.dart';
 import '../../widgets/profile_cached_network_image.dart';
 import '../post_detailed_bloc.dart';
 
-class CommentItem extends StatelessWidget {
+class CommentItem extends StatefulWidget {
   final Comment comment;
   final String postId;
 
   CommentItem(this.comment, this.postId);
+
+  @override
+  State<CommentItem> createState() => _CommentItemState();
+}
+
+class _CommentItemState extends State<CommentItem> {
+  bool? isUserLoggedIn;
+
+  @override
+  void initState() {
+    isUserLoggedIn = context.read<SettingBloc>().state.isUserLoggedIn;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +48,30 @@ class CommentItem extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipOval(
-              child: SizedBox.fromSize(
-                size: Size.fromRadius(20), // Image radius
-                child: comment.sender?.photo != null
-                    ? ProfileCacheImage(comment.sender?.photo)
-                    : SvgPicture.asset('assets/images/drawer/profile2.svg'),
+            InkWell(
+              onTap: (){
+                if (isUserLoggedIn != true) {
+                  Navigator.of(context).pushNamed(AppRoutes.login);
+                }else {
+                  if (BlocProvider
+                      .of<SettingBloc>(context)
+                      .state
+                      .profile
+                      ?.globalId == widget.comment.sender?.globalId) {
+                    Navigator.of(context).pushNamed(AppRoutes.myProfile);
+                  } else {
+                    Navigator.of(context).pushNamed(AppRoutes.profile,
+                        arguments: widget.comment.sender?.globalId);
+                  }
+                }
+              },
+              child: ClipOval(
+                child: SizedBox.fromSize(
+                  size: Size.fromRadius(20), // Image radius
+                  child: widget.comment.sender?.photo != null
+                      ? ProfileCacheImage(widget.comment.sender?.photo)
+                      : SvgPicture.asset('assets/images/drawer/profile2.svg'),
+                ),
               ),
             ),
             SizedBox(width: 8),
@@ -88,7 +120,7 @@ class CommentItem extends StatelessWidget {
                                   // Name and family with Flexible
                                   Flexible(
                                     child: Text(
-                                      '${comment.sender?.name} ${comment.sender?.family}',
+                                      '${widget.comment.sender?.name} ${widget.comment.sender?.family}',
                                       overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context)
                                           .textTheme
@@ -100,9 +132,9 @@ class CommentItem extends StatelessWidget {
                                     ),
                                   ),
                                   SizedBox(width: 3),
-                                  if (comment.sender?.username != null)
+                                  if (widget.comment.sender?.username != null)
                                     Text(
-                                      '(${comment.sender?.username})',
+                                      '(${widget.comment.sender?.username})',
                                       textDirection: TextDirection.ltr,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
@@ -124,7 +156,7 @@ class CommentItem extends StatelessWidget {
                             ),
                             SizedBox(width: 6),
                             Text(
-                              '${comment.persianDate ?? ''}',
+                              '${widget.comment.persianDate ?? ''}',
                               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                                 color: Theme.of(context).colorScheme.surface,
                                 fontWeight: FontWeight.w400,
@@ -134,7 +166,7 @@ class CommentItem extends StatelessWidget {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          comment.message?.trim() ?? '',
+                          widget.comment.message?.trim() ?? '',
                           style:
                               Theme.of(context).textTheme.bodyLarge!.copyWith(
                                     color: Theme.of(context).colorScheme.shadow,
@@ -157,8 +189,8 @@ class CommentItem extends StatelessWidget {
                                     value: postDetailedBloc,
                                     child: CommentBottomSheet(
                                         function: submitComment,
-                                        postId: postId,
-                                        replyTo: comment.id),
+                                        postId: widget.postId,
+                                        replyTo: widget.comment.id),
                                   ),
                                   isScrollControlled: true,
                                   backgroundColor: Colors.transparent,
@@ -207,8 +239,8 @@ class CommentItem extends StatelessWidget {
           ],
         ),
         //for reply in comment , create repliitem
-        if (comment.replies != null && comment.replies!.isNotEmpty)
-          for (var reply in comment.replies!) ReplyItem(reply),
+        if (widget.comment.replies != null && widget.comment.replies!.isNotEmpty)
+          for (var reply in widget.comment.replies!) ReplyItem(reply),
       ],
     );
   }

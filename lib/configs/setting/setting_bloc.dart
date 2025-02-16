@@ -10,6 +10,8 @@ import '../../repos/models/profile.dart';
 import '../../repos/models/tag.dart';
 import '../../repos/repositories/dio/dio_profile_repository.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
+import '../../services/dio_auth_service.dart';
+import '../../services/firebase_notification_service.dart';
 import '../../services/graphql_service.dart';
 import 'user_settings.dart';
 
@@ -93,10 +95,20 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   FutureOr<void> _handelClearUserInformation(event, emit) async {
     await _settingsLoadedCompleter.future;
+
+    // Clear data from storage
     await _storageService.deleteData('token');
     await _storageService.deleteData('refreshToken');
+
+    // Remove tokens from services
     GraphQLService.instance.removeTokenFromAuthLink();
+    DioAuthService.instance.removeToken();
+
+    // Remove Firebase notification token
+    await FirebaseNotificationService.instance.removeToken();
     await FirebaseMessaging.instance.deleteToken();
+
+    // Reset other state
     emit(state.copyWith(
       token: '',
       profile: null,

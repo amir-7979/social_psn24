@@ -177,8 +177,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               if (value!.isEmpty) {
                                 return AppLocalizations.of(context)!
                                     .translateNested('error', 'notEmpty');
-                              } else if (!RegExp(r'^[\u0600-\u06FF\s]+$')
-                                  .hasMatch(value)) {
+                              } else if (!RegExp(r'^[\u0600-\u06FF\s\u200C]+$').hasMatch(value)) {
                                 return AppLocalizations.of(context)!
                                     .translateNested('error', 'persian_name');
                               } else if (value.length > 30) {

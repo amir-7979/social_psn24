@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/src/response.dart';
@@ -27,13 +28,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     emit(NotificationLoading());
     try {
       Response result = await _notificationRepository.fetchNotifications();
-      print(result.data);
+      log(result.data!.toString());
         notifications = (result.data!['data']['notifications'] as List)
             .map((notification) => MyNotification.fromJson(notification))
             .toList();
       checkUnreadNotifications();
         emit(NotificationLoaded(notifications, unreadNotifications));
     } catch (exception) {
+      print(exception.toString());
       emit(NotificationError(exception.toString()));
     }
   }
@@ -55,19 +57,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   void checkUnreadNotifications() {
-    // Count unread notifications
     unreadNotifications = notifications.where((element) => element.seen == 0).length;
-
-    // Cap unread notifications at 99
     if (unreadNotifications > 99) {
       unreadNotifications = 99;
     }
-
-    // Separate unread and read notifications
     List<MyNotification> unread = notifications.where((element) => element.seen == 0).toList();
     List<MyNotification> read = notifications.where((element) => element.seen != 0).toList();
-
-    // Combine unread first, then read
     notifications = [...unread, ...read];
   }
 

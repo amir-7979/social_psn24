@@ -1,3 +1,4 @@
+import 'package:auto_scroll_text/auto_scroll_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -307,14 +308,28 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "${profile.name} ${profile.family}",
-                    softWrap: true,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                          color: Theme.of(context).hoverColor,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 160,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        AutoScrollText(
+
+                          "${profile.name} ${profile.family}",
+                          mode: AutoScrollTextMode.bouncing,
+                          delayBefore: const Duration(seconds: 3),
+                          pauseBetween: const Duration(seconds: 1),
+                          textAlign: TextAlign.start,
+
+                          scrollDirection: Axis.horizontal,
+                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                            color: Theme.of(context).hoverColor,
+                          ),
+
                         ),
+                      ],
+                    ),
+
                   ),
                   if (profile.displayName != null &&
                       profile.displayName!.isNotEmpty)

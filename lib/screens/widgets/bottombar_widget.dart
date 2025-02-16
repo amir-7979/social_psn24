@@ -72,6 +72,7 @@ class _MyStylishBottomBarState extends State<MyStylishBottomBar> {
   Widget build(BuildContext context) {
     return StylishBottomBar(
       backgroundColor: Theme.of(context).bottomAppBarTheme.color,
+
       items: [
         BottomBarItem(
           icon: _currentIndex == 0
@@ -152,6 +153,7 @@ class _MyStylishBottomBarState extends State<MyStylishBottomBar> {
       hasNotch: true,
       notchStyle: NotchStyle.circle,
       option: AnimatedBarOptions(
+
         padding: EdgeInsets.all(0),
         barAnimation: BarAnimation.blink,
         iconStyle: IconStyle.animated,

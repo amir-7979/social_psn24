@@ -48,4 +48,8 @@ class DioAuthService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
     }
   }
+
+  void removeToken() async {
+    _dio.options.headers.remove('Authorization');
+  }
 }

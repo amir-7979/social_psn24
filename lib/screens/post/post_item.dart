@@ -1,4 +1,3 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,10 +10,8 @@ import '../../../configs/setting/setting_bloc.dart';
 import '../../../repos/models/post.dart';
 import '../../configs/setting/themes.dart';
 import '../../configs/utilities.dart';
-import '../../services/request_queue.dart';
 import '../home/home_bloc.dart';
 import '../main/widgets/screen_builder.dart';
-import '../widgets/custom_snackbar.dart';
 import '../widgets/profile_cached_network_image.dart';
 import 'post_bloc.dart';
 

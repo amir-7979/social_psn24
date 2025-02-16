@@ -34,6 +34,7 @@ class MyNotification {
     String? createdAt = json['created_at'];
     Jalali? jalaliDate = createdAt != null ? Jalali.fromDateTime(DateTime.parse(createdAt)) : null;
     String? formattedPersianDate = jalaliDate != null ? '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}' : null;
+
     return MyNotification(
       id: json['id'],
       user: json['user'],

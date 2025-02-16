@@ -7,12 +7,12 @@ import '../configs/utilities.dart';
 import '../screens/notification/notification_bloc.dart';
 
 class FirebaseNotificationService {
-  static final FirebaseNotificationService _instance = FirebaseNotificationService._internal();
-  factory FirebaseNotificationService() => _instance;
+  static final FirebaseNotificationService instance = FirebaseNotificationService._internal();
+  factory FirebaseNotificationService() => instance;
   FirebaseNotificationService._internal();
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin localNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
     await Firebase.initializeApp();
@@ -23,16 +23,37 @@ class FirebaseNotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedAppHandler);
   }
 
+  Future<void> uninitialize() async {
+    // Cancel all local notifications
+    await localNotificationsPlugin.cancelAll();
+
+    // Unsubscribe from topics
+    await FirebaseMessaging.instance.unsubscribeFromTopic('all');
+
+    // Remove Firebase token
+    await _messaging.deleteToken();
+
+    // Optionally: You can also remove the token from FirebaseNotificationService instance
+    await removeToken();
+
+    // Optionally, clear other data or listeners if needed
+    FirebaseMessaging.onMessage.listen((_) {});
+    FirebaseMessaging.onBackgroundMessage((_)async {});
+    FirebaseMessaging.onMessageOpenedApp.listen((_) {});
+
+    print("Firebase Notification Service uninitialized.");
+  }
+
   Future<void> _initializeLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@drawable/logo');
-     DarwinInitializationSettings initializationSettingsDarwin =
+    DarwinInitializationSettings initializationSettingsDarwin =
     DarwinInitializationSettings();
 
-     InitializationSettings initializationSettings = InitializationSettings(
+    InitializationSettings initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsDarwin);
 
-    await _localNotificationsPlugin.initialize(
+    await localNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: _onDidReceiveNotificationResponse,
     );
@@ -46,7 +67,7 @@ class FirebaseNotificationService {
     );
 
     // Register the channel with the system
-    await _localNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+    await localNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
   }
 
@@ -83,7 +104,7 @@ class FirebaseNotificationService {
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
 
-    await _localNotificationsPlugin.show(
+    await localNotificationsPlugin.show(
       0,
       title,
       body,
@@ -123,5 +144,9 @@ class FirebaseNotificationService {
 
   Future<void> unsubscribeFromTopic(String topic) async {
     await _messaging.unsubscribeFromTopic(topic);
+  }
+
+  Future<void> removeToken() async {
+    await _messaging.deleteToken();
   }
 }

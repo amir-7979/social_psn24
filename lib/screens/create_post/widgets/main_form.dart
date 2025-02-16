@@ -458,7 +458,7 @@ class _MainFormState extends State<MainForm> {
                 },
                 onSubmit: (value) {
                   setState(() {
-                    _isSearchFieldOpen = false; // Close suggestions
+                    _isSearchFieldOpen = false;
                     _categoryFocusNode.unfocus();
                     _longTextFocusNode.requestFocus();
                   });
