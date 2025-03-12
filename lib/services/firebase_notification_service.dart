@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import '../configs/utilities.dart';
 import '../screens/notification/notification_bloc.dart';
 
@@ -23,26 +22,6 @@ class FirebaseNotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedAppHandler);
   }
 
-  Future<void> uninitialize() async {
-    // Cancel all local notifications
-    await localNotificationsPlugin.cancelAll();
-
-    // Unsubscribe from topics
-    await FirebaseMessaging.instance.unsubscribeFromTopic('all');
-
-    // Remove Firebase token
-    await _messaging.deleteToken();
-
-    // Optionally: You can also remove the token from FirebaseNotificationService instance
-    await removeToken();
-
-    // Optionally, clear other data or listeners if needed
-    FirebaseMessaging.onMessage.listen((_) {});
-    FirebaseMessaging.onBackgroundMessage((_)async {});
-    FirebaseMessaging.onMessageOpenedApp.listen((_) {});
-
-    print("Firebase Notification Service uninitialized.");
-  }
 
   Future<void> _initializeLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -83,12 +62,14 @@ class FirebaseNotificationService {
   }
 
   void _onMessageHandler(RemoteMessage message) async {
-    if (message.notification != null) {
-      _showNotification(
+    print('_______________________\nMessage received!');
+    print('Message data: ${message.data}');
+    print('Message notification: ${message.notification}');
+    _showNotification(
         message.notification!.title ?? '',
         message.notification!.body ?? '',
       );
-    }
+
     BlocProvider.of<NotificationBloc>(navigatorKey.currentContext!).add(LoadNotifications());
   }
 

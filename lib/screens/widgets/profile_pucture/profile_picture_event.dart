@@ -8,3 +8,4 @@ class UploadProfilePicture extends ProfilePictureEvent {
 
   UploadProfilePicture(this.file);
 }
+class RemoveProfilePhotoEvent extends ProfilePictureEvent {}

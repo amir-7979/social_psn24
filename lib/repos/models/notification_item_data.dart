@@ -1,6 +1,8 @@
+import 'package:social_psn/repos/models/thumbnail.dart';
+
 class NotificationDataDetails {
   final String? postId;
-  final List<dynamic>? thumbnail;
+  final List<Thumbnail>? thumbnails;
   final String? commentId;
   final String? userPhoto;
   final String? commentMessage;
@@ -11,7 +13,7 @@ class NotificationDataDetails {
 
   NotificationDataDetails({
     this.postId,
-    this.thumbnail,
+    this.thumbnails,
     this.commentId,
     this.userPhoto,
     this.commentMessage,
@@ -22,9 +24,12 @@ class NotificationDataDetails {
   });
 
   factory NotificationDataDetails.fromJson(Map<String, dynamic> json) {
+    if(json['thumbnail'] != null )print(json['thumbnails']);
     return NotificationDataDetails(
       postId: json['post_id'],
-      thumbnail: json['thumbnail'],
+      thumbnails: (json['thumbnail'] as List<dynamic>?)
+          ?.map((e) => Thumbnail.fromJson(e as Map<String, dynamic>))
+          .toList(),
       commentId: json['comment_id'],
       userPhoto: json['user_photo'],
       commentMessage: json['comment_message'],

@@ -5,7 +5,7 @@ class NotificationRepository {
   final Dio _dio = DioAuthService.instance.client;
 
   Future<Response<dynamic>> fetchNotifications() async {
-    return _dio.get('/notification', queryParameters: {'user': null});
+    return _dio.get('/notification', queryParameters: {'user': null}, );
   }
 
   Future<Response<dynamic>> markAllNotificationsAsRead() async {

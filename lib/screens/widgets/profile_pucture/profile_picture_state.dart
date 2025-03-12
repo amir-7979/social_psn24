@@ -12,7 +12,7 @@ class ProfilePictureSuccess extends ProfilePictureState {
 
   ProfilePictureSuccess(this.imageUrl);
 }
-
+class ProfilePictureRemove extends ProfilePictureState {}
 class ProfilePictureFailure extends ProfilePictureState {
   final String? error;
 

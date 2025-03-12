@@ -16,6 +16,7 @@ class DioAuthService {
 
   void _initializeClient() {
     _dio = Dio(
+
       BaseOptions(
         baseUrl: 'https://core.psn24.ir/u',
         headers: {

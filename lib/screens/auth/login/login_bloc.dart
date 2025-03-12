@@ -30,6 +30,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (e.response!.data['status'] == 422) {
         emit(LoginAgain(event.phoneNumber, e.response!.data['message'].toString()));
       } else {
+
         emit(LoginFailure(e.response!.data['message'].toString()));
       }
     } catch (e) {

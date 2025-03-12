@@ -4,10 +4,16 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
 
     <application
         android:label="social_psn"
         android:name="${applicationName}"
+        android:requestLegacyExternalStorage="true"
+
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

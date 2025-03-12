@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
+import 'package:social_psn/screens/notification/notification_bloc.dart';
 
 import '../../configs/consts.dart';
 import '../../configs/localization/app_localizations.dart';
@@ -417,6 +418,8 @@ class UserDrawer extends StatelessWidget {
                                   Navigator.pop(context);
                                 },
                                 onConfirm: () {
+                                  //reset notification bloc
+                                  BlocProvider.of<NotificationBloc>(context).reset();
                                   dialogContext.read<SettingBloc>().add(ClearInfo());
                                   Navigator.pop(context);
                                   navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);

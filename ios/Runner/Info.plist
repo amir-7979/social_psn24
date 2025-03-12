@@ -13,6 +13,10 @@
         <string>fetch</string>
         <string>remote-notification</string>
     </array>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>This app needs permission to add photos to your library to save downloaded images.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app requires access to your photo library to save downloaded images.</string>
 
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>

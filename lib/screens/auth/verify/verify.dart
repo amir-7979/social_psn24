@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:social_psn/screens/auth/verify/verify_bloc.dart';
+import 'package:social_psn/screens/notification/notification_bloc.dart';
 import 'package:social_psn/screens/widgets/custom_snackbar.dart';
 
 import '../../../configs/localization/app_localizations.dart';
@@ -110,6 +111,7 @@ class _VerifyState extends State<Verify> {
                   } catch (e) {
                     print(e);
                   }
+                  BlocProvider.of<NotificationBloc>(context).add(LoadNotifications());
                   Navigator.of(context).pushReplacementNamed(AppRoutes.home);
                 }else if(state is ResendSuccess){
                   widget.LoginId = state.loginId;
@@ -152,8 +154,6 @@ class _VerifyState extends State<Verify> {
                   enableActiveFill: true,
                   onCompleted: (v) {
                     if (state is! VerifyLoading) {
-                      print('hereeeee-------------------------');
-                      print('loginId: ${widget.LoginId}, code: $v');
                       BlocProvider.of<VerifyBloc>(context).add(VerifyTokenEvent(loginId: widget.LoginId, code: v));
                     }
                   },

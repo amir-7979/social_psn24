@@ -10,6 +10,7 @@ import '../widgets/custom_snackbar.dart';
 import '../widgets/dialogs/my_alert_dialog.dart';
 import '../widgets/dialogs/my_confirm_dialog.dart';
 import '../widgets/profile_pucture/profile_picture.dart';
+import '../widgets/profile_pucture/profile_picture_bloc.dart';
 import '../widgets/white_circular_progress_indicator.dart';
 import 'edit_profile_bloc.dart';
 
@@ -28,7 +29,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _lastNameFocusNode = FocusNode();
   final _idFocusNode = FocusNode();
   String? photoUrl = null;
-
 
   @override
   void dispose() {
@@ -93,11 +93,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 children: [
                   const SizedBox(height: 16),
                   Center(
-                    child: Container(
-                      height: 155,
-                      width: 155,
-                      child: Center(
-                        child: ProfilePicture(photoUrl, _newPickedImage),
+                    child: BlocProvider(
+                      create: (context) => ProfilePictureBloc(),
+                      child: Container(
+                        height: 155,
+                        width: 155,
+                        child: Center(
+                          child: ProfilePicture(photoUrl, _newPickedImage),
+                        ),
                       ),
                     ),
                   ),
@@ -177,7 +180,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               if (value!.isEmpty) {
                                 return AppLocalizations.of(context)!
                                     .translateNested('error', 'notEmpty');
-                              } else if (!RegExp(r'^[\u0600-\u06FF\s\u200C]+$').hasMatch(value)) {
+                              } else if (!RegExp(r'^[\u0600-\u06FF\s\u200C]+$')
+                                  .hasMatch(value)) {
                                 return AppLocalizations.of(context)!
                                     .translateNested('error', 'persian_name');
                               } else if (value.length > 30) {
@@ -366,14 +370,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       .translateNested(
                                           'dialog', 'exitFromSettingTitle'),
                                   description: AppLocalizations.of(context)!
-                                      .translateNested(
-                                          'dialog', 'exitFromSettingDescription'),
+                                      .translateNested('dialog',
+                                          'exitFromSettingDescription'),
                                   cancelText: AppLocalizations.of(context)!
                                       .translateNested('dialog', 'no'),
                                   confirmText: AppLocalizations.of(context)!
                                       .translateNested('dialog', 'yes'),
                                   returnText: AppLocalizations.of(context)!
-                                      .translateNested('profileScreen', 'return'),
+                                      .translateNested(
+                                          'profileScreen', 'return'),
                                   onReturn: () {
                                     Navigator.pop(context);
                                   },
@@ -453,54 +458,61 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     children: [
                       Expanded(
                           child: SizedBox(
-                            height: 45,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                BuildContext editProfileContext = context;
-                                showDialog(
-                                  context: editProfileContext,
-                                  builder: (BuildContext context) {
-                                    return MyConfirmDialog(
-                                      title: AppLocalizations.of(context)!.translateNested(
-                                          'dialog', 'deleteAccountTitle'), description: AppLocalizations.of(context)!.translateNested(
-                                        'dialog', 'deleteAccountDescription'), cancelText: AppLocalizations.of(context)!.translateNested(
-                                        'dialog', 'cancel'),confirmText: AppLocalizations.of(context)!.translateNested(
-                                        'dialog', 'delete'),
-                                      onCancel: () {
-                                        Navigator.pop(context);
-                                      },
-                                      onConfirm: () {
-                                        //todo delete account
-                                      },
-                                    );
+                        height: 45,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            BuildContext editProfileContext = context;
+                            showDialog(
+                              context: editProfileContext,
+                              builder: (BuildContext context) {
+                                return MyConfirmDialog(
+                                  title: AppLocalizations.of(context)!
+                                      .translateNested(
+                                          'dialog', 'deleteAccountTitle'),
+                                  description: AppLocalizations.of(context)!
+                                      .translateNested(
+                                          'dialog', 'deleteAccountDescription'),
+                                  cancelText: AppLocalizations.of(context)!
+                                      .translateNested('dialog', 'cancel'),
+                                  confirmText: AppLocalizations.of(context)!
+                                      .translateNested('dialog', 'delete'),
+                                  onCancel: () {
+                                    Navigator.pop(context);
+                                  },
+                                  onConfirm: () {
+                                    //todo delete account
                                   },
                                 );
                               },
-                              style: ElevatedButton.styleFrom(
-                                shadowColor: Colors.transparent,
-                                //foregroundColor: Theme.of(context).colorScheme.tertiary,
-                                backgroundColor: Theme.of(context).colorScheme.error.withOpacity(0.2),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Text(
-                                AppLocalizations.of(context)!
-                                    .translateNested('dialog', 'deleteAccountTitle'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shadowColor: Colors.transparent,
+                            //foregroundColor: Theme.of(context).colorScheme.tertiary,
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .error
+                                .withOpacity(0.2),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.translateNested(
+                                'dialog', 'deleteAccountTitle'),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
                                   fontWeight: FontWeight.w400,
                                   color: Theme.of(context).colorScheme.error,
                                 ),
-                              ),
-                            ),
-                          )),
+                          ),
+                        ),
+                      )),
                     ],
                   ),
                   const SizedBox(height: 16),
-
                 ],
               ),
             ),
@@ -513,11 +525,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void editUserFunction(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       context.read<EditProfileBloc>().add(SubmitEditProfileEvent(
-        name: _nameController.text,
-        family: _lastNameController.text,
-        username: _idController.text,
-      ));
+            name: _nameController.text,
+            family: _lastNameController.text,
+            username: _idController.text,
+          ));
     }
   }
-
 }

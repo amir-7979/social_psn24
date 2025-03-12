@@ -62,8 +62,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       unreadNotifications = 99;
     }
     List<MyNotification> unread = notifications.where((element) => element.seen == 0).toList();
-    List<MyNotification> read = notifications.where((element) => element.seen != 0).toList();
+    List<MyNotification> read = notifications.where((element) => element.seen == 1).toList();
     notifications = [...unread, ...read];
+  }
+
+  //reset bloc variables
+  void reset() {
+    notifications = [];
+    unreadNotifications = 0;
   }
 
 

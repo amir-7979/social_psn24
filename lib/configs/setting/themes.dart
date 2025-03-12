@@ -42,38 +42,47 @@ TextTheme iranYekanTheme = const TextTheme(
 TextTheme iranSansTheme = const TextTheme(
   displayLarge: TextStyle(
     fontSize: 24,
+    letterSpacing: -0.1,
     fontFamily: 'IRANSansX', // specify the font family here
   ),
   displayMedium: TextStyle(
+    letterSpacing: -0.1,
     fontSize: 20,
     fontFamily: 'IRANSansX', // specify the font family here
   ),
   displaySmall: TextStyle(
+    letterSpacing: -0.1,
     fontSize: 18,
     fontFamily: 'IRANSansX', // specify the font family here
   ),
   headlineMedium: TextStyle(
+    letterSpacing: -0.1,
     fontSize: 16,
     fontFamily: 'IRANSansX', // specify the font family here
   ),
   headlineSmall: TextStyle(
+    letterSpacing: -0.1,
     fontSize: 15,
     fontFamily: 'IRANSansX', // specify the font family here
   ),
   titleLarge: TextStyle(
+    letterSpacing: -0.1,
     fontSize: 14,
     fontFamily: 'IRANSansX', // specify the font family here
   ),
   bodyLarge: TextStyle(
+    letterSpacing: -0.1,
     fontSize: 12,
     fontFamily: 'IRANSansX', // specify the font family here
   ),
   labelSmall: TextStyle(
+    letterSpacing: 0,
     fontSize: 11,
     fontFamily: 'IRANSansX', // specify the font family here
   ),
   bodyMedium: TextStyle(
     locale: Locale('fa', 'IR'),
+    letterSpacing: -0.1,
     fontSize: 10,
     fontFamily: 'IRANSansX', // specify the font family here
   ),
