@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_psn/screens/widgets/shimmer.dart';
+import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
 import '../profile_cached_network_image.dart';
 import 'profile_picture_bloc.dart';
@@ -229,7 +230,9 @@ class _ProfilePictureState extends State<ProfilePicture> {
                             color: Theme.of(parentContext).colorScheme.onBackground),
                         SizedBox(width: 16),
                         Text(
-                          "Add profile picture from gallery",
+                          AppLocalizations.of(context)!
+                              .translateNested(
+                              'profileScreen', 'fromGallery'),
                           style: TextStyle(
                               color: Theme.of(parentContext).colorScheme.onBackground),
                         ),
@@ -250,7 +253,9 @@ class _ProfilePictureState extends State<ProfilePicture> {
                             color: Theme.of(parentContext).colorScheme.onBackground),
                         SizedBox(width: 16),
                         Text(
-                          "Add profile picture from camera",
+                          AppLocalizations.of(context)!
+                              .translateNested(
+                              'profileScreen', 'fromCamera'),
                           style: TextStyle(
                               color: Theme.of(parentContext).colorScheme.onBackground),
                         ),
@@ -272,7 +277,9 @@ class _ProfilePictureState extends State<ProfilePicture> {
                               color: Theme.of(parentContext).colorScheme.onBackground),
                           SizedBox(width: 16),
                           Text(
-                            "Save profile picture to gallery",
+                            AppLocalizations.of(context)!
+                                .translateNested(
+                                'profileScreen', 'savePicture'),
                             style: TextStyle(
                                 color: Theme.of(parentContext).colorScheme.onBackground),
                           ),
@@ -293,7 +300,9 @@ class _ProfilePictureState extends State<ProfilePicture> {
                             color: Theme.of(parentContext).colorScheme.onBackground),
                         SizedBox(width: 16),
                         Text(
-                          "Remove profile picture",
+                          AppLocalizations.of(context)!
+                              .translateNested(
+                              'profileScreen', 'removePicture'),
                           style: TextStyle(
                               color: Theme.of(parentContext).colorScheme.onBackground),
                         ),

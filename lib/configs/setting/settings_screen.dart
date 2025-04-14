@@ -2,6 +2,7 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_psn/configs/setting/themes.dart';
 import '../../services/settings_service.dart';
 import '../../services/storage_service.dart';
 import '../localization/app_localizations.dart';
@@ -127,7 +128,7 @@ class _SettingScreenState extends State<SettingScreen> {
               buildSwitch(context, advanceSwitchController5, () => _handleSwitchEvent("showConsultNotifications", advanceSwitchController5)),
             ],
           ),
-          Row(
+         /* Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -148,7 +149,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       .translateNested('setting', 'autoPlay')),
               buildSwitch(context, advanceSwitchController7, () => _handleSwitchEvent("autoPlayVideos", advanceSwitchController7)),
             ],
-          ),
+          ),*/
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -174,7 +175,8 @@ class _SettingScreenState extends State<SettingScreen> {
         padding: EdgeInsets.zero,
         clearOption: false,
         textFieldDecoration: InputDecoration(
-          labelText: "Language",
+          labelText: AppLocalizations.of(context)!
+              .translateNested('setting', 'language'),
           border: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.transparent),
           ),
@@ -186,7 +188,7 @@ class _SettingScreenState extends State<SettingScreen> {
           icon: _isDropdownOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
         ),
         listTextStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-
+          color: blackColor,
         ),
         dropDownItemCount: 2,
         dropdownRadius: 8,

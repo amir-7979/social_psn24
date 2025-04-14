@@ -143,7 +143,11 @@
     "offline": "Offline",
     "myInfo": "About Me",
     "activities": "Activities",
-    "myComments": "My Comments"
+    "myComments": "My Comments",
+    "fromGallery":"Add profile picture from gallery",
+    "fromCamera":"Add profile picture from camera",
+    "savePicture":"Save profile picture to gallery",
+    "removePicture":"Remove profile picture"
   },
   "postScreen": {
     "interest": "Add to Favorites",

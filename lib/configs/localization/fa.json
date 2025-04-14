@@ -153,7 +153,14 @@
     "offline": "آفلاین",
     "myInfo": "درباره من",
     "activities": "فعالیت\u200Cها",
-    "myComments": "نظرات من"
+    "myComments": "نظرات من",
+
+    "fromGallery":"افزودن عکس پروفایل از گالری",
+    "fromCamera":"افزودن عکس پروفایل با دوربین",
+    "savePicture":"ذخیره عکس پروفایل در گالری",
+    "removePicture":"حذف عکس پروفایل"
+
+
   },
 
   "postScreen": {
