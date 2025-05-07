@@ -136,11 +136,13 @@ class _SocialAppBarState extends State<SocialAppBar> {
               AppLocalizations.of(context)!.translate('appTitle'),
               style: iranYekanTheme.displaySmall!.copyWith(
                 color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.bold,
               ),
             ),
+
             leading: Builder(builder: (context) {
               return IconButton(
+                padding: EdgeInsetsDirectional.zero,
                 color: Theme.of(context).appBarTheme.iconTheme!.color,
                 icon: SvgPicture.asset(
                   'assets/images/appbar/bars.svg',

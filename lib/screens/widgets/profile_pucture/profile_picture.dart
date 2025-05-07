@@ -337,7 +337,9 @@ class _ProfilePictureState extends State<ProfilePicture> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return BlocProvider(
+  create: (context) => ProfilePictureBloc(),
+  child: GestureDetector(
       onTap: () => _showOptionsBottomSheet(context),
       child: SizedBox(
         child: Stack(
@@ -398,7 +400,8 @@ class _ProfilePictureState extends State<ProfilePicture> {
           ],
         ),
       ),
-    );
+    ),
+);
   }
 
   @override

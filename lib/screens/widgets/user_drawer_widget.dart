@@ -255,8 +255,8 @@ class UserDrawer extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                         // navigatorKey.currentState!.pushNamed(AppRoutes.cooperate);
-                          // Navigator.pop(context);
+                          navigatorKey.currentState!.pushNamed(AppRoutes.requestsList);
+                          Navigator.pop(context);
                         },
                       ),
                       ListTile(

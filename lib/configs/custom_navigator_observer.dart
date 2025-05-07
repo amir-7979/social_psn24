@@ -48,7 +48,8 @@ class CustomNavigatorObserver extends NavigatorObserver {
         currentIndexNotifier.value = 1;
         break;
       case AppRoutes.interest:
-      case AppRoutes.cooperate:
+      case AppRoutes.requestsList:
+      case AppRoutes.createRequest:
       case AppRoutes.createMedia:
       case AppRoutes.login:
       case AppRoutes.verify:

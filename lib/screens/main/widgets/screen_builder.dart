@@ -13,6 +13,8 @@ import '../../cooperation/cooperation_screen.dart';
 import '../../edit_profile/edit_profile_screen.dart';
 import '../../home/home_screen.dart';
 import '../../profile/profile_screen.dart';
+import '../../requests/create_request/create_request_screen.dart';
+import '../../requests/requests_list/requests_list_screen.dart';
 import '../main_screen.dart';
 
 class AppRoutes {
@@ -29,7 +31,8 @@ class AppRoutes {
   static const String createMedia = '/create_media';
   static const String postDetailed = '/post_detailed';
   static const String interest = '/interest';
-  static const String cooperate = '/cooperate';
+  static const String requestsList = '/requests_list';
+  static const String createRequest = '/create_requests';
   static const String settings = '/settings';
 
 }
@@ -63,7 +66,8 @@ final Map<String, WidgetBuilder> routes = {
     );
   },
   AppRoutes.interest: (BuildContext context) => InterestScreen(),
-  AppRoutes.cooperate: (BuildContext context) => CooperationScreen(),
+  AppRoutes.requestsList: (BuildContext context) => RequestsListScreen(),
+  AppRoutes.createRequest: (BuildContext context) => CreateRequestScreen(),
   AppRoutes.settings: (BuildContext context) => SettingScreen(),
 
 };
