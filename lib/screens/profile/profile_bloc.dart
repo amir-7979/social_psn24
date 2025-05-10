@@ -9,7 +9,7 @@ import '../../configs/setting/setting_bloc.dart';
 import '../../repos/models/comment.dart';
 import '../../repos/models/content.dart';
 import '../../repos/models/profile.dart';
-import '../../repos/repositories/dio/dio_profile_repository.dart';
+import '../../repos/repositories/dio/profile_repository.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/graphql_service.dart';
 

@@ -8,7 +8,7 @@ import 'package:social_psn/services/storage_service.dart';
 import '../../repos/models/admin_setting.dart';
 import '../../repos/models/profile.dart';
 import '../../repos/models/tag.dart';
-import '../../repos/repositories/dio/dio_profile_repository.dart';
+import '../../repos/repositories/dio/profile_repository.dart';
 import '../../repos/repositories/graphql/post_repository.dart';
 import '../../services/dio_auth_service.dart';
 import '../../services/firebase_notification_service.dart';

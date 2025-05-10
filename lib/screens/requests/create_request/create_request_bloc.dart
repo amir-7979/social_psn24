@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
 import '../../../repos/models/cooperation_type.dart';
-import '../../../repos/repositories/dio/dio_cosultation_repository.dart';
+import '../../../repos/repositories/dio/cosultation_repository.dart';
 
 part 'create_request_event.dart';
 part 'create_request_state.dart';

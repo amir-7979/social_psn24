@@ -7,7 +7,6 @@ class ProfileRepository {
   // Fetch the authenticated user's profile
   Future<Response<dynamic>> getProfile() async => _dio.get('/profile/me');
 
-  // Update profile
   Future<Response<dynamic>> editProfile(
       {required String firstName,
         required String lastName,

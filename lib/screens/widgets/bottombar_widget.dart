@@ -51,7 +51,7 @@ class _MyStylishBottomBarState extends State<MyStylishBottomBar> {
         targetRoute = AppRoutes.home;
         break;
       case 3:
-        targetRoute = AppRoutes.consultation;
+        targetRoute = AppRoutes.myConsultation;
         break;
       case 4:
         targetRoute = AppRoutes.charity;

@@ -56,7 +56,7 @@ class CustomNavigatorObserver extends NavigatorObserver {
       case AppRoutes.register:
         currentIndexNotifier.value = 2;
         break;
-      case AppRoutes.consultation:
+      case AppRoutes.myConsultation:
         currentIndexNotifier.value = 3;
         break;
       case AppRoutes.charity:

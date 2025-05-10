@@ -5,7 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/src/response.dart';
 import 'package:meta/meta.dart';
 import '../../repos/models/notification.dart';
-import '../../repos/repositories/dio/dio_notification_repository.dart';
+import '../../repos/repositories/dio/notification_repository.dart';
 
 
 part 'notification_event.dart';

@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/src/response.dart';
 import 'package:meta/meta.dart';
 import '../../../configs/setting/setting_bloc.dart';
-import '../../../repos/repositories/dio/dio_profile_repository.dart';
+import '../../../repos/repositories/dio/profile_repository.dart';
 
 part 'register_event.dart';
 part 'register_state.dart';

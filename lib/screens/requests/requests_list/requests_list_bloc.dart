@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
 import '../../../repos/models/request_data.dart';
-import '../../../repos/repositories/dio/dio_cosultation_repository.dart';
+import '../../../repos/repositories/dio/cosultation_repository.dart';
 
 part 'requests_list_event.dart';
 part 'requests_list_state.dart';

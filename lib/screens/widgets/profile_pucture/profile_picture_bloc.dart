@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:http/http.dart' as http;
-import '../../../repos/repositories/dio/dio_profile_repository.dart';
+import '../../../repos/repositories/dio/profile_repository.dart';
 
 part 'profile_picture_event.dart';
 part 'profile_picture_state.dart';

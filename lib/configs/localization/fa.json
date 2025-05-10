@@ -214,7 +214,10 @@
     "noRequest": "تا کنون هیچ درخواست همکاری ثبت نشده\u200Cاست برای ایجاد درخواست همکاری از دکمه افزودن بالا استفاده کنید",
     "addRequest": "افزودن درخواست ",
     "cancelRequest": "لغو درخواست",
-    "cancelCooperation": "لغو همکاری"
+    "cancelCooperation": "لغو همکاری",
+    "myConsultation": "مشاوره من",
+    "consultant": "مشاور",
+    "address": "مسیریابی مرکز"
   },
 
   "error": {

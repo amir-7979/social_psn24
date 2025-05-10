@@ -8,10 +8,10 @@ import '../../auth/login/login.dart';
 import '../../auth/register/register.dart';
 import '../../auth/verify/verify.dart';
 import '../../charity/charity_screen.dart';
-import '../../consultation/consultation_screen.dart';
 import '../../cooperation/cooperation_screen.dart';
 import '../../edit_profile/edit_profile_screen.dart';
 import '../../home/home_screen.dart';
+import '../../my_consultation/my_consultation_screen.dart';
 import '../../profile/profile_screen.dart';
 import '../../requests/create_request/create_request_screen.dart';
 import '../../requests/requests_list/requests_list_screen.dart';
@@ -25,7 +25,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String myProfile = '/my_profile';
   static const String home = '/';
-  static const String consultation = '/consultation';
+  static const String myConsultation = '/my_consultation';
   static const String charity = '/charity';
   static const String editProfile = '/edit_profile';
   static const String createMedia = '/create_media';
@@ -52,7 +52,7 @@ final Map<String, WidgetBuilder> routes = {
   AppRoutes.profile: (BuildContext context) => ProfileScreen(),
   AppRoutes.myProfile: (BuildContext context) => ProfileScreen(),
   AppRoutes.home: (BuildContext context) => HomeScreen(),
-  AppRoutes.consultation: (BuildContext context) => ConsultationScreen(),
+  AppRoutes.myConsultation: (BuildContext context) => MyConsultationScreen(),
   AppRoutes.charity: (BuildContext context) => CharityScreen(),
   AppRoutes.editProfile: (BuildContext context) => EditProfileScreen(),
   AppRoutes.createMedia: (BuildContext context) => CreatePostScreen(),

@@ -12,7 +12,7 @@ import 'package:social_psn/repos/repositories/graphql/post_repository.dart';
 import '../../repos/models/admin_setting.dart';
 import '../../repos/models/create_media.dart';
 import '../../repos/models/create_new_post.dart';
-import '../../repos/repositories/dio/dio_profile_repository.dart';
+import '../../repos/repositories/dio/profile_repository.dart';
 import '../../repos/repositories/graphql/create_post_repository.dart';
 import '../../services/graphql_service.dart';
 import 'widgets/media_item/media_item.dart';

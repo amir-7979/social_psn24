@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
-import '../../repos/repositories/dio/dio_profile_repository.dart';
+import '../../repos/repositories/dio/profile_repository.dart';
 
 part 'edit_profile_event.dart';
 part 'edit_profile_state.dart';
