@@ -38,12 +38,10 @@ class RequestItemShimmer extends StatelessWidget {
 
                 const SizedBox(height: 20),
                 Row(
-
                   children: [
                     shimmerContainer(context, width: 50, height: 12, radius: 4),
                     SizedBox(width: 50),
                     Expanded(child: shimmerContainer(context, width: double.infinity, height: 12, radius: 4)),
-
                   ],
                 ),
 

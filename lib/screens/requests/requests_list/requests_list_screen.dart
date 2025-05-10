@@ -138,66 +138,7 @@ class _RequestsListScreenState extends State<RequestsListScreen> {
                   return Container();
                 }
               }),
-              /*Expanded(
-                child: Center(
-                  child: PagedGridView<int, Liked>(
-                    showNewPageProgressIndicatorAsGridChild: false,
-                    padding: const EdgeInsetsDirectional.only(bottom: 10),
-                    pagingController: pagingController,
-                    cacheExtent: 300,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 1.0,
-                      mainAxisSpacing: 5,
-                      crossAxisSpacing: 5,
-                    ),
-                    builderDelegate: PagedChildBuilderDelegate<Liked>(
-                      itemBuilder: (context, item, index) => InterestItem(item),
-                      firstPageProgressIndicatorBuilder: (context) => SizedBox(
-                        height: 400,
-                        child: GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            childAspectRatio: 1.0,
-                            mainAxisSpacing: 5,
-                            crossAxisSpacing: 5,
-                          ),
-                          itemCount: 20,
-                          itemBuilder: (context, index) => ShimmerContentItem(),
-                        ),
-                      ),
-                      newPageProgressIndicatorBuilder: (context) => NewPageProgressIndicator(),
-                      newPageErrorIndicatorBuilder: (context) => Center(
-                        child: Text(
-                          AppLocalizations.of(context)!
-                              .translateNested("profileScreen", "fetchError"),
-                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ),
-                      firstPageErrorIndicatorBuilder: (context) => Center(
-                        child: Text(
-                          AppLocalizations.of(context)!
-                              .translateNested("profileScreen", "fetchError"),
-                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ),
-                      noItemsFoundIndicatorBuilder: (context) => Center(
-                        child: Text(
-                          AppLocalizations.of(context)!
-                              .translateNested("profileScreen", "noInterest"),
-                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),*/
+
             ],
           ),
         );

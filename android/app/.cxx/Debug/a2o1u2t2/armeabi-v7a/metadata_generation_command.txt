@@ -1,0 +1,20 @@
+                        -HH:\flutter\packages\flutter_tools\gradle\src\main\groovy
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=26
+-DANDROID_PLATFORM=android-26
+-DANDROID_ABI=armeabi-v7a
+-DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a
+-DANDROID_NDK=C:\Users\amir\AppData\Local\Android\Sdk\ndk\26.1.10909125
+-DCMAKE_ANDROID_NDK=C:\Users\amir\AppData\Local\Android\Sdk\ndk\26.1.10909125
+-DCMAKE_TOOLCHAIN_FILE=C:\Users\amir\AppData\Local\Android\Sdk\ndk\26.1.10909125\build\cmake\android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=C:\Users\amir\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\amir\Desktop\apps\projects\flutter\social_psn24\build\app\intermediates\cxx\Debug\a2o1u2t2\obj\armeabi-v7a
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\Users\amir\Desktop\apps\projects\flutter\social_psn24\build\app\intermediates\cxx\Debug\a2o1u2t2\obj\armeabi-v7a
+-DCMAKE_BUILD_TYPE=Debug
+-BC:\Users\amir\Desktop\apps\projects\flutter\social_psn24\android\app\.cxx\Debug\a2o1u2t2\armeabi-v7a
+-GNinja
+-Wno-dev
+--no-warn-unused-cli
+                        Build command args: []
+                        Version: 2

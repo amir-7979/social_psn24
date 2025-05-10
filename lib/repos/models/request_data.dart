@@ -2,13 +2,13 @@ import 'package:shamsi_date/shamsi_date.dart';
 
 class RequestData {
   final int? id;
-  final String? type;
-  final String? title;
-  final String? description;
-  final String? comment;
-  final String? status;
-  final String? statusFa;
-  final String? statusText;
+   String? type;
+   String? title;
+   String? description;
+   String? comment;
+   String? status;
+   String? statusFa;
+   String? statusText;
   final String? createdAt;
 
   RequestData({

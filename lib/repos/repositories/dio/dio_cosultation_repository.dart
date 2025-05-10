@@ -8,15 +8,13 @@ class RequestsRepository {
 
   Future<Response<dynamic>> getRequestType() async => _dio.get('/collaboration/types');
 
-  Future<Response<dynamic>> postRequest(String title, String description, String attachment,) async {
-    FormData formData = FormData.fromMap({
-      'attachment':
-      await MultipartFile.fromFile(attachment, filename: 'attachment'),
-    });
+  Future<Response<dynamic>> postRequest(String title, String description, int id, List attachments) async {
+
       Map<String, dynamic> variables = {
         'title': title ,
+        "collaboration_type_id": id,
         'description': description,
-        'attachment': formData,
+        'attachment': attachments,
       };
 
     return await _dio.post('/collaboration/store', data: variables);
