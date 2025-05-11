@@ -58,6 +58,11 @@ class ProfileRepository {
       '/admin-settings',
     );
   }
-}
 
+  Future<Response<dynamic>> getInfoList(List<int> ids) {
+    Map<String, dynamic> variables = {'global_ids': ids};
+    return _dio.post('/users-info', data: variables,);
+  }
+
+}
 

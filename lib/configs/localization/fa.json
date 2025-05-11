@@ -217,7 +217,11 @@
     "cancelCooperation": "لغو همکاری",
     "myConsultation": "مشاوره من",
     "consultant": "مشاور",
-    "address": "مسیریابی مرکز"
+    "address": "مسیریابی مرکز",
+    "time":"زمان",
+    "center_address" : "آدرس مرکز مشاوره",
+    "myConsultation_cost" : "هزینه مشاوره",
+    "toman" : "تومان"
   },
 
   "error": {

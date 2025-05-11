@@ -29,6 +29,7 @@ void main() async {
   final NotificationBloc notificationBloc = NotificationBloc();
   notificationBloc.add(LoadNotifications());
   final settings = await loadUserSettings();
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp(notificationBloc: notificationBloc, userSettings: settings['userSettings'], token: settings['token']??''));
 }
 

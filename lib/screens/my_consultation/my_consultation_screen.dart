@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:social_psn/screens/my_consultation/shimmer/consult_shimmer.dart';
 import 'package:social_psn/screens/my_consultation/widget/consult_item.dart';
 
 import '../../configs/localization/app_localizations.dart';
@@ -50,7 +51,8 @@ class MyConsultationScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    SizedBox(height: 16),
+
                     BlocConsumer<MyConsultationBloc, MyConsultationState>(
                         listenWhen: (context, state)=> state is MyConsultationError,
                         listener: (context, state){
@@ -64,10 +66,10 @@ class MyConsultationScreen extends StatelessWidget {
                             return Expanded(
                               child: ListView(
                                 children: [
-                                  RequestItemShimmer(),
-                                  RequestItemShimmer(),
-                                  RequestItemShimmer(),
-                                  RequestItemShimmer(),
+                                  ConsultationShimmer(),
+                                  ConsultationShimmer(),
+                                  ConsultationShimmer(),
+                                  ConsultationShimmer(),
                                 ],
                               ),
                             );
