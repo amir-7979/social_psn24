@@ -449,17 +449,13 @@ class _ConsultationItemState extends State<ConsultationItem>
                                     }
                                   },
                                   child: Text(
-<<<<<<< HEAD
-                                    AppLocalizations.of(context)!
-=======
-                                    //use getType function to get the type of consultation
                                     getType(widget.consultation) == 1
                                         ? AppLocalizations.of(context)!
                                             .translateNested("consultation", "address")
                                         : getType(widget.consultation) == 2 ? AppLocalizations.of(context)!
                                             .translateNested("consultation", "start_conversation")
                                    :  AppLocalizations.of(context)!
->>>>>>> 0458aa0 (complete 2 screens for chose consultant and consulting center.)
+
                                         .translateNested("consultation", "address"),
                                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                       fontWeight: FontWeight.w400,
@@ -495,7 +491,7 @@ class _ConsultationItemState extends State<ConsultationItem>
                         shape: BoxShape.circle,
                         color: Theme.of(context).colorScheme.background,
                         border:
-                            Border.all(color: Theme.of(context).colorScheme.surface),
+                            Border.all(color: Theme.of(context).colorScheme.background),
                       ),
                       child: ClipOval(
                         child:
@@ -538,11 +534,8 @@ class _ConsultationItemState extends State<ConsultationItem>
                                   ),
                                 ),
                                 const SizedBox(width: 2),
-<<<<<<< HEAD
-                                Flexible(
-=======
+
                                 if(widget.consultation.counselingCenter?.name != null) Flexible(
->>>>>>> 0458aa0 (complete 2 screens for chose consultant and consulting center.)
                                   child: Text(
                                     '(${widget.consultation.counselingCenter?.name})',
                                     textDirection: TextDirection.ltr,
