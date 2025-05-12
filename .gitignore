@@ -9,13 +9,14 @@
 .history
 .svn/
 migrate_working_dir/
-
+/build/
+/.idea/
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
-
+android/app/*
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
@@ -47,3 +48,5 @@ app.*.map.json
 /firebase.json
 /firebase.exe.lnk
 /lib/secre.dart
+/android/key.properties
+/android/app/.cxx/

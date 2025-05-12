@@ -1,2 +1,0 @@
-C:/Users/amir/Desktop/apps/projects/flutter/social_psn24/android/app/.cxx/Debug/a2o1u2t2/arm64-v8a/CMakeFiles/edit_cache.dir
-C:/Users/amir/Desktop/apps/projects/flutter/social_psn24/android/app/.cxx/Debug/a2o1u2t2/arm64-v8a/CMakeFiles/rebuild_cache.dir
