@@ -29,11 +29,7 @@ void main() async {
   final NotificationBloc notificationBloc = NotificationBloc();
   notificationBloc.add(LoadNotifications());
   final settings = await loadUserSettings();
-<<<<<<< HEAD
-  WidgetsFlutterBinding.ensureInitialized();
-=======
   print('Token: ${settings['userSettings']}');
->>>>>>> 0458aa0 (complete 2 screens for chose consultant and consulting center.)
   runApp(MyApp(notificationBloc: notificationBloc, userSettings: settings['userSettings'], token: settings['token']??''));
 }
 
