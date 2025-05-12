@@ -17,4 +17,14 @@ class ConsultantsRepository {
 
   Future<Response<dynamic>> getAvailability(int consultantId) =>
       _dio.get('/api/consultants/$consultantId/availability');
+
+  Future<Response<dynamic>> getCounselingCenters() =>
+      _dio.get('/api/consultants/centers');
+
+  Future<Response<dynamic>> createCenter(Map<String, dynamic> data) =>
+      _dio.post('/api/counseling-center/store', data: data);
+
+  Future<Response<dynamic>> updateCenter(Map<String, dynamic> data) =>
+      _dio.post('/api/counseling-center/update', data: data);
+
 }

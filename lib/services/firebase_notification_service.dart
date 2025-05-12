@@ -62,9 +62,6 @@ class FirebaseNotificationService {
   }
 
   void _onMessageHandler(RemoteMessage message) async {
-    print('_______________________\nMessage received!');
-    print('Message data: ${message.data}');
-    print('Message notification: ${message.notification}');
     _showNotification(
         message.notification!.title ?? '',
         message.notification!.body ?? '',
@@ -95,22 +92,18 @@ class FirebaseNotificationService {
   }
 
   void _onMessageOpenedAppHandler(RemoteMessage message) {
-    print('_______________________\nMessage clicked!');
   }
 
   Future<void> _onDidReceiveNotificationResponse(
       NotificationResponse notificationResponse) async {
-    print('_______________________\nMessage payload!');
 
     if (notificationResponse.payload != null) {
-      print('Notification payload: ${notificationResponse.payload.toString()}');
     }
   }
 
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
-    print("Handling a background message: ${message.messageId}");
   }
 
   Future<String?> getToken() async {
@@ -120,7 +113,6 @@ class FirebaseNotificationService {
 
   Future<void> subscribeToTopic(String topic) async {
     await _messaging.subscribeToTopic(topic);
-    //print('Subscribed to topic: $topic');
   }
 
   Future<void> unsubscribeFromTopic(String topic) async {

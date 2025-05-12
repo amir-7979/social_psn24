@@ -9,6 +9,7 @@ import '../../auth/register/register.dart';
 import '../../auth/verify/verify.dart';
 import '../../charity/charity_screen.dart';
 import '../../cooperation/cooperation_screen.dart';
+import '../../create_consultation/create_consultation_screen.dart';
 import '../../edit_profile/edit_profile_screen.dart';
 import '../../home/home_screen.dart';
 import '../../my_consultation/my_consultation_screen.dart';
@@ -34,6 +35,7 @@ class AppRoutes {
   static const String requestsList = '/requests_list';
   static const String createRequest = '/create_requests';
   static const String settings = '/settings';
+  static const String createConsult = '/create_consult';
 
 }
 
@@ -69,5 +71,6 @@ final Map<String, WidgetBuilder> routes = {
   AppRoutes.requestsList: (BuildContext context) => RequestsListScreen(),
   AppRoutes.createRequest: (BuildContext context) => CreateRequestScreen(),
   AppRoutes.settings: (BuildContext context) => SettingScreen(),
+  AppRoutes.createConsult: (BuildContext context) => CreateConsultationScreen(),
 
 };

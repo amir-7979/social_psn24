@@ -221,7 +221,16 @@
     "time":"زمان",
     "center_address" : "آدرس مرکز مشاوره",
     "myConsultation_cost" : "هزینه مشاوره",
+<<<<<<< HEAD
     "toman" : "تومان"
+=======
+    "toman" : "تومان",
+    "start_conversation" : "شروع گفتگو",
+    "start_consultation" : "شروع مشاوره",
+    "consult_list": " لیست مشاوران",
+    "consultation_centers": "مراکز مشاوره",
+    "details": "جزییات"
+>>>>>>> 0458aa0 (complete 2 screens for chose consultant and consulting center.)
   },
 
   "error": {

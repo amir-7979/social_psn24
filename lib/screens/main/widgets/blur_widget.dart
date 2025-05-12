@@ -43,7 +43,6 @@ class _BlurWidgetState extends State<BlurWidget> with SingleTickerProviderStateM
 
   void _closeWidget() {
     _controller.reverse().then((_) {
-      // Animation completed, now update the state
       widget.changeAddButtonState(false);
     });
   }
@@ -84,7 +83,12 @@ class _BlurWidgetState extends State<BlurWidget> with SingleTickerProviderStateM
                           0,
                           AppLocalizations.of(context)!.translateNested('bottomBar', 'consultation'),
                           FontAwesomeIcons.thinComment,
-                          _closeWidget,
+                          (){
+                            _closeWidget();
+
+                            widget.navigatorKey.currentState!.pushNamed(AppRoutes.createConsult);
+
+                          },
                         ),
                       ),
                       _buildAnimatedColumn(

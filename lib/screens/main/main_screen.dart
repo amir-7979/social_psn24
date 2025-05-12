@@ -217,8 +217,39 @@ class _MainScreenState extends State<MainScreen>
                           AppLocalizations.of(context)!
                               .translateNested('bottomBar', 'consultation'),
                           FontAwesomeIcons.thinComment,
-                          _handleFABPressed,
-                          color: darkBaseColor
+                                () {
+                              if (!BlocProvider.of<SettingBloc>(context)
+                                  .state
+                                  .isUserLoggedIn) {
+                                navigatorKey.currentState!
+                                    .pushNamed(AppRoutes.login);
+                              } else {
+                                if (BlocProvider.of<SettingBloc>(context)
+                                    .state
+                                    .profile != null && BlocProvider.of<SettingBloc>(context)
+                                    .state
+                                    .profile!
+                                    .permissions!
+                                    .any((permission) {
+                                  return RegExp(r'create .* ')
+                                      .hasMatch(permission);
+                                })) {
+                                  navigatorKey.currentState!
+                                      .pushNamed(AppRoutes.createConsult);
+                                }
+                                _handleFABPressed();
+                              }
+                            },
+                            color: BlocProvider.of<SettingBloc>(context)
+                                .state
+                                .profile != null && BlocProvider.of<SettingBloc>(context)
+                                .state
+                                .profile!
+                                .permissions!
+                                .any((permission) {
+                              return RegExp(r'create .* ')
+                                  .hasMatch(permission);
+                            }) ? Theme.of(context).colorScheme.tertiary : darkBaseColor
                         ),
                       ),
                       _buildAnimatedColumn(

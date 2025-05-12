@@ -1,3 +1,4 @@
+import 'consultant.dart';
 import 'province.dart';
 
 class CounselingCenter {
@@ -12,6 +13,7 @@ class CounselingCenter {
   final String? openingTime;
   final String? closingTime;
   final bool? isActive;
+  final List<Consultant>? consultants;
 
   CounselingCenter({
     this.id,
@@ -25,6 +27,7 @@ class CounselingCenter {
     this.openingTime,
     this.closingTime,
     this.isActive,
+    this.consultants,
   });
 
   factory CounselingCenter.fromJson(Map<String, dynamic> json) {
@@ -40,6 +43,9 @@ class CounselingCenter {
       openingTime: json['opening_time'] as String?,
       closingTime: json['closing_time'] as String?,
       isActive: json['is_active'] as bool?,
+      consultants: (json['consultants'] as List<dynamic>?)
+          ?.map((e) => Consultant.fromJson(e))
+          .toList(),
     );
   }
 }
