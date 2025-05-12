@@ -71,7 +71,7 @@ class CenterItemShimmer extends StatelessWidget {
                   color: Theme.of(context).colorScheme.background,
                   borderRadius: BorderRadius.circular(8),
                   border:
-                  Border.all(color: Theme.of(context).colorScheme.surface),
+                  Border.all(color: Theme.of(context).colorScheme.background),
                 ),
                 child: shimmerContainer(context,
                     width: 55, height: 55, radius: 8),

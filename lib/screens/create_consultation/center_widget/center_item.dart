@@ -115,7 +115,7 @@ class CenterItem extends StatelessWidget {
                   color: Theme.of(context).colorScheme.background,
                   borderRadius: BorderRadius.circular(8),
                   border:
-                  Border.all(color: Theme.of(context).colorScheme.surface),
+                  Border.all(color: Theme.of(context).colorScheme.background),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
