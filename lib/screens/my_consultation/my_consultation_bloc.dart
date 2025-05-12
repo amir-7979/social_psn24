@@ -31,10 +31,6 @@ class MyConsultationBloc extends Bloc<MyConsultationEvent, MyConsultationState> 
       final List<Consultation> consultations = (result.data['data'] as List).map((item) => Consultation.fromJson(item)).toList();
 
       final List<int> consultationIds = consultations.map((c) => c.consultant!.id!).toList();
-<<<<<<< HEAD
-      print(consultationIds);
-=======
->>>>>>> 0458aa0 (complete 2 screens for chose consultant and consulting center.)
 
       try {
         result = await profileRepository.getInfoList(consultationIds);
