@@ -377,7 +377,7 @@ class _ConsultationItemState extends State<ConsultationItem>
                               begin: Alignment.bottomCenter,
                               end: Alignment.topCenter,
                               colors: [
-                                Theme.of(context).primaryColor.withOpacity(0.2),
+                                Theme.of(context).primaryColor.withOpacity(0.16),
                                 Theme.of(context).colorScheme.background.withOpacity(0.0),
 
                               ],

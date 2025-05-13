@@ -226,7 +226,15 @@
     "start_consultation" : "شروع مشاوره",
     "consult_list": " لیست مشاوران",
     "consultation_centers": "مراکز مشاوره",
-    "details": "جزییات"
+    "details": "جزییات",
+    "national_code": "کد ملی",
+    "chose_center": "مرکز",
+    "error_national_code": "کد ملی وارد شده صحیح نیست",
+    "day": "روز",
+    "night": "شب",
+    "evening": "عصر",
+    "pay": "پرداخت و ثبت نوبت"
+
   },
 
   "error": {

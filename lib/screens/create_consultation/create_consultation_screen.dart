@@ -33,63 +33,67 @@ class _CreateConsultationScreenState extends State<CreateConsultationScreen> wit
   Widget build(BuildContext context) {
     return BlocProvider(
   create: (context) => CreateConsultationBloc(),
-  child: DefaultTabController(
-      length: 2,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 50,
-              child: TabBar(
-                tabAlignment: TabAlignment.center,
-                indicator: const UnderlineTabIndicator(
-                  borderSide: BorderSide(width: 2.0, color: whiteColor),
-                ),
-                labelColor: whiteColor,
-                dividerColor: Colors.transparent,
-                labelStyle: iranYekanTheme.headlineMedium!.copyWith(color: whiteColor),
-                unselectedLabelStyle: iranYekanTheme.headlineMedium!.copyWith(color: whiteColor),
-                indicatorPadding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 10),
-                tabs: [
-                  Tab(
-                    text: AppLocalizations.of(context)!
-                        .translateNested('consultation', 'consult_list'),
-                  ),
-
-                  Tab(
-                    text: AppLocalizations.of(context)!
-                        .translateNested('consultation', 'consultation_centers'),
-                  ),
-                ],
-              ),
+  child: Builder(
+    builder: (context) {
+      return DefaultTabController(
+          length: 2,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.primary,
             ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsetsDirectional.fromSTEB(10, 16, 10, 0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.transparent),
-                  color: Theme.of(context).colorScheme.background,
-                  borderRadius: const BorderRadius.all(Radius.circular(16)),
-                ),
-                child: TabBarView(
-                  children: [
-                    ConsultantList(),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 50,
+                  child: TabBar(
+                    tabAlignment: TabAlignment.center,
+                    indicator: const UnderlineTabIndicator(
+                      borderSide: BorderSide(width: 2.0, color: whiteColor),
+                    ),
+                    labelColor: whiteColor,
+                    dividerColor: Colors.transparent,
+                    labelStyle: iranYekanTheme.headlineMedium!.copyWith(color: whiteColor),
+                    unselectedLabelStyle: iranYekanTheme.headlineMedium!.copyWith(color: whiteColor),
+                    indicatorPadding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 10),
+                    tabs: [
+                      Tab(
+                        text: AppLocalizations.of(context)!
+                            .translateNested('consultation', 'consult_list'),
+                      ),
 
-                    CenterList(),
-                  ],
+                      Tab(
+                        text: AppLocalizations.of(context)!
+                            .translateNested('consultation', 'consultation_centers'),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 16, 10, 0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.transparent),
+                      color: Theme.of(context).colorScheme.background,
+                      borderRadius: const BorderRadius.all(Radius.circular(16)),
+                    ),
+                    child: TabBarView(
+                      children: [
+                        ConsultantList(),
+
+                        CenterList(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ),
+          ),
+        );
+    }
+  ),
 );
   }
 }

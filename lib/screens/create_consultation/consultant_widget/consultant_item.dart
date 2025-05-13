@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_psn/repos/models/consultation_model/consultation.dart';
+import 'package:social_psn/screens/consultant_availability/consultant_availability_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
@@ -12,9 +13,10 @@ import '../../../repos/models/consultation_model/consultant.dart';
 import '../../../repos/models/consultation_model/user.dart';
 
 import '../../main/widgets/screen_builder.dart';
+import '../../notification/notification_screen.dart';
 import '../../widgets/profile_cached_network_image.dart';
 
-class ConsultantItem extends StatelessWidget{
+class ConsultantItem extends StatelessWidget {
   final Consultant consultant;
 
   ConsultantItem(this.consultant);
@@ -29,9 +31,9 @@ class ConsultantItem extends StatelessWidget{
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: 24),
               child: Container(
-
                 decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.surface),
+                  border:
+                      Border.all(color: Theme.of(context).colorScheme.surface),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Padding(
@@ -41,8 +43,7 @@ class ConsultantItem extends StatelessWidget{
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Padding(
-                        padding:
-                        const EdgeInsetsDirectional.only(start: 55),
+                        padding: const EdgeInsetsDirectional.only(start: 55),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -53,38 +54,35 @@ class ConsultantItem extends StatelessWidget{
                                     color: Theme.of(context).hintColor),
                                 SizedBox(width: 2),
                                 Text(
-                                  AppLocalizations.of(context)!
-                                      .translateNested(
+                                  AppLocalizations.of(context)!.translateNested(
                                       "consultation", 'consultant'),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
                                       .copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    color: Theme.of(context).hintColor,
-                                  ),
+                                        fontWeight: FontWeight.w500,
+                                        color: Theme.of(context).hintColor,
+                                      ),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
                                 Text(
-                                  consultant.score == 0 ? "0" : consultant.score.toString() ?? "",
+                                  consultant.score == 0
+                                      ? "0"
+                                      : consultant.score.toString() ?? "",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
                                       .copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: amberColor,
-                                  ),
-                                  ),
+                                        fontWeight: FontWeight.w400,
+                                        color: amberColor,
+                                      ),
+                                ),
                                 SizedBox(width: 2),
-
                                 FaIcon(FontAwesomeIcons.solidStar,
-                                    size: 12,
-                                    color: Colors.amber),
-
-
+                                    size: 12, color: Colors.amber),
                               ],
                             ),
                           ],
@@ -103,16 +101,22 @@ class ConsultantItem extends StatelessWidget{
                                 height: 22,
                                 padding: EdgeInsets.zero,
                                 margin: EdgeInsets.zero,
-
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: consultant.hasChat ?  Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.surface.withOpacity(0.2),
+                                  color: consultant.hasChat
+                                      ? Theme.of(context).colorScheme.surface
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .surface
+                                          .withOpacity(0.2),
                                 ),
                                 child: Center(
                                   child: FaIcon(
                                     FontAwesomeIcons.solidComment,
                                     size: 12,
-                                    color: Theme.of(context).colorScheme.background,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
                                   ),
                                 ),
                               ),
@@ -122,56 +126,72 @@ class ConsultantItem extends StatelessWidget{
                                 height: 22,
                                 padding: EdgeInsets.zero,
                                 margin: EdgeInsets.zero,
-
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: consultant.hasInPerson ?  Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.surface.withOpacity(0.2),
+                                  color: consultant.hasInPerson
+                                      ? Theme.of(context).colorScheme.surface
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .surface
+                                          .withOpacity(0.2),
                                 ),
                                 child: Center(
                                   child: FaIcon(
                                     FontAwesomeIcons.solidUserTie,
                                     size: 12,
-                                    color: Theme.of(context).colorScheme.background,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
                                   ),
                                 ),
                               ),
                               SizedBox(width: 4),
-
                               Container(
                                 width: 22,
                                 height: 22,
                                 padding: EdgeInsets.zero,
                                 margin: EdgeInsets.zero,
-
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: consultant.hasVideo ?  Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.surface.withOpacity(0.2),
+                                  color: consultant.hasVideo
+                                      ? Theme.of(context).colorScheme.surface
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .surface
+                                          .withOpacity(0.2),
                                 ),
                                 child: Center(
                                   child: FaIcon(
                                     FontAwesomeIcons.solidVideo,
                                     size: 11,
-                                    color: Theme.of(context).colorScheme.background,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
                                   ),
                                 ),
                               ),
                               SizedBox(width: 4),
-
                               Container(
                                 width: 22,
                                 height: 22,
                                 padding: EdgeInsets.zero,
                                 margin: EdgeInsets.zero,
-
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: consultant.hasAudio ?  Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.surface.withOpacity(0.2),
+                                  color: consultant.hasAudio
+                                      ? Theme.of(context).colorScheme.surface
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .surface
+                                          .withOpacity(0.2),
                                 ),
                                 child: Center(
                                   child: FaIcon(
                                     FontAwesomeIcons.solidPhone,
                                     size: 12,
-                                    color: Theme.of(context).colorScheme.background,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
                                   ),
                                 ),
                               ),
@@ -181,7 +201,8 @@ class ConsultantItem extends StatelessWidget{
                             height: 27,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 0),
+                                padding: EdgeInsetsDirectional.symmetric(
+                                    horizontal: 8, vertical: 0),
                                 minimumSize: const Size(60, 27),
                                 shadowColor: Colors.transparent,
                                 backgroundColor: Color(0x3300A6ED),
@@ -190,22 +211,35 @@ class ConsultantItem extends StatelessWidget{
                                 ),
                               ),
                               onPressed: () async {
-
-
+                                showDialog(
+                                    context: context,
+                                    useSafeArea: true,
+                                    barrierDismissible: true,
+                                    useRootNavigator: true,
+                                    builder: (BuildContext context) {
+                                      return Dialog(
+                                        elevation: 1,
+                                        child: ConsultantAvailabilityScreen(id: consultant.id!, avatar: consultant.infoUrl),
+                                      );
+                                    });
                               },
                               child: Text(
-                                AppLocalizations.of(context)!
-                                    .translateNested("consultation", "start_consultation"),
-                                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                ),
+                                AppLocalizations.of(context)!.translateNested(
+                                    "consultation", "start_consultation"),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary,
+                                    ),
                               ),
                             ),
                           ),
                         ],
                       ),
-
                     ],
                   ),
                 ),
@@ -220,9 +254,9 @@ class ConsultantItem extends StatelessWidget{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               InkWell(
-                onTap:(){
-                  Navigator.of(context).pushNamed(AppRoutes.profile,
-                      arguments: consultant.id);
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamed(AppRoutes.profile, arguments: consultant.id);
                 },
                 child: Container(
                   width: 50,
@@ -230,21 +264,19 @@ class ConsultantItem extends StatelessWidget{
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Theme.of(context).colorScheme.background,
-                    border:
-                    Border.all(color: Theme.of(context).colorScheme.background),
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.background),
                   ),
                   child: ClipOval(
-                    child:
-                    (consultant.infoUrl !=
-                        null)
+                    child: (consultant.infoUrl != null)
                         ? FittedBox(
-                      fit: BoxFit.cover,
-                      child: ProfileCacheImage(
-                        consultant.infoUrl,
-                      ),
-                    )
+                            fit: BoxFit.cover,
+                            child: ProfileCacheImage(
+                              consultant.infoUrl,
+                            ),
+                          )
                         : SvgPicture.asset(
-                        'assets/images/profile/profile2.svg'),
+                            'assets/images/profile/profile2.svg'),
                   ),
                 ),
               ),
@@ -265,15 +297,15 @@ class ConsultantItem extends StatelessWidget{
                                     .textTheme
                                     .titleLarge!
                                     .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground,
-                                    //fontSize: 14,
-                                    fontWeight: FontWeight.w400),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground,
+                                        //fontSize: 14,
+                                        fontWeight: FontWeight.w400),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            ],
+                          ],
                         ),
                       ),
                     ],
