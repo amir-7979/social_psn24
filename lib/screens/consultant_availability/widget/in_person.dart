@@ -7,6 +7,7 @@ import 'package:searchfield/searchfield.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
 import '../../../repos/models/consultation_model/consultant_availability.dart';
+import '../../../repos/models/consultation_model/counseling_center_short.dart';
 
 class InPerson extends StatefulWidget {
   final ConsultantAvailability consultantAvailability;
@@ -21,17 +22,19 @@ class InPerson extends StatefulWidget {
 }
 
 class _InPersonState extends State<InPerson> {
-  @override
-  final _ifFocusNode = FocusNode();
+  TextEditingController categoryController = TextEditingController();
+  final TextEditingController idController = TextEditingController();
+  final _idFocusNode = FocusNode();
   final _centerFocusNode = FocusNode();
-
   String? selectedCenter;
+  int? selectedCenterId;
   bool _isCenterFieldOpen = false;
   String? selectedValue;
   final _formKey = GlobalKey<FormState>();
-
-  TextEditingController categoryController = TextEditingController();
-  final TextEditingController idController = TextEditingController();
+  CenterAvailability? selectedCenterShort;
+  AvailableDate? selectedDate;
+  DaySectionAvailability? daySectionAvailability;
+  AvailableTime? availableTime;
 
   void _toggleSearchField() {
     setState(() {
@@ -44,6 +47,24 @@ class _InPersonState extends State<InPerson> {
     });
   }
 
+  void setAvailableDate(AvailableDate? date) {
+    setState(() {
+      selectedDate = date;
+    });
+  }
+
+  void setDaySectionAvailability(DaySectionAvailability? date) {
+    setState(() {
+      daySectionAvailability = date;
+    });
+  }
+
+  void setAvailableTime(AvailableTime? data) {
+    setState(() {
+      availableTime = data;
+    });
+  }
+
   Widget build(BuildContext context) {
     return ListView(
       children: [
@@ -51,7 +72,7 @@ class _InPersonState extends State<InPerson> {
         Form(
           key: _formKey,
           child: TextFormField(
-            focusNode: _ifFocusNode,
+            focusNode: _idFocusNode,
             controller: idController,
             keyboardType: TextInputType.number,
             textDirection: TextDirection.ltr,
@@ -64,7 +85,7 @@ class _InPersonState extends State<InPerson> {
               labelText: AppLocalizations.of(context)!
                   .translateNested("consultation", "national_code"),
               labelStyle: TextStyle(
-                color: _ifFocusNode.hasFocus
+                color: _idFocusNode.hasFocus
                     ? Theme.of(context).primaryColor
                     : Theme.of(context).hintColor,
                 fontWeight: FontWeight.w400,
@@ -80,38 +101,36 @@ class _InPersonState extends State<InPerson> {
               border: borderStyle,
               errorBorder: errorBorderStyle,
               focusedErrorBorder: errorBorderStyle,
-              contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+              contentPadding:
+                  const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
             ),
             validator: (value) {
-              if (value!.isNotEmpty &&
-                  value.length == 10) {
+              if (value!.isNotEmpty && value.length == 10) {
                 return null;
-              }else
-              return AppLocalizations.of(context)!
-                  .translateNested('consultation', 'error_national_code');
+              } else
+                return AppLocalizations.of(context)!
+                    .translateNested('consultation', 'error_national_code');
             },
             onTap: () {
-              _ifFocusNode.requestFocus();
+              _idFocusNode.requestFocus();
               setState(() {});
             },
             onTapUpOutside: (_) {
-              _ifFocusNode.unfocus();
+              _idFocusNode.unfocus();
               _formKey.currentState!.validate();
-
             },
             onFieldSubmitted: (value) {
               _centerFocusNode.requestFocus();
               _formKey.currentState!.validate();
               setState(() {});
             },
-
           ),
         ),
         SizedBox(height: 8),
         Directionality(
           textDirection: TextDirection.rtl,
           child: DropdownButtonHideUnderline(
-            child: DropdownButton2<String>(
+            child: DropdownButton2<CenterAvailability>(
               isExpanded: true,
               focusNode: _centerFocusNode,
               barrierColor: Colors.transparent,
@@ -125,12 +144,11 @@ class _InPersonState extends State<InPerson> {
                       fontWeight: FontWeight.w400,
                     ),
               ),
-              items: widget.consultantAvailability.availabilities!.inPerson!
-                  .counselingCenters!
-                  .map((item) => DropdownMenuItem<String>(
-                        value: item.id.toString(),
+              items: widget.consultantAvailability.availabilities.inPerson
+                  .map((item) => DropdownMenuItem<CenterAvailability>(
+                        value: item,
                         child: Text(
-                          item.name ?? '',
+                          item.center.name ?? '',
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge!
@@ -141,19 +159,20 @@ class _InPersonState extends State<InPerson> {
                         ),
                       ))
                   .toList(),
-              value: selectedValue,
+              value: selectedCenterShort,
               onMenuStateChange: (isOpen) {
                 setState(() {
-
                   _centerFocusNode.requestFocus();
                 });
               },
               onChanged: (value) {
                 setState(() {
-                  selectedValue = value;
+                  selectedCenterShort = value;
                   _toggleSearchField();
                   _centerFocusNode.unfocus();
-
+                  selectedDate = null;
+                  daySectionAvailability = null;
+                  availableTime = null;
                 });
               },
               buttonStyleData: ButtonStyleData(
@@ -189,19 +208,78 @@ class _InPersonState extends State<InPerson> {
           ),
         ),
         SizedBox(height: 20),
-        DatePicker(consultantAvailability: widget.consultantAvailability),
+        if (selectedCenterShort != null)
+          DatePicker(
+              availableDates: selectedCenterShort!.availableDates,
+              setAvailableDate: setAvailableDate,
+              setDaySectionAvailability: setDaySectionAvailability),
         SizedBox(height: 20),
-        SimpleTimeSelector(),
+        if (selectedDate != null)
+          DaySelector(
+              selectedDate: selectedDate!,
+              setDaySectionAvailability: setDaySectionAvailability),
+        SizedBox(height: 20),
+        (daySectionAvailability != null)
+            ? TimePicker(
+                times: daySectionAvailability!.times,
+                setAvailableTime: setAvailableTime)
+            : Text(
+                AppLocalizations.of(context)!
+                    .translateNested("consultation", "select_day"),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+              ),
+        SizedBox(height: 20),
+        Expanded(child: Container()),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding:
+                  EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 0),
+              minimumSize: const Size(double.infinity, 40),
+              shadowColor: Colors.transparent,
+              backgroundColor: (availableTime != null) ? Color(0x3300A6ED) :
+              Theme.of(context).dividerColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            onPressed: () async {
+              if(availableTime != null){
 
+              }
+            },
+            child: Text(
+              AppLocalizations.of(context)!
+                  .translateNested("consultation", "pay"),
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: (availableTime != null) ? Theme.of(context).colorScheme.tertiary:
+                Theme.of(context).shadowColor,
+                  ),
+            ),
+          ),
+        ),
       ],
     );
   }
 }
 
 class DatePicker extends StatefulWidget {
-  final ConsultantAvailability consultantAvailability;
+  final List<AvailableDate> availableDates;
+  Function(AvailableDate) setAvailableDate;
+  Function(DaySectionAvailability?) setDaySectionAvailability;
 
-  const DatePicker({super.key, required this.consultantAvailability});
+  DatePicker({
+    Key? key,
+    required this.availableDates,
+    required this.setAvailableDate,
+    required this.setDaySectionAvailability,
+  }) : super(key: key);
 
   @override
   State<DatePicker> createState() => _DatePickerState();
@@ -219,14 +297,10 @@ class _DatePickerState extends State<DatePicker> {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          ...widget.consultantAvailability.availabilities!.inPerson!
-              .availableDates!
-              .asMap()
-              .entries
-              .map(
-                (entry) {
-              final index = entry.key;
-              final date = entry.value;
+          ...widget.availableDates.map(
+            (entry) {
+              final index = entry.id;
+
               final isSelected = selectedIndex == index;
 
               return Padding(
@@ -235,6 +309,8 @@ class _DatePickerState extends State<DatePicker> {
                   onTap: () {
                     setState(() {
                       selectedIndex = index;
+                      widget.setAvailableDate(entry);
+                      widget.setDaySectionAvailability(null);
                     });
                   },
                   child: Container(
@@ -249,13 +325,13 @@ class _DatePickerState extends State<DatePicker> {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      date.formattedPersianDate!,
+                      entry.jalaliDate,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: isSelected
-                            ? primaryColor
-                            : Theme.of(context).colorScheme.surface,
-                      ),
+                            color: isSelected
+                                ? primaryColor
+                                : Theme.of(context).colorScheme.surface,
+                          ),
                     ),
                   ),
                 ),
@@ -268,15 +344,22 @@ class _DatePickerState extends State<DatePicker> {
   }
 }
 
-class SimpleTimeSelector extends StatefulWidget {
-  const SimpleTimeSelector({super.key});
+class DaySelector extends StatefulWidget {
+  AvailableDate selectedDate;
+  Function(DaySectionAvailability?) setDaySectionAvailability;
+
+  DaySelector({
+    Key? key,
+    required this.selectedDate,
+    required this.setDaySectionAvailability,
+  }) : super(key: key);
 
   @override
-  State<SimpleTimeSelector> createState() => _SimpleTimeSelectorState();
+  State<DaySelector> createState() => _DaySelectorState();
 }
 
-class _SimpleTimeSelectorState extends State<SimpleTimeSelector> {
-  int? selectedIndex;
+class _DaySelectorState extends State<DaySelector> {
+  int? index;
 
   @override
   Widget build(BuildContext context) {
@@ -290,109 +373,197 @@ class _SimpleTimeSelectorState extends State<SimpleTimeSelector> {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              setState(() {
-                selectedIndex = 0;
-              });
+              if (widget.selectedDate.sections
+                  .any((data) => data.section == DaySection.day))
+                setState(() {
+                  index = 0;
+                  widget.setDaySectionAvailability(widget.selectedDate.sections
+                      .firstWhere((data) => data.section == DaySection.day));
+                });
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               decoration: BoxDecoration(
-                border: Border.all(
-                    color: selectedIndex == 0 ? primaryColor : surfaceColor),
+                border:
+                    Border.all(color: index == 0 ? primaryColor : surfaceColor),
                 borderRadius: BorderRadius.circular(8),
+                color: (widget.selectedDate.sections
+                        .any((data) => data.section == DaySection.day))
+                    ? Colors.transparent
+                    : Theme.of(context).dividerColor,
               ),
-              child:Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   FaIcon(FontAwesomeIcons.lightSun,
-                      size: 14,
-                      color: selectedIndex == 0 ? primaryColor : whiteColor),
+                      size: 14, color: index == 0 ? primaryColor : whiteColor),
                   const SizedBox(width: 5),
                   Text(
                     AppLocalizations.of(context)!
                         .translateNested("consultation", "day"),
                     style: TextStyle(
-                        color:
-                        selectedIndex == 0 ? primaryColor : whiteColor),
+                        color: index == 0 ? primaryColor : whiteColor),
                   ),
                 ],
               ),
             ),
           ),
         ),
-
         SizedBox(width: 8),
         Expanded(
           child: GestureDetector(
             onTap: () {
-              setState(() {
-                selectedIndex = 1;
-              });
+              if (widget.selectedDate.sections
+                  .any((data) => data.section == DaySection.evening))
+                setState(() {
+                  index = 1;
+                  widget.setDaySectionAvailability(widget.selectedDate.sections
+                      .firstWhere(
+                          (data) => data.section == DaySection.evening));
+                });
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               decoration: BoxDecoration(
-                border: Border.all(
-                    color: selectedIndex == 1 ? primaryColor : surfaceColor),
+                border:
+                    Border.all(color: index == 1 ? primaryColor : surfaceColor),
                 borderRadius: BorderRadius.circular(10),
+                color: (widget.selectedDate.sections
+                        .any((data) => data.section == DaySection.evening))
+                    ? Colors.transparent
+                    : Theme.of(context).dividerColor,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-
                 children: [
                   FaIcon(FontAwesomeIcons.lightCloudSun,
-                      size: 14,
-                      color: selectedIndex == 1 ? primaryColor : whiteColor),
+                      size: 14, color: index == 1 ? primaryColor : whiteColor),
                   const SizedBox(width: 5),
                   Text(
                     AppLocalizations.of(context)!
                         .translateNested("consultation", "evening"),
                     style: TextStyle(
-                        color:
-                        selectedIndex == 1 ? primaryColor : whiteColor),
+                        color: index == 1 ? primaryColor : whiteColor),
                   ),
                 ],
               ),
             ),
           ),
         ),
-
         SizedBox(width: 8),
         Expanded(
           child: GestureDetector(
             onTap: () {
-              setState(() {
-                selectedIndex = 2;
-              });
+              if (widget.selectedDate.sections
+                  .any((data) => data.section == DaySection.night))
+                setState(() {
+                  index = 2;
+                  widget.setDaySectionAvailability(widget.selectedDate.sections
+                      .firstWhere((data) => data.section == DaySection.night));
+                });
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               decoration: BoxDecoration(
-                border: Border.all(
-                    color: selectedIndex == 2 ? primaryColor : surfaceColor),
+                border:
+                    Border.all(color: index == 2 ? primaryColor : surfaceColor),
                 borderRadius: BorderRadius.circular(10),
+                color: (widget.selectedDate.sections
+                        .any((data) => data.section == DaySection.night))
+                    ? Colors.transparent
+                    : Theme.of(context).dividerColor,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-
                 children: [
                   FaIcon(FontAwesomeIcons.lightMoon,
-                      size: 14,
-                      color: selectedIndex == 2 ? primaryColor : whiteColor),
+                      size: 14, color: index == 2 ? primaryColor : whiteColor),
                   const SizedBox(width: 5),
                   Text(
                     AppLocalizations.of(context)!
                         .translateNested("consultation", "night"),
                     style: TextStyle(
-                        color:
-                        selectedIndex == 2 ? primaryColor : whiteColor),
+                        color: index == 2 ? primaryColor : whiteColor),
                   ),
                 ],
               ),
             ),
           ),
         ),
+        SizedBox(width: 8),
       ],
+    );
+  }
+}
+
+class TimePicker extends StatefulWidget {
+  final List<AvailableTime> times;
+  Function(AvailableTime?) setAvailableTime;
+
+  TimePicker({
+    Key? key,
+    required this.times,
+    required this.setAvailableTime,
+  }) : super(key: key);
+
+  @override
+  State<TimePicker> createState() => _TimePickerState();
+}
+
+class _TimePickerState extends State<TimePicker> {
+  int? selectedIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.tertiary;
+
+    return SizedBox(
+      height: 35,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          ...widget.times.asMap().entries.map(
+            (entry) {
+              final index = entry.key;
+              final date = entry.value;
+              final isSelected = selectedIndex == index;
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = index;
+                      widget.setAvailableTime(date);
+                    });
+                  },
+                  child: Container(
+                    width: 70,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: isSelected
+                            ? primaryColor
+                            : Theme.of(context).colorScheme.surface,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "${date.time} - ${date.endTime}",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            color: isSelected
+                                ? primaryColor
+                                : Theme.of(context).colorScheme.surface,
+                          ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

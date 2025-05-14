@@ -33,14 +33,14 @@ class _AvailabilityTabState extends State<AvailabilityTab>
     super.initState();
 
     // Dynamically determine available tabs based on AvailabilityType
-    if (widget.consultantAvailability.availabilities!.inPerson != null)
+    if (widget.consultantAvailability.availabilities.inPerson.isNotEmpty)
       availableTabs.add('Chat');
-    if (widget.consultantAvailability.availabilities!.video != null)
-      availableTabs.add('Video');
-    if (widget.consultantAvailability.availabilities!.audio != null)
-      availableTabs.add('Audio');
-    if (widget.consultantAvailability.availabilities!.chat != null)
-      availableTabs.add('Chat');
+    // if (widget.consultantAvailability.availabilities!.video != null)
+    //   availableTabs.add('Video');
+    // if (widget.consultantAvailability.availabilities!.audio != null)
+    //   availableTabs.add('Audio');
+    // if (widget.consultantAvailability.availabilities!.chat != null)
+    //   availableTabs.add('Chat');
 
     _tabController = TabController(length: availableTabs.length, vsync: this);
   }

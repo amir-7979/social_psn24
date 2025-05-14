@@ -19,3 +19,15 @@ final class ConsultantAvailabilityError extends ConsultantAvailabilityState {
 
   ConsultantAvailabilityError(this.message);
 }
+
+final class ConsultantAvailabilitySubmitting extends ConsultantAvailabilityState {}
+final class ConsultantAvailabilitySubmitted extends ConsultantAvailabilityState {
+  final String message;
+
+  ConsultantAvailabilitySubmitted(this.message);
+}
+final class ConsultantAvailabilitySubmitError extends ConsultantAvailabilityState {
+  final String message;
+
+  ConsultantAvailabilitySubmitError(this.message);
+}

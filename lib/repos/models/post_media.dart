@@ -4,7 +4,6 @@ class PostMedia {
   final String? type;
   final int? order;
   final String? typename;
-  final String url = 'https://media.psn24.ir/';
   PostMedia({
     this.id,
     this.loc,
@@ -24,9 +23,9 @@ class PostMedia {
   }
   get mediaUrl {
     if (type!.contains('image') && loc != null) {
-      return url + (loc ?? '');
+      return (loc ?? '');
     } else if (type!.contains('video')) {
-      return url + (loc ?? '');
+      return (loc ?? '');
     } else {
       return null;
     }

@@ -4,7 +4,6 @@ class Media {
   String? id;
   final String? loc;
   final String? type;
-  final String url = 'https://media.psn24.ir/';
   int? order;
   final List<Thumbnail>? thumbnails;
 
@@ -24,13 +23,13 @@ class Media {
 
   String? getMediaUrl() {
     if (type!.contains('image') && loc != null) {
-      return url + (loc ?? '');
+      return (loc ?? '');
     } else if (type!.contains('video') &&
         thumbnails != null &&
         thumbnails!.isNotEmpty) {
       return thumbnails![0].loc == null
           ? null
-          : url + (thumbnails![0].loc ?? '');
+          : (thumbnails![0].loc ?? '');
     } else {
       return null;
     }
@@ -38,7 +37,7 @@ class Media {
 
   String? getVideoUrl() {
     if (type!.contains('video') && loc != null) {
-      return url + (loc ?? '');
+      return (loc ?? '');
     } else {
       return null;
     }
@@ -46,7 +45,7 @@ class Media {
 
   String? getAudioUrl() {
     if (type!.contains('audio') && loc != null) {
-      return url + (loc ?? '');
+      return (loc ?? '');
     } else {
       return null;
     }
@@ -54,7 +53,7 @@ class Media {
 
   String? getThumbnailUrl() {
     if (thumbnails != null && thumbnails!.isNotEmpty) {
-      return url + (thumbnails![0].loc ?? '');
+      return (thumbnails![0].loc ?? '');
     } else {
       return null;
     }
