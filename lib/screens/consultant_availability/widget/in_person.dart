@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:searchfield/searchfield.dart';
@@ -8,6 +9,9 @@ import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
 import '../../../repos/models/consultation_model/consultant_availability.dart';
 import '../../../repos/models/consultation_model/counseling_center_short.dart';
+import '../../widgets/custom_snackbar.dart';
+import '../../widgets/white_circular_progress_indicator.dart';
+import '../consultant_availability_bloc.dart';
 
 class InPerson extends StatefulWidget {
   final ConsultantAvailability consultantAvailability;
@@ -66,207 +70,263 @@ class _InPersonState extends State<InPerson> {
   }
 
   Widget build(BuildContext context) {
-    return ListView(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SizedBox(height: 8),
-        Form(
-          key: _formKey,
-          child: TextFormField(
-            focusNode: _idFocusNode,
-            controller: idController,
-            keyboardType: TextInputType.number,
-            textDirection: TextDirection.ltr,
-            textAlign: TextAlign.end,
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
+        Column(
+          children: [
+          SizedBox(height: 8),
+          Form(
+            key: _formKey,
+            child: TextFormField(
+              focusNode: _idFocusNode,
+              controller: idController,
+              keyboardType: TextInputType.number,
+              textDirection: TextDirection.ltr,
+              textAlign: TextAlign.end,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+              textAlignVertical: TextAlignVertical.center,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!
+                    .translateNested("consultation", "national_code"),
+                labelStyle: TextStyle(
+                  color: _idFocusNode.hasFocus
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).hintColor,
+                  fontWeight: FontWeight.w400,
+                  fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
+                  fontFamily: Theme.of(context).textTheme.titleLarge!.fontFamily,
                 ),
-            textAlignVertical: TextAlignVertical.center,
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!
-                  .translateNested("consultation", "national_code"),
-              labelStyle: TextStyle(
-                color: _idFocusNode.hasFocus
-                    ? Theme.of(context).primaryColor
-                    : Theme.of(context).hintColor,
-                fontWeight: FontWeight.w400,
-                fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
-                fontFamily: Theme.of(context).textTheme.titleLarge!.fontFamily,
+                errorStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                  fontWeight: FontWeight.w400,
+                ),
+                enabledBorder: borderStyle,
+                focusedBorder: selectedBorderStyle,
+                border: borderStyle,
+                errorBorder: errorBorderStyle,
+                focusedErrorBorder: errorBorderStyle,
+                contentPadding:
+                const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
               ),
-              errorStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.error,
-                    fontWeight: FontWeight.w400,
-                  ),
-              enabledBorder: borderStyle,
-              focusedBorder: selectedBorderStyle,
-              border: borderStyle,
-              errorBorder: errorBorderStyle,
-              focusedErrorBorder: errorBorderStyle,
-              contentPadding:
-                  const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+              validator: (value) {
+                if (value!.isNotEmpty && value.length == 10) {
+                  return null;
+                } else
+                  return AppLocalizations.of(context)!
+                      .translateNested('consultation', 'error_national_code');
+              },
+              onTap: () {
+                _idFocusNode.requestFocus();
+                setState(() {});
+              },
+              onTapUpOutside: (_) {
+                _idFocusNode.unfocus();
+                _formKey.currentState!.validate();
+              },
+              onFieldSubmitted: (value) {
+                _centerFocusNode.requestFocus();
+                _formKey.currentState!.validate();
+                setState(() {});
+              },
             ),
-            validator: (value) {
-              if (value!.isNotEmpty && value.length == 10) {
-                return null;
-              } else
-                return AppLocalizations.of(context)!
-                    .translateNested('consultation', 'error_national_code');
-            },
-            onTap: () {
-              _idFocusNode.requestFocus();
-              setState(() {});
-            },
-            onTapUpOutside: (_) {
-              _idFocusNode.unfocus();
-              _formKey.currentState!.validate();
-            },
-            onFieldSubmitted: (value) {
-              _centerFocusNode.requestFocus();
-              _formKey.currentState!.validate();
-              setState(() {});
-            },
           ),
-        ),
-        SizedBox(height: 8),
-        Directionality(
-          textDirection: TextDirection.rtl,
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton2<CenterAvailability>(
-              isExpanded: true,
-              focusNode: _centerFocusNode,
-              barrierColor: Colors.transparent,
-              hint: Text(
-                AppLocalizations.of(context)!
-                    .translateNested("consultation", "chose_center"),
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: _centerFocusNode.hasFocus
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).hintColor,
-                      fontWeight: FontWeight.w400,
-                    ),
-              ),
-              items: widget.consultantAvailability.availabilities.inPerson
-                  .map((item) => DropdownMenuItem<CenterAvailability>(
-                        value: item,
-                        child: Text(
-                          item.center.name ?? '',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onBackground,
-                              ),
-                        ),
-                      ))
-                  .toList(),
-              value: selectedCenterShort,
-              onMenuStateChange: (isOpen) {
-                setState(() {
-                  _centerFocusNode.requestFocus();
-                });
-              },
-              onChanged: (value) {
-                setState(() {
-                  selectedCenterShort = value;
-                  _toggleSearchField();
-                  _centerFocusNode.unfocus();
-                  selectedDate = null;
-                  daySectionAvailability = null;
-                  availableTime = null;
-                });
-              },
-              buttonStyleData: ButtonStyleData(
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
+          SizedBox(height: 8),
+          Directionality(
+            textDirection: TextDirection.rtl,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton2<CenterAvailability>(
+                isExpanded: true,
+                focusNode: _centerFocusNode,
+                barrierColor: Colors.transparent,
+                hint: Text(
+                  AppLocalizations.of(context)!
+                      .translateNested("consultation", "chose_center"),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     color: _centerFocusNode.hasFocus
                         ? Theme.of(context).primaryColor
-                        : Theme.of(context).dividerColor,
-                  ),
-                  color: Theme.of(context).colorScheme.background,
-                ),
-              ),
-              iconStyleData: const IconStyleData(
-                icon: Icon(
-                  Icons.arrow_drop_up,
-                  color: Colors.grey,
-                ),
-                openMenuIcon: Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.grey,
-                ),
-              ),
-              dropdownStyleData: DropdownStyleData(
-                maxHeight: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Theme.of(context).colorScheme.background,
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 20),
-        if (selectedCenterShort != null)
-          DatePicker(
-              availableDates: selectedCenterShort!.availableDates,
-              setAvailableDate: setAvailableDate,
-              setDaySectionAvailability: setDaySectionAvailability),
-        SizedBox(height: 20),
-        if (selectedDate != null)
-          DaySelector(
-              selectedDate: selectedDate!,
-              setDaySectionAvailability: setDaySectionAvailability),
-        SizedBox(height: 20),
-        (daySectionAvailability != null)
-            ? TimePicker(
-                times: daySectionAvailability!.times,
-                setAvailableTime: setAvailableTime)
-            : Text(
-                AppLocalizations.of(context)!
-                    .translateNested("consultation", "select_day"),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: Theme.of(context).colorScheme.onBackground,
-                    ),
-              ),
-        SizedBox(height: 20),
-        Expanded(child: Container()),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding:
-                  EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 0),
-              minimumSize: const Size(double.infinity, 40),
-              shadowColor: Colors.transparent,
-              backgroundColor: (availableTime != null) ? Color(0x3300A6ED) :
-              Theme.of(context).dividerColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            onPressed: () async {
-              if(availableTime != null){
-
-              }
-            },
-            child: Text(
-              AppLocalizations.of(context)!
-                  .translateNested("consultation", "pay"),
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        : Theme.of(context).hintColor,
                     fontWeight: FontWeight.w400,
-                    color: (availableTime != null) ? Theme.of(context).colorScheme.tertiary:
-                Theme.of(context).shadowColor,
+                  ),
+                ),
+                items: widget.consultantAvailability.availabilities.inPerson
+                    .map((item) => DropdownMenuItem<CenterAvailability>(
+                  value: item,
+                  child: Text(
+                    item.center.name ?? '',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(
+                      color:
+                      Theme.of(context).colorScheme.onBackground,
+                    ),
+                  ),
+                ))
+                    .toList(),
+                value: selectedCenterShort,
+                onMenuStateChange: (isOpen) {
+                  setState(() {
+                    _centerFocusNode.requestFocus();
+                  });
+                },
+                onChanged: (value) {
+                  setState(() {
+                    selectedCenterShort = value;
+                    _toggleSearchField();
+                    _centerFocusNode.unfocus();
+                    selectedDate = null;
+                    daySectionAvailability = null;
+                    availableTime = null;
+                  });
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: _centerFocusNode.hasFocus
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).dividerColor,
+                    ),
+                    color: Theme.of(context).colorScheme.background,
+                  ),
+                ),
+                iconStyleData: const IconStyleData(
+                  icon: Icon(
+                    Icons.arrow_drop_up,
+                    color: Colors.grey,
+                  ),
+                  openMenuIcon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.grey,
+                  ),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.background,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          if (selectedCenterShort != null)
+            DatePicker(
+                availableDates: selectedCenterShort!.availableDates,
+                setAvailableDate: setAvailableDate,
+                setDaySectionAvailability: setDaySectionAvailability),
+          SizedBox(height: 20),
+          if (selectedDate != null)
+            DaySelector(
+                selectedDate: selectedDate!,
+                setDaySectionAvailability: setDaySectionAvailability),
+          SizedBox(height: 20),
+          (daySectionAvailability != null)
+              ? TimePicker(
+              times: daySectionAvailability!.times,
+              setAvailableTime: setAvailableTime)
+              : Text(
+            AppLocalizations.of(context)!
+                .translateNested("consultation", "select_day"),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              fontWeight: FontWeight.w400,
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
+          ),
+          SizedBox(height: 20),
+        ],),
+
+
+        Padding(
+          padding: const EdgeInsetsDirectional.only(bottom: 12),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding:
+                    EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 0),
+                minimumSize: const Size(double.infinity, 40),
+                shadowColor: Colors.transparent,
+                backgroundColor: (availableTime != null) ? Color(0x3300A6ED) :
+                Theme.of(context).dividerColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              onPressed: () async {
+                if(availableTime != null && _formKey.currentState!.validate()) {
+                  print("availableTime: ${availableTime!.id}");
+                  print("consultantId: ${widget.consultantAvailability.consultant.id}");
+                  print("nationalId: ${idController.text}");
+                  print("type: in_person");
+
+                  _submitForm(
+                    context,
+                    availableTime!.id,
+                    widget.consultantAvailability.consultant.id.toString(),
+                    idController.text,
+                    "in_person",
+                  );
+                }
+              },
+              child: BlocConsumer<ConsultantAvailabilityBloc, ConsultantAvailabilityState>(
+                listenWhen: (context, state) =>
+                    state is ConsultantAvailabilitySubmitted ||
+                    state is ConsultantAvailabilitySubmitError,
+                listener: (context, state) {
+                  if (state is ConsultantAvailabilitySubmitted) {
+                    Navigator.of(context).pop(true);
+                  } else if (state is ConsultantAvailabilitySubmitError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        CustomSnackBar(content: state.message).build(context));
+                  }
+                },
+                buildWhen: (context, state) =>
+                    state is ConsultantAvailabilitySubmitting ||
+                    state is ConsultantAvailabilitySubmitError||
+                    state is ConsultantAvailabilitySubmitted,
+                    builder: (context, state) {
+              if (state is ConsultantAvailabilitySubmitting) {
+                return WhiteCircularProgressIndicator();
+              }else{
+                  return Text(
+                AppLocalizations.of(context)!
+                    .translateNested("consultation", "pay"),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: (availableTime != null) ? Theme.of(context).colorScheme.tertiary:
+                  Theme.of(context).shadowColor,
+                    ),
+              );
+                  }
+                    },
                   ),
             ),
           ),
         ),
+
       ],
     );
   }
+}
+
+//function to add event for submit the form
+void _submitForm(BuildContext context, int availableTimeId, String consultantId, String nationalId, String type) {
+  BlocProvider.of<ConsultantAvailabilityBloc>(context).add(
+    SubmitConsultantAvailabilityEvent(
+      availableTimeId: availableTimeId,
+      consultantId: consultantId,
+      nationalId: nationalId,
+      type: type,
+    ),
+  );
+
 }
 
 class DatePicker extends StatefulWidget {

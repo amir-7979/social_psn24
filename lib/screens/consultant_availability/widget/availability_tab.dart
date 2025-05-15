@@ -58,7 +58,7 @@ class _AvailabilityTabState extends State<AvailabilityTab>
                 color: Colors.transparent, // Changed color to transparent
               ),
               Container(
-                height: 612,
+                height: 600,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   color: Theme.of(context).colorScheme.primary,

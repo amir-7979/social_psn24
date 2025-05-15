@@ -12,6 +12,7 @@ class CustomSnackBar {
 
   SnackBar build(BuildContext context) {
     return SnackBar(
+      duration: const Duration(seconds:2),
       behavior: SnackBarBehavior.floating,
       elevation: 0,
       content: Text(

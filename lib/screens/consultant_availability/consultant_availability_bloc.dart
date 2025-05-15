@@ -39,13 +39,15 @@ class ConsultantAvailabilityBloc extends Bloc<ConsultantAvailabilityEvent, Consu
 
   Future<void> _onSubmitConsultantAvailability(SubmitConsultantAvailabilityEvent event, Emitter<ConsultantAvailabilityState> emit) async {
     emit(ConsultantAvailabilitySubmitting());
+
     try {
       final response = await invoiceRepository.bookSession(event.availableTimeId, event.consultantId, event.nationalId, event.type);
       if (response.data == null || response.data['data'] == null) {
+        print(response.data);
         emit(ConsultantAvailabilitySubmitError('خطا در ارسال اطلاعات'));
       }
-
-      emit(ConsultantAvailabilitySubmitted('درخواست شما با موفقیت ثبت شد'));
+      print(response.data.toString());
+      emit(ConsultantAvailabilitySubmitted(response.data['message']));
 
     } catch (e) {
       print(e.toString());

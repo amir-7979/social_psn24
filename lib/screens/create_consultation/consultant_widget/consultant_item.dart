@@ -14,6 +14,7 @@ import '../../../repos/models/consultation_model/user.dart';
 
 import '../../main/widgets/screen_builder.dart';
 import '../../notification/notification_screen.dart';
+import '../../widgets/custom_snackbar.dart';
 import '../../widgets/profile_cached_network_image.dart';
 
 class ConsultantItem extends StatelessWidget {
@@ -88,7 +89,7 @@ class ConsultantItem extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: 30),
+                      SizedBox(height: 27),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -198,7 +199,7 @@ class ConsultantItem extends StatelessWidget {
                             ],
                           ),
                           SizedBox(
-                            height: 27,
+                            height: 30,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsetsDirectional.symmetric(
@@ -211,17 +212,32 @@ class ConsultantItem extends StatelessWidget {
                                 ),
                               ),
                               onPressed: () async {
-                                showDialog(
+                                final bool? didSubmit = await showDialog(
                                     context: context,
                                     useSafeArea: true,
                                     barrierDismissible: true,
                                     useRootNavigator: true,
+
                                     builder: (BuildContext context) {
+                                      final maxHeight = MediaQuery.of(context).size.height * 0.8;
                                       return Dialog(
                                         elevation: 1,
-                                        child: ConsultantAvailabilityScreen(id: consultant.id!, avatar: consultant.infoUrl),
+                                        child: ConstrainedBox(
+                                          constraints: BoxConstraints(maxHeight: maxHeight),
+                                          child: SingleChildScrollView(
+                                            child: ConsultantAvailabilityScreen(
+                                                id: consultant.id!,
+                                                avatar: consultant.infoUrl),
+                                          ),
+                                        ),
                                       );
                                     });
+                                if (didSubmit == true) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      CustomSnackBar(backgroundColor: Theme.of(context).primaryColor, content:  AppLocalizations.of(context)!.translateNested(
+                                          "consultation", "submitSuccess"),).build(context));
+
+                                }
                               },
                               child: Text(
                                 AppLocalizations.of(context)!.translateNested(

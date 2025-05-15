@@ -25,11 +25,15 @@ class ConsultantAvailabilityScreen extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                     CustomSnackBar(content: state.message).build(context));
             },
+            buildWhen: (context, state) =>
+                state is ConsultantAvailabilityLoading ||
+                state is ConsultantAvailabilityLoaded ||
+                state is ConsultantAvailabilityError,
             builder: (context, state) {
               if (state is ConsultantAvailabilityLoading) {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is ConsultantAvailabilityLoaded) {
-                state.consultantAvailability!.consultant!.infoUrl = avatar;
+                state.consultantAvailability!.consultant.infoUrl = avatar;
                 return AvailabilityTab(consultantAvailability: state.consultantAvailability!,);
               } else if (state is ConsultantAvailabilityError) {
                 return Center(child: Text(state.message));
