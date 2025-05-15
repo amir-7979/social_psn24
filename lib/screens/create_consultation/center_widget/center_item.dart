@@ -33,33 +33,32 @@ class CenterItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Padding(
-                        padding:
-                        const EdgeInsetsDirectional.only(start: 55),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                FaIcon(FontAwesomeIcons.lightLocationDot,
-                                    size: 12,
-                                    color: Theme.of(context).hintColor),
-                                SizedBox(width: 2),
-                                Text(
-                                  center.address ?? "",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
+                      SizedBox(
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.only(start: 55),
+                          child: Row(
+                            children: [
+                              FaIcon(FontAwesomeIcons.lightLocationDot,
+                                  size: 12, color: Theme.of(context).hintColor),
+                              const SizedBox(width: 2),
+                              Expanded(
+                                child: Text(
+                                  center.address ?? '',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: true,
+                                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                     fontWeight: FontWeight.w500,
                                     color: Theme.of(context).hintColor,
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+
                       SizedBox(height: 30),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -78,12 +77,16 @@ class CenterItem extends StatelessWidget {
                                 ),
                               ),
                               onPressed: () async {
-
+                                Navigator.of(context).pushNamed(
+                                    AppRoutes.centerConsultants,
+                                    arguments: <String, dynamic>{
+                                    'consultants': center.consultants,
+                                    });
 
                               },
                               child: Text(
                                 AppLocalizations.of(context)!
-                                    .translateNested("consultation", "details"),
+                                    .translateNested("consultation", "listOfConsultants"),
                                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                   fontWeight: FontWeight.w400,
                                   color: Theme.of(context).colorScheme.tertiary,

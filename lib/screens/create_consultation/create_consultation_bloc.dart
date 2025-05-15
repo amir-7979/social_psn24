@@ -62,18 +62,57 @@ class CreateConsultationBloc
     }
   }
 
-  Future<void> _onGetCounselingCentersEvent(GetCounselingCentersEvent event, Emitter<CreateConsultationState> emit) async {
+  Future<void> _onGetCounselingCentersEvent(
+      GetCounselingCentersEvent event,
+      Emitter<CreateConsultationState> emit
+      ) async {
     emit(FetchCounselingCentersLoading());
     try {
+      // 1) get raw centers
       Response result = await consultantsRepository.getCounselingCenters();
       if (result.data == null || result.data['data'] == null) {
         emit(FetchCounselingCentersFailure('خطا در دریافت اطلاعات'));
-
+        return;
       }
-      print(result.data);
-      final List<CounselingCenter> centers = (result.data['data'] as List)
+
+      // 2) parse into model
+      final centers = (result.data['data'] as List)
           .map((item) => CounselingCenter.fromJson(item))
           .toList();
+
+      // 3) gather all consultant IDs across all centers
+      final allIds = centers
+          .expand((c) => c.consultants ?? <Consultant>[])  // if null, use empty list
+          .map((consultant) => consultant.id!)
+          .toSet()
+          .toList();
+
+      // 4) fetch profile infos in one batch
+      Response infoResult;
+      try {
+        infoResult = await profileRepository.getInfoList(allIds);
+        if (infoResult.data == null || infoResult.data['data'] == null) {
+          emit(FetchCounselingCentersFailure('خطا در دریافت اطلاعات'));
+          return;
+        }
+      } catch (e) {
+        print(e);
+        emit(FetchCounselingCentersFailure('خطا در دریافت اطلاعات'));
+        return;
+      }
+      final Map<String, dynamic> infoMap = infoResult.data['data'];
+
+      // 5) assign photo URLs back onto each consultant
+      for (var center in centers) {
+        for (var consultant in center.consultants!) {
+          final key = consultant.id.toString();
+          if (infoMap.containsKey(key)) {
+            consultant.infoUrl = infoMap[key]['photo'];
+          }
+        }
+      }
+
+      // 6) emit the updated list
       emit(FetchCounselingCentersSuccess(centers));
     } catch (e) {
       emit(FetchCounselingCentersFailure(e.toString()));

@@ -7,6 +7,7 @@ import 'package:social_psn/screens/post_detailed/post_detailed_screen.dart';
 import '../../auth/login/login.dart';
 import '../../auth/register/register.dart';
 import '../../auth/verify/verify.dart';
+import '../../center_consultant/center_consultant_screen.dart';
 import '../../charity/charity_screen.dart';
 import '../../cooperation/cooperation_screen.dart';
 import '../../create_consultation/create_consultation_screen.dart';
@@ -36,6 +37,8 @@ class AppRoutes {
   static const String createRequest = '/create_requests';
   static const String settings = '/settings';
   static const String createConsult = '/create_consult';
+  static const String centerConsultants = '/center_consultants';
+
 
 }
 
@@ -72,5 +75,12 @@ final Map<String, WidgetBuilder> routes = {
   AppRoutes.createRequest: (BuildContext context) => CreateRequestScreen(),
   AppRoutes.settings: (BuildContext context) => SettingScreen(),
   AppRoutes.createConsult: (BuildContext context) => CreateConsultationScreen(),
+  AppRoutes.centerConsultants: (BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return CenterConsultantScreen(
+      consultants: args['consultants'],
+    );
+
+  },
 
 };
