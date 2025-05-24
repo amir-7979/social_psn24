@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_psn/screens/my_consultation/shimmer/consult_shimmer.dart';
 import 'package:social_psn/screens/my_consultation/widget/consult_item.dart';
 
 import '../../configs/localization/app_localizations.dart';
+import '../../configs/setting/setting_bloc.dart';
 import '../../configs/setting/themes.dart';
 import '../main/widgets/screen_builder.dart';
 import '../requests/requests_list/widget/shimmer/request_item_shimmer.dart';
@@ -61,6 +63,7 @@ class MyConsultationScreen extends StatelessWidget {
                                 CustomSnackBar(content: state.message).build(context)
                             );
                         },
+                        buildWhen: (context, state) => state is MyConsultationLoading || state is MyConsultationLoaded,
                         builder: (context, state) {
                           if(state is MyConsultationLoading){
                             return Expanded(
@@ -75,12 +78,70 @@ class MyConsultationScreen extends StatelessWidget {
                             );
                           }else if(state is MyConsultationLoaded){
                             return Expanded(
-                              child: state.consultations.length == 0 ? Text(AppLocalizations.of(context)!.translateNested("consultation", 'noRequest'),
-                                textAlign: TextAlign.center,
+                              child: state.consultations.length == 0 ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    AspectRatio(
+                                      aspectRatio: 485/390,
+                                      child: Container(
+                                       width: MediaQuery.of(context).size.width,
+                                        child: SvgPicture.asset(
+                                          'assets/images/consult/mobile.svg',
 
-                                style: iranYekanTheme.headlineSmall!.copyWith(
-                                  color: Theme.of(context).hoverColor,
-                                  fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 24),
+                                    Text(AppLocalizations.of(context)!.translateNested("consultation", 'noRequest'),
+                                      textAlign: TextAlign.center,
+
+                                      style: iranYekanTheme.headlineSmall!.copyWith(
+                                        color: Theme.of(context).hoverColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(height: 24),
+                                    SizedBox(
+                                      height: 40,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsetsDirectional.symmetric(
+                                              horizontal: 8, vertical: 0),
+                                          minimumSize: const Size(190, 40),
+                                          shadowColor: Colors.transparent,
+                                          backgroundColor: Color(0x3300A6ED),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          if (context
+                                              .read<SettingBloc>()
+                                              .state
+                                              .isUserLoggedIn) {
+                                            Navigator.pushNamed(
+                                                context, AppRoutes.createConsult);
+                                          }
+
+                                        },
+                                        child: Text(
+                                          AppLocalizations.of(context)!.translateNested(
+                                              "consultation", "start_consultation"),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                  ],
                                 ),
                               ) : ListView.builder(
                                 itemCount: state.consultations.length,

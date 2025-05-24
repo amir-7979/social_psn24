@@ -54,6 +54,8 @@ class CustomNavigatorObserver extends NavigatorObserver {
       case AppRoutes.login:
       case AppRoutes.verify:
       case AppRoutes.register:
+      case AppRoutes.createConsult:
+      case AppRoutes.centerConsultants:
         currentIndexNotifier.value = 2;
         break;
       case AppRoutes.myConsultation:

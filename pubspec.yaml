@@ -121,6 +121,7 @@ flutter:
     - assets/images/notification/
     - assets/images/post/
     - assets/images/search/
+    - assets/images/consult/
 
   fonts:
     - family: IRANSansX

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_psn/configs/setting/setting_bloc.dart';
+import 'package:social_psn/screens/edit_profile/widgets/documents.dart';
 
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/themes.dart';
@@ -335,6 +336,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  Documents(),
+                  const SizedBox(height: 16),
                   BlocBuilder<EditProfileBloc, EditProfileState>(
                       builder: (context, state) {
                     if (state is EditProfileError) {
@@ -531,4 +534,5 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ));
     }
   }
+
 }

@@ -8,7 +8,6 @@ class Creator {
   final bool? online;
   final String? displayName;
   final int? showActivity;
-  final String url = 'https://media.psn24.ir/';
 
   Creator({
     this.id,
@@ -25,7 +24,7 @@ class Creator {
   factory Creator.fromJson(Map<String, dynamic> json) {
     String? photoUrl = json['photo'];
     if (photoUrl != null && photoUrl.isNotEmpty) {
-      photoUrl = 'https://media.psn24.ir/$photoUrl';
+      photoUrl = photoUrl;
     }
 
     return Creator(

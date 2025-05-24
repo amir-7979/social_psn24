@@ -28,7 +28,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     emit(NotificationLoading());
     try {
       Response result = await _notificationRepository.fetchNotifications();
-      log(result.data!.toString());
         notifications = (result.data!['data']['notifications'] as List)
             .map((notification) => MyNotification.fromJson(notification))
             .toList();

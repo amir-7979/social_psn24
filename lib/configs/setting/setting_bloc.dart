@@ -47,6 +47,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     try {
       var response = await _profileRepository.getProfile();
       final Profile profile = Profile.fromJson(response.data!['data']);
+      print(response.data.toString());
       emit(state.copyWith(profile: profile));
     } catch (error) {
       print(error.toString());

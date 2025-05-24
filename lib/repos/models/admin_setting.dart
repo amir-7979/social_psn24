@@ -93,6 +93,7 @@ class AdminSettings {
     List<String>? parseList(String? value) {
       return value?.split(',').map((e) => e.trim()).toList();
     }
+    print('AdminSettings.fromJson: $json');
 
     return AdminSettings(
       tokenExpireTimeSec: json['token_expire_time_sec'],

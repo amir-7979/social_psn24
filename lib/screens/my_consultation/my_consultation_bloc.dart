@@ -17,6 +17,7 @@ class MyConsultationBloc extends Bloc<MyConsultationEvent, MyConsultationState> 
 
   MyConsultationBloc() : super(MyConsultationInitial()) {
     on<FetchMyConsultationEvent>(_onFetchMyConsultationEvent);
+    on<DeleteMyConsultationEvent>(_onDeleteMyConsultationEvent);
   }
 
   Future<void> _onFetchMyConsultationEvent(FetchMyConsultationEvent event, Emitter<MyConsultationState> emit) async {
@@ -27,9 +28,12 @@ class MyConsultationBloc extends Bloc<MyConsultationEvent, MyConsultationState> 
 
         emit(MyConsultationError('خطا در دریافت اطلاعات'));
       }
-
       final List<Consultation> consultations = (result.data['data'] as List).map((item) => Consultation.fromJson(item)).toList();
+      if (consultations.isEmpty) {
+        emit(MyConsultationLoaded([]));
 
+        return;
+      }
       final List<int> consultationIds = consultations.map((c) => c.consultant!.id!).toList();
       try {
         result = await profileRepository.getInfoList(consultationIds);
@@ -49,8 +53,6 @@ class MyConsultationBloc extends Bloc<MyConsultationEvent, MyConsultationState> 
       for (var consultation in consultations) {
         final String consultIdStr = consultation.consultant!.id.toString();
         if (infoUrls.containsKey(consultIdStr)) {
-          print('Consultation ID: ${consultIdStr}');
-          print('Consultation ID: ${infoUrls[consultIdStr]['photo']}');
           consultation.consultant!.infoUrl = infoUrls[consultIdStr]['photo'];
         }
       }
@@ -79,6 +81,21 @@ class MyConsultationBloc extends Bloc<MyConsultationEvent, MyConsultationState> 
     }
 
     return grouped;
+  }
+
+  Future<void> _onDeleteMyConsultationEvent(DeleteMyConsultationEvent event, Emitter<MyConsultationState> emit) async {
+    emit(MyConsultationDeleteLoading());
+    try {
+      Response result = await invoiceRepository.cancelInvoice(event.id);
+      if (result.data == null || result.data['data'] == null) {
+        emit(MyConsultationDeleteError('خطا در حذف مشاوره'));
+        return;
+      }
+      emit(MyConsultationDeleteSuccess('مشاوره با موفقیت حذف شد'));
+    } catch (e) {
+      print(e.toString());
+      emit(MyConsultationDeleteError('خطا در حذف مشاوره'));
+    }
   }
 }
 

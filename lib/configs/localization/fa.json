@@ -1,6 +1,7 @@
 {
   "appTitle": "شبکه اجتماعی",
-    "comingSoon": "این بخش به زودی به سامانه اضافه خواهد شد\n",
+  "comingSoon": "این بخش به زودی به سامانه اضافه خواهد شد\n",
+
   "bottomBar": {
     "profile": "پروفایل",
     "home": "خانه",
@@ -159,8 +160,12 @@
     "fromCamera":"افزودن عکس پروفایل با دوربین",
     "savePicture":"ذخیره عکس پروفایل در گالری",
     "removePicture":"حذف عکس پروفایل"
+  },
 
-
+  "editProfileScreen": {
+    "document": "اسناد و مدارک",
+    "info1":"توجه داشته باشید حتما از اصل مدارک عکس بگیرید.",
+    "info2":"همه اطلاعات و مشخصات در تصاویر ارسالی باید واضح و خوانا باشد."
   },
 
   "postScreen": {
@@ -237,9 +242,10 @@
     "select_day" : " لطفا روز مورد نظر را انتخاب نمایید ",
     "submitSuccess": "مشاوره با موفقیت ایجاد شد",
     "listOfConsultants": "لیست مشاوران مرکز",
-    "booking": "نوبت\u200Cدهی"
-
-
+    "booking": "نوبت\u200Cدهی",
+    "editConsultation": "ویرابش مشاوره",
+    "cancelConsultation": "لغو مشاوره",
+    "deleteConsultationDescription": "آیا از حذف این مشاوره اطمینان دارید؟!"
   },
 
   "error": {

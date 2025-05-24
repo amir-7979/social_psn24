@@ -63,7 +63,6 @@ class Profile {
       username = username.substring(1);
     }
     String? newDisplayName = json['display_name'] != null ? json['display_name'] as String? : json['roles'][0]['display_name'] as String?;
-
     return Profile(
       id: json['id'] as int?,
       globalId: json['global_id'] as int?,

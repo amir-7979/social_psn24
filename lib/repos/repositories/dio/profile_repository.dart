@@ -64,5 +64,23 @@ class ProfileRepository {
     return _dio.post('/users-info', data: variables,);
   }
 
+  Future<Response<dynamic>> uploadProfileAttachment(dynamic formData) async {
+
+    return await _dio.post('/profile/upload-photo', data: formData);
+  }
+
+  Future<Response<dynamic>> postAttachment(String title, String description, int id, List attachments) async {
+
+    Map<String, dynamic> variables = {
+      'title': title ,
+      "collaboration_type_id": id,
+      'description': description,
+      'attachment': attachments,
+    };
+
+    return await _dio.post('/collaboration/store', data: variables);
+  }
+
+
 }
 

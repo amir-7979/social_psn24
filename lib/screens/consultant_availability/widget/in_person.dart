@@ -261,11 +261,6 @@ class _InPersonState extends State<InPerson> {
               ),
               onPressed: () async {
                 if(availableTime != null && _formKey.currentState!.validate()) {
-                  print("availableTime: ${availableTime!.id}");
-                  print("consultantId: ${widget.consultantAvailability.consultant.id}");
-                  print("nationalId: ${idController.text}");
-                  print("type: in_person");
-
                   _submitForm(
                     context,
                     availableTime!.id,

@@ -7,7 +7,7 @@ import 'package:social_psn/screens/widgets/shimmer.dart';
 import '../../../configs/localization/app_localizations.dart';
 import '../../../configs/setting/themes.dart';
 import '../profile_cached_network_image.dart';
-import 'profile_picture_bloc.dart';
+import 'profile_attachment_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart';
@@ -15,17 +15,18 @@ import 'package:path_provider/path_provider.dart';
 
 
 
-class ProfilePicture extends StatefulWidget {
+class ProfileAttachment extends StatefulWidget {
+  String name;
   String? photoUrl;
   Function onImagePicked;
 
-  ProfilePicture(this.photoUrl, this.onImagePicked);
+  ProfileAttachment(this.name, this.photoUrl, this.onImagePicked);
 
   @override
-  State<ProfilePicture> createState() => _ProfilePictureState();
+  State<ProfileAttachment> createState() => _ProfileAttachmentState();
 }
 
-class _ProfilePictureState extends State<ProfilePicture> {
+class _ProfileAttachmentState extends State<ProfileAttachment> {
   File? lastPickedImage;
   File? cropPath;
   final picker = ImagePicker();
@@ -66,8 +67,8 @@ class _ProfilePictureState extends State<ProfilePicture> {
       final croppedFile = await _cropImage(pickedXFile.path, context);
       if (croppedFile != null) {
         cropPath = croppedFile;
-        BlocProvider.of<ProfilePictureBloc>(context)
-            .add(UploadProfilePicture(croppedFile));
+        BlocProvider.of<ProfileAttachmentBloc>(context)
+            .add(UploadProfileAttachment(widget.name, pickedXFile.name, croppedFile));
       }
     }
   }
@@ -78,9 +79,9 @@ class _ProfilePictureState extends State<ProfilePicture> {
       final croppedFile = await _cropImage(pickedXFile.path, parentContext);
       if (croppedFile != null) {
         cropPath = croppedFile;
-        // Use the parent's context that contains the ProfilePictureBloc
-        BlocProvider.of<ProfilePictureBloc>(parentContext)
-            .add(UploadProfilePicture(croppedFile));
+        // Use the parent's context that contains the ProfileAttachmentBloc
+        BlocProvider.of<ProfileAttachmentBloc>(parentContext)
+            .add(UploadProfileAttachment(widget.name, pickedXFile.name, croppedFile));
       }
     }
   }
@@ -139,8 +140,8 @@ class _ProfilePictureState extends State<ProfilePicture> {
     }
   }
 
-  /// Downloads and saves the profile picture if a valid URL is provided.
-  Future<void> _saveProfilePicture() async {
+  /// Downloads and saves the profile Attachment if a valid URL is provided.
+  Future<void> _saveProfileAttachment() async {
     // Only proceed if we have a valid image URL
     if (widget.photoUrl == null) {
       print("No image URL available to download");
@@ -176,7 +177,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
         }
 
         // Create a unique file name and save the file
-        String fileName = "profile_picture_${DateTime.now().millisecondsSinceEpoch}.png";
+        String fileName = "profile_Attachment_${DateTime.now().millisecondsSinceEpoch}.png";
         String filePath = '${directory.path}/$fileName';
         File file = File(filePath);
         await file.writeAsBytes(bytes);
@@ -266,7 +267,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                      _saveProfilePicture();
+                      _saveProfileAttachment();
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -278,7 +279,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
                           Text(
                             AppLocalizations.of(context)!
                                 .translateNested(
-                                'profileScreen', 'savePicture'),
+                                'profileScreen', 'saveAttachment'),
                             style: TextStyle(
                                 color: Theme.of(parentContext).colorScheme.onBackground),
                           ),
@@ -289,7 +290,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
                 InkWell(
                   onTap: () {
                     Navigator.pop(context);
-                    _removeProfilePicture();
+                    _removeProfileAttachment();
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -301,7 +302,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
                         Text(
                           AppLocalizations.of(context)!
                               .translateNested(
-                              'profileScreen', 'removePicture'),
+                              'profileScreen', 'removeAttachment'),
                           style: TextStyle(
                               color: Theme.of(parentContext).colorScheme.onBackground),
                         ),
@@ -317,8 +318,8 @@ class _ProfilePictureState extends State<ProfilePicture> {
     );
   }
 
-  void _removeProfilePicture() {
-    context.read<ProfilePictureBloc>().add(RemoveProfilePhotoEvent());
+  void _removeProfileAttachment() {
+    context.read<ProfileAttachmentBloc>().add(RemoveProfileAttachmentEvent());
     setState(() {
       lastPickedImage = null;
       widget.photoUrl = null;
@@ -337,7 +338,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-  create: (context) => ProfilePictureBloc(),
+  create: (context) => ProfileAttachmentBloc(),
   child: GestureDetector(
       onTap: () => _showOptionsBottomSheet(context),
       child: SizedBox(
@@ -345,13 +346,13 @@ class _ProfilePictureState extends State<ProfilePicture> {
           alignment: AlignmentDirectional.center,
           children: [
             ClipOval(
-              child: BlocBuilder<ProfilePictureBloc, ProfilePictureState>(
+              child: BlocBuilder<ProfileAttachmentBloc, ProfileAttachmentState>(
   builder: (context, state) {
     return SizedBox.fromSize(
                   size: Size.fromRadius(75),
-                 child: (state is ProfilePictureLoading)? shimmerCircular(context, size: 75) : (state is ProfilePictureSuccess)?
+                 child: (state is ProfileAttachmentLoading)? shimmerCircular(context, size: 75) : (state is ProfileAttachmentSuccess)?
                      
-                  ProfileCacheImage(state.imageUrl): (state is ProfilePictureRemove)? Image.asset(
+                  ProfileCacheImage(state.imageUrl): (state is ProfileAttachmentRemove)? Image.asset(
                     'assets/images/profile/profile.png',
                     fit: BoxFit.cover,
                   ): (widget.photoUrl != null)? ProfileCacheImage(widget.photoUrl!): Image.asset(

@@ -19,3 +19,26 @@ final class MyConsultationError extends MyConsultationState {
    MyConsultationError(this.message);
 }
 
+final class MyConsultationDeleteSuccess extends MyConsultationState {
+  final String message;
+
+   MyConsultationDeleteSuccess(this.message);
+}
+final class MyConsultationEditSuccess extends MyConsultationState {
+  final String message;
+
+   MyConsultationEditSuccess(this.message);
+}
+final class MyConsultationDeleteError extends MyConsultationState {
+  final String message;
+
+   MyConsultationDeleteError(this.message);
+}
+final class MyConsultationEditError extends MyConsultationState {
+  final String message;
+
+   MyConsultationEditError(this.message);
+}
+final class MyConsultationDeleteLoading extends MyConsultationState {}
+
+
