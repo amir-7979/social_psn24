@@ -76,6 +76,11 @@ dependencies:
   maps_launcher: ^3.0.0+1
   android_intent_plus: ^5.3.0
   dropdown_button2: ^2.3.9
+  flutter_chat_core: ^2.0.0
+  flutter_chat_ui: ^2.0.0
+  web_socket_channel: ^3.0.3
+  flutter_chat_types: ^3.6.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

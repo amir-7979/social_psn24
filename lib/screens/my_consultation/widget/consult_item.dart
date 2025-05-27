@@ -429,7 +429,19 @@ class ConsultationItem extends StatelessWidget {
                                 ),
                               ),
                               onPressed: () async {
-                                if (consultation.counselingCenter!.latitude !=
+                                if(getType(consultation) == 2){
+                                  Navigator.of(context).pushNamed(
+                                    AppRoutes.chat,
+                                    arguments: {
+                                      "chatUuid": consultation.chatInfo!.uuid,
+                                      "wsDomain": consultation.chatInfo!.wsDomain,
+                                      "wsChannel": consultation.chatInfo!.wsChannel,
+                                      "chatTitle": consultation.consultant?.name??'',
+                                      "userId": consultation.consultant?.id,
+                                      "avatarUrl": consultation.consultant?.infoUrl,
+                                    },
+                                  );
+                                }else if (consultation.counselingCenter!.latitude !=
                                         null &&
                                     consultation.counselingCenter!.longitude !=
                                         null) {

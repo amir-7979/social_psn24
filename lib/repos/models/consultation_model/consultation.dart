@@ -1,5 +1,6 @@
 import 'package:social_psn/repos/models/consultation_model/user.dart';
 
+import 'chat_info.dart';
 import 'consultation_date.dart';
 import 'consultation_type.dart';
 import 'counseling_center.dart';
@@ -12,7 +13,7 @@ class Consultation {
   final int? total;
   final String? statusPersian;
   final String? status;
-  final dynamic chat;
+  final ChatInfo? chatInfo;
   final ConsultationType? consultationType;
   final CounselingCenter? counselingCenter;
   final ConsultationDate? date;
@@ -25,7 +26,7 @@ class Consultation {
     this.total,
     this.statusPersian,
     this.status,
-    this.chat,
+    this.chatInfo,
     this.consultationType,
     this.counselingCenter,
     this.date,
@@ -40,7 +41,7 @@ class Consultation {
       total: json['total'] as int?,
       statusPersian: json['status_persian'] as String?,
       status: json['status'] as String?,
-      chat: json['chat'],
+      chatInfo: ChatInfo.fromJson(json['chat']),
       consultationType: json['consultation_type'] != null
           ? ConsultationType.fromJson(json['consultation_type'])
           : null,

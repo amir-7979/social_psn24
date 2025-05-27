@@ -9,6 +9,7 @@ import '../../auth/register/register.dart';
 import '../../auth/verify/verify.dart';
 import '../../center_consultant/center_consultant_screen.dart';
 import '../../charity/charity_screen.dart';
+import '../../chat/chat_screen.dart';
 import '../../cooperation/cooperation_screen.dart';
 import '../../create_consultation/create_consultation_screen.dart';
 import '../../edit_profile/edit_profile_screen.dart';
@@ -38,15 +39,14 @@ class AppRoutes {
   static const String settings = '/settings';
   static const String createConsult = '/create_consult';
   static const String centerConsultants = '/center_consultants';
-
-
+  static const String chat = '/chat';
 }
 
 final Map<String, WidgetBuilder> routes = {
-
   AppRoutes.login: (BuildContext context) => Login(),
-  AppRoutes.verify: (BuildContext context){
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+  AppRoutes.verify: (BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return Verify(
       phone: args['phone'],
       LoginId: args['loginId'],
@@ -62,7 +62,8 @@ final Map<String, WidgetBuilder> routes = {
   AppRoutes.editProfile: (BuildContext context) => EditProfileScreen(),
   AppRoutes.createMedia: (BuildContext context) => CreatePostScreen(),
   AppRoutes.postDetailed: (BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return PostDetailedScreen(
       post: args['post'],
       postId: args['postId'],
@@ -76,11 +77,22 @@ final Map<String, WidgetBuilder> routes = {
   AppRoutes.settings: (BuildContext context) => SettingScreen(),
   AppRoutes.createConsult: (BuildContext context) => CreateConsultationScreen(),
   AppRoutes.centerConsultants: (BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return CenterConsultantScreen(
       consultants: args['consultants'],
     );
-
   },
-
+  AppRoutes.chat: (BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return ChatScreen(
+      chatUuid: args['chatUuid'],
+      wsDomain: args['wsDomain'],
+      wsChannel: args['wsChannel'],
+      chatTitle: args['chatTitle'],
+      userId: args['userId'],
+      avatarUrl: args['avatarUrl'],
+    );
+  },
 };
