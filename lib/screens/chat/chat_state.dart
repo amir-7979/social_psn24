@@ -8,7 +8,7 @@ final class ChatInitial extends ChatState {}
 final class ChatLoading extends ChatState {}
 
 final class ChatLoaded extends ChatState {
-  final List<types.Message> messages;
+  final List<flutter_chat_core.Message> messages;
 
   ChatLoaded({required this.messages});
 }
@@ -38,4 +38,15 @@ final class ChatCancelError extends ChatState {
   final String message;
 
   ChatCancelError({required this.message});
+}
+
+class EarlierMessagesLoading extends ChatState {
+  final List<types.TextMessage> messages;
+  EarlierMessagesLoading({required this.messages});
+}
+
+class EarlierMessagesLoaded extends ChatState {
+  final List<types.TextMessage> messages;
+  final bool hasMore; // indicate if there are more messages to load
+  EarlierMessagesLoaded({required this.messages, required this.hasMore});
 }

@@ -1,4 +1,7 @@
-class ChatMessage {
+import 'package:flutter_chat_core/flutter_chat_core.dart' as types;
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+
+class NewChatMessage {
   final int? id;
   final int? conversationId;
   final int? receiverId;
@@ -17,7 +20,7 @@ class ChatMessage {
   final String? formattedCreatedAt;
   final dynamic file;
 
-  ChatMessage({
+  NewChatMessage({
     this.id,
     this.conversationId,
     this.receiverId,
@@ -37,9 +40,11 @@ class ChatMessage {
     this.file,
   });
 
-  factory ChatMessage.fromJson(Map<String, dynamic>? json) {
-    if (json == null) return ChatMessage();
-    return ChatMessage(
+  factory NewChatMessage.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return NewChatMessage();
+    //print sender and recirver id
+    print('NewChatMessage.fromJson: senderId=${json['sender_id']}, receiverId=${json['receiver_id']}');
+    return NewChatMessage(
       id: json['id'] as int?,
       conversationId: json['conversation_id'] as int?,
       receiverId: json['receiver_id'] as int?,
@@ -60,25 +65,13 @@ class ChatMessage {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'conversation_id': conversationId,
-      'receiver_id': receiverId,
-      'sender_id': senderId,
-      'text': text,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-      'uuid': uuid,
-      'deleted_at': deletedAt,
-      'reply_to_id': replyToId,
-      'has_file': hasFile,
-      'file_type': fileType,
-      'status': status,
-      'delivered_at': deliveredAt,
-      'seen_at': seenAt,
-      'formatted_created_at': formattedCreatedAt,
-      'file': file,
-    };
+
+  types.TextMessage toTypesMessage() {
+    return types.TextMessage(
+      id: uuid!,
+      authorId: senderId.toString(),
+      text: text ?? '',
+      createdAt: DateTime.parse(createdAt!)
+    );
   }
 }

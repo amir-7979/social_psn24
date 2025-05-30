@@ -91,6 +91,7 @@ final Map<String, WidgetBuilder> routes = {
       wsDomain: args['wsDomain'],
       wsChannel: args['wsChannel'],
       chatTitle: args['chatTitle'],
+      currentUserId: args['currentUserId'],
       userId: args['userId'],
       avatarUrl: args['avatarUrl'],
     );

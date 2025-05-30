@@ -39,3 +39,8 @@ class FinishChatEvent extends ChatEvent {
 
   FinishChatEvent({required this.chatUuid});
 }
+class LoadEarlierMessagesEvent extends ChatEvent {
+  final String chatUuid;
+  final int page;
+  LoadEarlierMessagesEvent({required this.chatUuid, required this.page});
+}

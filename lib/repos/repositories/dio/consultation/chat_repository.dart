@@ -19,4 +19,13 @@ class ChatRepository {
   Future<Response<dynamic>> cancelConversation(String conversationUuid) {
     return _dio.post('/api/conversations/$conversationUuid/finish');
   }
+
+
+ Future<Response<dynamic>> getConversationStatus(String conversationUuid) {
+    return _dio.get('/api/conversations/$conversationUuid/status');
+  }
+
+  Future<Response<dynamic>> getMessagesListPagination(String chatUuid, int page) {
+    return _dio.get('/api/messages/$chatUuid?messages_list_pagination=$page');
+  }
 }

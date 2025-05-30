@@ -3,7 +3,7 @@ import 'pagination_link.dart';
 
 class MessagesListPagination {
   final int? currentPage;
-  final List<ChatMessage>? data;
+  final List<NewChatMessage>? data;
   final String? firstPageUrl;
   final int? from;
   final int? lastPage;
@@ -36,8 +36,8 @@ class MessagesListPagination {
     if (json == null) return MessagesListPagination();
     return MessagesListPagination(
       currentPage: json['current_page'] as int?,
-      data: (json['data'] as List?)
-          ?.map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
+      data: (json['data'] as List)
+          .map((e) => NewChatMessage.fromJson(e as Map<String, dynamic>))
           .toList(),
       firstPageUrl: json['first_page_url'] as String?,
       from: json['from'] as int?,
@@ -57,21 +57,4 @@ class MessagesListPagination {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'current_page': currentPage,
-      'data': data?.map((e) => e.toJson()).toList(),
-      'first_page_url': firstPageUrl,
-      'from': from,
-      'last_page': lastPage,
-      'last_page_url': lastPageUrl,
-      'links': links?.map((e) => e.toJson()).toList(),
-      'next_page_url': nextPageUrl,
-      'path': path,
-      'per_page': perPage,
-      'prev_page_url': prevPageUrl,
-      'to': to,
-      'total': total,
-    };
-  }
 }

@@ -21,11 +21,4 @@ class FetchMessagesResponse {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-      'messages': messages?.toJson(),
-      'participants': participants?.toJson(),
-    };
-  }
 }

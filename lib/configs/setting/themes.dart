@@ -90,7 +90,7 @@ TextTheme iranSansTheme = const TextTheme(
 
 final ThemeData lightTheme = ThemeData(
   fontFamily: 'IRANSansX',
-  dialogTheme: const DialogTheme(
+  dialogTheme:  DialogThemeData(
     backgroundColor: Colors.transparent,
     //surfaceTintColor: Colors.white,
     elevation: 0,
@@ -136,7 +136,7 @@ final ThemeData lightTheme = ThemeData(
 
 final ThemeData darkTheme = ThemeData(
     fontFamily: 'IRANSansX',
-    dialogTheme: const DialogTheme(
+    dialogTheme:  DialogThemeData(
       backgroundColor: Colors.transparent,
       //surfaceTintColor: Colors.white,
       elevation: 0,
