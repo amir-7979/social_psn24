@@ -77,23 +77,11 @@ final Map<String, WidgetBuilder> routes = {
   AppRoutes.settings: (BuildContext context) => SettingScreen(),
   AppRoutes.createConsult: (BuildContext context) => CreateConsultationScreen(),
   AppRoutes.centerConsultants: (BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    return CenterConsultantScreen(
-      consultants: args['consultants'],
-    );
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return CenterConsultantScreen(consultants: args['consultants']);
   },
   AppRoutes.chat: (BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    return ChatScreen(
-      chatUuid: args['chatUuid'],
-      wsDomain: args['wsDomain'],
-      wsChannel: args['wsChannel'],
-      chatTitle: args['chatTitle'],
-      currentUserId: args['currentUserId'],
-      userId: args['userId'],
-      avatarUrl: args['avatarUrl'],
-    );
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return ChatScreen(consultation: args['consultation']);
   },
 };

@@ -3,7 +3,8 @@ import 'package:flutter_chat_core/flutter_chat_core.dart' as core;
 
 class OtherUserMessageBubble extends StatelessWidget {
   final core.TextMessage message;
-  const OtherUserMessageBubble({required this.message});
+  final int index;
+  const OtherUserMessageBubble({required this.message, required this.index});
 
   @override
   Widget build(BuildContext context) {

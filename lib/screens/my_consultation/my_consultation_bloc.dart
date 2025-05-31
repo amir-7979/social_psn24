@@ -28,7 +28,7 @@ class MyConsultationBloc extends Bloc<MyConsultationEvent, MyConsultationState> 
 
         emit(MyConsultationError('خطا در دریافت اطلاعات'));
       }
-      final List<Consultation> consultations = (result.data['data'] as List).map((item) => Consultation.fromJson(item)).toList();
+      List<Consultation> consultations = (result.data['data'] as List).map((item) => Consultation.fromJson(item)).toList();
       if (consultations.isEmpty) {
         emit(MyConsultationLoaded([]));
 
@@ -56,6 +56,9 @@ class MyConsultationBloc extends Bloc<MyConsultationEvent, MyConsultationState> 
           consultation.consultant!.infoUrl = infoUrls[consultIdStr]['photo'];
         }
       }
+      //reverse the list of consultations and move first to end and end to first
+      consultations = consultations.reversed.toList();
+
 
       emit(MyConsultationLoaded(consultations));
     } catch (e) {

@@ -433,13 +433,7 @@ class ConsultationItem extends StatelessWidget {
                                   Navigator.of(context).pushNamed(
                                     AppRoutes.chat,
                                     arguments: {
-                                      "chatUuid": consultation.chatInfo!.uuid,
-                                      "wsDomain": consultation.chatInfo!.wsDomain,
-                                      "wsChannel": consultation.chatInfo!.wsChannel,
-                                      "chatTitle": consultation.consultant?.name??'',
-                                      "userId": consultation.consultant!.id,
-                                      "currentUserId": consultation.user!.id,
-                                      "avatarUrl": consultation.consultant?.infoUrl,
+                                      "consultation": consultation,
                                     },
                                   );
                                 }else if (consultation.counselingCenter!.latitude !=

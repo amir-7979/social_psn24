@@ -22,40 +22,24 @@ part 'chat_state.dart';
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ChatRepository chatRepository = ChatRepository();
   final types.User currentUser;
-  final String wsDomain;
-  final StorageService _storageService = StorageService();
-  InMemoryChatController chatController;
-  int _currentPage = 1;
 
-  WebSocketChannel? wsChannel;
-  StreamSubscription? _wsSubscription;
   List<NewChatMessage> _messages = [];
 
   ChatBloc({
     required this.currentUser,
-    required this.wsDomain,
-    required this.chatController,
     required chatUuid,
   }) : super(ChatInitial()) {
     on<ChatInitEvent>(_onChatInit);
     on<SendChatMessageEvent>(_onSendChatMessage);
-    on<NewChatMessageReceivedEvent>(_onNewChatMessageReceived);
-    on<DisconnectWebSocketEvent>(_onDisconnectWebSocket);
     on<FinishChatEvent>(_onFinishChat);
-    on<LoadEarlierMessagesEvent>((event, emit) async {
-      await _onLoadEarlierMessages(event, emit);
-    });
   }
   Future<void> _onChatInit(ChatInitEvent event, Emitter<ChatState> emit) async {
-    _currentPage = 1;
     emit(ChatLoading());
     try {
       await _fetchAndEmitMessages(event, emit);
 
       bool isCanceled = await _checkAndEmitStatus(event, emit);
       if (isCanceled) return;
-
-      await _connectAndListenWebSocket(event, emit);
 
     } on FormatException catch (e) {
       print('[ChatBloc] JSON Format Error: $e');
@@ -93,37 +77,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     return false;
   }
 
-  Future<void> _connectAndListenWebSocket(ChatInitEvent event, Emitter<ChatState> emit) async {
-    final token = await _storageService.readData('token');
-    final wsDomainWithParams = '$wsDomain?token=$token&service-token=$Secret2';
-    wsChannel = WebSocketChannel.connect(Uri.parse(wsDomainWithParams));
-    _wsSubscription = wsChannel!.stream.listen(
-          (data) {
-        print('[ChatBloc] WebSocket DATA: $data');
-        try {
-          final decoded = data is String ? data : data.toString();
-          final eventData = jsonDecode(decoded);
-          if (eventData != null && eventData['event'] == 'message.new') {
-            add(NewChatMessageReceivedEvent(messageJson: eventData['data']));
-          }
-        } catch (err) {
-          print('[ChatBloc] WebSocket JSON parse error: $err');
-        }
-      },
-      onError: (error, [stackTrace]) {
-        print('[ChatBloc] WebSocket STREAM ERROR: $error');
-        emit(ChatError('خطا در سوکت: $error'));
-      },
-      onDone: () {
-        print('[ChatBloc] WebSocket connection closed');
-      },
-      cancelOnError: true,
-    );
-  }
-
 
   Future<void> _onSendChatMessage(SendChatMessageEvent event, Emitter<ChatState> emit) async {
-    emit(ChatMessageSending(messages: _messages.map(_toTypesMessage).toList()));
+/*
+    emit(ChatMessageSending();
+*/
     try {
       final response = await chatRepository.sendMessage(event.chatUuid, event.text);
 
@@ -135,44 +93,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       final sentMsg = NewChatMessage.fromJson(response.data['data']);
       _messages.add(sentMsg);
 
+/*
       emit(ChatMessageSent(messages: List.from(_messages.map(_toTypesMessage))));
+*/
     } catch (e) {
       emit(ChatError("خطا در ارسال پیام: ${e.toString()}"));
     }
   }
 
-  void _onNewChatMessageReceived(NewChatMessageReceivedEvent event, Emitter<ChatState> emit) {
-    final newMsg = NewChatMessage.fromJson(event.messageJson);
-    _messages.add(newMsg);
-    emit(ChatLoaded(messages: List.from(_messages.map(_toTypesMessage))));
-  }
 
-  void _onDisconnectWebSocket(DisconnectWebSocketEvent event, Emitter<ChatState> emit) {
-    print('[ChatBloc] WebSocket disconnecting...');
-    _wsSubscription?.cancel();
-    wsChannel?.sink.close();
-    print('[ChatBloc] WebSocket disconnected.');
-  }
-
-  // Helper: Convert ChatMessage to flutter_chat_types TextMessage
-  types.TextMessage _toTypesMessage(NewChatMessage msg) {
-    return types.TextMessage(
-      author: types.User(id: msg.senderId?.toString() ?? ''),
-      id: msg.uuid ?? msg.id?.toString() ?? '',
-      text: msg.text ?? '',
-      createdAt: msg.createdAt != null
-          ? DateTime.parse(msg.createdAt!).millisecondsSinceEpoch
-          : DateTime.now().millisecondsSinceEpoch,
-    );
-  }
-
-
-  @override
-  Future<void> close() {
-    _wsSubscription?.cancel();
-    wsChannel?.sink.close();
-    return super.close();
-  }
 
   Future<void> _onFinishChat(FinishChatEvent event, Emitter<ChatState> emit) async {
     emit(ChatCanceling());
@@ -188,6 +117,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
 
 
+/*
 
   _onLoadEarlierMessages(event, emit) async {
     emit(EarlierMessagesLoading(messages: _messages.map(_toTypesMessage).toList()));
@@ -214,6 +144,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(ChatError("خطا در بارگذاری پیام‌های قبلی: ${e.toString()}"));
     }
   }
+*/
 
 
 }

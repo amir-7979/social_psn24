@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
@@ -8,33 +11,27 @@ import 'package:flyer_chat_text_message/flyer_chat_text_message.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_psn/repos/models/chat_models/chat_message.dart';
 import '../../configs/localization/app_localizations.dart';
+import '../../configs/setting/themes.dart';
 import '../../repos/models/chat_models/fetch_messages_response.dart';
+import '../../repos/models/consultation_model/consultation.dart';
 import '../../repos/repositories/dio/consultation/chat_repository.dart';
+import '../../secret.dart';
+import '../../services/storage_service.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/dialogs/my_confirm_dialog.dart';
 import '../widgets/profile_cached_network_image.dart';
 import 'chat_bloc.dart';
+import 'widget/composer.dart';
 import 'widget/other_message_bubble.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String chatUuid;
-  final String wsDomain;
-  final String wsChannel;
-  final String chatTitle;
-  final int userId;
-  final int currentUserId;
-  final String? avatarUrl;
+  final Consultation consultation;
 
   const ChatScreen({
     Key? key,
-    required this.chatUuid,
-    required this.wsDomain,
-    required this.wsChannel,
-    required this.chatTitle,
-    required this.userId,
-    required this.currentUserId,
-    this.avatarUrl,
+    required this.consultation,
   }) : super(key: key);
 
   @override
@@ -42,33 +39,87 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final TextEditingController textEditingController = TextEditingController();
   final ChatRepository chatRepository = ChatRepository();
-  int _currentPage = 1;
+  int _currentPage = 2;
   bool _hasMore = true;
   bool _isLoading = false;
   final _chatController = flutter_chat_core.InMemoryChatController();
-
+  final StorageService _storageService = StorageService();
+  WebSocketChannel? wsChannel;
+  StreamSubscription? _wsSubscription;
   late types.User user2;
   late types.User user1;
 
   @override
   void initState() {
     super.initState();
-    print(
-        '[ChatScreen] User ID: ${widget.userId}, Current User ID: ${widget.currentUserId}');
+
+    textEditingController.addListener(() {
+      setState(() {});
+    });
+
     user2 = types.User(
-      id: widget.userId.toString(),
-      firstName: widget.chatTitle,
-      imageUrl: widget.avatarUrl,
+      id: widget.consultation.consultant!.id.toString(),
+      firstName: widget.consultation.consultant!.name,
+      imageUrl: widget.consultation.consultant!.avatar,
     );
-    user1 = types.User(id: widget.currentUserId.toString());
+    user1 = types.User(id: widget.consultation.user!.id.toString());
+    Future.delayed(Duration.zero, () async {
+      await _connectAndListenWebSocket();
+    });
+
   }
+
+
+  Future<void> _connectAndListenWebSocket() async {
+    final token = await _storageService.readData('token');
+    final wsDomainWithParams = '${widget.consultation.chatInfo!.wsDomain}?token=$token&service-token=$Secret2';
+    wsChannel = WebSocketChannel.connect(Uri.parse(wsDomainWithParams));
+    print('[ChatBloc] WebSocket connecting to: $wsDomainWithParams');
+    _wsSubscription = wsChannel!.stream.listen(
+          (data) {
+        print('[ChatBloc] WebSocket DATA: $data');
+        try {
+          final decoded = data is String ? data : data.toString();
+          final eventData = jsonDecode(decoded);
+          print('[ChatBloc] WebSocket JSON: $eventData');
+
+          if (eventData != null && eventData['event'] == 'message.new') {
+            final messageData = eventData['data'];
+
+            if (messageData != null) {
+              final newMessage = NewChatMessage.fromJson(messageData);
+              final chatMessage = newMessage.toTypesMessage();
+              print('[ChatBloc] New message received: $chatMessage');
+              /*if(chatMessage.authorId == widget.consultation.user!.id){
+                return;
+              }*/
+              setState(() {
+                _chatController.insertMessage(chatMessage, index: 0);
+              });
+            }
+          }
+        } catch (err) {
+          print('[ChatBloc] WebSocket JSON parse error: $err');
+        }
+      },
+      onError: (error, [stackTrace]) {
+        print('[ChatBloc] WebSocket STREAM ERROR: $error');
+      },
+      onDone: () {
+        print('[ChatBloc] WebSocket connection closed');
+      },
+      cancelOnError: true,
+    );
+  }
+
 
   Future<flutter_chat_core.User?> _resolveUser(String userId) async {
     return flutter_chat_core.User(
-      id: widget.userId.toString(),
-      name: widget.chatTitle,
-      imageSource: widget.avatarUrl,
+      id: widget.consultation.consultant!.id.toString(),
+      name: widget.consultation.consultant!.name,
+      imageSource: widget.consultation.consultant!.avatar,
     );
   }
 
@@ -77,7 +128,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _isLoading = true;
 
     final response = await chatRepository.getMessagesListPagination(
-        widget.chatUuid, _currentPage);
+        widget.consultation.chatInfo!.uuid!, _currentPage);
     print('[ChatScreen] Loaded page $_currentPage: ${response.data}');
 
     final parsed = FetchMessagesResponse.fromJson(response.data);
@@ -87,6 +138,10 @@ class _ChatScreenState extends State<ChatScreen> {
       _hasMore = false;
       _isLoading = false;
       return;
+    }
+
+    if (parsed.messages!.lastPage == _currentPage) {
+      _hasMore = false;
     }
     final List<flutter_chat_core.TextMessage> chatMessages =
         newChatMessages.map((msg) => msg.toTypesMessage()).toList();
@@ -102,15 +157,65 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
+  // 1) This method will be called when user taps the microphone icon
+  void _onMicPressed() {
+    // e.g. open your voice recorder or handle audio input
+    print('[Composer] Mic pressed');
+  }
+
+  // 2) This method will be called when user taps the paperclip icon
+  void _onAttachPressed() async {
+    // e.g. open image_picker or file_picker, then insert an ImageMessage or FileMessage:
+    // final result = await FilePicker.platform.pickFiles(type: FileType.any);
+    // if (result != null && result.files.single.path != null) {
+    //   final path = result.files.single.path!;
+    //   final file = File(path);
+    //   final message = types.FileMessage(
+    //     author: user1,
+    //     createdAt: DateTime.now().millisecondsSinceEpoch,
+    //     id: DateTime.now().millisecondsSinceEpoch.toString(),
+    //     name: result.files.single.name,
+    //     size: result.files.single.size,
+    //     uri: path,
+    //   );
+    //   setState(() {
+    //     _chatController.insertMessage(message, index: 0);
+    //   });
+    // }
+    print('[Composer] Attach pressed');
+  }
+
+  // 3) This method will be called when user taps send arrow
+  void _onSendPressed(String text) {
+        (text) {
+      if (text.trim().isNotEmpty) {
+        BlocProvider.of<ChatBloc>(context)
+            .add(SendChatMessageEvent(
+          chatUuid: widget.consultation.chatInfo!.uuid!,
+          text: text,
+        ));
+        final trimmed = textEditingController.text.trim();
+        if (trimmed.isEmpty) return;
+        textEditingController.clear();
+        setState(() {});
+      }
+    };
+  }
+
+  // 4) This method will be called when user taps the emoji icon
+  void _onEmojiPressed() {
+    // e.g. open your emoji picker dialog
+    print('[Composer] Emoji pressed');
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ChatBloc(
         currentUser: user1,
-        wsDomain: widget.wsDomain,
-        chatController: _chatController,
-        chatUuid: widget.chatUuid,
-      )..add(ChatInitEvent(chatUuid: widget.chatUuid)),
+        chatUuid: widget.consultation.chatInfo!.uuid!,
+      )..add(ChatInitEvent(chatUuid: widget.consultation.chatInfo!.uuid!)),
       child: Builder(builder: (context) {
         return BlocConsumer<ChatBloc, ChatState>(
           listenWhen: (context, state) {
@@ -123,6 +228,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 CustomSnackBar(content: state.message).build(context),
               );
             }
+          },
+          buildWhen: (previous, current) {
+            return current is ChatLoading ||
+                current is ChatError ||
+                current is ChatLoaded;
           },
           builder: (context, state) {
             if (state is ChatLoading) {
@@ -154,7 +264,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     ElevatedButton(
                       onPressed: () {
                         BlocProvider.of<ChatBloc>(context).add(
-                            FetchChatHistoryEvent(chatUuid: widget.chatUuid));
+                            FetchChatHistoryEvent(
+                                chatUuid: widget.consultation.chatInfo!.uuid!));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE91E63),
@@ -171,42 +282,134 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   buildAppBar(context),
                   Expanded(
-                    child: Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: Chat(
-                        theme: flutter_chat_core.ChatTheme.fromThemeData(
-                            Theme.of(context)),
-                        builders: flutter_chat_core.Builders(
-                          chatAnimatedListBuilder: (context, itemBuilder) {
-                            return ChatAnimatedList(
-                              itemBuilder: itemBuilder,
+                    child: Chat(
 
-                              onEndReached: _loadMore,
-                            );
-                          },
-                          textMessageBuilder: (context, message, index) {
-                            final isMine = message.authorId == widget.currentUserId.toString();
-                            // Only customize "other" messages, use default for yours
-                            if (!isMine) {
-                              return OtherUserMessageBubble(message: message);
-                            } else {
-                              // You can also provide a custom bubble for your own messages if you want
-                              return FlyerChatTextMessage(message: message, index: index); // or your custom
-                            }
-                          },
+
+
+                      backgroundColor:
+                          Theme.of(context).colorScheme.background,
+                      decoration: BoxDecoration(
+
+                        color: Theme.of(context).colorScheme.background,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/chat/chat_background.png'),
+                          opacity: 0.2,
+                          fit: BoxFit.cover,
                         ),
-                        currentUserId: widget.currentUserId.toString(),
-                        resolveUser: (userId) => _resolveUser(userId),
-                        chatController: _chatController,
-                        onMessageSend: (text) {
-                          if (text.trim().isNotEmpty) {
-                            BlocProvider.of<ChatBloc>(context).add(SendChatMessageEvent(
-                              chatUuid: widget.chatUuid,
-                              text: text,
-                            ));
-                          }
+
+                      ),
+                      theme: flutter_chat_core.ChatTheme.fromThemeData(
+                          Theme.of(context)),
+                      builders: flutter_chat_core.Builders(
+                        composerBuilder: (context) {
+                          return Composer(
+                            maxLines: 5,
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                            padding: EdgeInsetsDirectional.only(bottom: 16),
+                            textInputAction: TextInputAction.send,
+                            hintText: AppLocalizations.of(context)!
+                                .translateNested('consultation', 'writeMessage'),
+                            attachmentIconColor: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                            attachmentIcon: FaIcon( FontAwesomeIcons.thinPaperclip,
+                                color: Theme.of(context)
+                                    .primaryColor),
+                            hintColor: Theme.of(context)
+                                .hoverColor,
+                            sendIconColor: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                            textColor: Theme.of(context)
+                                .hoverColor,
+                            sendIcon: (textEditingController.value.text.isNotEmpty) ? Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: FaIcon(FontAwesomeIcons.solidSend,
+                                  color: Theme.of(context)
+                                      .primaryColor),
+                            ): null,
+                            inputFillColor: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                            textEditingController: textEditingController,
+                            handleSafeArea: true,
+
+
+
+
+
+
+                          );
+                        },
+
+                        chatAnimatedListBuilder: (context, itemBuilder) {
+                          return ChatAnimatedList(
+                            itemBuilder: itemBuilder,
+                            onEndReached: _loadMore,
+
+
+                          );
+                        },
+                        textMessageBuilder: (context, message, index) {
+                          return FlyerChatTextMessage(
+                            message: message,
+                            index: index,
+                            showStatus: true,
+                            showTime: true,
+
+
+
+                            borderRadius: BorderRadius.circular(4),
+                            timeAndStatusPosition: flutter_chat_core.TimeAndStatusPosition.start,
+                            timeAndStatusPositionInlineInsets:  EdgeInsetsDirectional.zero,
+                            padding: EdgeInsetsDirectional.all(10),
+                            timeStyle: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+
+                                  color: Theme.of(context)
+                                      .primaryColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                            receivedBackgroundColor: chatReceive,
+                            //i want this primary color with alpha rgba(204, 242, 240, 1)
+                            sentBackgroundColor: chatSent.withOpacity(0.8),
+                            sentTextStyle: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                            receivedTextStyle: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                          );
                         },
                       ),
+                      currentUserId: widget.consultation.user!.id.toString(),
+                      resolveUser: (userId) => _resolveUser(userId),
+                      chatController: _chatController,
+                      onMessageSend: (text) {
+                        if (text.trim().isNotEmpty) {
+                          BlocProvider.of<ChatBloc>(context)
+                              .add(SendChatMessageEvent(
+                            chatUuid: widget.consultation.chatInfo!.uuid!,
+                            text: text,
+                          ));
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -238,8 +441,8 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           InkWell(
             onTap: () {
-              Navigator.of(context)
-                  .pushNamed(AppRoutes.profile, arguments: widget.userId);
+              Navigator.of(context).pushNamed(AppRoutes.profile,
+                  arguments: widget.consultation.user!.id);
             },
             child: Container(
               width: 45,
@@ -251,11 +454,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     Border.all(color: Theme.of(context).colorScheme.background),
               ),
               child: ClipOval(
-                child: (widget.avatarUrl != null)
+                child: (widget.consultation.user!.avatar != null)
                     ? FittedBox(
                         fit: BoxFit.cover,
                         child: ProfileCacheImage(
-                          widget.avatarUrl,
+                          widget.consultation.user!.avatar,
                         ),
                       )
                     : SvgPicture.asset('assets/images/profile/profile2.svg'),
@@ -276,7 +479,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       children: [
                         Flexible(
                           child: Text(
-                            widget.chatTitle,
+                            widget.consultation.consultant!.name!,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
@@ -312,60 +515,60 @@ class _ChatScreenState extends State<ChatScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsetsDirectional.symmetric(
-                              horizontal: 8, vertical: 0),
-                          minimumSize: const Size(80, 30),
-                          shadowColor: Colors.transparent,
-                          //foregroundColor: Theme.of(context).colorScheme.tertiary,
-                          backgroundColor: Theme.of(context)
-                              .colorScheme
-                              .error
-                              .withOpacity(0.2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
+                      if (widget.consultation.status == "processing")
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsetsDirectional.symmetric(
+                                horizontal: 8, vertical: 0),
+                            minimumSize: const Size(80, 30),
+                            shadowColor: Colors.transparent,
+                            //foregroundColor: Theme.of(context).colorScheme.tertiary,
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .error
+                                .withOpacity(0.2),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          onPressed: () async {
+                            BuildContext profileContext = context;
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return MyConfirmDialog(
+                                  title: AppLocalizations.of(context)!
+                                      .translateNested(
+                                          'consultation', 'cancelConsultation'),
+                                  description: AppLocalizations.of(context)!
+                                      .translateNested('consultation',
+                                          'deleteConsultationDescription'),
+                                  cancelText: AppLocalizations.of(context)!
+                                      .translateNested('dialog', 'cancel'),
+                                  confirmText: AppLocalizations.of(context)!
+                                      .translateNested('dialog', 'delete'),
+                                  onCancel: () {
+                                    Navigator.pop(context);
+                                  },
+                                  onConfirm: () {
+                                    _handleFinishPressed(profileContext, context);
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.translateNested(
+                                "consultation", "cancelConsultation"),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
                           ),
                         ),
-                        onPressed: () async {
-                          BuildContext profileContext = context;
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return MyConfirmDialog(
-                                title: AppLocalizations.of(context)!
-                                    .translateNested(
-                                        'consultation', 'cancelConsultation'),
-                                description: AppLocalizations.of(context)!
-                                    .translateNested('consultation',
-                                        'deleteConsultationDescription'),
-                                cancelText: AppLocalizations.of(context)!
-                                    .translateNested('dialog', 'cancel'),
-                                confirmText: AppLocalizations.of(context)!
-                                    .translateNested('dialog', 'delete'),
-                                onCancel: () {
-                                  Navigator.pop(context);
-                                },
-                                onConfirm: () {
-                                  BlocProvider.of<ChatBloc>(profileContext).add(
-                                      FinishChatEvent(
-                                          chatUuid: widget.chatUuid));
-                                  Navigator.pop(context);
-                                },
-                              );
-                            },
-                          );
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.translateNested(
-                              "consultation", "cancelConsultation"),
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),
-                        ),
-                      ),
                       SizedBox(width: 16),
                       InkWell(
                         onTap: () {
@@ -386,12 +589,14 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _handleSendPressed(String text) {
-    if (text.trim().isNotEmpty) {
-      BlocProvider.of<ChatBloc>(context).add(SendChatMessageEvent(
-        chatUuid: widget.chatUuid,
-        text: text,
-      ));
-    }
+  void _handleFinishPressed(BuildContext profileContext, BuildContext context) {
+
+    BlocProvider.of<ChatBloc>(profileContext)
+        .add(FinishChatEvent(
+            chatUuid: widget
+                .consultation.chatInfo!.uuid!));
+    Navigator.pop(context);
+
   }
+
 }

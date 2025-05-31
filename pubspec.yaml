@@ -82,6 +82,7 @@ dependencies:
   web_socket_channel: ^3.0.3
   flutter_chat_types: ^3.6.2
   flyer_chat_text_message: ^2.2.1
+  syncfusion_flutter_chat: ^29.2.7
 
 dev_dependencies:
   flutter_test:
@@ -129,6 +130,7 @@ flutter:
     - assets/images/post/
     - assets/images/search/
     - assets/images/consult/
+    - assets/images/chat/
 
   fonts:
     - family: IRANSansX

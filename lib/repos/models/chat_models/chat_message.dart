@@ -42,8 +42,6 @@ class NewChatMessage {
 
   factory NewChatMessage.fromJson(Map<String, dynamic>? json) {
     if (json == null) return NewChatMessage();
-    //print sender and recirver id
-    print('NewChatMessage.fromJson: senderId=${json['sender_id']}, receiverId=${json['receiver_id']}');
     return NewChatMessage(
       id: json['id'] as int?,
       conversationId: json['conversation_id'] as int?,
@@ -71,7 +69,45 @@ class NewChatMessage {
       id: uuid!,
       authorId: senderId.toString(),
       text: text ?? '',
-      createdAt: DateTime.parse(createdAt!)
+      createdAt: DateTime.parse(createdAt!),
+      updatedAt: updatedAt != null ? DateTime.parse(updatedAt!) : null,
+      deliveredAt: deliveredAt != null ? DateTime.parse(deliveredAt!) : null,
+      deletedAt: deletedAt != null ? DateTime.parse(deletedAt!) : null,
+      seenAt: seenAt != null ? DateTime.parse(seenAt!) : null,
+      replyToMessageId: replyToId != null ? replyToId.toString() : null,
+      sentAt: DateTime.parse(createdAt!),
+
+      metadata: {
+        'fileType': fileType,
+        'hasFile': hasFile,
+        'formattedCreatedAt': formattedCreatedAt,
+        'file': file,
+      },
     );
   }
+
+  types.Message toTypesMessageWithFile() {
+    return types.FileMessage(
+      id: uuid!,
+      authorId: senderId.toString(),
+      createdAt: DateTime.parse(createdAt!),
+      updatedAt: updatedAt != null ? DateTime.parse(updatedAt!) : null,
+      deliveredAt: deliveredAt != null ? DateTime.parse(deliveredAt!) : null,
+      deletedAt: deletedAt != null ? DateTime.parse(deletedAt!) : null,
+      seenAt: seenAt != null ? DateTime.parse(seenAt!) : null,
+      replyToMessageId: replyToId != null ? replyToId.toString() : null,
+      sentAt: DateTime.parse(createdAt!),
+      source: file['uri'] ?? '',
+      name: file['name'] ?? '',
+      metadata: {
+        'fileType': fileType,
+        'hasFile': hasFile,
+        'formattedCreatedAt': formattedCreatedAt,
+      },
+      size: file['size'] ?? 0,
+      mimeType: fileType ?? 'application/octet-stream',
+
+    );
+  }
+
 }

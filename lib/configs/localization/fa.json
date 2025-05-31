@@ -245,7 +245,8 @@
     "booking": "نوبت\u200Cدهی",
     "editConsultation": "ویرابش مشاوره",
     "cancelConsultation": "لغو مشاوره",
-    "deleteConsultationDescription": "آیا از لغو این مشاوره اطمینان دارید؟!"
+    "deleteConsultationDescription": "آیا از لغو این مشاوره اطمینان دارید؟!",
+    "writeMessage": "پیام خود را بنویسید..."
   },
 
   "error": {

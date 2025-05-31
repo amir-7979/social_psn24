@@ -1649,6 +1649,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  syncfusion_flutter_chat:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_chat
+      sha256: bda746750178a86d54e5cba4241ffdb921ead7e7cc2d66ad7d8ca5bbec109dd1
+      url: "https://pub.dev"
+    source: hosted
+    version: "29.2.7"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: "6898c5dc81f73ac4e1156a075e4dd4591ea8927f26dcc77f6ba0e9b1b1d6c8c5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "29.2.7"
   synchronized:
     dependency: transitive
     description:

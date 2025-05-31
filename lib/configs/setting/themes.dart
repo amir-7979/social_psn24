@@ -197,6 +197,9 @@ final Color lightHighlightColor = Colors.grey[100]!;
 final Color darkBaseColor = Colors.grey[700]!;
 final Color darkHighlightColor = Colors.grey[600]!;
 final Color amberColor = Colors.amber[600]!;
+const Color chatSent =  Color(0xFFCCF2F0);
+const Color chatReceive = Color(0xFFF5F9FF);
+
 
 final OutlineInputBorder borderStyle = OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
