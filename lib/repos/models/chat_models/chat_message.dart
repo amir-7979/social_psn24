@@ -1,5 +1,6 @@
-import 'package:flutter_chat_core/flutter_chat_core.dart' as types;
+import 'package:flutter_chat_core/flutter_chat_core.dart' as flutter_chat_core;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class NewChatMessage {
   final int? id;
@@ -18,6 +19,8 @@ class NewChatMessage {
   final String? deliveredAt;
   final String? seenAt;
   final String? formattedCreatedAt;
+  final Jalali? jalaliDate;
+   String? formattedPersianDate;
   final dynamic file;
 
   NewChatMessage({
@@ -37,11 +40,17 @@ class NewChatMessage {
     this.deliveredAt,
     this.seenAt,
     this.formattedCreatedAt,
+    this.jalaliDate,
+    this.formattedPersianDate,
     this.file,
   });
 
   factory NewChatMessage.fromJson(Map<String, dynamic>? json) {
     if (json == null) return NewChatMessage();
+    String? createdAt = json['created_at'];
+    Jalali? jalaliDate = createdAt != null ? Jalali.fromDateTime(DateTime.parse(createdAt)) : null;
+    String? formattedPersianDate = jalaliDate != null ? '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}' : null;
+
     return NewChatMessage(
       id: json['id'] as int?,
       conversationId: json['conversation_id'] as int?,
@@ -59,13 +68,15 @@ class NewChatMessage {
       deliveredAt: json['delivered_at'] as String?,
       seenAt: json['seen_at'] as String?,
       formattedCreatedAt: json['formatted_created_at'] as String?,
+      jalaliDate: jalaliDate,
+      formattedPersianDate: formattedPersianDate,
       file: json['file'],
     );
   }
 
 
-  types.TextMessage toTypesMessage() {
-    return types.TextMessage(
+  flutter_chat_core.TextMessage toTypesMessage() {
+    return flutter_chat_core.TextMessage(
       id: uuid!,
       authorId: senderId.toString(),
       text: text ?? '',
@@ -78,16 +89,17 @@ class NewChatMessage {
       sentAt: DateTime.parse(createdAt!),
 
       metadata: {
+        'jalaliDate': jalaliDate,
         'fileType': fileType,
         'hasFile': hasFile,
-        'formattedCreatedAt': formattedCreatedAt,
+        'formattedCreatedAt': formattedPersianDate,
         'file': file,
       },
     );
   }
 
-  types.Message toTypesMessageWithFile() {
-    return types.FileMessage(
+  flutter_chat_core.Message toTypesMessageWithFile() {
+    return flutter_chat_core.FileMessage(
       id: uuid!,
       authorId: senderId.toString(),
       createdAt: DateTime.parse(createdAt!),

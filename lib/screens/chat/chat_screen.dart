@@ -9,6 +9,7 @@ import 'package:flutter_chat_core/flutter_chat_core.dart' as flutter_chat_core;
 import 'package:flutter_svg/svg.dart';
 import 'package:flyer_chat_text_message/flyer_chat_text_message.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 import 'package:social_psn/repos/models/chat_models/chat_message.dart';
 import '../../configs/localization/app_localizations.dart';
 import '../../configs/setting/themes.dart';
@@ -20,6 +21,7 @@ import '../../services/storage_service.dart';
 import '../main/widgets/screen_builder.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/dialogs/my_confirm_dialog.dart';
+import '../widgets/new_page_progress_indicator.dart';
 import '../widgets/profile_cached_network_image.dart';
 import 'chat_bloc.dart';
 import 'widget/composer.dart';
@@ -71,6 +73,38 @@ class _ChatScreenState extends State<ChatScreen> {
 
   }
 
+  List<flutter_chat_core.Message> insertDateSeparators(List<flutter_chat_core.Message> messages) {
+    final List<flutter_chat_core.Message> result = [];
+    Jalali? previousDate;
+
+    for (final flutter_chat_core.Message message in messages) {
+      final jalali = message.metadata?['jalaliDate'];
+
+      if (jalali != null && jalali is Jalali) {
+        if (previousDate == null || !_isSameJalaliDay(previousDate, jalali)) {
+          result.add(flutter_chat_core.CustomMessage(
+            id: 'separator_${jalali.toString()}',
+            authorId: messages.first.authorId,
+            createdAt: message.createdAt,
+            metadata: {
+              'type': 'date-separator',
+              'jalali': jalali,
+              'formatted': message.metadata?['formattedCreatedAt'],
+            },
+          ));
+          previousDate = jalali;
+        }
+      }
+
+      result.add(message);
+    }
+
+    return result;
+  }
+
+  bool _isSameJalaliDay(Jalali a, Jalali b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
 
   Future<void> _connectAndListenWebSocket() async {
     final token = await _storageService.readData('token');
@@ -124,7 +158,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _loadMore() async {
-    if (!_hasMore || _isLoading) return;
+
+    if (!_hasMore || _isLoading){
+      print('[ChatScreen] No more messages to load or already loading.');
+      return;
+    }
     _isLoading = true;
 
     final response = await chatRepository.getMessagesListPagination(
@@ -140,15 +178,20 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
-    if (parsed.messages!.lastPage == _currentPage) {
-      _hasMore = false;
-    }
-    final List<flutter_chat_core.TextMessage> chatMessages =
-        newChatMessages.map((msg) => msg.toTypesMessage()).toList();
 
-    await _chatController.insertAllMessages(chatMessages, index: 0);
+    final List<flutter_chat_core.TextMessage> chatMessages =
+    newChatMessages.map((msg) => msg.toTypesMessage()).toList();
+
+    final withSeparators = insertDateSeparators(chatMessages);
+    _chatController.insertAllMessages(withSeparators, index: 0);
+    _chatController.insertAllMessages(chatMessages, index: 0);
     _currentPage = _currentPage + 1;
     _isLoading = false;
+    if (parsed.messages!.lastPage == _currentPage) {
+      setState(() {
+        _hasMore = false;
+      });
+    }
   }
 
   @override
@@ -236,11 +279,8 @@ class _ChatScreenState extends State<ChatScreen> {
           },
           builder: (context, state) {
             if (state is ChatLoading) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE91E63)),
-                ),
-              );
+              return NewPageProgressIndicator();
+
             } else if (state is ChatError) {
               return Center(
                 child: Column(
@@ -277,30 +317,61 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               );
             } else if (state is ChatLoaded) {
-              _chatController.setMessages(state.messages);
+              final withSeparators = insertDateSeparators(state.messages);
+              _chatController.insertAllMessages(withSeparators, index: 0);
               return Column(
                 children: [
                   buildAppBar(context),
                   Expanded(
                     child: Chat(
-
-
-
                       backgroundColor:
-                          Theme.of(context).colorScheme.background,
+                      Theme.of(context).colorScheme.background,
                       decoration: BoxDecoration(
 
                         color: Theme.of(context).colorScheme.background,
                         image: const DecorationImage(
                           image: AssetImage('assets/images/chat/chat_background.png'),
-                          opacity: 0.2,
+                          opacity: 0.1,
                           fit: BoxFit.cover,
                         ),
 
                       ),
                       theme: flutter_chat_core.ChatTheme.fromThemeData(
                           Theme.of(context)),
+
                       builders: flutter_chat_core.Builders(
+                        customMessageBuilder: (context, message, index) {
+                          if (message.metadata?['type'] == 'date-separator') {
+                            final formatted = message.metadata?['formatted'] as String? ?? '';
+
+                            return Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer
+                                      .withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  formatted, // Already localized like "12 خرداد 1403"
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground,
+                                    fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            );
+                          }
+
+                          return const SizedBox.shrink();
+                        },
                         composerBuilder: (context) {
                           return Composer(
                             maxLines: 5,
@@ -335,19 +406,21 @@ class _ChatScreenState extends State<ChatScreen> {
                                 .onPrimaryContainer,
                             textEditingController: textEditingController,
                             handleSafeArea: true,
-
-
-
-
-
-
                           );
+                        },
+                        loadMoreBuilder: (context) {
+                          return _hasMore ? SizedBox.shrink(): SizedBox.shrink();
                         },
 
                         chatAnimatedListBuilder: (context, itemBuilder) {
                           return ChatAnimatedList(
                             itemBuilder: itemBuilder,
-                            onEndReached: _loadMore,
+                            onEndReached: (_hasMore)?_loadMore: null,
+                            reversed: true,
+                            handleSafeArea: true,
+                            physics: const BouncingScrollPhysics(),
+
+
 
 
                           );
@@ -370,10 +443,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                 .bodyLarge!
                                 .copyWith(
 
-                                  color: Theme.of(context)
-                                      .primaryColor,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                              color: Theme.of(context)
+                                  .primaryColor,
+                              fontWeight: FontWeight.w400,
+                            ),
                             receivedBackgroundColor: chatReceive,
                             //i want this primary color with alpha rgba(204, 242, 240, 1)
                             sentBackgroundColor: chatSent.withOpacity(0.8),
@@ -381,20 +454,20 @@ class _ChatScreenState extends State<ChatScreen> {
                                 .textTheme
                                 .bodyLarge!
                                 .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onBackground,
+                              fontWeight: FontWeight.w400,
+                            ),
                             receivedTextStyle: Theme.of(context)
                                 .textTheme
                                 .bodyLarge!
                                 .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onBackground,
+                              fontWeight: FontWeight.w400,
+                            ),
                           );
                         },
                       ),
@@ -451,16 +524,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 shape: BoxShape.circle,
                 color: Theme.of(context).colorScheme.background,
                 border:
-                    Border.all(color: Theme.of(context).colorScheme.background),
+                Border.all(color: Theme.of(context).colorScheme.background),
               ),
               child: ClipOval(
                 child: (widget.consultation.user!.avatar != null)
                     ? FittedBox(
-                        fit: BoxFit.cover,
-                        child: ProfileCacheImage(
-                          widget.consultation.user!.avatar,
-                        ),
-                      )
+                  fit: BoxFit.cover,
+                  child: ProfileCacheImage(
+                    widget.consultation.user!.avatar,
+                  ),
+                )
                     : SvgPicture.asset('assets/images/profile/profile2.svg'),
               ),
             ),
@@ -484,11 +557,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                 .textTheme
                                 .titleLarge!
                                 .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground,
-                                    //fontSize: 14,
-                                    fontWeight: FontWeight.w200),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onBackground,
+                                //fontSize: 14,
+                                fontWeight: FontWeight.w200),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -503,9 +576,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                 .textTheme
                                 .bodyMedium!
                                 .copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                    fontWeight: FontWeight.w400),
+                                color:
+                                Theme.of(context).colorScheme.surface,
+                                fontWeight: FontWeight.w400),
                           ),
                         ),
                       ],
@@ -539,10 +612,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                 return MyConfirmDialog(
                                   title: AppLocalizations.of(context)!
                                       .translateNested(
-                                          'consultation', 'cancelConsultation'),
+                                      'consultation', 'cancelConsultation'),
                                   description: AppLocalizations.of(context)!
                                       .translateNested('consultation',
-                                          'deleteConsultationDescription'),
+                                      'deleteConsultationDescription'),
                                   cancelText: AppLocalizations.of(context)!
                                       .translateNested('dialog', 'cancel'),
                                   confirmText: AppLocalizations.of(context)!
@@ -564,9 +637,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                 .textTheme
                                 .bodyLarge!
                                 .copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: Theme.of(context).colorScheme.error,
-                                ),
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
                           ),
                         ),
                       SizedBox(width: 16),
@@ -593,8 +666,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
     BlocProvider.of<ChatBloc>(profileContext)
         .add(FinishChatEvent(
-            chatUuid: widget
-                .consultation.chatInfo!.uuid!));
+        chatUuid: widget
+            .consultation.chatInfo!.uuid!));
     Navigator.pop(context);
 
   }
