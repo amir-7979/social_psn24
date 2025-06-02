@@ -43,7 +43,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController textEditingController = TextEditingController();
   final ChatRepository chatRepository = ChatRepository();
-  int _currentPage = 2;
+  int _currentPage = 1;
   bool _hasMore = true;
   bool _isLoading = false;
   final _chatController = flutter_chat_core.InMemoryChatController();
@@ -56,7 +56,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-
     textEditingController.addListener(() {
       setState(() {});
     });
@@ -64,13 +63,106 @@ class _ChatScreenState extends State<ChatScreen> {
     user2 = types.User(
       id: widget.consultation.consultant!.id.toString(),
       firstName: widget.consultation.consultant!.name,
-      imageUrl: widget.consultation.consultant!.avatar,
+      imageUrl: widget.consultation.consultant!.infoUrl,
     );
     user1 = types.User(id: widget.consultation.user!.id.toString());
     Future.delayed(Duration.zero, () async {
+
+      await _loadMore(); // initial fetch
       await _connectAndListenWebSocket();
     });
+  }
 
+ /* final withSeparators = insertDateSeparators(state.messages);
+  _chatController.insertAllMessages(withSeparators, index: 0);
+*/
+  Timer? _pingTimer;
+
+  void _startPing() {
+    _pingTimer = Timer.periodic(Duration(seconds: 20), (_) {
+      try {
+        wsChannel?.sink.add(jsonEncode({"event": "pusher:ping"}));
+        print('[Ping] Sent custom ping');
+      } catch (e) {
+        print('[Ping] Error sending ping: $e');
+      }
+    });
+  }
+
+
+  void _stopPing() {
+    _pingTimer?.cancel();
+  }
+
+  Future<void> _connectAndListenWebSocket() async {
+    final token = await _storageService.readData('token');
+    final wsDomainWithParams =
+        '${widget.consultation.chatInfo!.wsDomain}?token=$token&service-token=$Secret2';
+
+    wsChannel = WebSocketChannel.connect(Uri.parse(wsDomainWithParams));
+    _startPing();
+
+    final String channelName = 'chat-channel.${widget.consultation.chatInfo!.uuid}';
+
+    _wsSubscription = wsChannel!.stream.listen(
+          (data) {
+        try {
+          print('[ChatBloc] WebSocket data received: $data');
+          final decoded = data is String ? data : data.toString();
+          final eventData = jsonDecode(decoded);
+
+          final event = eventData['event'];
+          final payload = eventData['data'];
+          final channel = eventData['channel'];
+
+          if (event == 'pusher:connection_established') {
+            print('[ChatBloc] Connection established');
+            final subscribeMessage = {
+              "event": "pusher:subscribe",
+              "data": {
+                "channel": channelName,
+              }
+            };
+
+            wsChannel?.sink.add(jsonEncode(subscribeMessage));
+            print('[ChatBloc] Sent subscription for channel: $channelName');
+          }
+
+          else if (event == 'pusher_internal:subscription_succeeded') {
+            print('[ChatBloc] Subscribed successfully to $channel');
+          }
+
+          else if (event == 'new_chat_message' && channel == channelName) {
+            final messageJson = jsonDecode(payload)['message'];
+
+            final newMessage = NewChatMessage.fromJson(messageJson);
+            print(newMessage.toString());
+            final chatMessage = newMessage.toTypesMessage();
+
+            setState(() {
+              _chatController.insertMessage(chatMessage);
+            });
+          }
+
+          else if (event == 'pusher:pong') {
+            print('[ChatBloc] Received pong event');
+          }
+
+          else {
+            print('[ChatBloc] Unknown event type: $event');
+          }
+        } catch (e) {
+          print('[ChatBloc] WebSocket JSON parse error: $e');
+        }
+      },
+      onError: (error, [stackTrace]) {
+        print('[ChatBloc] WebSocket error: $error');
+      },
+      onDone: () {
+        print('[ChatBloc] WebSocket closed');
+      },
+      cancelOnError: true,
+    );
   }
 
   List<flutter_chat_core.Message> insertDateSeparators(List<flutter_chat_core.Message> messages) {
@@ -102,50 +194,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return result;
   }
 
-  bool _isSameJalaliDay(Jalali a, Jalali b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  Future<void> _connectAndListenWebSocket() async {
-    final token = await _storageService.readData('token');
-    final wsDomainWithParams = '${widget.consultation.chatInfo!.wsDomain}?token=$token&service-token=$Secret2';
-    wsChannel = WebSocketChannel.connect(Uri.parse(wsDomainWithParams));
-    print('[ChatBloc] WebSocket connecting to: $wsDomainWithParams');
-    _wsSubscription = wsChannel!.stream.listen(
-          (data) {
-        print('[ChatBloc] WebSocket DATA: $data');
-        try {
-          final decoded = data is String ? data : data.toString();
-          final eventData = jsonDecode(decoded);
-          print('[ChatBloc] WebSocket JSON: $eventData');
-
-          if (eventData != null && eventData['event'] == 'message.new') {
-            final messageData = eventData['data'];
-
-            if (messageData != null) {
-              final newMessage = NewChatMessage.fromJson(messageData);
-              final chatMessage = newMessage.toTypesMessage();
-              print('[ChatBloc] New message received: $chatMessage');
-              /*if(chatMessage.authorId == widget.consultation.user!.id){
-                return;
-              }*/
-              setState(() {
-                _chatController.insertMessage(chatMessage, index: 0);
-              });
-            }
-          }
-        } catch (err) {
-          print('[ChatBloc] WebSocket JSON parse error: $err');
-        }
-      },
-      onError: (error, [stackTrace]) {
-        print('[ChatBloc] WebSocket STREAM ERROR: $error');
-      },
-      onDone: () {
-        print('[ChatBloc] WebSocket connection closed');
-      },
-      cancelOnError: true,
-    );
+  bool _isSameJalaliDay(Jalali a, Jalali b) {return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
 
@@ -158,19 +207,14 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _loadMore() async {
-
-    if (!_hasMore || _isLoading){
-      print('[ChatScreen] No more messages to load or already loading.');
-      return;
-    }
+    if (!_hasMore || _isLoading) return;
     _isLoading = true;
 
     final response = await chatRepository.getMessagesListPagination(
         widget.consultation.chatInfo!.uuid!, _currentPage);
-    print('[ChatScreen] Loaded page $_currentPage: ${response.data}');
 
     final parsed = FetchMessagesResponse.fromJson(response.data);
-    final List<NewChatMessage> newChatMessages = parsed.messages!.data ?? [];
+    final List<NewChatMessage> newChatMessages = parsed.messages?.data ?? [];
 
     if (newChatMessages.isEmpty) {
       _hasMore = false;
@@ -178,25 +222,36 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
-
-    final List<flutter_chat_core.TextMessage> chatMessages =
-    newChatMessages.map((msg) => msg.toTypesMessage()).toList();
+    // Sort messages by time
+    final chatMessages = newChatMessages
+        .map((msg) => msg.toTypesMessage())
+        .toList()
+      ..sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
 
     final withSeparators = insertDateSeparators(chatMessages);
-    _chatController.insertAllMessages(withSeparators, index: 0);
-    _chatController.insertAllMessages(chatMessages, index: 0);
-    _currentPage = _currentPage + 1;
+
+    if (_currentPage == 1) {
+      // First load: show at bottom
+      _chatController.insertAllMessages(withSeparators, index: _chatController.messages.length);
+    } else {
+      _chatController.insertAllMessages(withSeparators, index: 0);
+    }
+
+    _currentPage++;
     _isLoading = false;
+
     if (parsed.messages!.lastPage == _currentPage) {
-      setState(() {
-        _hasMore = false;
-      });
+      _hasMore = false;
     }
   }
+
 
   @override
   void dispose() {
     _chatController.dispose();
+    _wsSubscription?.cancel();
+    _stopPing();
+    wsChannel?.sink.close();
     super.dispose();
   }
 
@@ -266,6 +321,7 @@ class _ChatScreenState extends State<ChatScreen> {
           },
           listener: (context, state) {
             if (state is ChatMessageSent) {
+
             } else if (state is ChatError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 CustomSnackBar(content: state.message).build(context),
@@ -317,8 +373,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               );
             } else if (state is ChatLoaded) {
-              final withSeparators = insertDateSeparators(state.messages);
-              _chatController.insertAllMessages(withSeparators, index: 0);
               return Column(
                 children: [
                   buildAppBar(context),
@@ -416,7 +470,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           return ChatAnimatedList(
                             itemBuilder: itemBuilder,
                             onEndReached: (_hasMore)?_loadMore: null,
-                            reversed: true,
+                            reversed: false,
                             handleSafeArea: true,
                             physics: const BouncingScrollPhysics(),
 
@@ -515,7 +569,7 @@ class _ChatScreenState extends State<ChatScreen> {
           InkWell(
             onTap: () {
               Navigator.of(context).pushNamed(AppRoutes.profile,
-                  arguments: widget.consultation.user!.id);
+                  arguments: widget.consultation.consultant!.id);
             },
             child: Container(
               width: 45,
@@ -527,11 +581,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 Border.all(color: Theme.of(context).colorScheme.background),
               ),
               child: ClipOval(
-                child: (widget.consultation.user!.avatar != null)
+                child: (widget.consultation.consultant!.infoUrl != null)
                     ? FittedBox(
                   fit: BoxFit.cover,
                   child: ProfileCacheImage(
-                    widget.consultation.user!.avatar,
+                    widget.consultation.consultant!.infoUrl,
                   ),
                 )
                     : SvgPicture.asset('assets/images/profile/profile2.svg'),

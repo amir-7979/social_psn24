@@ -98,6 +98,7 @@ class NewChatMessage {
     );
   }
 
+
   flutter_chat_core.Message toTypesMessageWithFile() {
     return flutter_chat_core.FileMessage(
       id: uuid!,
