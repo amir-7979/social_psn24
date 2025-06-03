@@ -133,6 +133,10 @@ class _ChatScreenState extends State<ChatScreen> {
           }
 
           else if (event == 'new_chat_message' && channel == channelName) {
+            if (payload['sender_id'] == widget.consultation.user!.id.toString()) {
+              print('[ChatBloc] Ignoring my own message');
+              return;
+            }
             final messageJson = jsonDecode(payload)['message'];
 
             final newMessage = NewChatMessage.fromJson(messageJson);
@@ -255,35 +259,8 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  // 1) This method will be called when user taps the microphone icon
-  void _onMicPressed() {
-    // e.g. open your voice recorder or handle audio input
-    print('[Composer] Mic pressed');
-  }
 
-  // 2) This method will be called when user taps the paperclip icon
-  void _onAttachPressed() async {
-    // e.g. open image_picker or file_picker, then insert an ImageMessage or FileMessage:
-    // final result = await FilePicker.platform.pickFiles(type: FileType.any);
-    // if (result != null && result.files.single.path != null) {
-    //   final path = result.files.single.path!;
-    //   final file = File(path);
-    //   final message = types.FileMessage(
-    //     author: user1,
-    //     createdAt: DateTime.now().millisecondsSinceEpoch,
-    //     id: DateTime.now().millisecondsSinceEpoch.toString(),
-    //     name: result.files.single.name,
-    //     size: result.files.single.size,
-    //     uri: path,
-    //   );
-    //   setState(() {
-    //     _chatController.insertMessage(message, index: 0);
-    //   });
-    // }
-    print('[Composer] Attach pressed');
-  }
 
-  // 3) This method will be called when user taps send arrow
   void _onSendPressed(String text) {
         (text) {
       if (text.trim().isNotEmpty) {
@@ -299,13 +276,6 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     };
   }
-
-  // 4) This method will be called when user taps the emoji icon
-  void _onEmojiPressed() {
-    // e.g. open your emoji picker dialog
-    print('[Composer] Emoji pressed');
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -391,6 +361,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                       ),
                       theme: flutter_chat_core.ChatTheme.fromThemeData(
+
                           Theme.of(context)),
 
                       builders: flutter_chat_core.Builders(
@@ -469,14 +440,12 @@ class _ChatScreenState extends State<ChatScreen> {
                         chatAnimatedListBuilder: (context, itemBuilder) {
                           return ChatAnimatedList(
                             itemBuilder: itemBuilder,
+
                             onEndReached: (_hasMore)?_loadMore: null,
                             reversed: false,
                             handleSafeArea: true,
+
                             physics: const BouncingScrollPhysics(),
-
-
-
-
                           );
                         },
                         textMessageBuilder: (context, message, index) {
@@ -501,6 +470,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   .primaryColor,
                               fontWeight: FontWeight.w400,
                             ),
+
                             receivedBackgroundColor: chatReceive,
                             //i want this primary color with alpha rgba(204, 242, 240, 1)
                             sentBackgroundColor: chatSent.withOpacity(0.8),
@@ -522,21 +492,48 @@ class _ChatScreenState extends State<ChatScreen> {
                                   .onBackground,
                               fontWeight: FontWeight.w400,
                             ),
+
                           );
                         },
                       ),
                       currentUserId: widget.consultation.user!.id.toString(),
                       resolveUser: (userId) => _resolveUser(userId),
                       chatController: _chatController,
-                      onMessageSend: (text) {
-                        if (text.trim().isNotEmpty) {
-                          BlocProvider.of<ChatBloc>(context)
-                              .add(SendChatMessageEvent(
-                            chatUuid: widget.consultation.chatInfo!.uuid!,
-                            text: text,
-                          ));
-                        }
+                      onMessageSend: (text) async {
+                        final trimmed = text.trim();
+                        if (trimmed.isEmpty) return;
+                        final tempId = DateTime.now().millisecondsSinceEpoch.toString();
+                        final jalaliDate = Jalali.now();
+                        final formattedPersianDate = '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}';
+                        final tempMessage = flutter_chat_core.TextMessage(
+                          id: tempId,
+                          authorId: widget.consultation.user!.id.toString(),
+                          text: trimmed,
+                          createdAt: DateTime.now(),
+                          metadata: {
+                            'sending': true,
+                            'jalaliDate': jalaliDate,
+                            'formattedCreatedAt': formattedPersianDate,
+                          },
+                        );
+                        _chatController.insertMessage(tempMessage);
+                        textEditingController.clear();
+                        chatRepository.sendMessage(
+                          widget.consultation.chatInfo!.uuid!,
+                          trimmed,
+                        ).then((response) {
+
+                          final sentMsg = NewChatMessage.fromJson(response.data['data']);
+                          _chatController.updateMessage(
+                            tempMessage,
+                            sentMsg.toTypesMessage(),
+                          );
+                        }).catchError((error) {
+                          //todo
+                        });
+
                       },
+
                     ),
                   ),
                 ],
