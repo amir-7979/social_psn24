@@ -148,13 +148,7 @@ class MyConsultationScreen extends StatelessWidget {
                               ) : ListView.builder(
                                 itemCount: state.consultations.length,
                                 itemBuilder: (context, index) {
-                                  return Column(
-                                    children: [
-                                      ConsultationShimmer(),
-
-                                      ConsultationItem(state.consultations[index]),
-                                    ],
-                                  );
+                                  return ConsultationItem(state.consultations[index]);
                                 },
                               ),
                             );
