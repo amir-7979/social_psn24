@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../widgets/shimmer.dart';
 
 class ConsultationShimmer extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -14,7 +13,8 @@ class ConsultationShimmer extends StatelessWidget {
               padding: const EdgeInsetsDirectional.only(bottom: 24),
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.surface),
+                  border:
+                      Border.all(color: Theme.of(context).colorScheme.surface),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -27,7 +27,7 @@ class ConsultationShimmer extends StatelessWidget {
                         children: [
                           Padding(
                             padding:
-                            const EdgeInsetsDirectional.only(start: 55),
+                                const EdgeInsetsDirectional.only(start: 55),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -49,7 +49,6 @@ class ConsultationShimmer extends StatelessWidget {
                             ],
                           ),
                           SizedBox(height: 2),
-
                         ],
                       ),
                     ),
@@ -62,26 +61,23 @@ class ConsultationShimmer extends StatelessWidget {
                           end: Alignment.topCenter,
                           colors: [
                             Theme.of(context).primaryColor.withOpacity(0.2),
-                            Theme.of(context).colorScheme.background.withOpacity(0.0),
-
+                            Theme.of(context)
+                                .colorScheme
+                                .background
+                                .withOpacity(0.0),
                           ],
                         ),
                       ),
                       padding:
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                      child: Stack(
-                        alignment: Alignment.center,
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child:  shimmerContainer(context,
-                                width: 85, height: 14, radius: 16),
-                          ),
-                          Positioned(
-                            left: 0,
-                            child:  shimmerContainer(context,
-                                width: 75, height: 40, radius: 16),
-                          ),
+                          shimmerContainer(context,
+                              width: 80, height: 25, radius: 4),
+                          SizedBox(width: 8),
+                          shimmerContainer(context,
+                              width: 80, height: 25, radius: 4),
                         ],
                       ),
                     )
@@ -91,7 +87,6 @@ class ConsultationShimmer extends StatelessWidget {
             ),
           ],
         ),
-
         Padding(
           padding: const EdgeInsetsDirectional.only(start: 10),
           child: Row(
@@ -104,11 +99,10 @@ class ConsultationShimmer extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Theme.of(context).colorScheme.background,
-                  border:
-                  Border.all(color: Theme.of(context).colorScheme.background),
+                  border: Border.all(
+                      color: Theme.of(context).colorScheme.background),
                 ),
                 child: shimmerCircular(context, size: 55),
-
               ),
               const SizedBox(width: 8),
               Expanded(

@@ -27,6 +27,7 @@ import 'chat_bloc.dart';
 import 'widget/composer.dart';
 import 'widget/other_message_bubble.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class ChatScreen extends StatefulWidget {
   final Consultation consultation;
@@ -347,193 +348,191 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   buildAppBar(context),
                   Expanded(
-                    child: Chat(
-                      backgroundColor:
-                      Theme.of(context).colorScheme.background,
-                      decoration: BoxDecoration(
-
-                        color: Theme.of(context).colorScheme.background,
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/chat/chat_background.png'),
-                          opacity: 0.1,
-                          fit: BoxFit.cover,
+                    child: Localizations.override(
+                      context: context,
+                      locale: const Locale('en'), // Force English locale for the Chat UI
+                      delegates: const <LocalizationsDelegate<dynamic>>[
+                        GlobalMaterialLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                        // You might have DefaultCupertinoLocalizations.delegate too
+                        // DO NOT include your AppLocalizations.delegate here unless you
+                        // want AppLocalizations within this scope to also become English.
+                      ],
+                      child: Chat(
+                        backgroundColor:
+                        Theme.of(context).colorScheme.background,
+                        decoration: BoxDecoration(
+                      
+                          color: Theme.of(context).colorScheme.background,
+                          image: const DecorationImage(
+                            image: AssetImage('assets/images/chat/chat_background.png'),
+                            opacity: 0.1,
+                            fit: BoxFit.cover,
+                          ),
+                      
                         ),
-
-                      ),
-                      theme: flutter_chat_core.ChatTheme.fromThemeData(
-
-                          Theme.of(context)),
-
-                      builders: flutter_chat_core.Builders(
-                        customMessageBuilder: (context, message, index) {
-                          if (message.metadata?['type'] == 'date-separator') {
-                            final formatted = message.metadata?['formatted'] as String? ?? '';
-
-                            return Center(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer
-                                      .withOpacity(0.8),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Text(
-                                  formatted, // Already localized like "12 خرداد 1403"
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
+                        theme: flutter_chat_core.ChatTheme.fromThemeData(
+                      
+                            Theme.of(context)),
+                      
+                        builders: flutter_chat_core.Builders(
+                          customMessageBuilder: (context, message, index) {
+                            if (message.metadata?['type'] == 'date-separator') {
+                              final formatted = message.metadata?['formatted'] as String? ?? '';
+                      
+                              return Center(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                                  decoration: BoxDecoration(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onBackground,
-                                    fontWeight: FontWeight.w400,
+                                        .onPrimaryContainer
+                                        .withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Text(
+                                    formatted, // Already localized like "12 خرداد 1403"
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground,
+                                      fontWeight: FontWeight.w400,
+                                  ),
                                 ),
                               ),
-                            ),
-                            );
-                          }
-
-                          return const SizedBox.shrink();
-                        },
-                        composerBuilder: (context) {
-                          return Composer(
-                            maxLines: 5,
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer,
-                            padding: EdgeInsetsDirectional.only(bottom: 16),
-                            textInputAction: TextInputAction.send,
-                            hintText: AppLocalizations.of(context)!
-                                .translateNested('consultation', 'writeMessage'),
-                            attachmentIconColor: Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer,
-                            attachmentIcon: FaIcon( FontAwesomeIcons.thinPaperclip,
-                                color: Theme.of(context)
-                                    .primaryColor),
-                            hintColor: Theme.of(context)
-                                .hoverColor,
-                            sendIconColor: Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer,
-                            textColor: Theme.of(context)
-                                .hoverColor,
-                            sendIcon: (textEditingController.value.text.isNotEmpty) ? Directionality(
-                              textDirection: TextDirection.rtl,
-                              child: FaIcon(FontAwesomeIcons.solidSend,
-                                  color: Theme.of(context)
-                                      .primaryColor),
-                            ): null,
-                            inputFillColor: Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer,
-                            textEditingController: textEditingController,
-                            handleSafeArea: true,
-                          );
-                        },
-                        loadMoreBuilder: (context) {
-                          return _hasMore ? SizedBox.shrink(): SizedBox.shrink();
-                        },
-
-                        chatAnimatedListBuilder: (context, itemBuilder) {
-                          return ChatAnimatedList(
-                            itemBuilder: itemBuilder,
-
-                            onEndReached: (_hasMore)?_loadMore: null,
-                            reversed: false,
-                            handleSafeArea: true,
-
-                            physics: const BouncingScrollPhysics(),
-                          );
-                        },
-                        textMessageBuilder: (context, message, index) {
-                          return FlyerChatTextMessage(
-                            message: message,
-                            index: index,
-                            showStatus: true,
-                            showTime: true,
-
-
-
-                            borderRadius: BorderRadius.circular(4),
-                            timeAndStatusPosition: flutter_chat_core.TimeAndStatusPosition.start,
-                            timeAndStatusPositionInlineInsets:  EdgeInsetsDirectional.zero,
-                            padding: EdgeInsetsDirectional.all(10),
-                            timeStyle: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(
-
-                              color: Theme.of(context)
-                                  .primaryColor,
-                              fontWeight: FontWeight.w400,
-                            ),
-
-                            receivedBackgroundColor: chatReceive,
-                            //i want this primary color with alpha rgba(204, 242, 240, 1)
-                            sentBackgroundColor: chatSent.withOpacity(0.8),
-                            sentTextStyle: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onBackground,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            receivedTextStyle: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onBackground,
-                              fontWeight: FontWeight.w400,
-                            ),
-
-                          );
-                        },
-                      ),
-                      currentUserId: widget.consultation.user!.id.toString(),
-                      resolveUser: (userId) => _resolveUser(userId),
-                      chatController: _chatController,
-                      onMessageSend: (text) async {
-                        final trimmed = text.trim();
-                        if (trimmed.isEmpty) return;
-                        final tempId = DateTime.now().millisecondsSinceEpoch.toString();
-                        final jalaliDate = Jalali.now();
-                        final formattedPersianDate = '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}';
-                        final tempMessage = flutter_chat_core.TextMessage(
-                          id: tempId,
-                          authorId: widget.consultation.user!.id.toString(),
-                          text: trimmed,
-                          createdAt: DateTime.now(),
-                          metadata: {
-                            'sending': true,
-                            'jalaliDate': jalaliDate,
-                            'formattedCreatedAt': formattedPersianDate,
+                              );
+                            }
+                      
+                            return const SizedBox.shrink();
                           },
-                        );
-                        _chatController.insertMessage(tempMessage);
-                        textEditingController.clear();
-                        chatRepository.sendMessage(
-                          widget.consultation.chatInfo!.uuid!,
-                          trimmed,
-                        ).then((response) {
+                          composerBuilder: (context) {
+                            return Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: MyCustomComposer(
+                                onSendPressed: _performSendMessage,
+                                customHintStyle: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                  color: Theme.of(context)
+                                      .hoverColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                customInputTextStyle: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                  color: Theme.of(context)
+                                      .hoverColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                maxLines: 5,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                                padding: EdgeInsetsDirectional.only(bottom: 10),
+                                textInputAction: TextInputAction.send,
+                                hintText: AppLocalizations.of(context)!
+                                    .translateNested('consultation', 'writeMessage'),
+                                attachmentIconColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                                attachmentIcon: FaIcon( FontAwesomeIcons.thinPaperclip,
+                                    color: Theme.of(context)
+                                        .primaryColor),
+                                hintColor: Theme.of(context)
+                                    .hoverColor,
+                                sendIconColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                                textColor: Theme.of(context)
+                                    .hoverColor,
+                                sendIcon: (textEditingController.value.text.isNotEmpty) ? RotatedBox(
+                                  quarterTurns: 2,
+                                  child: FaIcon(FontAwesomeIcons.solidPaperPlaneTop,
+                                      color: Theme.of(context)
+                                          .primaryColor),
+                                ): null,
+                                inputFillColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                                textEditingController: textEditingController,
+                                keyboardType: TextInputType.multiline,
 
-                          final sentMsg = NewChatMessage.fromJson(response.data['data']);
-                          _chatController.updateMessage(
-                            tempMessage,
-                            sentMsg.toTypesMessage(),
-                          );
-                        }).catchError((error) {
-                          //todo
-                        });
-
-                      },
-
+                                handleSafeArea: true,
+                              ),
+                            );
+                          },
+                          loadMoreBuilder: (context) {
+                            return _hasMore ? SizedBox.shrink(): SizedBox.shrink();
+                          },
+                      
+                          chatAnimatedListBuilder: (context, itemBuilder) {
+                            return ChatAnimatedList(
+                              itemBuilder: itemBuilder,
+                      
+                              onEndReached: (_hasMore)?_loadMore: null,
+                              reversed: true,
+                              handleSafeArea: true,
+                      
+                              physics: const BouncingScrollPhysics(),
+                            );
+                          },
+                          textMessageBuilder: (context, message, index) {
+                            return FlyerChatTextMessage(
+                              message: message,
+                              index: index,
+                              showStatus: true,
+                              showTime: true,
+                              borderRadius: BorderRadius.circular(4),
+                              timeAndStatusPosition: flutter_chat_core.TimeAndStatusPosition.start,
+                              timeAndStatusPositionInlineInsets:  EdgeInsetsDirectional.zero,
+                              padding: EdgeInsetsDirectional.all(10),
+                              timeStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                      
+                                color: Theme.of(context)
+                                    .primaryColor,
+                                fontWeight: FontWeight.w400,
+                              ),
+                      
+                              receivedBackgroundColor: chatReceive,
+                              //i want this primary color with alpha rgba(204, 242, 240, 1)
+                              sentBackgroundColor: chatSent.withOpacity(0.8),
+                              sentTextStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onBackground,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              receivedTextStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onBackground,
+                                fontWeight: FontWeight.w400,
+                              ),
+                      
+                            );
+                          },
+                        ),
+                        currentUserId: widget.consultation.user!.id.toString(),
+                        resolveUser: (userId) => _resolveUser(userId),
+                        chatController: _chatController,
+                        onMessageSend: _performSendMessage,
+                      
+                      ),
                     ),
                   ),
                 ],
@@ -723,4 +722,38 @@ class _ChatScreenState extends State<ChatScreen> {
 
   }
 
+  Future<void> _performSendMessage(String text) async {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
+    final tempId = DateTime.now().millisecondsSinceEpoch.toString();
+    final jalaliDate = Jalali.now();
+    final formattedPersianDate = '${jalaliDate.day} ${jalaliDate.formatter.mN} ${jalaliDate.year}';
+    final tempMessage = flutter_chat_core.TextMessage(
+      id: tempId,
+      authorId: widget.consultation.user!.id.toString(),
+      text: trimmed,
+      createdAt: DateTime.now(),
+      metadata: {
+        'sending': true,
+        'jalaliDate': jalaliDate,
+        'formattedCreatedAt': formattedPersianDate,
+      },
+    );
+    _chatController.insertMessage(tempMessage);
+    textEditingController.clear();
+    chatRepository.sendMessage(
+      widget.consultation.chatInfo!.uuid!,
+      trimmed,
+    ).then((response) {
+
+      final sentMsg = NewChatMessage.fromJson(response.data['data']);
+      _chatController.updateMessage(
+        tempMessage,
+        sentMsg.toTypesMessage(),
+      );
+    }).catchError((error) {
+      //todo
+    });
+
+  }
 }
